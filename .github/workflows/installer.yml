@@ -1,0 +1,94 @@
+name: Installer
+
+# Builds Mellon-Setup-<version>.exe with packaging/build.ps1 and installs it
+# once as a smoke test. "Run workflow" on the Actions tab builds it from any
+# branch and keeps it as a run artifact. Pushing a tag v<version> (matching
+# `version` in pyproject.toml, e.g. v0.2.0rc1) also attaches it to a draft
+# GitHub release, which is published by hand.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mellon
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: astral-sh/setup-uv@v10.3.0
+
+      # The runner image ships Inno Setup 6 at the path build.ps1 defaults to.
+      - name: Build installer
+        run: powershell -ExecutionPolicy Bypass -File packaging\build.ps1
+
+      - name: Check version
+        id: version
+        run: |
+          $exe = @(Get-ChildItem build\Mellon-Setup-*.exe)
+          if ($exe.Count -ne 1) { throw "expected one installer in build\, found $($exe.Count)" }
+          $version = $exe[0].BaseName.Substring('Mellon-Setup-'.Length)
+          if ($env:GITHUB_REF_TYPE -eq 'tag' -and $env:GITHUB_REF_NAME -ne "v$version") {
+            throw "tag $env:GITHUB_REF_NAME does not match the package version (expected v$version)"
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Install and smoke-test
+        timeout-minutes: 5
+        run: |
+          $setup = (Get-Item build\Mellon-Setup-*.exe).FullName
+          $p = Start-Process $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Setup exited with code $($p.ExitCode)" }
+          $app = "$env:LOCALAPPDATA\Programs\Mellon"
+          & "$app\mellon-mcp.exe" --version
+          if ($LASTEXITCODE -ne 0) { throw "mellon-mcp.exe --version exited with code $LASTEXITCODE" }
+          # Windowed exe: no console output, so only the exit code tells.
+          $p = Start-Process "$app\mellon.exe" -ArgumentList '--version' -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "mellon.exe --version exited with code $($p.ExitCode)" }
+          if (-not (Test-Path "$app\tools\tectonic.exe")) { throw "tools\tectonic.exe is missing" }
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Mellon-Setup-${{ steps.version.outputs.version }}
+          path: mellon/build/Mellon-Setup-*.exe
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: Mellon-Setup-${{ needs.build.outputs.version }}
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          sha256sum Mellon-Setup-*.exe > SHA256SUMS.txt
+          prerelease=
+          case "$VERSION" in *[a-z]*) prerelease=--prerelease ;; esac
+          gh release create "$TAG" Mellon-Setup-*.exe SHA256SUMS.txt \
+            --draft $prerelease --verify-tag \
+            --title "Mellon $VERSION" \
+            --notes "Windows installer for Mellon $VERSION. See mellon/CHANGELOG.md for the changes."

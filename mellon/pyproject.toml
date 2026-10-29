@@ -1,0 +1,39 @@
+[project]
+name = "mellon"
+version = "0.2.0rc1"
+description = "DOORS-like requirements management on top of XML files in a git repository, with a PySide6 GUI and an MCP server."
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Tobias Hallberg", email = "zotty@zotty.se" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "jinja2>=3.1,<4",
+    "lxml>=6.1.0,<7",
+    # mcp 2.x removed `mcp.server.fastmcp`; stay on 1.x until the server is ported.
+    "mcp>=1.27,<2",
+    "pygit2>=1.19.2,<2",
+    # Only QtCore/QtGui/QtWidgets/QtSvg are used — Essentials avoids ~450 MB of add-ons.
+    "pyside6-essentials>=6.11,<7",
+]
+
+[project.urls]
+Homepage = "https://github.com/tobias-hallberg/mellon-req-tool"
+Issues = "https://github.com/tobias-hallberg/mellon-req-tool/issues"
+Changelog = "https://github.com/tobias-hallberg/mellon-req-tool/blob/develop/mellon/CHANGELOG.md"
+
+[project.scripts]
+mellon-mcp = "mellon.mcp.server:main"
+mellon-gui = "mellon.gui.app:main"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-qt>=4.4",
+]

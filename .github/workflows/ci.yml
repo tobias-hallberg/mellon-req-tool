@@ -1,0 +1,87 @@
+name: CI
+
+# Runs only when something lands on main or develop (e.g. merging a branch).
+# Pushes to other branches and pull requests don't use Actions minutes. "Run
+# workflow" on the Actions tab starts it by hand.
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: mellon
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+
+      - name: Install Qt runtime libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libegl1 libgl1 libxkbcommon0 libxkbcommon-x11-0 libxcb-cursor0 \
+            libfontconfig1 libdbus-1-3
+
+      - name: Configure git identity (tests create commits)
+        run: |
+          git config --global user.name "Mellon CI"
+          git config --global user.email "ci@mellon.invalid"
+
+      - name: Install dependencies
+        run: uv sync --locked --all-groups
+
+      - name: Run tests
+        env:
+          QT_QPA_PLATFORM: offscreen
+          MELLON_REQUIRE_FIXTURE: "1"
+        run: uv run --no-sync pytest -q -rs
+
+  wheel-smoke:
+    # Installs the built wheel WITHOUT uv.lock, the way `uv tool install`
+    # does, so an unbounded dependency that breaks a fresh install fails here.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: mellon
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.3.0
+
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+
+      - name: Build wheel
+        run: uv build --wheel --out-dir "$RUNNER_TEMP/dist"
+
+      - name: Install wheel into a fresh venv
+        run: |
+          uv venv --python 3.12 "$RUNNER_TEMP/venv"
+          uv pip install --python "$RUNNER_TEMP/venv" "$RUNNER_TEMP"/dist/*.whl
+
+      - name: Smoke-test entry points
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          "$RUNNER_TEMP/venv/bin/mellon-mcp" --version
+          "$RUNNER_TEMP/venv/bin/mellon-gui" --version
+          "$RUNNER_TEMP/venv/bin/python" -c "import mellon.mcp.server, mellon.gui.main_window"

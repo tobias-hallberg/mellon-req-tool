@@ -1,0 +1,54 @@
+Mellon — third-party components
+================================
+
+Mellon is free software, licensed under the GNU General Public License,
+version 3 or (at your option) any later version — see LICENSE.
+Copyright (C) Tobias Hallberg.
+
+This installation bundles the components below. Each remains under its own
+licence; the licence texts are available at the linked project pages, and
+many are also included in the _internal\ folder next to the component.
+
+Python runtime and standard library
+    Python Software Foundation License
+    https://www.python.org/
+
+Qt 6 (QtCore, QtGui, QtWidgets, QtSvg) and PySide6 / Shiboken6
+    GNU Lesser General Public License v3 (LGPL-3.0)
+    https://www.qt.io/  https://code.qt.io/  https://pypi.org/project/PySide6/
+    Qt and PySide6 are shipped as separate, unmodified shared libraries in
+    _internal\ (PySide6\, shiboken6\) and may be replaced with compatible
+    builds of your own. Source code is available from the links above.
+
+libgit2 and pygit2
+    GNU General Public License v2 with linking exception
+    https://libgit2.org/  https://github.com/libgit2/pygit2
+
+lxml, libxml2, libxslt
+    BSD-3-Clause (lxml), MIT (libxml2, libxslt)
+    https://lxml.de/
+
+Jinja2, MarkupSafe
+    BSD-3-Clause
+    https://palletsprojects.com/
+
+MCP Python SDK (mcp)
+    MIT
+    https://github.com/modelcontextprotocol/python-sdk
+
+pydantic, pydantic-core, anyio, httpx, httpx-sse, starlette, sse-starlette,
+uvicorn, jsonschema, python-multipart, pywin32, cffi, and their dependencies
+    MIT / BSD / Apache-2.0 / PSF (see each project on https://pypi.org/)
+
+OpenSSL (bundled with the Python runtime)
+    Apache License 2.0
+    https://www.openssl.org/
+
+Tectonic (tools\tectonic.exe)
+    MIT
+    https://tectonic-typesetting.github.io/
+
+TeX resources in tools\tectonic-cache\ (LaTeX packages and fonts from the
+Tectonic bundle, e.g. Latin Modern)
+    Various free licences (LPPL, GUST Font License, OFL and others), as
+    recorded in each file's header and on https://ctan.org/

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Fixture repository — checked in as req-test.bundle at the project root.
+# `tests/conftest.py` clones the bundle into ./req-test on first pytest run.
+req-test/
+
+# Local screenshots / notes
+feedback/

@@ -1,0 +1,109 @@
+%% main.tex.j2 — SyRS document, rendered by mellon.export.
+%% Custom Jinja2 delimiters are configured in export.py so LaTeX braces and
+%% percent signs can pass through untouched. Compile via the mellon.export
+%% pipeline (tectonic, XeLaTeX-compatible).
+
+\documentclass{syrs}
+
+\setDocID{((( doc_id | escape_latex )))}
+((* if rev *))
+\setDocRev{((( rev | one_line | escape_latex )))}
+((* endif *))
+((* if date *))
+\setDocDate{((( date | one_line | escape_latex )))}
+((* endif *))
+((* if subject *))
+\setDocSubject{((( subject | one_line | escape_latex )))}
+((* endif *))
+((* if owner *))
+\setDocOwner{((( owner | one_line | escape_latex )))}
+((* endif *))
+
+\begin{document}
+
+\makecoverpage
+
+{\sffamily\color{accent}\fontsize{8pt}{10pt}\selectfont%
+ \syrsmono{\MakeUppercase{\textls[140]{Contents}}}\par}\vspace{1.2mm}
+{\sffamily\bfseries\color{ink}\fontsize{20pt}{24pt}\selectfont
+ Table of Contents\par}\vspace{6mm}
+%% Suppress \tableofcontents' built-in heading; we already drew one above.
+\renewcommand{\contentsname}{}
+{\hypersetup{linkcolor=ink}\tableofcontents}
+\newpage
+
+((* for it in items *))
+((* if it.obj is none *))
+% missing object: ((( it.ref_id | escape_latex )))
+((* elif it.obj.attrs.get("type") == "Heading" *))
+((( heading_macro(it.depth) ))){((( it.obj.description | one_line | escape_latex )))}
+((* if it.figure_file *))
+\syrsfigure{((( it.figure_file )))}{}
+((* elif it.figure_note *))
+\figureplaceholder{((( it.figure_note | escape_latex )))}
+((* endif *))
+((* elif it.obj.table is not none *))
+((* if it.obj.description *))\noindent\textbf{((( it.obj.description | one_line | escape_latex )))}\par\nobreak\vspace{2pt}((* endif *))
+((( it.table_latex )))
+((* if it.figure_file *))
+\syrsfigure{((( it.figure_file )))}{}
+((* elif it.figure_note *))
+\figureplaceholder{((( it.figure_note | escape_latex )))}
+((* endif *))
+((* else *))
+\begin{requirement}{((( it.obj.id | escape_latex )))}{}
+((# A rendered figure takes the description as its caption. #))
+((* if it.figure_file *))
+\syrsfigure{((( it.figure_file )))}{((( it.obj.description | one_line | escape_latex )))}
+((* else *))
+\shall{((( it.obj.description | escape_latex )))}
+((* if it.figure_note *))
+\figureplaceholder{((( it.figure_note | escape_latex )))}
+((* endif *))
+((* endif *))
+((* if it.kv *))
+\attrs{((* for k, v in it.kv *))\attrcell{((( k | escape_latex )))}{((* if k == "status" *))\statuspill{((( v | escape_latex )))}((* elif k == "priority" *))\prioritypill{((( v | escape_latex )))}((* else *))((( v | escape_latex )))((* endif *))}((* if not loop.last *)) & ((* endif *))((* endfor *))}
+((* endif *))
+\end{requirement}
+((* endif *))
+((* endfor *))
+((* if trace *))
+
+((# Traceability: links to the parent documents, then what they leave uncovered. #))
+\clearpage
+\syrssection{Traceability}
+((* for line in trace.summary *))
+\lead{((( line | escape_latex )))}
+((* endfor *))
+\syrssubsection{Links to ((( trace.parent_ids | join(", ") | escape_latex )))}
+\begingroup
+\tracetablesetup
+\begin{longtable}{@{}>{\RaggedRight\arraybackslash}p{40mm}%
+  >{\RaggedRight\arraybackslash}p{40mm}@{}}
+\toprule
+\tracehead{Object} & \tracehead{Parent} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+((* for row in trace.rows *))
+((* if not loop.first *))
+\traceline
+((* endif *))
+\syrsmono{((( row.id | escape_latex )))} & ((* if row.targets *))((* for t in row.targets *))\syrsmono{((( t | escape_latex )))}((* if not loop.last *))\newline ((* endif *))((* endfor *))((* else *))\textcolor{inkFour}{none}((* endif *)) \\
+((* endfor *))
+\end{longtable}
+\endgroup
+((* for p in trace.uncovered *))
+\syrssubsection{Uncovered objects in ((( p.doc_id | escape_latex )))}
+((* if p.missing *))
+\lead{((( p.doc_id | escape_latex ))) could not be loaded, so its objects are not listed.}
+((* elif not p.ids *))
+\lead{Every object in ((( p.doc_id | escape_latex ))) has a link from this document.}
+((* else *))
+{\tracetablesetup\noindent ((* for i in p.ids *))\syrsmono{((( i | escape_latex )))}((* if not loop.last *)), ((* endif *))((* endfor *))\par}
+((* endif *))
+((* endfor *))
+((* endif *))
+
+\end{document}
