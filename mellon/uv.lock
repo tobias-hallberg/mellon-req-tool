@@ -446,7 +446,7 @@ wheels = [
 
 [[package]]
 name = "mellon"
-version = "0.2.0rc1"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "jinja2" },

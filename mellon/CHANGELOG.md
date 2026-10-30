@@ -4,7 +4,10 @@ All notable changes to Mellon. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 0.3.0 — 2026-10-30
+
+The first public release. It includes everything listed under 0.2.0 below,
+which never shipped on its own.
 
 draw.io support for figures: draw and edit them in draw.io desktop from
 Mellon, see them properly in the grid, and get them in the PDF. The PDF also
@@ -105,7 +108,7 @@ longer clashes over object ids. A commit can now be tagged with a free name
   failed offline. The cache warm-up now fetches it, and exports the
   documents with their Traceability sections so the matrix's font is cached.
 
-## 0.2.0 — unreleased
+## 0.2.0 — not released on its own
 
 The first release for team use. It ships a Windows installer with the GUI,
 the MCP server and PDF export, plus the data-safety and git fixes needed when

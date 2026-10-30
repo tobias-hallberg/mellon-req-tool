@@ -3,7 +3,7 @@ name: Installer
 # Builds Mellon-Setup-<version>.exe with packaging/build.ps1 and installs it
 # once as a smoke test. "Run workflow" on the Actions tab builds it from any
 # branch and keeps it as a run artifact. Pushing a tag v<version> (matching
-# `version` in pyproject.toml, e.g. v0.2.0rc1) also attaches it to a draft
+# `version` in pyproject.toml, e.g. v0.3.0) also attaches it to a draft
 # GitHub release, which is published by hand.
 on:
   push:

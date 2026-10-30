@@ -416,7 +416,7 @@ installs the result silently and runs `mellon-mcp.exe --version` and
 - **Pushing a tag `v<version>`** does the same and attaches the installer, plus
   `SHA256SUMS.txt`, to a **draft** GitHub release. Review it and publish it by
   hand. The tag must match `version` in `pyproject.toml` exactly (e.g.
-  `v0.2.0rc1`), or the build fails. A version with letters (`rc`, `a`, `b`) is
+  `v0.3.0`), or the build fails. A version with letters (`rc`, `a`, `b`) is
   marked as a pre-release.
 
 A runner is a clean machine, so CI builds avoid the PATH problem below.

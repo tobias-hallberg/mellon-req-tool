@@ -1,12 +1,15 @@
 name: CI
 
-# Runs only when something lands on main or develop (e.g. merging a branch).
-# Pushes to other branches and pull requests don't use Actions minutes. "Run
+# Runs on pull requests and when something lands on main or develop. "Run
 # workflow" on the Actions tab starts it by hand.
 on:
   push:
     branches: [main, develop]
+  pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
