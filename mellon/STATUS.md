@@ -3,8 +3,7 @@
 A snapshot of what's built, what's deferred, and where to pick up. For the
 per-release list of changes, see [CHANGELOG.md](CHANGELOG.md).
 
-**Release in progress:** v0.2.0, currently `0.2.0rc1` on `develop`, with
-draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
+**Current release:** v0.3.0, with draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
 and the team routine is in [TEAM.md](TEAM.md). The scale target is about 500
 objects per document or fewer.
 
@@ -652,7 +651,7 @@ Ordered roughly by usefulness.
 There is no GUI Compare dialog yet. `diff.py` stays a library-only module,
 with no MCP diff tools.
 
-### Known limitations in 0.2.0
+### Known limitations in 0.3.0
 
 - Figures need draw.io desktop to be edited from Mellon or rendered in the
   PDF; without it they print a placeholder. A multi-page diagram exports its
@@ -689,7 +688,7 @@ Descriptions are plain text for now. This is an open question in
 - DOORS "table-of-objects" (cells as objects): intentionally not built; see
   [Tables](#tables).
 
-### Out of scope for v0.2.0
+### Out of scope for v0.3.0
 
 - **Features:**
   - in-app pull/push/merge UI

@@ -2,7 +2,7 @@
 
 Mellon is a requirements management tool modelled on IBM DOORS, built for small engineering teams. Each requirements document is a folder of XML files in a git repository: a manifest (metadata, attribute schema, outline), one file per object, and a links file for each object that has outgoing links. Git provides versioning, branching, history, diffs and review, and one-file-per-object keeps diffs and merges at the level of a single requirement. Mellon adds the document editor, links with suspect-link review, validation, traceability and PDF export. It has a desktop GUI for engineers and an MCP server so AI agents can work on the same requirements under the same rules.
 
-The current version is 0.2.0, still a release candidate. Mellon is sized for documents of up to about 500 objects.
+The current version is 0.3.0. Mellon is sized for documents of up to about 500 objects.
 
 ## Features
 
@@ -13,7 +13,7 @@ The current version is 0.2.0, still a release candidate. Mellon is sized for doc
 - **Saved views and filters.** A view saves column visibility and order; a filter is a DOORS-style multi-rule filter. Both are stored as files in the document folder, so they are versioned with it.
 - **Tables and figures.** A table belongs to one object; it can have header rows, column alignment and merged cells, and is edited in place in the grid. Each object can also have one SVG figure (draw.io `.drawio.svg` works), shown as a thumbnail in the grid.
 - **Issue tags.** You cut a document issue as a git tag `<doc-id>-issue-<n>` from the commit dialog. A plain commit creates no tag.
-- **PDF export** (`Ctrl+E`). The cover and running header come from the document's ID, title, author, date and current issue. Tables are typeset; each attached figure appears as a placeholder line. The Windows installer includes the TeX engine (tectonic) and its cache, so export works offline.
+- **PDF export** (`Ctrl+E`). The cover and running header come from the document's ID, title, author, date and current issue. Tables are typeset. Attached figures are rendered by draw.io desktop; without it, each one prints as a placeholder line. The Windows installer includes the TeX engine (tectonic) and its cache, so export works offline.
 - **MCP server for AI agents.** `mellon-mcp` has 45 tools (13 read, 27 write, 5 git/review). Use `--read-only` to refuse every write.
 - **Safe with git.**
   - A GUI commit contains only that document's files, never unrelated staged changes.
@@ -125,11 +125,11 @@ claude mcp add mellon -- "$env:LOCALAPPDATA\Programs\Mellon\mellon-mcp.exe"
 | [mellon/STATUS.md](mellon/STATUS.md) | What's built, what's deferred, source file map |
 | [mellon/CHANGELOG.md](mellon/CHANGELOG.md) | Release notes, including behaviour changes in 0.2.0 |
 
-## Limits in 0.2
+## Limits in 0.3
 
-- Mellon has no pull, push or merge; use a git client.
-- There is no undo stack. Use **Discard uncommitted changes to this document…** or git.
-- Figures are SVG only and appear as placeholders in the PDF.
+- Mellon has no pull or push and doesn't start merges; use a git client. When a merge stops on conflicts in documents, **Resolve merge…** in the Project Explorer resolves them.
+- Undo and redo cover the edits made in a Document Editor window since the last commit, not draw.io saves or MCP changes.
+- Figures are SVG only, and rendering them in the PDF needs draw.io desktop.
 - Descriptions are plain text.
 - Mellon is sized for up to about 500 objects per document.
 

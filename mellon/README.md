@@ -9,7 +9,7 @@ Mellon is a requirements management tool modelled on IBM DOORS. Requirements doc
 - tables and figures
 - issue tags and PDF export
 
-Version 0.2.0. License GPL-3.0-or-later, © Tobias Hallberg (see `LICENSE`).
+Version 0.3.0. License GPL-3.0-or-later, © Tobias Hallberg (see `LICENSE`).
 
 ## Entry points
 

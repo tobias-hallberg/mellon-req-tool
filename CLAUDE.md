@@ -1,6 +1,6 @@
 # Mellon — orientation for Claude
 
-A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.2.0 is in progress on `develop` (currently `0.2.0rc1`); see `mellon/CHANGELOG.md`.
+A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.3.0 is the current release; see `mellon/CHANGELOG.md`.
 
 **The Python package is one directory deep**, in `mellon/`. Run all `uv` commands from there, not from this outer directory.
 
@@ -36,7 +36,7 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ## Read these before exploring code
 
 - `mellon/STATUS.md` — what's built, what's deferred, full file map. Read this first.
-- `mellon/CHANGELOG.md` — what changed in 0.2.0, including the upgrade notes.
+- `mellon/CHANGELOG.md` — what changed per release, including the 0.2.0 upgrade notes.
 - `mellon/USAGE.md` — on-disk format, schema/folder rules, validation rules, suspect-link workflow.
 - `mellon/TEAM.md` — how a team uses Mellon with an external git client.
 - `mellon/INSTALL.md` — env setup if anything's broken.

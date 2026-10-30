@@ -1,6 +1,6 @@
 # Usage
 
-This page covers Mellon 0.2.0. Mellon works on **documents**, which are folders inside a git repository. You can work with them in three ways, and all three use the on-disk format described below:
+This page covers Mellon 0.3.0. Mellon works on **documents**, which are folders inside a git repository. You can work with them in three ways, and all three use the on-disk format described below:
 
 - **GUI:** `mellon.exe` from the Windows installer, or `mellon-gui` in a dev environment.
 - **MCP stdio server:** `mellon-mcp`.
