@@ -48,6 +48,7 @@ class HistoryTab(QWidget):
         self._controller = controller
         self._current_doc_id: str | None = None
         self._current_obj_id: str | None = None
+        self._load_on_show = False
 
         self._empty = QLabel(self.EMPTY_MESSAGE)
         self._empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -126,11 +127,24 @@ class HistoryTab(QWidget):
         # New commit just landed — pull the updated log so the new row shows.
         self.refresh()
 
+    def showEvent(self, event) -> None:  # type: ignore[override]
+        super().showEvent(event)
+        if self._load_on_show:
+            self.refresh()
+
     # --- table ------------------------------------------------------------
 
     def refresh(self) -> None:
         """Re-read the shown object's history. An edit can't change it, so this
-        is for a new selection and a new commit, from here or a git client."""
+        is for a new selection and a new commit, from here or a git client.
+
+        Walking history is slow on a large repo and selecting an object is
+        frequent, so while the tab is hidden this waits until it is shown.
+        """
+        if not self.isVisible():
+            self._load_on_show = True
+            return
+        self._load_on_show = False
         if self._current_doc_id is None or self._current_obj_id is None:
             self._table.setRowCount(0)
             self._stack.setCurrentWidget(self._empty)

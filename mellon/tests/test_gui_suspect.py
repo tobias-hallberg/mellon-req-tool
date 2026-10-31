@@ -150,6 +150,21 @@ def test_suspect_only_filter_narrows_grid(window):
     assert filtered == 6
 
 
+def test_row_state_matches_the_scan_for_every_row(window):
+    """The filter reads the grid's per-row map, which must agree with the scan."""
+    from mellon.gui.models.objects_grid import OBJ_STATE_ROLE
+
+    w, _ = window
+    w.controller.select_document("VCU3-SRS")
+    model = w.grid_pane._model
+    states = set()
+    for row in range(model.rowCount()):
+        state = model.index(row, 0).data(OBJ_STATE_ROLE)
+        assert state == w.controller.object_worst_state("VCU3-SRS", model.obj_id_at(row))
+        states.add(state)
+    assert states == {"ok", "suspect"}
+
+
 def test_suspect_only_plus_text_filter(window):
     w, _ = window
     w.controller.select_document("VCU3-SRS")

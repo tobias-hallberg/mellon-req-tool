@@ -267,9 +267,9 @@ class ObjectsGridModel(QAbstractTableModel):
         return self._shown_doc
 
     def _state_for(self, obj_id: str) -> str:
-        if self._doc_id is None:
-            return "ok"
-        return self._controller.object_worst_state(self._doc_id, obj_id)
+        # Read from the per-row map: the suspect-only filter asks for every row.
+        outgoing = self._link_states.get(obj_id, ("none", "none"))[0]
+        return outgoing if outgoing in ("suspect", "broken") else "ok"
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlag:
         if not index.isValid():
