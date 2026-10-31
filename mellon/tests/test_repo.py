@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pygit2
@@ -265,3 +266,34 @@ def test_scan_repo_detects_suspect_after_parent_revision(two_doc_repo):
     assert status.source_id == "DOC-1"
     assert status.link.target_doc == "PARENT"
     assert status.link.target_id == "PARENT-42"
+
+
+def test_folders_fingerprint_keys_and_values(two_doc_repo):
+    """Every file below the folder, with its posix path, modified time and size."""
+    _root, parent, _doc, _c1 = two_doc_repo
+    nested = parent / "figures" / "deep"
+    nested.mkdir(parents=True)
+    (nested / "x.svg").write_text("<svg/>", encoding="utf-8")
+    expected = set()
+    for f in parent.rglob("*"):
+        if f.is_file():
+            st = f.stat()
+            expected.add(
+                (f"{parent.name}/{f.relative_to(parent).as_posix()}", st.st_mtime_ns, st.st_size)
+            )
+    assert folders_fingerprint([parent]) == expected
+    assert any(key.endswith("/figures/deep/x.svg") for key, _, _ in expected)
+
+
+def test_folders_fingerprint_sees_a_same_size_replace(two_doc_repo):
+    """A rewrite through a temp file, which is how the editor writes, must show
+    in the directory listing's metadata."""
+    _root, doc, _other, _c1 = two_doc_repo
+    path = next((doc / "objects").glob("*.xml"))
+    before = folders_fingerprint([doc])
+    tmp = path.with_name("x.tmp")
+    tmp.write_bytes(path.read_bytes())
+    stamp = path.stat().st_mtime_ns + 5_000_000_000
+    os.utime(tmp, ns=(stamp, stamp))
+    os.replace(tmp, path)
+    assert folders_fingerprint([doc]) != before

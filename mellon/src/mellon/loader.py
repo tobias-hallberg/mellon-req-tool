@@ -13,7 +13,11 @@ Folder layout (see PLAN.md):
 from __future__ import annotations
 
 import dataclasses
+import os
+import time
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any, TypeVar
 
 from lxml import etree
 
@@ -58,38 +62,36 @@ def load_document(folder: str | Path) -> Document:
     if not manifest_path.is_file():
         raise LoaderError(f"Manifest not found: {manifest_path}")
 
-    manifest = _parse_xml(manifest_path)
-    if manifest.tag != "document":
-        raise LoaderError(
-            f"{manifest_path}: root element must be <document>, got <{manifest.tag}>"
-        )
-    manifest_id = manifest.get("id")
-    if manifest_id != doc_id:
-        raise LoaderError(
-            f"{manifest_path}: document id={manifest_id!r} does not match "
-            f"folder name {doc_id!r}"
-        )
-
-    metadata = _parse_metadata(manifest.find("metadata"))
-    parents = _parse_parents(manifest.find("parents"))
-    attributes = _parse_attributes(manifest.find("attributes"))
-    outline = _parse_outline(manifest.find("outline"))
+    try:
+        manifest_stat = os.stat(manifest_path)
+    except OSError as e:
+        raise LoaderError(f"{manifest_path}: cannot read file: {e}") from e
+    metadata, parents, attributes, outline = _cached_parse(
+        _manifests,
+        _manifests,
+        os.path.abspath(manifest_path),
+        str(manifest_path),
+        manifest_stat,
+        _parse_manifest,
+    )
     rules = _parse_rules_file(folder / f"{doc_id}.rules.xml")
 
     objects_dir = folder / "objects"
     objects: dict[str, RequirementObject] = {}
     if objects_dir.is_dir():
-        for path in sorted(objects_dir.glob("*.xml")):
-            obj = _parse_object(path)
+        for obj in _parse_folder(objects_dir, _parse_object):
             if obj.id in objects:
                 raise LoaderError(f"Duplicate object id {obj.id!r} in {objects_dir}")
             objects[obj.id] = obj
 
     figures_dir = folder / "figures"
     if figures_dir.is_dir():
-        figure_stems = {
-            p.stem for p in figures_dir.glob("*.svg") if p.is_file()
-        }
+        with os.scandir(figures_dir) as entries:
+            figure_stems = {
+                os.path.splitext(e.name)[0]
+                for e in entries
+                if _has_suffix(e.name, ".svg") and e.is_file()
+            }
         for obj_id in figure_stems & objects.keys():
             objects[obj_id] = dataclasses.replace(
                 objects[obj_id], figure_path=f"figures/{obj_id}.svg"
@@ -98,8 +100,7 @@ def load_document(folder: str | Path) -> Document:
     links_dir = folder / "links"
     links: dict[str, tuple[Link, ...]] = {}
     if links_dir.is_dir():
-        for path in sorted(links_dir.glob("*.xml")):
-            source, link_list = _parse_links(path)
+        for source, link_list in _parse_folder(links_dir, _parse_links):
             if source in links:
                 raise LoaderError(f"Duplicate links source {source!r} in {links_dir}")
             links[source] = link_list
@@ -140,6 +141,89 @@ def load_document(folder: str | Path) -> Document:
         views=tuple(views),
         filters=tuple(filters),
     )
+
+
+def _parse_manifest(
+    path: Path,
+) -> tuple[Metadata, tuple[str, ...], tuple[Attribute, ...], tuple[OutlineNode, ...]]:
+    manifest = _parse_xml(path)
+    if manifest.tag != "document":
+        raise LoaderError(
+            f"{path}: root element must be <document>, got <{manifest.tag}>"
+        )
+    manifest_id = manifest.get("id")
+    if manifest_id != path.parent.name:
+        raise LoaderError(
+            f"{path}: document id={manifest_id!r} does not match "
+            f"folder name {path.parent.name!r}"
+        )
+    return (
+        _parse_metadata(manifest.find("metadata")),
+        _parse_parents(manifest.find("parents")),
+        _parse_attributes(manifest.find("attributes")),
+        _parse_outline(manifest.find("outline")),
+    )
+
+
+# Parsed files are kept and reused while a file's modified time and size stay
+# the same, so re-reading a large document only parses what changed. What's
+# kept is immutable, so documents can share it.
+#
+# As in git, a file modified moments before it was read isn't kept: another
+# write in the same clock tick could leave the same time and size behind.
+_RACY_NS = 2_000_000_000
+_T = TypeVar("_T")
+_Cache = dict[str, tuple[int, int, Any]]
+_manifests: _Cache = {}
+_folders: dict[str, _Cache] = {}
+
+
+def _cached_parse(
+    old: _Cache,
+    new: _Cache,
+    key: str,
+    path: str,
+    st: os.stat_result,
+    parse: Callable[[Path], _T],
+) -> _T:
+    """`parse(path)`, or what `old` keeps under `key` if the file is unchanged.
+    What can be kept goes in `new`."""
+    hit = old.get(key)
+    if hit is not None and hit[0] == st.st_mtime_ns and hit[1] == st.st_size:
+        new[key] = hit
+        return hit[2]
+    parsed = parse(Path(path))
+    if time.time_ns() - st.st_mtime_ns >= _RACY_NS:
+        new[key] = (st.st_mtime_ns, st.st_size, parsed)
+    return parsed
+
+
+def _has_suffix(name: str, suffix: str) -> bool:
+    # normcase: `*.xml` also matches `A.XML` on Windows, as a glob does there.
+    return os.path.normcase(name).endswith(suffix)
+
+
+def _parse_folder(folder: Path, parse: Callable[[Path], _T]) -> list[_T]:
+    """`parse` each `*.xml` file in `folder`, in sorted order, reusing what's
+    kept for that folder. Kept entries of files that are gone are dropped."""
+    with os.scandir(folder) as entries:
+        found = [e for e in entries if _has_suffix(e.name, ".xml")]
+    found.sort(key=lambda e: os.path.normcase(e.name))
+    key = os.path.abspath(folder)
+    old = _folders.get(key, {})
+    new: _Cache = {}
+    out: list[_T] = []
+    for entry in found:
+        try:
+            st = entry.stat()
+        except OSError:
+            # Gone since the listing: `parse` reports it as it would any
+            # unreadable file.
+            out.append(parse(Path(entry.path)))
+            continue
+        out.append(_cached_parse(old, new, entry.name, entry.path, st, parse))
+    _folders[key] = new
+    return out
 
 
 def _parse_xml(path: Path) -> etree._Element:
