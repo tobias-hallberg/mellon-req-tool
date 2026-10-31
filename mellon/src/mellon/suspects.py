@@ -5,20 +5,23 @@ Suspect-link algorithm (see PLAN.md §4):
         1. Resolve target file: <repo_root>/<target-doc>/objects/<target-id>.xml
         2. If missing -> BROKEN
         3. Get target's last-commit short hash from git (object XML + figure
-           SVG, following git's history simplification across merges)
+           SVG, following git's history simplification across merges; see
+           link_index.py)
         4. If the link has no @ack, or @ack != current_hash -> SUSPECT
         5. Otherwise -> OK
 """
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
 from lxml import etree
 
-from .git_ops import discover_repo, last_commit_for_paths
+from .git_ops import discover_repo
+from .link_index import current_hashes
 from .schema import Document, Link
 
 
@@ -45,22 +48,33 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
     """
     repo, repo_root = discover_repo(doc_folder)
     results: list[LinkStatus] = []
-    # Many links share a target; each target's history is walked once.
-    current_by_target: dict[tuple[str, str], str | None] = {}
+
+    # One listing per target document instead of one disk check per link.
+    listed: dict[str, set[str]] = {}
+    existing: dict[str, set[str]] = {}
+    for link_list in doc.links.values():
+        for link in link_list:
+            if link.target_doc not in listed:
+                listed[link.target_doc] = _object_files(repo_root, link.target_doc)
+            if (
+                f"{link.target_id}.xml" in listed[link.target_doc]
+                or (repo_root / _object_rel(link)).is_file()
+            ):
+                existing.setdefault(link.target_doc, set()).add(link.target_id)
+    current_by_doc = {
+        target_doc: current_hashes(repo, target_doc, ids)
+        for target_doc, ids in existing.items()
+    }
+
     for source_id, link_list in doc.links.items():
         for link in link_list:
-            obj_rel = f"{link.target_doc}/objects/{link.target_id}.xml"
-            fig_rel = f"{link.target_doc}/figures/{link.target_id}.svg"
-            if not (repo_root / obj_rel).is_file():
+            if link.target_id not in existing.get(link.target_doc, ()):
                 results.append(
                     LinkStatus(source_id, link, LinkState.BROKEN, None, "target file missing")
                 )
                 continue
 
-            key = (link.target_doc, link.target_id)
-            if key not in current_by_target:
-                current_by_target[key] = last_commit_for_paths(repo, [obj_rel, fig_rel])
-            current = current_by_target[key]
+            current = current_by_doc[link.target_doc][link.target_id]
             if current is None:
                 results.append(
                     LinkStatus(source_id, link, LinkState.BROKEN, None, "target not in git history")
@@ -81,6 +95,19 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
             else:
                 results.append(LinkStatus(source_id, link, LinkState.OK, current, "ok"))
     return results
+
+
+def _object_rel(link: Link) -> str:
+    return f"{link.target_doc}/objects/{link.target_id}.xml"
+
+
+def _object_files(repo_root: Path, target_doc: str) -> set[str]:
+    """Names of the files in a document's `objects` folder."""
+    try:
+        with os.scandir(repo_root / target_doc / "objects") as entries:
+            return {e.name for e in entries if e.is_file()}
+    except OSError:
+        return set()
 
 
 def scan_repo(repo_root: Path) -> dict[str, list[LinkStatus]]:

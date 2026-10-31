@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 from . import __version__, git_ops
+from .link_index import from_scratch
 from .repo import DocLoadError
 from .service import DocumentService, ServiceError
 from .suspects import LinkState
@@ -71,7 +72,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     try:
-        lines, doc_count = _problems(DocumentService(root, read_only=True))
+        with from_scratch():
+            lines, doc_count = _problems(DocumentService(root, read_only=True))
     except ServiceError as e:
         print(e.message, file=sys.stderr)
         return 2

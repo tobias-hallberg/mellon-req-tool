@@ -32,7 +32,8 @@ from .filter import (
     LINK_OPS,
     valid_ops_for_kind,
 )
-from .git_ops import GitError, _replace_file, discover_repo, last_commit_for_paths
+from .git_ops import GitError, _replace_file, discover_repo
+from .link_index import current_hashes
 from .loader import LoaderError, load_document
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
@@ -1848,6 +1849,5 @@ def _compute_ack(folder: Path, target_doc: str, target_id: str) -> str | None:
     target_path = repo_root / rel
     if not target_path.is_file():
         return None
-    # Same paths and rule as the suspect scan, so a new link starts OK.
-    fig_rel = f"{target_doc}/figures/{target_id}.svg"
-    return last_commit_for_paths(repo, [rel, fig_rel])
+    # The suspect scan's own answer, so a new link starts OK.
+    return current_hashes(repo, target_doc, [target_id])[target_id]
