@@ -717,13 +717,8 @@ Descriptions are plain text for now. This is an open question in
   - `Ctrl+P` switcher
   - cross-repo links
   - roles and approvals
-- **Structural performance work:**
-  - a single-walk suspect map
-  - incremental grid updates
-  - batch editor primitives
-  - a reverse-link index
-
-  Revisit these if the team hits lag at around 500 objects.
+- **Structural performance work:** see [SCALING.md](SCALING.md) for
+  measurements and what's left.
 - **Other changes:**
   - a port to mcp 2.x (the `<2` cap is enough)
   - MCP pagination
