@@ -39,6 +39,37 @@ With one real scan and its result reused, to expose the other costs. Other bench
 
 These stayed fast at 5,000: `repo.status()` 52 ms, painting 25 ms, the text filter 116 ms, and re-measuring one grid row under 1 ms.
 
+## After this work
+
+Old and new code ran side by side on identical repos, so they saw the same load. The machine was about 60–65% busy with unrelated work throughout, so all of these read high.
+
+| Offscreen, old → new | 500 | 2,000 |
+|---|---|---|
+| Open window, second in process | 3.2 s → 0.8 s | 25 s → 2.6 s |
+| Edit one cell | 4.3 s → 0.11 s | 42 s → 0.23–0.34 s |
+| Select an object, History hidden | 0.13 s → 0.03 s | 1.1 s → 0.04 s |
+| F5 reload | 2.3 s → 0.5 s | 21 s → 1.7 s |
+| New object | 2.8 s → 0.5 s | 24 s → 1.9 s |
+| Suspect-only toggle | 0.26 s → 0.01 s | 1.4 s → 0.04 s |
+| Link states after one commit | 1.1 s → 0.02 s | not reached → 0.03 s |
+
+The old code at 2,000 didn't finish its commit step within 280 s.
+
+| At 5,000 objects, new code | Offscreen | Real window | Target | Met? |
+|---|---|---|---|---|
+| Suspect scan, first ever | 13 s (4.0 s on a quieter run) | 11 s | ≤ 10 s | not under load |
+| Link states after one commit | 0.05 s | 0.15 s | ≤ 0.2 s | yes |
+| Open window, index on disk | 5.3 s | 6.4 s | ≤ 5 s | no |
+| Edit one cell | 0.49 s | 0.41 s | ≤ 0.5 s | yes |
+| Select an object, History hidden | 0.04 s | 0.07 s | ≤ 0.2 s | yes |
+| F5 reload | 3.5 s | 4.3 s | ≤ 3 s | no |
+| New object | 3.9 s | 4.6 s | ≤ 3 s | no |
+| Suspect-only toggle | 0.09 s | 0.09 s | ≤ 0.2 s | yes |
+
+The targets were estimates set before the work. The open and reload times are mostly Qt measuring every cell; see below.
+
+**First read of new files.** The very first open after the files were written took 21 s at 500 objects, about 80–97 s at 2,000 and 81 s at 5,000, on old and new code alike. A second open is far faster, so this is the cost of reading files for the first time, which on this machine looks like antivirus scanning. That wasn't verified. Expect it after a fresh clone, not in daily use.
+
 ## Why it was slow
 
 **The suspect scan.** It walked history separately for every link target, so its cost grew with targets × commits. Each step also read the target document's `objects` tree, and that tree grows with the document. At 5,000 objects this filled libgit2's process-wide 256 MB object cache during the first scan, and each target then cost about 1 s instead of a few milliseconds. The 222 s rescan at 2,000 fits the same cause, though the cliff itself was only reproduced in a separate test.
@@ -54,19 +85,15 @@ These stayed fast at 5,000: `repo.status()` 52 ms, painting 25 ms, the text filt
 
 Costs are at 5,000 objects.
 
-**Reverse-link index.** Incoming links are found by scanning every link in the repo:
+**Model resets.** Create, delete, move, undo and F5 still reset the grid model, 3.5–4.6 s under load. Most of that is Qt measuring every cell of every row, about 295,000 Python `data()` calls. The text-height cache already removed the description layout. Either measure rows in one pass of our own, or move structural edits to row inserts and removes.
 
-- has-incoming filter: 5.1 s
-- `trace`: 10 s
-- `build_link_states`: 0.35 s
+**Reverse-link index.** The has-incoming filter scans every link in the repo for each object: 5–14 s depending on load. An active filter like that also re-runs after each field edit, which would undo the fast edit path.
 
-**MCP.** The server runs uncached, so documents are re-read on every call. The loader's parse cache should remove most of that cost, so re-measure before designing anything. There is no pagination, and `outline` returns 1 MB of JSON, which is too much for an agent to use.
+**History walks.** `log_for_path` walks history until it finds 10 changes. With the History tab visible, selecting an object costs about 4.8 s when the object rarely changes (measured before this work). MCP `inspect_object` with history took 15 s under load. `link_index` shows how to avoid reading the large tree for every commit.
 
-**PDF export.** 58–126 s at 500 objects. At 5,000 it hits tectonic's fixed 300 s timeout, whose error message wrongly suggests a network problem. Whether it finishes at all is unknown.
+**MCP.** The parse cache removed most of the cost of re-reading documents: `set_attribute` 4.9 s → 0.2 s, `trace` 10 s → 0.4 s, `show_object` 8.9 s → 0.4 s. There is still no pagination, and `outline` returns 1 MB of JSON, which is too much for an agent to use.
 
-**History tab while visible.** Selecting an object walks history until it finds 10 changes, about 4.8 s when the object rarely changes. The tab only loads while it is visible, so this costs nothing otherwise.
-
-**Structural edits.** Create, delete and move still reset the grid model. Move to row inserts and removes if a reset turns out too slow.
+**PDF export.** 58–126 s at 500 objects. At 5,000 it hits tectonic's fixed 300 s timeout, whose error message wrongly suggests a network problem. Whether it finishes at all is unknown. This work didn't change it, and 2,000 wasn't measured.
 
 **Batch editor primitives.** Each editor call loads the document and writes its files on its own, so a bulk operation repeats that work.
 

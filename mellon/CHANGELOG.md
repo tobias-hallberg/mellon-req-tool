@@ -19,9 +19,23 @@ All notable changes to Mellon. The format follows
 - `git_ops.blob_id_at` and `DocumentService.uncommitted_document_paths`.
 - This repo has a `.gitattributes` (`* text=auto eol=lf`), as `TEAM.md`
   recommends for repositories holding documents.
+- `SCALING.md` and `benchmarks/`: measurements up to 5,000 objects per
+  document, and the work that remains.
+- **`.git/mellon-link-index.json`.** Answers from the suspect scan, kept so a
+  new process needn't walk history again. It's a cache: deleting it is always
+  safe, and `mellon-check` ignores it.
 
 ### Changed
 
+- **Much faster on large documents.** At 5,000 objects with 5,000 commits, a
+  document used to not open within 30 minutes. See `SCALING.md` for numbers:
+  - The suspect scan walks history once per target document, instead of once
+    per link target (`link_index.py`).
+  - Loading only re-parses files that changed.
+  - Description, attribute and table edits update one row instead of resetting
+    the grid, so scroll position and selection survive.
+  - The History tab loads only while it is visible, and an edit no longer
+    reloads it.
 - **"N dirty" counts document files only,** in both status bars: what a
   commit of the documents would pick up. Other files in the repo, such as
   source code, no longer count.

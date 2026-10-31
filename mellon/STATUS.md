@@ -4,8 +4,9 @@ A snapshot of what's built, what's deferred, and where to pick up. For the
 per-release list of changes, see [CHANGELOG.md](CHANGELOG.md).
 
 **Current release:** v0.3.0, with draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
-and the team routine is in [TEAM.md](TEAM.md). The scale target is about 500
-objects per document or fewer.
+and the team routine is in [TEAM.md](TEAM.md). Editing and link checks are
+measured up to 5,000 objects per document; PDF export and the MCP `outline`
+tool aren't practical at that size. See [SCALING.md](SCALING.md).
 
 ## What's built
 
@@ -249,7 +250,7 @@ panes, and pane sizes are saved per document:
     Right-click an outgoing link for Jump, and for Remove when the window is
     writable.
   - **History:** the git log of the selected object's file, with "View at
-    this commit…".
+    this commit…". It loads only while the tab is visible.
 
 **Editing**
 
@@ -649,7 +650,7 @@ no documents of its own yet, so the job passes trivially for now.
 
 ### Tests
 
-**1342 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-10-31).
+**1423 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-10-31).
 They cover the library, git_ops, MCP read/write/git, and the GUI (smoke,
 edits, outline, links, suspect, polish, theme, filter, reload, commit,
 export, tables, figures, app). They also cover the filter engine, coverage,
@@ -750,6 +751,8 @@ src/mellon/
                  head_summary, dirty_paths_under, current_issue, create_issue_tag
   check.py       mellon-check: pass/fail gate over load errors, validation, link states
   suspects.py    scan_document, scan_repo, ack_all
+  link_index.py  current_hashes: every object's last commit from one history walk,
+                 kept per commit and in .git/mellon-link-index.json; from_scratch
   repo.py        discover_documents, load_all (+ DocLoadError), cross-doc incoming,
                  all_objects, folders_fingerprint / doc_folder_names (staleness checks)
   trace.py       recursive up/down traversal, cycle-safe
@@ -795,6 +798,7 @@ src/mellon/
 
 packaging/       build.ps1, mellon.spec, mellon.iss, launch_gui.py, launch_mcp.py,
                  THIRD-PARTY-NOTICES.txt
+benchmarks/      scale benchmarks: gen_repo, bench_core, bench_gui, bench_export, run_all
 tests/           one file per module; conftest.py holds the fixture + a test git identity
 tools/           (gitignored) optional vendored tectonic for source checkouts
 CHANGELOG.md     per-release changes

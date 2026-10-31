@@ -25,7 +25,7 @@ Related pages:
 
 Documents sit directly under the repo root; nested document folders are not supported. Mellon commits but never pulls, pushes, or merges. Sync with an external git client as described in [TEAM.md](TEAM.md).
 
-Mellon is designed for documents of up to about **500 objects**.
+Editing and link checks are measured up to **5,000 objects** per document. At that size, opening or reloading a document takes several seconds, and PDF export and the MCP `outline` tool aren't practical yet. [SCALING.md](SCALING.md) has the numbers.
 
 ## On-disk format
 
@@ -662,7 +662,9 @@ The two-commit structure is enforced by git: a commit can't contain its own hash
 
 ### Merges, squashes and rebases
 
-The current hash follows git's history simplification. It is the same commit that `git log -1 --format=%h -- <object.xml> <figure.svg>` reports from HEAD.
+The current hash follows git's history simplification. It is the same commit that `git log -1 --format=%h -- <object.xml> <figure.svg>` reports from HEAD, except that a commit changing only a file's mode doesn't count.
+
+Mellon keeps these answers in `.git/mellon-link-index.json`, so a new process needn't walk history again. It's a cache that is never committed, and deleting it is always safe: the next scan just takes longer. `mellon-check` ignores it and computes everything from scratch.
 
 - **Merge commits keep acks valid.** Branch commits keep their hashes through a merge, whether fast-forward or `--no-ff`. A merge commit counts as a change only when its result differs from every parent, for example a conflict resolution that produced new text. Links to that object then turn SUSPECT, which is correct.
 - **Squash merges, rebases, and cherry-picks invalidate acks.** They create new commits with new hashes, so acks recorded on the branch no longer match, and those links read SUSPECT after the merge. Re-ack on the target branch. For this reason the team routine is merge commits only (see [TEAM.md](TEAM.md)).
