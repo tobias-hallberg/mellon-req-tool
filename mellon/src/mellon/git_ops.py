@@ -434,6 +434,20 @@ def show_blob_at(
     return blob.data.decode("utf-8")
 
 
+def blob_id_at(
+    repo: pygit2.Repository, rel_path: str, commit_ref: str
+) -> pygit2.Oid | None:
+    """Blob id of `rel_path` at `commit_ref`, or None if it isn't there.
+
+    Raises GitError if the ref can't be resolved to a commit.
+    """
+    try:
+        commit_obj = repo.revparse_single(commit_ref).peel(pygit2.Commit)
+    except (pygit2.GitError, KeyError, ValueError) as e:
+        raise GitError(f"cannot resolve {commit_ref!r}: {e}") from e
+    return _entry_id(commit_obj.tree, rel_path)
+
+
 def list_tree_filenames(
     repo: pygit2.Repository, rel_dir: str, commit_ref: str
 ) -> list[str]:
@@ -552,20 +566,6 @@ def is_side_file(path: str) -> bool:
     return path.replace("\\", "/").rsplit("/", 1)[-1].startswith(_SIDE_FILE_PREFIXES)
 
 
-def dirty_count(repo: pygit2.Repository) -> int:
-    """Number of paths with uncommitted changes (new, modified, or deleted).
-
-    Matches what `git status --short` would list: work-tree changes and
-    staged ones (ignored files are not counted). Editor side files
-    (`.$*`, `~$*`) are not counted either.
-    """
-    return sum(
-        1
-        for path, flags in repo.status().items()
-        if flags & _UNCOMMITTED_MASK and not is_side_file(path)
-    )
-
-
 def dirty_paths_under(
     repo: pygit2.Repository, folder_rel: str
 ) -> list[str]:
@@ -573,8 +573,10 @@ def dirty_paths_under(
 
     Filters `repo.status()` to entries whose path starts with `folder_rel/`
     (or equals it). Returns repo-relative posix paths suitable for passing
-    straight to `commit(paths=...)`. Honors the same mask as `dirty_count`:
-    new, modified, deleted, typechange, renamed, in the work tree or staged.
+    straight to `commit(paths=...)`. Matches what `git status --short` would
+    list: new, modified, deleted, typechange, renamed, in the work tree or
+    staged (ignored files are not listed). An empty `folder_rel` means the
+    whole repo.
     A staged file must be listed: `commit` builds the tree from HEAD plus
     the listed paths, so a file left out would be left out of the commit.
     Editor side files (`.$*`, `~$*`, e.g. draw.io's `.$<fig>.svg.bkp`) are
@@ -587,7 +589,7 @@ def dirty_paths_under(
         if not (flags & _UNCOMMITTED_MASK):
             continue
         norm = path.replace("\\", "/")
-        if prefix and not norm.startswith(prefix):
+        if prefix and norm != folder_rel and not norm.startswith(prefix):
             continue
         if is_side_file(norm):
             continue
@@ -615,8 +617,10 @@ def log_for_path(
 
     Args:
         max_entries: stop after this many matches.
-        since_commit: if given, stop walking once we reach this commit
-            (exclusive). Useful for "what changed on this file since ack X?"
+        since_commit: if given, leave out this commit and everything it
+            contains, like `git log <since_commit>..HEAD`. Useful for "what
+            changed on this file since ack X?", including on branches merged
+            in later, and when X is no longer on HEAD's history.
 
     Returns a list of `{commit_oid, short_hash, message, author, email,
     timestamp}` dicts. `commit_oid` is the full hex; `timestamp` is the
@@ -636,9 +640,10 @@ def log_for_path(
 
     paths = [rel_path] if isinstance(rel_path, str) else list(rel_path)
     results: list[dict] = []
-    for commit_obj in repo.walk(head_oid, pygit2.GIT_SORT_TOPOLOGICAL):
-        if stop_oid is not None and commit_obj.id == stop_oid:
-            break
+    walker = repo.walk(head_oid, pygit2.GIT_SORT_TOPOLOGICAL)
+    if stop_oid is not None:
+        walker.hide(stop_oid)
+    for commit_obj in walker:
         cur_blobs = tuple(_entry_id(commit_obj.tree, p) for p in paths)
         parent_blobs = [
             tuple(_entry_id(parent.tree, p) for p in paths)

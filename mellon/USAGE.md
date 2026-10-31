@@ -474,6 +474,25 @@ Naming notes:
 - `set_attribute` sets an object's value. `define_attribute` adds a schema entry.
 - The four old view tools are merged into `manage_view(action=…)`.
 
+### Gate: `mellon-check [--repo-root <path>]`
+
+`mellon-check` is a pass/fail check for CI, using the same checks as the GUI and the MCP server. It comes with a dev or `uv tool` install, not with the Windows installer. It prints one line per problem, then a summary. `--repo-root` defaults as for `mellon-mcp`.
+
+| Exit status | Meaning |
+|---|---|
+| 0 | Clean, or the repo has no documents. |
+| 1 | A document fails to load, or there is a validation error, or a suspect or broken link. |
+| 2 | The root can't be checked: see [Repository requirements](#repository-requirements). |
+
+A CI checkout has to be a full clone, or the result is status 2:
+
+```yaml
+- uses: actions/checkout@v7
+  with:
+    fetch-depth: 0
+- run: mellon-check --repo-root .
+```
+
 ### Library
 
 Every operation is also available from Python. The `mellon` package exports the following (see `src/mellon/__init__.py`):
@@ -621,7 +640,11 @@ This is the core quality gate. Assume `VCU3-SRS-1` satisfies `VCU3-SyRS-42`, and
    - MCP `suspects` reports the link.
 3. **Review** what changed on the parent:
    - **GUI:** double-click the outgoing link in the Inspector to jump to the parent, then use the History tab ("View at this commit…").
-   - **MCP:** `review_suspect_link` returns the parent text at the ack and now, plus the commits in between.
+   - **MCP:** `review_suspect_link` returns the parent text and attributes at the ack and now, the commits in between, and:
+     - `changed_fields`: what an ack would accept, meaning what differs between the acked commit and HEAD, from `description`, `attr:<name>`, `table` and `figure`. It is `null` when there is nothing to compare with: no ack, an ack that can't be resolved, or a parent that wasn't there at the ack. Empty on a suspect link means only the file's formatting changed.
+     - `ack_found`: false when there is no ack or it can't be resolved, for example after a rebase and gc.
+     - `parent_uncommitted`: the parent has edits an ack wouldn't cover. The "now" fields read the work tree, so they show those edits, and the link goes suspect again once they are committed.
+     - `commits_between_truncated`: more than the 20 commits listed.
    - **git:** `git log -p -- VCU3-SyRS/objects/VCU3-SyRS-42.xml VCU3-SyRS/figures/VCU3-SyRS-42.svg`.
 4. **Update the child if needed.** Edit `VCU3-SRS-1` and commit.
 5. **Acknowledge.** This rewrites the `ack` in `VCU3-SRS/links/VCU3-SRS-1.xml` to the parent's current hash. You can do it in any of these ways:
@@ -653,7 +676,8 @@ A document whose files can't be parsed is listed with its error instead of disap
 |---|---|
 | Project Explorer | The document is greyed out with a warning icon, and its tooltip shows the error. Double-clicking it shows the error instead of opening the document. |
 | Open editor, F5 | The real load error. The window keeps the last good copy behind the "Changed on disk" banner, and edits are refused. |
-| MCP | `list_documents` lists it as `{doc_id, folder, load_error: {doc_id, file, line, message}}`. `validate_repo` returns `ok: false` with `load_errors`. `repo_health` adds `load_errors` (the other fields are then incomplete). |
+| MCP | `list_documents` lists it as `{doc_id, folder, load_error: {doc_id, file, line, message}}`. `validate_repo` returns `ok: false` with `load_errors`. `repo_health` adds `load_errors` (the other fields are then incomplete). `suspects()` without a `doc_id` is refused, naming the documents; asking about a document that loads still works. |
+| `mellon-check` | A `LOAD_ERROR` line per document, and exit status 1. |
 | Delete | Refused repo-wide until every document loads again. |
 
 To recover, fix the named file (for merge conflicts, see [Merging branches](#merging-branches)), then press **F5** in the Project Explorer and in open editors, and run **Validate**. After any pull, press F5: the Explorer notices added or removed document folders by itself, but not a document that broke in place.

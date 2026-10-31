@@ -72,6 +72,45 @@ def test_git_cell_dirty_marker_appears_after_edit(window):
     assert " dirty" in after
 
 
+def test_git_cell_counts_only_document_files(window):
+    """In a repo that also holds code, a code edit isn't a document change:
+    the count is what a commit of the documents would pick up."""
+    w, dst = window
+    (dst / "notes.txt").write_text("not a document", encoding="utf-8")
+    (dst / "src").mkdir()
+    (dst / "src" / "app.py").write_text("x = 1\n", encoding="utf-8")
+
+    w._refresh_git_cell()
+    assert " dirty" not in w._git_cell.text()
+
+    (dst / "VCU3-SRS" / "objects" / "VCU3-SRS-2.xml").write_text(
+        "<object/>", encoding="utf-8"
+    )
+    w._refresh_git_cell()
+    assert " 1 dirty" in w._git_cell.text()
+
+
+def test_project_explorer_git_cell_counts_only_document_files(qtbot, tmp_path: Path, clean_worktree):
+    from mellon.gui.project_explorer_window import ProjectExplorerWindow
+
+    dst = tmp_path / "req-test"
+    shutil.copytree(REQ_TEST, dst)
+    clean_worktree(dst)
+    w = ProjectExplorerWindow()
+    qtbot.addWidget(w)
+    assert w.controller.open_repo(dst)
+    (dst / "notes.txt").write_text("not a document", encoding="utf-8")
+
+    w._refresh_git_cell()
+    assert " dirty" not in w._git_cell.text()
+
+    (dst / "VCU3-SRS" / "objects" / "VCU3-SRS-2.xml").write_text(
+        "<object/>", encoding="utf-8"
+    )
+    w._refresh_git_cell()
+    assert " 1 dirty" in w._git_cell.text()
+
+
 def test_git_cell_empty_when_not_in_git_repo(qtbot, tmp_path: Path):
     from mellon.gui.main_window import DocumentEditorWindow
     from mellon.service.document import DocumentService

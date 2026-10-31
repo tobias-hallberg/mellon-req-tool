@@ -12,6 +12,7 @@ from pathlib import Path
 
 import pygit2
 import pytest
+from lxml import etree
 
 from mellon.mcp import server
 
@@ -231,6 +232,121 @@ def test_review_lists_figure_only_revision(req_test_copy: Path) -> None:
     assert r["state"] == "suspect"
     assert r["parent_text_at_ack"] == r["parent_text_now"]
     assert [c["message"] for c in r["commits_between"]] == ["Draw figure"]
+
+
+def _review_syrs_42() -> dict:
+    """Review the fixture's OK link SRS-1 -> SyRS-42."""
+    return server.review_suspect_link(
+        "VCU3-SRS", "VCU3-SRS-1", "VCU3-SyRS", "VCU3-SyRS-42"
+    )
+
+
+def test_review_ok_link_has_no_changed_fields(req_test_copy: Path) -> None:
+    r = _review_syrs_42()
+    assert r["changed_fields"] == []
+    assert r["ack_found"] is True
+    assert r["parent_uncommitted"] is False
+    assert r["commits_between_truncated"] is False
+
+
+def test_review_names_an_attribute_only_revision(req_test_copy: Path) -> None:
+    """The description is the same before and after, so the attribute change
+    has to be visible some other way or it gets acked blind."""
+    result = server.set_attribute(
+        "VCU3-SyRS", "VCU3-SyRS-42", "status", "Draft", commit_message="Back to draft"
+    )
+    assert result["ok"] and "commit" in result
+
+    r = _review_syrs_42()
+
+    assert r["state"] == "suspect"
+    assert r["parent_text_at_ack"] == r["parent_text_now"]
+    assert r["changed_fields"] == ["attr:status"]
+    assert r["parent_attrs_at_ack"]["status"] == "Approved"
+    assert r["parent_attrs_now"]["status"] == "Draft"
+
+
+def test_review_names_a_description_revision(req_test_copy: Path) -> None:
+    result = server.edit_description(
+        "VCU3-SyRS", "VCU3-SyRS-42", "Within 200 ms.", commit_message="Tighten"
+    )
+    assert result["ok"] and "commit" in result
+    assert _review_syrs_42()["changed_fields"] == ["description"]
+
+
+def test_review_names_a_table_only_revision(req_test_copy: Path) -> None:
+    table = {"columns": [{"align": "left"}], "rows": [{"cells": ["Signal"]}]}
+    result = server.set_table(
+        "VCU3-SyRS", "VCU3-SyRS-42", table, commit_message="Add table"
+    )
+    assert result["ok"] and "commit" in result
+
+    r = _review_syrs_42()
+
+    assert r["parent_text_at_ack"] == r["parent_text_now"]
+    assert r["changed_fields"] == ["table"]
+
+
+def test_review_names_a_figure_only_revision(req_test_copy: Path) -> None:
+    _commit_figure(req_test_copy, "VCU3-SyRS", "VCU3-SyRS-42")
+    assert _review_syrs_42()["changed_fields"] == ["figure"]
+
+
+def test_review_flags_parent_edits_an_ack_would_not_cover(req_test_copy: Path) -> None:
+    """`parent_text_now` reads the work tree, but an ack pins HEAD's version."""
+    server.edit_description("VCU3-SyRS", "VCU3-SyRS-42", "Not committed yet.")
+
+    r = _review_syrs_42()
+
+    assert r["parent_uncommitted"] is True
+    assert r["parent_text_now"] == "Not committed yet."
+    # Nothing committed since the ack, so an ack would accept no change.
+    assert r["changed_fields"] == []
+
+
+def test_review_never_reviewed_has_no_changed_fields(req_test_copy: Path) -> None:
+    r = server.review_suspect_link(
+        "VCU3-SRS", "VCU3-SRS-17", "VCU3-SyRS", "VCU3-SyRS-61"
+    )
+    assert r["changed_fields"] is None
+    assert r["ack_found"] is False
+    assert r["parent_attrs_at_ack"] is None
+    assert r["parent_attrs_now"]["type"] == "Requirement"
+
+
+def _set_ack(req_test_copy: Path, ack: str) -> None:
+    links = req_test_copy / "VCU3-SRS" / "links" / "VCU3-SRS-1.xml"
+    tree = etree.parse(str(links))
+    for link in tree.getroot().findall("link"):
+        if link.get("target-id") == "VCU3-SyRS-42":
+            link.set("ack", ack)
+    tree.write(str(links), encoding="UTF-8", xml_declaration=True)
+
+
+def test_review_says_when_the_ack_cannot_be_resolved(req_test_copy: Path) -> None:
+    """After a rebase and gc the acked commit is gone. Say so, rather than
+    returning empty results that look like nothing changed."""
+    _set_ack(req_test_copy, "0123abc")
+
+    r = _review_syrs_42()
+
+    assert r["state"] == "suspect"
+    assert r["ack_found"] is False
+    assert r["changed_fields"] is None
+    assert r["commits_between"] == []
+
+
+def test_review_flags_a_truncated_commit_list(req_test_copy: Path) -> None:
+    for n in range(21):
+        result = server.edit_description(
+            "VCU3-SyRS", "VCU3-SyRS-42", f"Revision {n}.", commit_message=f"Rev {n}"
+        )
+        assert result["ok"] and "commit" in result
+
+    r = _review_syrs_42()
+
+    assert len(r["commits_between"]) == 20
+    assert r["commits_between_truncated"] is True
 
 
 def test_git_history_includes_figure_commits(req_test_copy: Path) -> None:

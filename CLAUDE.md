@@ -13,6 +13,7 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── CLAUDE.md                   <-- this file
 ├── README.md                   overview, install, quickstart
 ├── LICENSE                     copy of mellon/LICENSE, so GitHub detects the license
+├── .gitattributes              LF line endings, as TEAM.md recommends
 ├── .github/workflows/
 │   ├── ci.yml                  CI: ubuntu + windows tests, wheel smoke job
 │   └── installer.yml           Windows installer build (manual, or v* tag → draft release)
@@ -48,7 +49,8 @@ All run from inside `mellon/`:
 | Command | Purpose |
 |---|---|
 | `uv sync` | Install/update env from `uv.lock` |
-| `uv run pytest` | Run the full suite (~1200 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
+| `uv run pytest` | Run the full suite (~1340 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
+| `uv run mellon-check --repo-root ..` | Pass/fail gate over load errors, validation and link states: exit 0 clean, 1 problems, 2 unusable root. CI runs it |
 | `uv run mellon-mcp [--repo-root <path>] [--read-only]` | MCP stdio server (45 tools). The root defaults to `$CLAUDE_PROJECT_DIR`, then the cwd, and must be the root of a full git clone (otherwise exit 2) |
 | `uv run mellon-gui [path]` | PySide6 GUI (Project Explorer + per-doc Document Editor windows) |
 | `powershell -ExecutionPolicy Bypass -File packaging\build.ps1` | Build `build\Mellon-Setup-<version>.exe` (needs uv, git, Inno Setup 6.3+, internet) |
@@ -64,7 +66,8 @@ All run from inside `mellon/`:
 | `suspects.py` | `scan_document`, `scan_repo`, `ack_all` |
 | `trace.py` | Recursive up/down traversal, cycle-safe |
 | `repo.py` | Multi-doc discovery, `load_all` + `DocLoadError` (failed docs are reported, not dropped), cross-doc incoming links, `folders_fingerprint`/`doc_folder_names` staleness helpers |
-| `git_ops.py` | `pygit2` wrappers (`check_repo_root`, `last_commit_for_paths`, `commit`, `discard_paths`, `show_blob_at`, `log_for_path`, `head_summary`, `dirty_count`, `current_issue`, `create_issue_tag`) |
+| `git_ops.py` | `pygit2` wrappers (`check_repo_root`, `last_commit_for_paths`, `commit`, `discard_paths`, `show_blob_at`, `blob_id_at`, `log_for_path`, `head_summary`, `dirty_paths_under`, `current_issue`, `create_issue_tag`) |
+| `check.py` | `mellon-check`: the CI gate (load errors, validation, suspect and broken links) |
 | `filter.py` | Saved-filter engine: `evaluate(doc, filt)`, operators per attribute kind |
 | `coverage.py` | `coverage_report` (direct + transitive, headings-aware) |
 | `search.py` | `search_objects`: case-insensitive substring scan with ranked hits |

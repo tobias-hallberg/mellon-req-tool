@@ -111,6 +111,8 @@ resolve relative paths against the repo root:
 - `list_documents` lists it as `{doc_id, folder, load_error}`.
 - `validate_repo` and `repo_health` carry `load_errors`.
 - `validate_repo` is `ok: false` while any document fails to load.
+- `suspects()` without a `doc_id` is refused, naming the failed documents, so
+  an empty answer always means clean.
 
 **Shapes worth knowing** (from the agent-friendliness pass):
 
@@ -139,6 +141,11 @@ resolve relative paths against the repo root:
   descriptions, with ranked hits and snippets.
 - **`inspect_object`** is `show_object` + `trace(both, depth=2)` +
   `git_history` in one call.
+- **`review_suspect_link`** returns the parent's text and attributes at the ack
+  and now, `commits_between` (newest 20, with `commits_between_truncated`),
+  `changed_fields` (`description`, `attr:<name>`, `table`, `figure`: the ack
+  against HEAD, which is what an ack accepts), `ack_found` and
+  `parent_uncommitted`.
 - **`define_attribute(default_value=…)`** backfills the value on every
   existing object.
 - **`manage_view(doc_id, action="create"|"rename"|"delete"|"edit", …)`** is
@@ -173,7 +180,9 @@ resolve relative paths against the repo root:
   - **View:** Refresh (`F5`), which drops the cache and re-lists every
     document; Theme (Light / Dark / Follow system)
   - **Help:** About
-- **Status bar:** `branch @ shorthash · N dirty`.
+- **Status bar:** `branch @ shorthash · N dirty`. N counts uncommitted files
+  inside document folders (`DocumentService.uncommitted_document_paths`, what
+  `commit_changes()` would pick up); other files in the repo don't count.
 - When the window is activated, it re-lists documents if a document folder
   appeared or disappeared. A document that breaks in place shows as failed
   only after F5.
@@ -373,8 +382,8 @@ on this document.
 **PDF export** (`Ctrl+E`) runs in a background thread. It shows a notice when
 attached figures were left out of the PDF, saying whether draw.io was missing.
 
-**Status bar:** `branch @ shorthash · N dirty` (with a tooltip for a detached
-HEAD).
+**Status bar:** `branch @ shorthash · N dirty`, counted as in the Project
+Explorer (with a tooltip for a detached HEAD).
 
 **Themes:** light and dark tokens in `gui/theme.py`.
 `ThemeManager` applies a `QPalette` plus QSS and saves the choice in
@@ -628,9 +637,19 @@ Close Mellon and Claude Code before upgrading.
 OS (see [INSTALL.md](INSTALL.md)). The PyPI name `mellon` is taken, so the
 package is not published there.
 
+### Repository check
+
+`mellon-check [--repo-root <path>]` (`check.py`) is a pass/fail gate for CI.
+It exits 0 when clean, 1 for any load error, validation error, or suspect or
+broken link, and 2 for a root that `check_repo_root` refuses. It uses the same
+`DocumentService` calls as the GUI and MCP, and isn't in the installer.
+
+This repo's CI runs it in the `check` job, with `fetch-depth: 0`. This repo has
+no documents of its own yet, so the job passes trivially for now.
+
 ### Tests
 
-**1206 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-10-21).
+**1342 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-10-31).
 They cover the library, git_ops, MCP read/write/git, and the GUI (smoke,
 edits, outline, links, suspect, polish, theme, filter, reload, commit,
 export, tables, figures, app). They also cover the filter engine, coverage,
@@ -732,8 +751,9 @@ src/mellon/
   editor.py      all mutations; atomic LF writes, write journal (all-or-nothing
                  operations, undo data), text sanitiser, _child_path guard
   git_ops.py     pygit2 wrappers: discover_repo, check_repo_root, last_commit_for_path(s),
-                 commit, discard_paths, show_blob_at, log_for_path, head_summary,
-                 dirty_count, dirty_paths_under, current_issue, create_issue_tag
+                 commit, discard_paths, show_blob_at, blob_id_at, log_for_path,
+                 head_summary, dirty_paths_under, current_issue, create_issue_tag
+  check.py       mellon-check: pass/fail gate over load errors, validation, link states
   suspects.py    scan_document, scan_repo, ack_all
   repo.py        discover_documents, load_all (+ DocLoadError), cross-doc incoming,
                  all_objects, folders_fingerprint / doc_folder_names (staleness checks)

@@ -7,6 +7,7 @@ fixture in conftest.py (or `real_repo` below for the req-test integration).
 
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 import pytest
@@ -425,6 +426,23 @@ def test_real_repo_suspects_scoped_to_one_doc(real_repo: Path) -> None:
     # SyRS has no outgoing links of its own -> 0 suspects.
     assert server.suspects("VCU3-SyRS") == []
     # STS's 8 links should all be OK -> 0 non-ok entries.
+    assert server.suspects("VCU3-STS") == []
+
+
+def test_suspects_refuses_to_report_clean_when_a_document_failed_to_load(
+    real_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, clean_worktree
+) -> None:
+    """An empty answer has to mean clean: a document that didn't load wasn't
+    scanned, and its suspects would otherwise just vanish."""
+    copy = tmp_path / "req-test"
+    shutil.copytree(real_repo, copy)
+    clean_worktree(copy)
+    monkeypatch.setattr(server._State, "repo_root", copy)
+    (copy / "VCU3-SRS" / "VCU3-SRS.xml").write_text("<<<<<<< HEAD", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="VCU3-SRS"):
+        server.suspects()
+    # A document that does load can still be asked about by name.
     assert server.suspects("VCU3-STS") == []
 
 

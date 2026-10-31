@@ -4,6 +4,47 @@ All notable changes to Mellon. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow
 [Semantic Versioning](https://semver.org/).
 
+## Unreleased
+
+### Added
+
+- **`mellon-check`.** A pass/fail gate for CI: exit 0 when clean, 1 for any
+  document that fails to load, validation error, or suspect or broken link,
+  and 2 for a root it can't check, such as a shallow clone. It isn't in the
+  installer. This repo's CI runs it, with `fetch-depth: 0`.
+- **`review_suspect_link` says what changed.** New fields: `changed_fields`,
+  `parent_attrs_at_ack`, `parent_attrs_now`, `parent_uncommitted`, `ack_found`
+  and `commits_between_truncated`. Before, a parent change that touched only
+  an attribute or a table showed identical text before and after.
+- `git_ops.blob_id_at` and `DocumentService.uncommitted_document_paths`.
+- This repo has a `.gitattributes` (`* text=auto eol=lf`), as `TEAM.md`
+  recommends for repositories holding documents.
+
+### Changed
+
+- **"N dirty" counts document files only,** in both status bars: what a
+  commit of the documents would pick up. Other files in the repo, such as
+  source code, no longer count.
+- **MCP `suspects()` without a `doc_id` is refused while a document fails to
+  load.** It used to leave that document out, so an empty answer could mean
+  that nothing was scanned. Use `repo_health` for the partial picture.
+
+### Fixed
+
+- `git_ops.log_for_path(since_commit=…)` now matches `git log <since>..HEAD`.
+  On a merged history it could drop commits from the other side of a merge,
+  and when the commit was no longer on HEAD's history (after a rebase) it
+  reported everything back to the root. `review_suspect_link` and
+  `DocumentService` history both use it.
+- `git_ops.dirty_paths_under` matches a path equal to its argument, as its
+  docstring said, not only paths below it.
+- `DocumentService.ack_all` raises `ServiceError` for a links file that became
+  malformed after the scan, instead of a raw XML error.
+
+### Removed
+
+- `git_ops.dirty_count`: nothing uses it now.
+
 ## 0.3.0 — 2026-10-30
 
 The first public release. It includes everything listed under 0.2.0 below,
