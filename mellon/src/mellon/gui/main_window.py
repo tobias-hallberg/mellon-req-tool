@@ -363,6 +363,7 @@ class DocumentEditorWindow(QMainWindow):
         # Same for the Inspector's link tags + Ack buttons and the banner's
         # "Ack selected".
         self.inspector.refresh_links()
+        self.right_pane.history.refresh()
         self._refresh_action_states()
 
     def _set_stale(self, on: bool) -> None:

@@ -246,10 +246,18 @@ class DocumentService:
             self._cache.put(loaded)
         return loaded
 
-    def _reload(self, doc_id: str) -> LoadedDoc:
-        """Force a disk re-read for `doc_id`, refreshing the cache entry."""
+    def _reload(self, doc_id: str, *, keep_scans: bool = False) -> LoadedDoc:
+        """Force a disk re-read for `doc_id`, refreshing the cache entry.
+
+        `keep_scans` is for edits to an object's fields: they can't change
+        links, whether a link target exists, or HEAD, which is all a suspect
+        scan depends on.
+        """
         if self._cache is not None:
-            self._cache.invalidate([doc_id])
+            if keep_scans:
+                self._cache.forget_document(doc_id)
+            else:
+                self._cache.invalidate([doc_id])
         return self._load(doc_id)
 
     def _docs_of(self, paths: Iterable[Path]) -> tuple[str, ...]:
@@ -1202,7 +1210,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded
@@ -1219,7 +1227,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded
@@ -1271,7 +1279,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded

@@ -620,6 +620,7 @@ class GridPane(QWidget):
 
         controller.object_selected.connect(self._on_external_selection)
         controller.document_selected.connect(self._refresh_banner)
+        controller.object_changed.connect(self._on_object_changed)
         self._model.modelReset.connect(self._on_model_reset)
         self._model.modelReset.connect(self._update_empty_state)
         self._model.modelReset.connect(self._refresh_banner)
@@ -1189,6 +1190,20 @@ class GridPane(QWidget):
 
     def is_suspect_only(self) -> bool:
         return self._proxy.suspectOnly()
+
+    def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
+        """Re-fit the edited row, and re-run the saved filter: the edit may
+        have changed what it matches."""
+        if self._controller.current_doc_id() != doc_id:
+            return
+        if self._active_filter is not None:
+            self.apply_filter(self._active_filter)
+        row = self._model.row_for_obj_id(obj_id)
+        if row < 0:
+            return
+        proxy = self._proxy.mapFromSource(self._model.index(row, 0))
+        if proxy.isValid():
+            self.table.resizeRowToContents(proxy.row())
 
     def refresh_link_states(self) -> None:
         """Re-read link states (gutter + suspect banner) after HEAD moved."""

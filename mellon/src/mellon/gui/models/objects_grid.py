@@ -102,6 +102,7 @@ class ObjectsGridModel(QAbstractTableModel):
         super().__init__()
         self._controller = controller
         self._rows: list[_Row] = []
+        self._row_by_id: dict[str, int] = {}
         self._doc_id: str | None = None
         self._link_states: dict[str, tuple[str, str]] = {}
         self._dirty_ids: frozenset[str] = frozenset()
@@ -113,6 +114,7 @@ class ObjectsGridModel(QAbstractTableModel):
         self._unloadable = False
         self._columns, self._labels = _columns_for_doc(None)
         controller.document_selected.connect(self._rebuild)
+        controller.object_changed.connect(self._on_object_changed)
 
     def set_read_only(self, on: bool) -> None:
         """Strip ItemIsEditable from `flags()` and refuse `setData` writes
@@ -327,9 +329,7 @@ class ObjectsGridModel(QAbstractTableModel):
             return False
 
         self._controller.edit_succeeded.emit(self._doc_id, row.obj_id, col)
-        # Re-load the doc and rebuild models. This also emits dataChanged
-        # effects via the full reset in _rebuild.
-        self._controller.reload_document(self._doc_id)
+        self._controller.refresh_object(self._doc_id, row.obj_id)
         return True
 
     # --- population -----------------------------------------------------
@@ -342,9 +342,35 @@ class ObjectsGridModel(QAbstractTableModel):
         self._unloadable = False
         self._columns, self._labels = _columns_for_doc(doc)
         self._rows = list(_walk(doc))
+        self._row_by_id = {}
+        for i, row in enumerate(self._rows):
+            self._row_by_id.setdefault(row.obj_id, i)
         self._link_states = self._controller.build_link_states(doc_id)
         self._dirty_ids = self._controller.build_dirty_ids(doc_id)
         self.endResetModel()
+
+    def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
+        """Update one row in place: no reset, so scroll and selection survive."""
+        row = self._row_by_id.get(obj_id)
+        if doc_id != self._doc_id or row is None:
+            return
+        doc = self._controller.document(doc_id)
+        self._shown_doc = doc
+        self._unloadable = False
+        obj = doc.objects.get(obj_id)
+        text = obj.description if obj and obj.description else ""
+        self._rows[row] = _Row(obj_id=obj_id, heading_or_text=text)
+        old_dirty = self._dirty_ids
+        self._dirty_ids = self._controller.build_dirty_ids(doc_id)
+        last = len(self._columns) - 1
+        self.dataChanged.emit(self.index(row, 0), self.index(row, last))
+        # Normally just this object, which the line above already covered.
+        id_col = self.column_index("id")
+        for changed in old_dirty ^ self._dirty_ids:
+            other = self._row_by_id.get(changed)
+            if other is not None and other != row:
+                index = self.index(other, id_col)
+                self.dataChanged.emit(index, index, [OBJ_DIRTY_ROLE])
 
     def refresh_link_states(self) -> None:
         """Recompute per-object link states and repaint the state gutter.
@@ -396,10 +422,7 @@ class ObjectsGridModel(QAbstractTableModel):
         return None
 
     def row_for_obj_id(self, obj_id: str) -> int:
-        for i, r in enumerate(self._rows):
-            if r.obj_id == obj_id:
-                return i
-        return -1
+        return self._row_by_id.get(obj_id, -1)
 
 
 def _walk(doc: Document):

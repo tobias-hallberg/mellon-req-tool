@@ -129,6 +129,7 @@ class Inspector(QWidget):
 
         controller.repo_loaded.connect(lambda *_: self._set_empty_state(True))
         controller.object_selected.connect(self._on_selection)
+        controller.object_changed.connect(self._on_object_changed)
         ThemeManager.instance().theme_changed.connect(self._on_theme_changed)
 
     def _on_theme_changed(self, *_args) -> None:
@@ -158,6 +159,10 @@ class Inspector(QWidget):
         self._current_doc_id = doc_id
         self._current_obj_id = obj_id
         self._repopulate()
+
+    def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
+        if doc_id == self._current_doc_id and obj_id == self._current_obj_id:
+            self._repopulate()
 
     def _repopulate(self) -> None:
         if self._current_doc_id is None or self._current_obj_id is None:
@@ -497,10 +502,10 @@ class Inspector(QWidget):
             return
         self._original_attrs[name] = new_value
         self._controller.edit_succeeded.emit(doc_id, obj_id, name)
-        # Reload on the next event-loop pass: the reload rebuilds this form,
-        # which would delete the combo / line edit while it is still emitting
-        # the signal that got us here (a use-after-free crash).
-        QTimer.singleShot(0, self, lambda: self._controller.reload_document(doc_id))
+        # Refresh on the next event-loop pass: it rebuilds this form, which
+        # would delete the combo / line edit while it is still emitting the
+        # signal that got us here (a use-after-free crash).
+        QTimer.singleShot(0, self, lambda: self._controller.refresh_object(doc_id, obj_id))
 
     def _commit_description(self) -> None:
         if (
@@ -525,7 +530,7 @@ class Inspector(QWidget):
             return
         self._original_description = new_desc
         self._controller.edit_succeeded.emit(doc_id, obj_id, "description")
-        self._controller.reload_document(doc_id)
+        self._controller.refresh_object(doc_id, obj_id)
 
     # --- helpers -------------------------------------------------------
 
