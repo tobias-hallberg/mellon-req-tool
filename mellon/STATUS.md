@@ -668,7 +668,10 @@ Ordered roughly by usefulness.
 ### Compare dialog
 
 There is no GUI Compare dialog yet. `diff.py` stays a library-only module,
-with no MCP diff tools.
+with no MCP diff tools. Its requirements are drafted in `../MELLON-SRS`,
+under the "Compare dialog" heading. Several of them need `diff.py`
+extensions: the working copy as a version, outline moves, table and figure
+changes, and marking objects that can't be read.
 
 ### Known limitations in 0.3.0
 

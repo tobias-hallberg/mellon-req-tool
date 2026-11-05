@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">Reviewing a suspect link doesn't change the requirement. The diff library already keeps acknowledgement changes apart.</attr>
+  <description>An object whose only change is a link acknowledgement shall be listed as Link reviewed, not Modified.</description>
+</object>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">Comparing never writes, so read-only mode has no reason to hide it.</attr>
+  <description>The Compare action shall be available when the editor is in read-only mode.</description>
+</object>

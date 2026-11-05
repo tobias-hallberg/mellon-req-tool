@@ -17,6 +17,8 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── .github/workflows/
 │   ├── ci.yml                  CI: ubuntu + windows tests, wheel smoke job
 │   └── installer.yml           Windows installer build (manual, or v* tag → draft release)
+├── MELLON-SRS/                 Mellon's own requirements, kept as a Mellon document (checked by mellon-check in CI)
+├── MELLON-STS/                 Mellon's own test specification; test cases verify MELLON-SRS
 ├── mellon/                     the actual Python package
 │   ├── README.md               short entry point
 │   ├── INSTALL.md              installer, MCP client config, dev env setup (uv, Python 3.12)
@@ -109,6 +111,7 @@ Tests mirror the layout: one `tests/test_<module>.py` per source module. `tests/
 - **Editor mutates, caller commits.** Every function in `editor.py` writes files but never commits. The GUI commits via an explicit dialog; the MCP server has a separate explicit `commit_changes` tool.
 - **Two-commit suspect-link rule is intentional.** A file cannot record its own commit's hash, so revising a parent and re-acking children always takes two commits. This is the design — don't try to "fix" it.
 - **One test file per source module.** Match the existing pattern when adding tests.
+- **Mellon specifies Mellon.** New behaviour is written as requirements in `MELLON-SRS` before it is built; existing behaviour gets requirements when it changes. Edit the documents through Mellon (GUI, MCP or `editor.py`), not by hand. A `MELLON-STS` test case links `verifies` to its requirements and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect.
 - **Folder name = manifest id.** A document's folder name must match its manifest's `id` attribute, and an object file's stem must match its `<object id>`.
 - **Outgoing links only on disk.** `links/<id>.xml` files hold *outgoing* links from object `<id>`. Incoming links are computed by scanning the whole repo.
 - **Canonical 2-space XML indentation** is applied on write via `lxml.etree.indent`. First edit of a hand-authored file may collapse decorative blank lines — expected, one-time.

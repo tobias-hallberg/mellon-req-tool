@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">"What changed between Issue 1 and Issue 2" is the common question.</attr>
+  <description>When the document has an issue, the dialog shall open with From set to its latest issue and To set to the latest commit; if the latest commit is that issue, From shall be the issue before it.</description>
+</object>

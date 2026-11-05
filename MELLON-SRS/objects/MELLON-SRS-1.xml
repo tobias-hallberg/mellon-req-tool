@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-1">
+  <attr name="type">Information</attr>
+  <attr name="status">Draft</attr>
+  <description>This document specifies the behaviour of Mellon: the library, the MCP server and the GUI. New behaviour is specified here before it is built; existing behaviour is added when it changes.</description>
+</object>

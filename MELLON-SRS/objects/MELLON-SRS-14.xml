@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Usability</attr>
+  <attr name="verification-method">Test</attr>
+  <description>When the document has no issue, the dialog shall open with From unset and prompt the user to choose a version.</description>
+</object>

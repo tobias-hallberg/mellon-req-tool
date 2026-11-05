@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">The diff library currently reads an unreadable file as an empty object, which gives a silent wrong answer.</attr>
+  <description>If an object can't be read at one version, the dialog shall show the remaining results and mark that object as unreadable at that version.</description>
+</object>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document id="MELLON-STS">
+  <metadata>
+    <title>Mellon Software Test Specification</title>
+    <author>Tobias Hallberg</author>
+    <date>2026-11-05</date>
+  </metadata>
+  <parents>
+    <parent doc="MELLON-SRS"/>
+  </parents>
+  <attributes>
+    <attribute name="type" kind="enum" required="true" label="Type">
+      <option>Heading</option>
+      <option>Test Case</option>
+      <option>Information</option>
+      <option>Note</option>
+    </attribute>
+    <attribute name="status" kind="enum" required="true" label="Status">
+      <option>Draft</option>
+      <option>Reviewed</option>
+      <option>Approved</option>
+      <option>Deleted</option>
+    </attribute>
+    <attribute name="automated-tests" kind="text" required="false" label="Automated Tests"/>
+    <attribute name="rationale" kind="text" required="false" label="Rationale"/>
+  </attributes>
+  <outline>
+    <ref id="MELLON-STS-0">
+      <ref id="MELLON-STS-1"/>
+    </ref>
+    <ref id="MELLON-STS-2"/>
+  </outline>
+</document>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Usability</attr>
+  <attr name="verification-method">Test</attr>
+  <description>The user shall be able to hide rows by change: Added, Deleted, Modified, Moved, Link reviewed.</description>
+</object>

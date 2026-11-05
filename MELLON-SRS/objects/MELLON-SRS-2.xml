@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-2">
+  <attr name="type">Information</attr>
+  <attr name="status">Draft</attr>
+  <description>Requirements use "shall" and carry a MoSCoW priority. MELLON-STS holds the test cases that verify them, and each test case lists the automated tests that implement it.</description>
+</object>

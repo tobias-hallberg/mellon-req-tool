@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-4">
+  <attr name="type">Information</attr>
+  <attr name="status">Draft</attr>
+  <description>The Compare dialog shows what changed in one document between two versions, From and To: typically two issues, or the latest issue and the latest commit. A version is an issue, a branch, a commit or the working copy.</description>
+</object>

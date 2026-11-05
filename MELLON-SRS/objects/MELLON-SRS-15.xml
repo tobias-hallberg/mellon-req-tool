@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Usability</attr>
+  <attr name="verification-method">Test</attr>
+  <description>The dialog shall have a control that swaps From and To.</description>
+</object>
