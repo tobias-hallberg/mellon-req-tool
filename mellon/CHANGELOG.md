@@ -19,6 +19,9 @@ All notable changes to Mellon. The format follows
   Specified first in `MELLON-SRS`, Mellon's own requirements, now kept in
   this repo next to `MELLON-STS`.
 - **MCP `compare_document`** returns the same changes (46 tools).
+- `tests/test_mellon_sts.py`: fails when a `MELLON-STS` test case lists a
+  pytest node id that names no test, so the test specification can't drift
+  from the suite.
 - `diff.compare_document` covers outline moves, tables, figures and the
   working copy (`WORKING_COPY`); new `document_versions`, `default_versions`,
   `word_diff`. Also `loader.parse_object_bytes` / `parse_links_bytes` /

@@ -2,5 +2,5 @@
 <object id="MELLON-STS-1">
   <attr name="type">Information</attr>
   <attr name="status">Draft</attr>
-  <description>This document holds the test cases that verify MELLON-SRS. Each Test Case links to the requirements it verifies and lists, in Automated Tests, the pytest node ids that implement it, one per line, relative to mellon/ (where the tests run).</description>
+  <description>This document holds the test cases that verify MELLON-SRS. Each Test Case links to the requirements it verifies and lists, in Automated Tests, the pytest node ids that implement it, one per line, relative to mellon/ (where the tests run). mellon/tests/test_mellon_sts.py fails when a listed node id names no test.</description>
 </object>

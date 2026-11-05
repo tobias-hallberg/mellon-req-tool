@@ -53,7 +53,7 @@ All run from inside `mellon/`:
 | Command | Purpose |
 |---|---|
 | `uv sync` | Install/update env from `uv.lock` |
-| `uv run pytest` | Run the full suite (~1420 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
+| `uv run pytest` | Run the full suite (~1500 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
 | `uv run mellon-check --repo-root ..` | Pass/fail gate over load errors, validation and link states: exit 0 clean, 1 problems, 2 unusable root. CI runs it |
 | `uv run mellon-mcp [--repo-root <path>] [--read-only]` | MCP stdio server (46 tools). The root defaults to `$CLAUDE_PROJECT_DIR`, then the cwd, and must be the root of a full git clone (otherwise exit 2) |
 | `uv run mellon-gui [path]` | PySide6 GUI (Project Explorer + per-doc Document Editor windows) |
@@ -111,7 +111,7 @@ Tests mirror the layout: one `tests/test_<module>.py` per source module. `tests/
 - **Editor mutates, caller commits.** Every function in `editor.py` writes files but never commits. The GUI commits via an explicit dialog; the MCP server has a separate explicit `commit_changes` tool.
 - **Two-commit suspect-link rule is intentional.** A file cannot record its own commit's hash, so revising a parent and re-acking children always takes two commits. This is the design — don't try to "fix" it.
 - **One test file per source module.** Match the existing pattern when adding tests.
-- **Mellon specifies Mellon.** New behaviour is written as requirements in `MELLON-SRS` before it is built; existing behaviour gets requirements when it changes. Edit the documents through Mellon (GUI, MCP or `editor.py`), not by hand. A `MELLON-STS` test case links `verifies` to its requirements and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect.
+- **Mellon specifies Mellon.** New behaviour is written as requirements in `MELLON-SRS` before it is built; existing behaviour gets requirements when it changes. Edit the documents through Mellon (GUI, MCP or `editor.py`), not by hand. A `MELLON-STS` test case links `verifies` to its requirements and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect. `tests/test_mellon_sts.py` fails when a listed node id names no test, so rename or delete a test together with its test case (that file is the one test not tied to a source module).
 - **Folder name = manifest id.** A document's folder name must match its manifest's `id` attribute, and an object file's stem must match its `<object id>`.
 - **Outgoing links only on disk.** `links/<id>.xml` files hold *outgoing* links from object `<id>`. Incoming links are computed by scanning the whole repo.
 - **Canonical 2-space XML indentation** is applied on write via `lxml.etree.indent`. First edit of a hand-authored file may collapse decorative blank lines — expected, one-time.

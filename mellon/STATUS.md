@@ -666,7 +666,7 @@ no documents of its own yet, so the job passes trivially for now.
 
 ### Tests
 
-**1426 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-11-05).
+**1506 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-11-05).
 They cover the library, git_ops, MCP read/write/git, and the GUI (smoke,
 edits, outline, links, suspect, polish, theme, filter, reload, commit,
 export, tables, figures, app). They also cover the filter engine, coverage,
@@ -677,6 +677,9 @@ the draw.io integration (`test_drawio.py`, which fakes the draw.io process).
 - GUI tests run headless with `QT_QPA_PLATFORM=offscreen`.
 - `MELLON_REQUIRE_FIXTURE=1` makes a missing fixture an error instead of a
   skip. CI sets it.
+- `test_mellon_sts.py` checks this repo's own `MELLON-STS`: every pytest node
+  id a test case lists must name an existing test. It reads the test files'
+  syntax trees rather than importing them.
 
 ## Deferred / pending
 
