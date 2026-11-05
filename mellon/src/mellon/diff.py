@@ -42,6 +42,7 @@ from .git_ops import (
 )
 from .loader import (
     LoaderError,
+    _has_suffix,  # the loader's own rule, so a compare sees the files it loads
     parse_links_bytes,
     parse_manifest_bytes,
     parse_object_bytes,
@@ -511,7 +512,7 @@ class _GitSide(_Side):
             for entry in subtree:
                 if entry.filemode == pygit2.GIT_FILEMODE_TREE:
                     continue
-                if entry.name.lower().endswith(suffix):
+                if _has_suffix(entry.name, suffix):
                     stem = entry.name[: -len(suffix)]
                     targets[sub][stem] = entry.id
                     self.names[(sub, stem)] = entry.name
@@ -546,7 +547,7 @@ class _DiskSide(_Side):
             except OSError:
                 continue
             for entry in entries:
-                if not os.path.normcase(entry.name).endswith(suffix):
+                if not _has_suffix(entry.name, suffix):
                     continue
                 stem = entry.name[: -len(suffix)]
                 try:

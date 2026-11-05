@@ -683,16 +683,25 @@ def test_default_versions_at_the_only_issue_has_no_from(tmp_git: Path, spec: Pat
 # --- files the loader accepts or rejects ------------------------------------
 
 
-def test_uppercase_extension_compares(tmp_git: Path, spec: Path) -> None:
+def test_uppercase_extension_follows_the_loader(tmp_git: Path, spec: Path) -> None:
+    """`SPEC-9.XML` is an object where the loader loads it (Windows, where a
+    glob ignores case) and not elsewhere; history and the working copy agree."""
+    import os
+
+    from mellon import load_document
+
     text = (spec / "objects" / "SPEC-1.xml").read_text(encoding="utf-8")
     (spec / "objects" / "SPEC-9.XML").write_text(
         text.replace("SPEC-1", "SPEC-9"), encoding="utf-8"
     )
     commit(tmp_git, "upper-case extension")
+    loaded = "SPEC-9" in load_document(spec).objects
+    assert loaded == (os.name == "nt")
     for ref_b in ("HEAD", WORKING_COPY):
         diff = compare_document(tmp_git, "SPEC", "HEAD~1", ref_b)
-        assert _kinds(diff) == {"SPEC-9": ("Added",)}
-        assert diff.changes[0].text == "Requirement 1."
+        assert _kinds(diff) == ({"SPEC-9": ("Added",)} if loaded else {})
+        if loaded:
+            assert diff.changes[0].text == "Requirement 1."
 
 
 def test_unreadable_links_file_is_not_read_as_no_links(tmp_git: Path, spec: Path) -> None:
