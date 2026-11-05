@@ -4,9 +4,8 @@ A snapshot of what's built, what's deferred, and where to pick up. For the
 per-release list of changes, see [CHANGELOG.md](CHANGELOG.md).
 
 **Current release:** v0.3.0, with draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
-and the team routine is in [TEAM.md](TEAM.md). Editing and link checks are
-measured up to 5,000 objects per document; PDF export and the MCP `outline`
-tool aren't practical at that size. See [SCALING.md](SCALING.md).
+and the team routine is in [TEAM.md](TEAM.md). Documents are meant for up to
+1,000 objects each; [SCALING.md](SCALING.md) has measurements up to 5,000.
 
 ## What's built
 
@@ -650,7 +649,7 @@ no documents of its own yet, so the job passes trivially for now.
 
 ### Tests
 
-**1423 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-10-31).
+**1426 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-11-05).
 They cover the library, git_ops, MCP read/write/git, and the GUI (smoke,
 edits, outline, links, suspect, polish, theme, filter, reload, commit,
 export, tables, figures, app). They also cover the filter engine, coverage,

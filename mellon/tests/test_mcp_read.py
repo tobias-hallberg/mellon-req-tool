@@ -155,6 +155,56 @@ def test_outline_is_preorder_with_depth(mcp_repo: Path) -> None:
     ]
 
 
+def _deepen_parent() -> tuple[str, str, str]:
+    """PARENT-0 > PARENT-1 > a > b, plus a second top-level object c."""
+    a = server.new_object("PARENT", parent_id="PARENT-1", description="A")["new_id"]
+    b = server.new_object("PARENT", parent_id=a, description="B")["new_id"]
+    c = server.new_object("PARENT", description="C")["new_id"]
+    return a, b, c
+
+
+def test_outline_depth_lists_top_levels_and_counts_the_rest(mcp_repo: Path) -> None:
+    a, b, c = _deepen_parent()
+    assert server.outline("PARENT", depth=1) == [
+        {
+            "id": "PARENT-0",
+            "depth": 0,
+            "heading_or_text": "Parent top heading",
+            "descendants_omitted": 3,
+        },
+        {"id": c, "depth": 0, "heading_or_text": "C"},
+    ]
+    assert [r["id"] for r in server.outline("PARENT", depth=2)] == [
+        "PARENT-0", "PARENT-1", c,
+    ]
+    assert server.outline("PARENT", depth=2)[1]["descendants_omitted"] == 2
+    # Deep enough to reach every row: identical to the unbounded outline.
+    full = server.outline("PARENT")
+    assert server.outline("PARENT", depth=4) == full
+    assert [r["id"] for r in full] == ["PARENT-0", "PARENT-1", a, b, c]
+    assert not any("descendants_omitted" in r for r in full)
+
+
+def test_outline_root_lists_the_subtree_below_it(mcp_repo: Path) -> None:
+    a, b, _ = _deepen_parent()
+    # The root itself is left out; depths stay document depths.
+    assert server.outline("PARENT", root="PARENT-1") == [
+        {"id": a, "depth": 2, "heading_or_text": "A"},
+        {"id": b, "depth": 3, "heading_or_text": "B"},
+    ]
+    assert server.outline("PARENT", root="PARENT-1", depth=1) == [
+        {"id": a, "depth": 2, "heading_or_text": "A", "descendants_omitted": 1},
+    ]
+    assert server.outline("PARENT", root=b) == []
+
+
+def test_outline_rejects_unknown_root_and_depth_below_one(mcp_repo: Path) -> None:
+    with pytest.raises(ValueError, match="No object 'PARENT-99' in the outline"):
+        server.outline("PARENT", root="PARENT-99")
+    with pytest.raises(ValueError, match="depth must be 1 or more"):
+        server.outline("PARENT", depth=0)
+
+
 # --- validate --------------------------------------------------------------
 
 

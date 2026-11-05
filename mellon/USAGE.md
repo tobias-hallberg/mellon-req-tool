@@ -25,7 +25,9 @@ Related pages:
 
 Documents sit directly under the repo root; nested document folders are not supported. Mellon commits but never pulls, pushes, or merges. Sync with an external git client as described in [TEAM.md](TEAM.md).
 
-Editing and link checks are measured up to **5,000 objects** per document. At that size, opening or reloading a document takes several seconds, and PDF export and the MCP `outline` tool aren't practical yet. [SCALING.md](SCALING.md) has the numbers.
+Keep each document to **1,000 objects** or fewer, counting headings and information text. Split a larger specification into components, each with its own set of documents. An object can only link within its own document or to a declared parent, so requirements the components share belong in a common parent document.
+
+Nothing enforces the limit, and larger documents still work, more slowly. PDF export took 191 s at 2,000 objects against tectonic's 300 s timeout, and at 5,000 it doesn't finish. Opening or reloading a 5,000-object document takes several seconds. [SCALING.md](SCALING.md) has the numbers.
 
 ## On-disk format
 
@@ -460,7 +462,9 @@ Composite tools that save AI clients many calls:
   - `search_objects(query, …)` does a case-insensitive substring search, with an optional attribute filter.
   - `inspect_object(doc_id, obj_id)` returns the object together with its trace and history.
 - **Repo-wide:** `repo_health()` and `validate_repo()` answer "what state is this in?" in one call.
-- **Compact reads:** `list_documents` and `show_document` return counts and `current_issue` by default. Pass `include=["metadata", "parents", "attributes", "outline", "views", "filters"]` (or `["*"]`) for more.
+- **Compact reads:**
+  - `list_documents` and `show_document` return counts and `current_issue` by default. Pass `include=["metadata", "parents", "attributes", "outline", "views", "filters"]` (or `["*"]`) for more.
+  - `outline(doc_id, depth=1)` lists only the top-level objects, and `outline(doc_id, root=obj_id)` lists only the objects under `obj_id`. A row whose children were left out carries `descendants_omitted`, so an agent can read a large document one section at a time.
 - **Auto-commit:**
   - Every write tool except `tag_issue` takes an optional `commit_message=…`. When it is set, the files the call changed are committed with a `Via: mellon-mcp` trailer, and the response carries `{commit: {short_hash, commit_message}}`.
   - If that commit fails, the response carries `commit_error` instead, and the write itself stays on disk.

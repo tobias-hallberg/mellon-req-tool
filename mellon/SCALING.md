@@ -2,6 +2,16 @@
 
 How Mellon behaves as documents grow, why, and what is left to do. The numbers come from `benchmarks/`, so they can be re-measured.
 
+## Recommended size
+
+Keep a document to 1,000 objects or fewer, counting headings and information text. A larger specification is better split into components, each with its own set of documents. Nothing enforces this.
+
+- **PDF export sets the limit.** A document has to be issued, and export took 101 s at 1,000 objects and 191 s at 2,000, against tectonic's fixed 300 s timeout. At 5,000 it hits the timeout. 1,000 leaves room for a slower machine or a busy one.
+- **Everything else is comfortable at 1,000.** Field edits and link checks stay fast up to 5,000. Opening, reloading and structural edits take several seconds at 5,000; see the tables below.
+- **Beyond the measurements:** a document much larger than this is hard to review as one piece, and it usually covers several components anyway.
+
+Splitting has one constraint: an object can only link within its own document or to a declared parent, so requirements that components share belong in a common parent document. Repos with many documents haven't been benchmarked; the has-incoming filter scans every link in the repo, so splitting doesn't make it faster.
+
 ## Method
 
 `benchmarks/gen_repo.py` builds a repo with two linked documents of N objects each. Every non-heading object in the child links to one object in the parent, and all links start OK. History is N commits, each touching 1–3 random objects, so the repo looks like a document that has been edited about once per object.
@@ -91,9 +101,9 @@ Costs are at 5,000 objects.
 
 **History walks.** `log_for_path` walks history until it finds 10 changes. With the History tab visible, selecting an object costs about 4.8 s when the object rarely changes (measured before this work). MCP `inspect_object` with history took 15 s under load. `link_index` shows how to avoid reading the large tree for every commit.
 
-**MCP.** The parse cache removed most of the cost of re-reading documents: `set_attribute` 4.9 s → 0.2 s, `trace` 10 s → 0.4 s, `show_object` 8.9 s → 0.4 s. There is still no pagination, and `outline` returns 1 MB of JSON, which is too much for an agent to use.
+**MCP.** The parse cache removed most of the cost of re-reading documents: `set_attribute` 4.9 s → 0.2 s, `trace` 10 s → 0.4 s, `show_object` 8.9 s → 0.4 s. The whole `outline` is 1 MB of JSON, too much for an agent to use, so it now takes `root` and `depth` and an agent can read one section at a time. The other reads have no pagination.
 
-**PDF export.** 58–126 s at 500 objects. At 5,000 it hits tectonic's fixed 300 s timeout, whose error message wrongly suggests a network problem. Whether it finishes at all is unknown. This work didn't change it, and 2,000 wasn't measured.
+**PDF export.** 58–126 s at 500 objects with the machine busy. On a mostly idle machine, with the installer's tectonic and TeX cache, it took 101 s at 1,000 and 191 s at 2,000, so it grows about linearly. At 5,000 it hits tectonic's fixed 300 s timeout, whose error message wrongly suggests a network problem. Whether it finishes at all without the timeout is unknown. This work didn't change it.
 
 **Batch editor primitives.** Each editor call loads the document and writes its files on its own, so a bulk operation repeats that work.
 

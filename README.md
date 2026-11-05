@@ -2,7 +2,7 @@
 
 Mellon is a requirements management tool modelled on IBM DOORS, built for small engineering teams. Each requirements document is a folder of XML files in a git repository: a manifest (metadata, attribute schema, outline), one file per object, and a links file for each object that has outgoing links. Git provides versioning, branching, history, diffs and review, and one-file-per-object keeps diffs and merges at the level of a single requirement. Mellon adds the document editor, links with suspect-link review, validation, traceability and PDF export. It has a desktop GUI for engineers and an MCP server so AI agents can work on the same requirements under the same rules.
 
-The current version is 0.3.0. Editing and link checks are measured up to 5,000 objects per document; PDF export and the MCP `outline` tool aren't practical at that size. See [SCALING.md](mellon/SCALING.md).
+The current version is 0.3.0. A document is meant to hold up to 1,000 objects, counting headings and information text; split a larger specification into components, each with its own set of documents. See [SCALING.md](mellon/SCALING.md).
 
 ## Features
 
@@ -131,7 +131,7 @@ claude mcp add mellon -- "$env:LOCALAPPDATA\Programs\Mellon\mellon-mcp.exe"
 - Undo and redo cover the edits made in a Document Editor window since the last commit, not draw.io saves or MCP changes.
 - Figures are SVG only, and rendering them in the PDF needs draw.io desktop.
 - Descriptions are plain text.
-- At 5,000 objects per document, opening or reloading a document takes several seconds, and PDF export and the MCP `outline` tool aren't practical. See [SCALING.md](mellon/SCALING.md).
+- Documents are meant for up to 1,000 objects. Larger ones still open and edit, but PDF export took 191 s at 2,000 objects against a 300 s timeout, and opening or reloading takes several seconds at 5,000. See [SCALING.md](mellon/SCALING.md).
 
 ## License
 

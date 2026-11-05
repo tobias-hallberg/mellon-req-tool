@@ -174,25 +174,47 @@ def _service_error_result(err: ServiceError, *, message: str) -> dict:
     }
 
 
-def _flat_outline(doc) -> list[dict]:
+def _flat_outline(doc, nodes=None, level: int = 0, levels: int | None = None) -> list[dict]:
+    """Pre-order rows for `nodes` (default: the whole outline), `levels` deep.
+
+    `level` is the document depth of `nodes`. A row whose children fall below
+    `levels` gets `descendants_omitted`, the number of objects left out under it.
+    """
     out: list[dict] = []
 
-    def walk(nodes, depth: int) -> None:
+    def count(nodes) -> int:
+        return sum(1 + count(n.children) for n in nodes)
+
+    def walk(nodes, depth: int, left: int | None) -> None:
         for n in nodes:
             obj = doc.objects.get(n.ref_id)
             text = obj.description if obj else ""
             first_line = text.splitlines()[0] if text else ""
-            out.append(
-                {
-                    "id": n.ref_id,
-                    "depth": depth,
-                    "heading_or_text": first_line[:200],
-                }
-            )
-            walk(n.children, depth + 1)
+            row = {
+                "id": n.ref_id,
+                "depth": depth,
+                "heading_or_text": first_line[:200],
+            }
+            out.append(row)
+            if left == 1:
+                if n.children:
+                    row["descendants_omitted"] = count(n.children)
+            else:
+                walk(n.children, depth + 1, None if left is None else left - 1)
 
-    walk(doc.outline, 0)
+    walk(doc.outline if nodes is None else nodes, level, levels)
     return out
+
+
+def _outline_node(nodes, ref_id: str, depth: int = 0):
+    """The outline node for `ref_id` and its document depth, or (None, 0)."""
+    for n in nodes:
+        if n.ref_id == ref_id:
+            return n, depth
+        found, found_depth = _outline_node(n.children, ref_id, depth + 1)
+        if found is not None:
+            return found, found_depth
+    return None, 0
 
 
 def _trim_tree(edges: list[dict], depth_left: int) -> list[dict]:
@@ -466,11 +488,37 @@ def inspect_object(
 
 
 @mcp.tool()
-def outline(doc_id: str) -> list[dict]:
-    """Flat pre-order outline of a document."""
-    log.info("outline %s", doc_id)
+def outline(
+    doc_id: str,
+    root: str | None = None,
+    depth: int | None = None,
+) -> list[dict]:
+    """Flat pre-order outline of a document, or of the part under one object.
+
+    Each row is `{id, depth, heading_or_text}`; `depth` is the row's level in
+    the whole document (0 = top level), whichever part was asked for.
+
+    Knobs:
+      - `root` lists only the objects under that object, not the object itself.
+      - `depth` bounds how many levels are listed: `1` gives the top-level
+        objects, or `root`'s direct children. A row whose children were left
+        out carries `descendants_omitted`, the number of objects under it;
+        pass that row's id as `root` to list them.
+
+    On a large document, start with `depth=1` and work down one section at
+    a time instead of reading the whole outline.
+    """
+    log.info("outline %s root=%s depth=%s", doc_id, root, depth)
     _require_doc(doc_id)
-    return _flat_outline(_svc().get_document(doc_id))
+    if depth is not None and depth < 1:
+        raise ValueError(f"depth must be 1 or more, got {depth}")
+    doc = _svc().get_document(doc_id)
+    if root is None:
+        return _flat_outline(doc, levels=depth)
+    node, level = _outline_node(doc.outline, root)
+    if node is None:
+        raise ValueError(f"No object {root!r} in the outline of document {doc_id!r}")
+    return _flat_outline(doc, node.children, level + 1, depth)
 
 
 @mcp.tool()

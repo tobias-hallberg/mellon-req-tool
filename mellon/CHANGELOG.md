@@ -24,9 +24,17 @@ All notable changes to Mellon. The format follows
 - **`.git/mellon-link-index.json`.** Answers from the suspect scan, kept so a
   new process needn't walk history again. It's a cache: deleting it is always
   safe, and `mellon-check` ignores it.
+- **MCP `outline` takes `root` and `depth`.** `depth=1` lists only the top
+  level, and `root` lists only the objects under one object. A row whose
+  children were left out carries `descendants_omitted`. Without either
+  argument, the response is unchanged.
 
 ### Changed
 
+- **Documents are meant for up to 1,000 objects,** counting headings and
+  information text. Split a larger specification into components, each with
+  its own set of documents. Nothing enforces it; `SCALING.md` explains the
+  choice.
 - **Much faster on large documents.** At 5,000 objects with 5,000 commits, a
   document used to not open within 30 minutes. See `SCALING.md` for numbers:
   - The suspect scan walks history once per target document, instead of once
