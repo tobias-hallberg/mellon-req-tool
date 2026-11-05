@@ -1051,7 +1051,7 @@ _READ_TOOLS = frozenset({
     "list_documents", "show_document", "search_objects", "show_object",
     "inspect_object", "outline", "validate_document", "validate_repo",
     "repo_health", "suspects", "trace", "incoming_links", "coverage_report",
-    "git_history", "show_object_at", "review_suspect_link",
+    "git_history", "show_object_at", "compare_document", "review_suspect_link",
 })
 _TOOL_SCHEMAS = {t.name: t.inputSchema for t in asyncio.run(server.mcp.list_tools())}
 # Real req-test ids for the arguments the read tools need; others get dummies.

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-10">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_working_copy_as_to
+tests/test_diff.py::test_working_copy_includes_uncommitted_edits
+tests/test_diff.py::test_working_copy_line_endings_alone_are_no_change</attr>
+  <description>Compare the latest commit with the working copy; an uncommitted edit is listed, and line endings alone are not a change.</description>
+</object>

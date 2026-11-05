@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-9">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_typed_version</attr>
+  <description>Type a short commit hash as From; the dialog compares at that commit.</description>
+</object>

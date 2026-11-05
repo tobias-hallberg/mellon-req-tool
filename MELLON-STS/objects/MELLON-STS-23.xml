@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-23">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_moved_and_link_reviewed_rows
+tests/test_diff.py::test_only_an_ack_change_is_a_link_review</attr>
+  <description>Change only a link's ack; the object is Link reviewed, not Modified.</description>
+</object>

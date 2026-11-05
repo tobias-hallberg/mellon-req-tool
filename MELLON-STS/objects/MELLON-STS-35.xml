@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_comparison_runs_in_the_background
+tests/test_gui_compare.py::test_only_the_latest_comparison_is_shown
+tests/test_gui_compare.py::test_closing_while_comparing_is_safe</attr>
+  <description>Start a comparison; the call returns before the result is in, only the latest result is shown, and closing the dialog mid-comparison is safe.</description>
+</object>

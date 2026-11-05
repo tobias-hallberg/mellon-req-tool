@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-25">
+  <attr name="type">Heading</attr>
+  <attr name="status">Draft</attr>
+  <description>Showing an object's changes</description>
+</object>

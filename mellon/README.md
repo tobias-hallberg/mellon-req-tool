@@ -16,7 +16,7 @@ Version 0.3.0. License GPL-3.0-or-later, © Tobias Hallberg (see `LICENSE`).
 | Command | What it does |
 |---|---|
 | `mellon-gui [PATH]` | PySide6 desktop app. A Project Explorer lists the repository's documents, and each document opens in its own editor window. |
-| `mellon-mcp [--repo-root PATH] [--read-only] [--log-level LEVEL]` | MCP stdio server for AI agents (45 tools). `--repo-root` defaults to `$CLAUDE_PROJECT_DIR`, then the current directory; `--read-only` refuses every write tool. |
+| `mellon-mcp [--repo-root PATH] [--read-only] [--log-level LEVEL]` | MCP stdio server for AI agents (46 tools). `--repo-root` defaults to `$CLAUDE_PROJECT_DIR`, then the current directory; `--read-only` refuses every write tool. |
 
 Both commands accept `--version`.
 

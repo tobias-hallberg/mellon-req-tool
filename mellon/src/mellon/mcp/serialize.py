@@ -253,3 +253,117 @@ def search_hit_to_dict(hit: SearchHit) -> dict:
         "score": hit.score,
         "match_fields": list(hit.match_fields),
     }
+
+
+def _position_to_dict(pos) -> dict | None:
+    if pos is None:
+        return None
+    return {"parent": pos.parent_id, "after": pos.after_id, "in_outline": pos.in_outline}
+
+
+def _state_to_dict(state) -> dict:
+    """An added or deleted object's fields at the version where it exists."""
+    out: dict = {"error": state.error} if state.error else {}
+    if state.obj is not None:
+        out.update(object_to_dict(state.obj))
+    out["figure"] = state.figure is not None
+    out["links"] = [link_to_dict(link) for link in state.links]
+    out["position"] = _position_to_dict(state.position)
+    return out
+
+
+def object_change_to_dict(change, labels) -> dict:
+    """One row of a `DocumentDiff`, with only the keys that apply."""
+    out: dict = {
+        "obj_id": change.obj_id,
+        "changes": [str(kind) for kind in change.kinds],
+        "text": change.text,
+    }
+    err_a, err_b = change.errors
+    if change.before is None or change.after is None:
+        state = change.after if change.before is None else change.before
+        out["object"] = _state_to_dict(state)
+        return out
+    if err_a or err_b:
+        out["unreadable"] = {"from": err_a, "to": err_b}
+    delta = change.delta
+    if delta is not None:
+        if delta.attrs:
+            out["attrs"] = [
+                {"name": a.name, "label": labels(a.name), "from": a.value_a, "to": a.value_b}
+                for a in delta.attrs
+            ]
+        if delta.description is not None:
+            out["description"] = {
+                "from": delta.description.text_a,
+                "to": delta.description.text_b,
+            }
+        links: dict = {}
+        if delta.links.added:
+            links["added"] = [_link_change(l) for l in delta.links.added]
+        if delta.links.removed:
+            links["removed"] = [_link_change(l) for l in delta.links.removed]
+        if delta.links.ack_changed:
+            links["reviewed"] = [
+                {
+                    "target_doc": l.target_doc,
+                    "target_id": l.target_id,
+                    "type": l.type,
+                    "ack_from": l.ack_a,
+                    "ack_to": l.ack_b,
+                }
+                for l in delta.links.ack_changed
+            ]
+        if links:
+            out["links"] = links
+        if delta.table is not None:
+            out["table"] = {
+                "from": table_to_dict(delta.table.table_a) if delta.table.table_a else None,
+                "to": table_to_dict(delta.table.table_b) if delta.table.table_b else None,
+            }
+        if delta.figure is not None:
+            out["figure"] = {
+                "from": delta.figure.svg_a is not None,
+                "to": delta.figure.svg_b is not None,
+            }
+    if "Moved" in out["changes"]:
+        out["moved"] = {
+            "from": _position_to_dict(change.before.position),
+            "to": _position_to_dict(change.after.position),
+        }
+    return out
+
+
+def _link_change(link) -> dict:
+    return {
+        "target_doc": link.target_doc,
+        "target_id": link.target_id,
+        "type": link.type,
+        "ack": link.ack,
+    }
+
+
+def _version_to_dict(ref: str, short: str, present: bool, outline_error: str | None) -> dict:
+    out: dict = {"ref": ref, "short": short, "present": present}
+    if outline_error:
+        out["outline_error"] = outline_error
+    return out
+
+
+def document_diff_to_dict(diff, *, max_changes: int | None = None) -> dict:
+    """A `diff.DocumentDiff` as the MCP `compare_document` tool returns it.
+
+    `figure` entries say whether each side has a figure; the SVG itself is
+    left out. `max_changes` caps the `changes` list (`truncated` says so).
+    """
+    changes = list(diff.changes)
+    shown = changes if max_changes is None else changes[:max_changes]
+    return {
+        "doc_id": diff.doc_id,
+        "from": _version_to_dict(diff.ref_a, diff.short_a, diff.present_a, diff.outline_error_a),
+        "to": _version_to_dict(diff.ref_b, diff.short_b, diff.present_b, diff.outline_error_b),
+        "counts": {str(kind): n for kind, n in diff.counts().items()},
+        "total_changes": len(changes),
+        "changes": [object_change_to_dict(c, diff.label) for c in shown],
+        "truncated": len(shown) < len(changes),
+    }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-17">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_rows_in_outline_order_with_change_and_text
+tests/test_diff.py::test_uppercase_extension_compares</attr>
+  <description>Compare Issue 1 with the latest commit; every added, deleted and modified object is a row with its id, change and first line of text, also from a file with an upper-case .XML extension.</description>
+</object>

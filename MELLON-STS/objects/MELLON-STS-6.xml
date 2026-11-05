@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-6">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_history_tab_compares_a_commit_with_the_latest</attr>
+  <description>Select a commit in the History tab and press Compare with latest…; From is that commit and To the latest commit.</description>
+</object>

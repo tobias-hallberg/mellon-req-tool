@@ -990,6 +990,31 @@ def test_current_issue_excludes_unreachable_branch_tag(tmp_git: Path) -> None:
     assert current_issue(repo, "DOC") == "1"
 
 
+def test_issue_tags_highest_first_and_reachable_only(tmp_git: Path) -> None:
+    from mellon.git_ops import issue_tags
+
+    _write(tmp_git, "DOC/DOC.xml", "<document/>")
+    commit(tmp_git, "v1")
+    repo = pygit2.Repository(str(tmp_git))
+    first = repo.head.target
+    create_issue_tag(repo, "DOC", "2", first)
+    create_issue_tag(repo, "DOC", "10", first)
+    create_issue_tag(repo, "OTHER", "7", first)
+    _write(tmp_git, "DOC/DOC.xml", "<document>later</document>")
+    later = repo.revparse_single(commit(tmp_git, "v2")).id
+    create_issue_tag(repo, "DOC", "11", later)
+    repo.reset(first, pygit2.GIT_RESET_HARD)
+
+    assert issue_tags(repo, "DOC") == [
+        ("11", "DOC-issue-11", later),
+        ("10", "DOC-issue-10", first),
+        ("2", "DOC-issue-2", first),
+    ]
+    # Issue 11 is on a commit HEAD no longer reaches.
+    assert [t[0] for t in issue_tags(repo, "DOC", reachable_only=True)] == ["10", "2"]
+    assert issue_tags(repo, "NONE") == []
+
+
 def test_create_issue_tag_refuses_duplicate(tmp_git: Path) -> None:
     _write(tmp_git, "DOC/DOC.xml", "<document/>")
     commit(tmp_git, "v1")

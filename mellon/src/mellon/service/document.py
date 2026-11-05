@@ -59,6 +59,13 @@ from ..suspects import (
     scan_repo,
 )
 from ..coverage import CoverageReport, coverage_report as _coverage_report
+from ..diff import (
+    DocumentDiff,
+    Version,
+    compare_document as _compare_document,
+    default_versions as _default_versions,
+    document_versions as _document_versions,
+)
 from ..search import SearchHit, search_objects as _search_objects
 from ..trace import TraceEdge, trace_down, trace_up
 from ..validator import ValidationError, validate
@@ -650,6 +657,46 @@ class DocumentService:
             return log_for_path(
                 repo, paths, max_entries=max_entries, since_commit=since_commit
             )
+        except GitError as e:
+            raise ServiceError(ErrorCode.GIT, str(e)) from e
+
+    # --- compare ---------------------------------------------------------
+    # Read-only and touching no shared state, so these may run off the GUI
+    # thread. The document need not exist on disk: it may only be in history.
+
+    def _compare_doc_id(self, doc_id: str) -> Path:
+        root = self._require_repo_root()
+        try:
+            editor._child_path(root, doc_id)
+        except EditorError as e:
+            raise ServiceError(ErrorCode.VALIDATION, str(e)) from e
+        return root
+
+    def compare_document(self, doc_id: str, ref_a: str, ref_b: str) -> DocumentDiff:
+        """What changed in `doc_id` from version `ref_a` to `ref_b`; see
+        `diff.compare_document`. `diff.WORKING_COPY` is the files on disk.
+        Raises `ServiceError(GIT)` naming a version that can't be resolved."""
+        root = self._compare_doc_id(doc_id)
+        try:
+            return _compare_document(root, doc_id, ref_a, ref_b)
+        except GitError as e:
+            raise ServiceError(ErrorCode.GIT, str(e)) from e
+
+    def compare_versions(self, doc_id: str, *, max_commits: int = 200) -> list[Version]:
+        """The versions to offer for comparing `doc_id`; see
+        `diff.document_versions`."""
+        root = self._compare_doc_id(doc_id)
+        try:
+            return _document_versions(root, doc_id, max_commits=max_commits)
+        except GitError as e:
+            raise ServiceError(ErrorCode.GIT, str(e)) from e
+
+    def default_compare_versions(self, doc_id: str) -> tuple[str | None, str]:
+        """`(from_ref, to_ref)` to compare `doc_id` with by default; see
+        `diff.default_versions`."""
+        root = self._compare_doc_id(doc_id)
+        try:
+            return _default_versions(root, doc_id)
         except GitError as e:
             raise ServiceError(ErrorCode.GIT, str(e)) from e
 

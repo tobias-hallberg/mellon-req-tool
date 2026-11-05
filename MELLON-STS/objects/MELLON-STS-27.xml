@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_description_change_highlights_words
+tests/test_gui_compare.py::test_words_html_marks_only_changed_words
+tests/test_diff.py::test_word_diff</attr>
+  <description>Select an object whose description changed; deleted words are struck through at From and inserted words underlined at To.</description>
+</object>

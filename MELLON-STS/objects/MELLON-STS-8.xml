@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-8">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_versions_offered
+tests/test_diff.py::test_document_versions</attr>
+  <description>From and To offer the working copy, the latest commit, every issue, every branch and the commits that changed the document, and only those commits.</description>
+</object>

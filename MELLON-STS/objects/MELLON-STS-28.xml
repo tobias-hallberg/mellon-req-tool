@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_modified_object_shows_each_field_at_from_and_to</attr>
+  <description>An attribute set on one side only shows (not set) on the other.</description>
+</object>

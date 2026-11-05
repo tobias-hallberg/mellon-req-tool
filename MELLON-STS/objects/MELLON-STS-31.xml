@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_double_click_selects_the_object_in_the_editor</attr>
+  <description>Double-click a row; the object is selected in the Document Editor, or the dialog says it isn't in the open document.</description>
+</object>

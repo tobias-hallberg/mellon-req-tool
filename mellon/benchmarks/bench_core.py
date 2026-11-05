@@ -12,6 +12,7 @@ from pathlib import Path
 import pygit2
 
 from mellon import editor, git_ops, load_document
+from mellon.diff import WORKING_COPY, compare_document, document_versions
 from mellon.filter import evaluate
 from mellon.mcp import server
 from mellon.repo import folders_fingerprint, load_all
@@ -50,6 +51,14 @@ t("scan_document(SRS), same HEAD", lambda: scan_document(doc, ROOT / "SRS"))
 t("repo.status()", lambda: repo.status())
 t("dirty_paths_under(SRS)", lambda: git_ops.dirty_paths_under(repo, "SRS"))
 t("folders_fingerprint(SRS,SYS)", lambda: folders_fingerprint([ROOT / "SRS", ROOT / "SYS"]))
+
+# Compare (MELLON-SRS: within 2 s at 1,000 objects). From the first commit to
+# HEAD changes the most objects; the working copy reads every file.
+first_commit = str(list(repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL))[-1].id)
+diff = t("compare_document(SRS), first..HEAD", lambda: compare_document(ROOT, "SRS", first_commit, "HEAD"))
+results["compare changes"] = len(diff.changes)
+t("compare_document(SRS), HEAD..working copy", lambda: compare_document(ROOT, "SRS", "HEAD", WORKING_COPY))
+t("document_versions(SRS)", lambda: document_versions(ROOT, "SRS"))
 
 # Incoming-link filter: the provider scans every link in the repo per object.
 rule_all = Filter(slug="x", name="x", rules=(FilterRule(kind="has-incoming", attr="", op="present", value=""),))

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-13">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_swap</attr>
+  <description>Press Swap; From and To exchange and the comparison runs the other way.</description>
+</object>

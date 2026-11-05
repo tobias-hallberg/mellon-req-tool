@@ -751,6 +751,41 @@ def current_issue(repo: pygit2.Repository, doc_id: str) -> str:
     return candidates[0][1]
 
 
+def issue_tags(
+    repo: pygit2.Repository, doc_id: str, *, reachable_only: bool = False
+) -> list[tuple[str, str, pygit2.Oid]]:
+    """Every `<doc_id>-issue-*` tag as `(issue, tag_name, commit_oid)`,
+    highest issue first.
+
+    `reachable_only` keeps the tags whose commit is an ancestor of HEAD, as
+    `current_issue` does (none when HEAD is unborn).
+    """
+    head_oid = None
+    if reachable_only:
+        try:
+            head_oid = repo.head.target
+        except (pygit2.GitError, KeyError):
+            return []
+    prefix = f"refs/tags/{doc_id}{_ISSUE_TAG_INFIX}"
+    out: list[tuple[tuple[int, ...], str, str, pygit2.Oid]] = []
+    for ref_name in repo.references:
+        if not ref_name.startswith(prefix):
+            continue
+        issue_str = ref_name[len(prefix):]
+        if not _ISSUE_RE.match(issue_str):
+            continue
+        try:
+            target_commit = repo.references[ref_name].peel(pygit2.Commit)
+        except (pygit2.GitError, KeyError):
+            continue
+        if head_oid is not None and not _is_ancestor(repo, target_commit.id, head_oid):
+            continue
+        tag_name = ref_name[len("refs/tags/"):]
+        out.append((_issue_key(issue_str), issue_str, tag_name, target_commit.id))
+    out.sort(key=lambda t: t[0], reverse=True)
+    return [(issue, name, oid) for _key, issue, name, oid in out]
+
+
 def issue_tags_by_commit(repo: pygit2.Repository, doc_id: str) -> dict[str, str]:
     """Map full commit-oid hex -> issue string for every `<doc_id>-issue-*` tag.
 

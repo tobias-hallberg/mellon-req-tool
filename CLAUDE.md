@@ -55,7 +55,7 @@ All run from inside `mellon/`:
 | `uv sync` | Install/update env from `uv.lock` |
 | `uv run pytest` | Run the full suite (~1420 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
 | `uv run mellon-check --repo-root ..` | Pass/fail gate over load errors, validation and link states: exit 0 clean, 1 problems, 2 unusable root. CI runs it |
-| `uv run mellon-mcp [--repo-root <path>] [--read-only]` | MCP stdio server (45 tools). The root defaults to `$CLAUDE_PROJECT_DIR`, then the cwd, and must be the root of a full git clone (otherwise exit 2) |
+| `uv run mellon-mcp [--repo-root <path>] [--read-only]` | MCP stdio server (46 tools). The root defaults to `$CLAUDE_PROJECT_DIR`, then the cwd, and must be the root of a full git clone (otherwise exit 2) |
 | `uv run mellon-gui [path]` | PySide6 GUI (Project Explorer + per-doc Document Editor windows) |
 | `powershell -ExecutionPolicy Bypass -File packaging\build.ps1` | Build `build\Mellon-Setup-<version>.exe` (needs uv, git, Inno Setup 6.3+, internet) |
 
@@ -76,11 +76,11 @@ All run from inside `mellon/`:
 | `filter.py` | Saved-filter engine: `evaluate(doc, filt)`, operators per attribute kind |
 | `coverage.py` | `coverage_report` (direct + transitive, headings-aware) |
 | `search.py` | `search_objects`: case-insensitive substring scan with ranked hits |
-| `diff.py` | `compare_document(repo_root, doc_id, ref_a, ref_b)`: structured diff between two refs. Library only; there is no Compare dialog yet |
+| `diff.py` | `compare_document(repo_root, doc_id, ref_a, ref_b)`: what changed between two versions (git refs or `WORKING_COPY`): added, deleted, modified, moved, link reviewed, with field deltas and both states. `document_versions` / `default_versions` feed the Compare dialog |
 | `merge.py` | Resolve a git merge that stopped with conflicts in documents: `pending`, `plan`, `resolve`. Renumbers the later of two objects created under one id (with their links), merges objects per field, link files as sets and outlines by position; only same-field conflicts go to the user (with trace context). GUI: Project Explorer banner + `MergeDialog` |
 | `export.py` | LaTeX/PDF export via Jinja2 + tectonic (`templates/syrs/`); tectonic lookup `MELLON_TECTONIC` → `<exe-dir>/tools` → PATH → `<project-root>/tools`. Figures are rendered by draw.io (`export.pdf(doc, folder=…)`) |
 | `drawio.py` | draw.io desktop integration (stdlib + lxml only — the frozen MCP exe has no Qt): `find_drawio` (`MELLON_DRAWIO` → Windows install dirs → PATH), `is_drawio_svg`, `BLANK_DRAWIO_SVG`, `open_in_drawio`, `qt_svg` (QtSvg-friendly rewrite: `light-dark()` colours, HTML labels), `export_pdfs` (one batch CLI run → cropped vector PDFs) |
-| `mcp/server.py` | FastMCP stdio server, 45 tools (13 read / 27 write / 5 git+review) |
+| `mcp/server.py` | FastMCP stdio server, 46 tools (13 read / 27 write / 6 git+review) |
 | `mcp/serialize.py` | dataclass → JSON-serializable dicts |
 | `service/` | Cache (incl. load errors, HEAD-keyed suspect scans), document service, error/result types shared by GUI + MCP |
 | `gui/app.py` | `QApplication` entrypoint; installs the excepthook (log at `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log`) and opens a `ProjectExplorerWindow` |
@@ -92,7 +92,7 @@ All run from inside `mellon/`:
 | `gui/models/` | `ProjectTreeModel`, `OutlineModel`, `ObjectsGridModel` |
 | `gui/widgets/` | `InlineTableWidget` — in-place editable table grid (cell-text editing), opened as the description-column editor for table objects; structural controls (add/delete row+col, merge/split, header, alignment, insert/remove) live in the toolbar **Table** dropdown, which drives the live editor |
 | `gui/panels/` | `OutlinePane` (left), `GridPane` (center), `RightPane` tabs (`Inspector` + `History`) |
-| `gui/dialogs/` | `LinkPicker`, `TraceView`, `CommitDialog`, `DocumentPropertiesDialog`, filter + view manager dialogs |
+| `gui/dialogs/` | `LinkPicker`, `TraceView`, `CommitDialog`, `CompareDialog`, `DocumentPropertiesDialog`, filter + view manager dialogs |
 
 Outside `src/`, **`mellon/packaging/`** holds the Windows installer:
 - `build.ps1` builds it with PyInstaller onedir and Inno Setup.

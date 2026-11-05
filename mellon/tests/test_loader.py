@@ -685,3 +685,31 @@ def test_uppercase_suffix_matches_on_windows(doc_folder: Path) -> None:
     objects = doc_folder / "objects"
     (objects / "DOC-0.xml").rename(objects / "DOC-0.XML")
     assert "DOC-0" in load_document(doc_folder).objects
+
+
+# --- parsing bytes (versions that aren't on disk) --------------------------
+
+
+def test_parse_bytes_matches_load_document(doc_folder: Path) -> None:
+    doc = load_document(doc_folder)
+    manifest = (doc_folder / "DOC.xml").read_bytes()
+    _meta, _parents, attributes, outline = loader.parse_manifest_bytes(manifest, "DOC/DOC.xml")
+    assert attributes == doc.attributes and outline == doc.outline
+    obj = loader.parse_object_bytes(
+        (doc_folder / "objects" / "DOC-0.xml").read_bytes(), "DOC/objects/DOC-0.xml"
+    )
+    assert obj == doc.objects["DOC-0"]
+    links = (
+        b'<links source="DOC-0"><link target-doc="DOC" target-id="DOC-1" type="refines"/></links>'
+    )
+    source, parsed = loader.parse_links_bytes(links, "DOC/links/DOC-0.xml")
+    assert source == "DOC-0" and parsed[0].target_id == "DOC-1"
+
+
+def test_parse_bytes_errors_name_the_path() -> None:
+    with pytest.raises(LoaderError, match=r"DOC-0\.xml: XML parse error"):
+        loader.parse_object_bytes(b"<object id=", "DOC/objects/DOC-0.xml")
+    with pytest.raises(LoaderError, match="does not match"):
+        loader.parse_object_bytes(b'<object id="DOC-1"/>', "DOC/objects/DOC-0.xml")
+    with pytest.raises(LoaderError, match="does not match folder name"):
+        loader.parse_manifest_bytes(b'<document id="X"/>', "DOC/DOC.xml")

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="rationale">Timed with the scale benchmark, not in CI: timings on shared runners are too noisy to gate on. SCALING.md records the result.</attr>
+  <description>Run benchmarks/bench_core.py on a gen_repo.py repo of 1,000 objects; compare_document(SRS), first..HEAD completes within 2 s.</description>
+</object>

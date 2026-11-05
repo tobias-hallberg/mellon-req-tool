@@ -381,7 +381,7 @@ Quit is in the hamburger menu. It uses the platform's standard Quit shortcut, wh
 
 New, Child, Indent/Outdent (Ctrl+] / Ctrl+[), Move up/down and Del sit on the outline pane's toolbar; their shortcuts also work while that pane is hidden. Tab / Shift+Tab in the grid indent and outdent too.
 
-Acknowledging suspect links has no shortcut; see [the suspect-link workflow](#the-suspect-link-workflow). Validate, Properties, the Figure/Table/Views/Filters menus, Discard, and Read-only have no shortcuts either. They are on the toolbar or in the hamburger menu.
+Acknowledging suspect links has no shortcut; see [the suspect-link workflow](#the-suspect-link-workflow). Validate, Properties, the Figure/Table/Views/Filters menus, Compare, Discard, and Read-only have no shortcuts either. They are on the toolbar or in the hamburger menu.
 
 **Figures in draw.io.** The **Figure** toolbar menu and the row's right-click menu start with **New draw.io figure…** (the object has no figure yet: attaches a blank draw.io figure and opens it) or **Edit in draw.io…** (opens the existing one). Draw, save in draw.io (Ctrl+S), and switch back: the thumbnail refreshes and the object counts as changed, with no "Changed on disk" banner. The action is disabled for a plain SVG, which draw.io can't edit, and needs draw.io desktop; see **PDF export** below for where Mellon looks for it. Thumbnails and **View full size** draw figures on white and show draw.io's labels and colours.
 
@@ -399,6 +399,16 @@ Acknowledging suspect links has no shortcut; see [the suspect-link workflow](#th
 - Any document in the repo fails to load, because the links to the object couldn't be checked.
 
 If other objects link to the deleted object, a second confirmation lists those links. Mellon then strips them from the other documents' `links/` files, and those documents need their own commit. Deleting an object also removes its outgoing links file and its figure.
+
+**Compare (hamburger menu → Compare…).** Shows what changed in this document between two versions, **From** and **To**. A version is an issue, a branch, a commit that changed the document, the latest commit, or the **working copy**: the files on disk, uncommitted edits included. You can also type a commit hash, tag or branch name.
+
+- **Opens with:** From is the latest issue and To the latest commit. When the document hasn't changed since its latest issue, From is the issue before it, so the two issues are compared. A document with no issue asks you to choose From. **Swap** exchanges the two.
+- **The list:** every added, deleted, modified and moved object, in outline order at To. A deleted object stands where it was at From, with its text from there. An object whose only change is an acknowledged suspect link is **Link reviewed**, not Modified. The **Show** boxes hide rows by change, and **Copy list** puts the shown rows on the clipboard as tab-separated text.
+- **Details:** select a row to see each changed field at From and at To: attributes by label (*(not set)* when an object doesn't have one), the description with deleted words struck through and inserted words underlined, the table, the figure, outgoing links added, removed or reviewed, and a moved object's place in the outline. An added or deleted object shows all its fields. Double-click a row to select the object in the editor.
+- **Files that can't be read:** an object whose file doesn't parse at a version is marked *unreadable* there, and the rest of the comparison still shows.
+- **Safe:** comparing reads git history and the files on disk and changes nothing, so it works in read-only mode too. It runs in the background, and the dialog stays open while you edit.
+
+The History tab's **Compare with latest…** compares the whole document at the selected commit with the latest commit. MCP `compare_document` returns the same changes.
 
 **PDF export (Ctrl+E).** Export renders the document as it is on disk, including uncommitted edits.
 
@@ -429,7 +439,7 @@ Export needs the `tectonic` binary. Mellon looks for it in this order:
 
 ### MCP: `mellon-mcp [--repo-root <path>] [--read-only]`
 
-`mellon-mcp` is a FastMCP stdio server with **45 tools**. In the installer it is `mellon-mcp.exe`.
+`mellon-mcp` is a FastMCP stdio server with **46 tools**. In the installer it is `mellon-mcp.exe`.
 
 **Options:**
 
@@ -446,7 +456,7 @@ For client configuration (`claude mcp add`, Claude Desktop), see [INSTALL.md](IN
 |---|---|
 | Read (13) | `list_documents`, `show_document`, `search_objects`, `show_object`, `inspect_object`, `outline`, `validate_document`, `validate_repo`, `repo_health`, `suspects`, `trace`, `incoming_links`, `coverage_report` |
 | Write (27) | `new_object`, `set_attribute`, `edit_description`, `update_object`, `copy_object`, `bulk_set_attribute`, `set_figure`, `clear_figure`, `set_table`, `clear_table`, `edit_metadata`, `tag_issue`, `add_parent_doc`, `remove_parent_doc`, `add_attr_option`, `define_attribute`, `change_attribute_required`, `delete_attribute`, `remove_attr_option`, `manage_view`, `create_document`, `move_object`, `reorder_outline`, `add_link`, `remove_link`, `delete_object`, `ack_suspects` |
-| Git, review, export (5) | `commit_changes`, `git_history`, `show_object_at`, `review_suspect_link`, `export_document` |
+| Git, review, export (6) | `commit_changes`, `git_history`, `show_object_at`, `compare_document`, `review_suspect_link`, `export_document` |
 
 Composite tools that save AI clients many calls:
 
@@ -510,7 +520,7 @@ Every operation is also available from Python. The `mellon` package exports the 
 | Suspects | `scan_document(doc, folder)`, `scan_repo(repo_root)`, `ack_all(folder, statuses)`, `LinkState`, `LinkStatus` |
 | Traverse, search, filter | `trace_up`/`trace_down(docs, doc_id, obj_id)`, `repo_incoming_links`, `search_objects(docs, query, …)`, `evaluate_filter`, `valid_ops_for_kind` |
 | Issues | `increment_issue`, `validate_issue` |
-| Diff (library only, no GUI or MCP) | `compare_document(repo_root, doc_id, ref_a, ref_b) -> DocumentDiff` |
+| Compare | `compare_document(repo_root, doc_id, ref_a, ref_b) -> DocumentDiff` (a ref may be `WORKING_COPY`), `document_versions`, `default_versions`, `word_diff`, `Change` |
 
 ```python
 from pathlib import Path
@@ -579,7 +589,7 @@ A document's issue is a lightweight git tag named `<doc-id>-issue-<n>`, for exam
 
 - **Format:** dot-separated numbers. Comparison is per component, so `1.10` is higher than `1.9`.
 - **Current issue:** the highest `<doc-id>-issue-*` tag reachable from HEAD. Tags that exist only on other branches don't count.
-- **Where it shows:** in the commit dialog, in the `current_issue` field of MCP `list_documents` / `show_document`, and as the revision on the PDF cover.
+- **Where it shows:** in the commit dialog, in the `current_issue` field of MCP `list_documents` / `show_document`, as the revision on the PDF cover, and as the versions the Compare dialog offers and opens with.
 
 **Commit dialog fields:**
 

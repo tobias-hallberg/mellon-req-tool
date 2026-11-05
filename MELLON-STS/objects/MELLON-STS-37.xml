@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_compare_document_defaults_to_latest_issue_and_commit
+tests/test_mcp_git.py::test_compare_document_matches_the_dialog_engine
+tests/test_mcp_git.py::test_compare_document_working_copy
+tests/test_mcp_git.py::test_compare_document_caps_the_list
+tests/test_mcp_git.py::test_compare_document_without_an_issue_needs_from
+tests/test_mcp_git.py::test_compare_document_names_a_bad_version
+tests/test_mcp_git.py::test_compare_document_works_read_only</attr>
+  <description>Call MCP compare_document; it returns the dialog's changes, defaults, working copy, caps and errors.</description>
+</object>
