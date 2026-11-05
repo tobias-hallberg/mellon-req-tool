@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <rule>
+    <when type="Test Case"/>
+    <then>
+      <attr name="status" status="required"/>
+      <attr name="verification-method" status="required"/>
+      <attr name="execution" status="required"/>
+      <attr name="rung" status="required"/>
+      <link target-doc="MELLON-PDF-SRS" status="required"/>
+    </then>
+  </rule>
+  <rule>
+    <when type="Test Case" execution="Automated"/>
+    <then>
+      <attr name="automated-tests" status="required"/>
+    </then>
+  </rule>
+  <rule>
+    <when type="Heading"/>
+    <then>
+      <attr name="status" status="forbidden"/>
+      <attr name="verification-method" status="forbidden"/>
+      <attr name="execution" status="forbidden"/>
+      <attr name="rung" status="forbidden"/>
+      <attr name="automated-tests" status="forbidden"/>
+      <attr name="rationale" status="forbidden"/>
+    </then>
+  </rule>
+</rules>

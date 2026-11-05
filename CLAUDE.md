@@ -17,8 +17,12 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── .github/workflows/
 │   ├── ci.yml                  CI: ubuntu + windows tests, wheel smoke job
 │   └── installer.yml           Windows installer build (manual, or v* tag → draft release)
-├── MELLON-SRS/                 Mellon's own requirements, kept as a Mellon document (checked by mellon-check in CI)
-├── MELLON-STS/                 Mellon's own test specification; test cases verify MELLON-SRS
+├── docs/                       how Mellon specifies itself: specification.md, definitions.md, open-questions.md,
+│                               architecture.md, failure-analysis.md (not a Mellon document)
+├── MELLON-<AREA>-SRS/          Mellon's own requirements, one document per area (STORE, EDIT, CHECK, TRACE,
+│                               VER, PDF, MCP, GUI); checked by mellon-check in CI
+├── MELLON-<AREA>-STS/          Mellon's own test cases; each verifies its area's SRS
+├── MELLON-SRS/, MELLON-STS/    the first, pre-split spec (Compare), being moved into MELLON-VER-SRS/STS
 ├── mellon/                     the actual Python package
 │   ├── README.md               short entry point
 │   ├── INSTALL.md              installer, MCP client config, dev env setup (uv, Python 3.12)
@@ -111,7 +115,13 @@ Tests mirror the layout: one `tests/test_<module>.py` per source module. `tests/
 - **Editor mutates, caller commits.** Every function in `editor.py` writes files but never commits. The GUI commits via an explicit dialog; the MCP server has a separate explicit `commit_changes` tool.
 - **Two-commit suspect-link rule is intentional.** A file cannot record its own commit's hash, so revising a parent and re-acking children always takes two commits. This is the design — don't try to "fix" it.
 - **One test file per source module.** Match the existing pattern when adding tests.
-- **Mellon specifies Mellon.** New behaviour is written as requirements in `MELLON-SRS` before it is built; existing behaviour gets requirements when it changes. Edit the documents through Mellon (GUI, MCP or `editor.py`), not by hand. A `MELLON-STS` test case links `verifies` to its requirements and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect. `tests/test_mellon_sts.py` fails when a listed node id names no test, so rename or delete a test together with its test case (that file is the one test not tied to a source module).
+- **Mellon specifies Mellon.** `docs/specification.md` is the rulebook; read it before touching a spec document. In short:
+  - New behaviour is written as a requirement in its area's `MELLON-<AREA>-SRS` before it is built; existing behaviour is being specified area by area.
+  - A requirement says exactly one of shall, should or could. It has `level: High` (Mellon is one program, so one level), a build-state `status` (Proposed, Accepted, Implemented, Deferred, Withdrawn) and a `rationale` that starts with its source (`as implemented:`, `stakeholder:`, `analysis:`, `derived:`, `parent:`).
+  - Requirements are implementation-free: they must survive a rewrite in another language or a replaced exporter, so they never name modules, libraries or pytest. Terms come from `docs/definitions.md` only.
+  - Edit the documents with a **released** Mellon build (GUI or MCP server), not the development build and not by hand. Rules files (`<doc>.rules.xml`) have no tool, so they're the one thing edited by hand.
+  - A `MELLON-<AREA>-STS` test case is written in product terms, links `verifies` to its requirements, and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect.
+  - `tests/test_mellon_spec.py` fails when a listed node id names no test, a requirement doesn't say exactly one keyword, or an Accepted or Implemented requirement has no test case. So rename or delete a test together with its test case. That file is the one test not tied to a source module.
 - **Folder name = manifest id.** A document's folder name must match its manifest's `id` attribute, and an object file's stem must match its `<object id>`.
 - **Outgoing links only on disk.** `links/<id>.xml` files hold *outgoing* links from object `<id>`. Incoming links are computed by scanning the whole repo.
 - **Canonical 2-space XML indentation** is applied on write via `lxml.etree.indent`. First edit of a hand-authored file may collapse decorative blank lines — expected, one-time.

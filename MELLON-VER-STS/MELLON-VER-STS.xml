@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document id="MELLON-VER-STS">
+  <metadata>
+    <title>Mellon Software Test Specification: Versions</title>
+    <author>Tobias Hallberg</author>
+    <date>2026-11-05</date>
+  </metadata>
+  <parents>
+    <parent doc="MELLON-VER-SRS"/>
+  </parents>
+  <attributes>
+    <attribute name="type" kind="enum" required="true" label="Type">
+      <option>Heading</option>
+      <option>Test Case</option>
+      <option>Information</option>
+      <option>Note</option>
+    </attribute>
+    <attribute name="status" kind="enum" required="false" label="Status">
+      <option>Proposed</option>
+      <option>Accepted</option>
+      <option>Implemented</option>
+      <option>Deferred</option>
+      <option>Withdrawn</option>
+    </attribute>
+    <attribute name="verification-method" kind="enum" required="false" label="Verification Method">
+      <option>Test</option>
+      <option>Analysis</option>
+      <option>Inspection</option>
+      <option>Demonstration</option>
+    </attribute>
+    <attribute name="execution" kind="enum" required="false" label="Execution">
+      <option>Automated</option>
+      <option>Manual</option>
+    </attribute>
+    <attribute name="rung" kind="enum" required="false" label="Rung">
+      <option>1 Unit</option>
+      <option>2 Git</option>
+      <option>3 GUI and MCP</option>
+      <option>4 Installer</option>
+      <option>5 Person</option>
+    </attribute>
+    <attribute name="automated-tests" kind="text" required="false" label="Automated Tests"/>
+    <attribute name="rationale" kind="text" required="false" label="Rationale"/>
+  </attributes>
+  <outline/>
+</document>

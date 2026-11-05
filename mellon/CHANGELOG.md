@@ -19,9 +19,17 @@ All notable changes to Mellon. The format follows
   Specified first in `MELLON-SRS`, Mellon's own requirements, now kept in
   this repo next to `MELLON-STS`.
 - **MCP `compare_document`** returns the same changes (46 tools).
-- `tests/test_mellon_sts.py`: fails when a `MELLON-STS` test case lists a
-  pytest node id that names no test, so the test specification can't drift
-  from the suite.
+- `tests/test_mellon_spec.py`: fails when a test case in Mellon's own
+  specification lists a pytest node id that names no test, so the test
+  specification can't drift from the suite. It also checks that each
+  requirement says exactly one of shall, should or could, that each Accepted
+  or Implemented requirement has a test case, and that each document's rules
+  catch a bare requirement or test case.
+- **Mellon's own specification is split by area:** `MELLON-<AREA>-SRS` and
+  `MELLON-<AREA>-STS` for STORE, EDIT, CHECK, TRACE, VER, PDF, MCP and GUI,
+  with rules files. `docs/specification.md` says how they're written,
+  `docs/definitions.md` holds the terms, and `docs/architecture.md` describes
+  the design.
 - `diff.compare_document` covers outline moves, tables, figures and the
   working copy (`WORKING_COPY`); new `document_versions`, `default_versions`,
   `word_diff`. Also `loader.parse_object_bytes` / `parse_links_bytes` /

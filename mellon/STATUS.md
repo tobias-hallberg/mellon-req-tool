@@ -661,8 +661,8 @@ It exits 0 when clean, 1 for any load error, validation error, or suspect or
 broken link, and 2 for a root that `check_repo_root` refuses. It uses the same
 `DocumentService` calls as the GUI and MCP, and isn't in the installer.
 
-This repo's CI runs it in the `check` job, with `fetch-depth: 0`. This repo has
-no documents of its own yet, so the job passes trivially for now.
+This repo's CI runs it in the `check` job, with `fetch-depth: 0`, over
+Mellon's own specification (see [Mellon's own specification](#mellons-own-specification)).
 
 ### Tests
 
@@ -677,9 +677,25 @@ the draw.io integration (`test_drawio.py`, which fakes the draw.io process).
 - GUI tests run headless with `QT_QPA_PLATFORM=offscreen`.
 - `MELLON_REQUIRE_FIXTURE=1` makes a missing fixture an error instead of a
   skip. CI sets it.
-- `test_mellon_sts.py` checks this repo's own `MELLON-STS`: every pytest node
-  id a test case lists must name an existing test. It reads the test files'
-  syntax trees rather than importing them.
+- `test_mellon_spec.py` checks this repo's own specification: every pytest
+  node id a test case lists must name an existing test (read from the test
+  files' syntax trees, not imported), each requirement says exactly one of
+  shall, should or could, each Accepted or Implemented requirement has a test
+  case, and each document's rules file fails a bare requirement or test case.
+
+### Mellon's own specification
+
+Mellon's requirements and test cases are kept in Mellon, in this repository:
+one `MELLON-<AREA>-SRS` and one `MELLON-<AREA>-STS` per area (STORE, EDIT,
+CHECK, TRACE, VER, PDF, MCP, GUI). `../docs/specification.md` says how they
+are written and checked; `../docs/definitions.md` holds the terms.
+
+- The area documents exist, with their attributes and rules files, and are
+  being filled area by area. Compare comes first, moving from the pre-split
+  `MELLON-SRS` / `MELLON-STS` into `MELLON-VER-SRS` / `MELLON-VER-STS`.
+- Requirements are implementation-free, say exactly one of shall, should or
+  could, and are all `level: High`.
+- The documents are edited with a released Mellon build.
 
 ## Deferred / pending
 

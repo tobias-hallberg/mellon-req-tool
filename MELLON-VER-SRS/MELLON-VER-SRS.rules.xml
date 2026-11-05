@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+  <rule>
+    <when type="Requirement"/>
+    <then>
+      <attr name="req-type" status="required"/>
+      <attr name="status" status="required"/>
+      <attr name="level" status="required"/>
+      <attr name="rationale" status="required"/>
+    </then>
+  </rule>
+  <rule>
+    <when type="Heading"/>
+    <then>
+      <attr name="req-type" status="forbidden"/>
+      <attr name="status" status="forbidden"/>
+      <attr name="level" status="forbidden"/>
+      <attr name="rationale" status="forbidden"/>
+    </then>
+  </rule>
+</rules>

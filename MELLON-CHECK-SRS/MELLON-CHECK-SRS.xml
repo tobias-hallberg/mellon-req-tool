@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document id="MELLON-CHECK-SRS">
+  <metadata>
+    <title>Mellon Software Requirements: Validation and Checks</title>
+    <author>Tobias Hallberg</author>
+    <date>2026-11-05</date>
+  </metadata>
+  <attributes>
+    <attribute name="type" kind="enum" required="true" label="Type">
+      <option>Heading</option>
+      <option>Requirement</option>
+    </attribute>
+    <attribute name="req-type" kind="enum" required="false" label="Requirement Type">
+      <option>Functional</option>
+      <option>Performance</option>
+      <option>Interface</option>
+      <option>Security</option>
+      <option>Quality</option>
+      <option>Constraint</option>
+    </attribute>
+    <attribute name="status" kind="enum" required="false" label="Status">
+      <option>Proposed</option>
+      <option>Accepted</option>
+      <option>Implemented</option>
+      <option>Deferred</option>
+      <option>Withdrawn</option>
+    </attribute>
+    <attribute name="level" kind="enum" required="false" label="Level">
+      <option>High</option>
+    </attribute>
+    <attribute name="rationale" kind="text" required="false" label="Rationale"/>
+  </attributes>
+  <outline/>
+</document>
