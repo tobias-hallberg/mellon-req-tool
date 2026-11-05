@@ -188,6 +188,73 @@ def test_broken_link_when_target_missing(repo_tree):
     assert statuses[0].state is LinkState.BROKEN
 
 
+def _write_link_to(doc: Path, target_id: str, ack: str | None) -> None:
+    ack_attr = f' ack="{ack}"' if ack else ""
+    (doc / "links" / "DOC-1.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<links source="DOC-1">\n'
+        f'  <link target-doc="PARENT" target-id="{target_id}" type="satisfies"{ack_attr}/>\n'
+        '</links>\n',
+        encoding="utf-8",
+    )
+
+
+def test_target_on_disk_but_never_committed_is_broken(repo_tree):
+    root, doc, _c1 = repo_tree
+    (root / "PARENT" / "objects" / "PARENT-43.xml").write_text(
+        PARENT_OBJ_V1.replace("PARENT-42", "PARENT-43"), encoding="utf-8"
+    )
+    _write_link_to(doc, "PARENT-43", None)
+
+    statuses = scan_document(load_document(doc), doc)
+
+    assert statuses[0].state is LinkState.BROKEN
+    assert statuses[0].reason == "target not in git history"
+    assert statuses[0].current_hash is None
+
+
+def test_ack_all_never_rewrites_a_broken_link(repo_tree):
+    _root, doc, _c1 = repo_tree
+    _write_link_to(doc, "PARENT-999", "aaaaaaa")
+    before = (doc / "links" / "DOC-1.xml").read_bytes()
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.BROKEN
+
+    assert ack_all(doc, statuses) == []
+    assert (doc / "links" / "DOC-1.xml").read_bytes() == before
+
+
+def test_two_commit_rule(repo_tree):
+    """A commit can't hold its own hash: revising the parent and touching the
+    ack in one commit stays suspect, and a second commit records the review."""
+    root, doc, c1 = repo_tree
+    (doc / "links" / "DOC-1.xml").write_text(_link_xml(c1), encoding="utf-8")
+    repo = pygit2.Repository(str(root))
+    _commit_all(repo, "ack")
+
+    (root / "PARENT" / "objects" / "PARENT-42.xml").write_text(
+        PARENT_OBJ_V2, encoding="utf-8"
+    )
+    # The best the first commit can do is the hash it doesn't have yet's parent.
+    (doc / "links" / "DOC-1.xml").write_text(
+        _link_xml(str(repo.head.target)[:7]), encoding="utf-8"
+    )
+    revision = _commit_all(repo, "revise parent and ack together")
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.SUSPECT
+    assert statuses[0].current_hash == revision
+
+    assert len(ack_all(doc, statuses)) == 1
+    _commit_all(repo, "record the review")
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.OK
+    # The second commit didn't touch the parent, so it isn't the target's hash.
+    assert statuses[0].current_hash == revision
+
+
 def test_write_ack_updates_single_link(repo_tree):
     _root, doc, _c1 = repo_tree
     (doc / "links" / "DOC-1.xml").write_text(_link_xml("aaaaaaa"), encoding="utf-8")
@@ -252,6 +319,46 @@ def test_ack_all_round_trip_with_figure(repo_tree):
     statuses2 = scan_document(loaded2, doc)
     assert statuses2[0].state is LinkState.OK
     assert statuses2[0].link.ack == c_fig
+
+
+def test_suspect_when_figure_removed(repo_tree):
+    root, doc, _c1 = repo_tree
+    figures = root / "PARENT" / "figures"
+    figures.mkdir()
+    (figures / "PARENT-42.svg").write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>\n',
+        encoding="utf-8",
+    )
+    repo = pygit2.Repository(str(root))
+    c_fig = _commit_all(repo, "add figure to parent")
+    (doc / "links" / "DOC-1.xml").write_text(_link_xml(c_fig), encoding="utf-8")
+    _commit_all(repo, "ack")
+    assert scan_document(load_document(doc), doc)[0].state is LinkState.OK
+
+    (figures / "PARENT-42.svg").unlink()
+    c_removed = _commit_all(repo, "remove figure")
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.SUSPECT
+    assert statuses[0].current_hash == c_removed
+
+
+def test_suspect_when_parent_commit_reverted(repo_tree):
+    """The text is back to an earlier version, but not the one last reviewed."""
+    root, doc, _c1 = repo_tree
+    parent = root / "PARENT" / "objects" / "PARENT-42.xml"
+    repo = pygit2.Repository(str(root))
+    parent.write_text(PARENT_OBJ_V2, encoding="utf-8")
+    c2 = _commit_all(repo, "revise parent")
+    (doc / "links" / "DOC-1.xml").write_text(_link_xml(c2), encoding="utf-8")
+    _commit_all(repo, "ack")
+
+    parent.write_text(PARENT_OBJ_V1, encoding="utf-8")
+    c_revert = _commit_all(repo, "revert parent")
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.SUSPECT
+    assert statuses[0].current_hash == c_revert
 
 
 def test_ack_all_round_trip(repo_tree):
@@ -340,6 +447,52 @@ def test_ack_on_branch_stays_ok_when_branch_merges_main(repo_tree):
     statuses = scan_document(load_document(doc), doc)
     assert statuses[0].state is LinkState.OK
     assert statuses[0].current_hash == _short(a_revise)
+
+
+def test_ack_on_branch_stays_ok_after_fast_forward(repo_tree):
+    root, doc, _c1 = repo_tree
+    repo = pygit2.Repository(str(root))
+    a_revise, a_ack, _main_tip = _revise_and_ack_on_branch(repo)
+    repo.reset(a_ack, pygit2.GIT_RESET_HARD)
+
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.OK
+    assert statuses[0].current_hash == _short(a_revise)
+
+
+def _assert_ack_invalidated(repo, doc, tip, a_revise, new_revise):
+    """The rewritten history gave the parent a new hash the ack doesn't know."""
+    repo.reset(tip, pygit2.GIT_RESET_HARD)
+    statuses = scan_document(load_document(doc), doc)
+    assert statuses[0].state is LinkState.SUSPECT
+    assert statuses[0].link.ack == _short(a_revise)
+    assert statuses[0].current_hash == _short(new_revise)
+
+
+def test_squash_merge_invalidates_ack(repo_tree):
+    root, doc, _c1 = repo_tree
+    repo = pygit2.Repository(str(root))
+    a_revise, _a_ack, main_tip = _revise_and_ack_on_branch(repo)
+    squash = _commit_on(
+        repo,
+        [main_tip],
+        {_PARENT_REL: PARENT_OBJ_V2, _LINKS_REL: _link_xml(_short(a_revise))},
+        "squash branch A",
+    )
+    _assert_ack_invalidated(repo, doc, squash, a_revise, squash)
+
+
+@pytest.mark.parametrize("how", ["rebase", "cherry-pick"])
+def test_replayed_commits_invalidate_ack(repo_tree, how):
+    """A rebase and a cherry-pick both replay the commits on a new parent."""
+    root, doc, _c1 = repo_tree
+    repo = pygit2.Repository(str(root))
+    a_revise, _a_ack, main_tip = _revise_and_ack_on_branch(repo)
+    replayed = _commit_on(repo, [main_tip], {_PARENT_REL: PARENT_OBJ_V2}, f"{how}: revise")
+    tip = _commit_on(
+        repo, [replayed], {_LINKS_REL: _link_xml(_short(a_revise))}, f"{how}: ack"
+    )
+    _assert_ack_invalidated(repo, doc, tip, a_revise, replayed)
 
 
 def test_add_link_right_after_merge_is_ok(repo_tree):

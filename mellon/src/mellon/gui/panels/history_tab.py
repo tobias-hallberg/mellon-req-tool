@@ -48,13 +48,14 @@ class HistoryTab(QWidget):
         self._controller = controller
         self._current_doc_id: str | None = None
         self._current_obj_id: str | None = None
+        self._load_on_show = False
 
         self._empty = QLabel(self.EMPTY_MESSAGE)
         self._empty.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._empty.setStyleSheet("color: palette(mid); padding: 24px;")
 
         self._refresh_button = QPushButton("Refresh")
-        self._refresh_button.clicked.connect(self._refresh)
+        self._refresh_button.clicked.connect(self.refresh)
         self._view_button = QPushButton("View at this commit…")
         self._view_button.clicked.connect(self._view_at_commit)
         self._view_button.setEnabled(False)
@@ -106,7 +107,6 @@ class HistoryTab(QWidget):
 
         controller.repo_loaded.connect(self._on_repo_loaded)
         controller.object_selected.connect(self._on_selection)
-        controller.edit_succeeded.connect(self._on_edit_succeeded)
         controller.committed.connect(self._on_committed)
 
     # --- controller signals -----------------------------------------------
@@ -121,20 +121,30 @@ class HistoryTab(QWidget):
     def _on_selection(self, doc_id: str, obj_id: str) -> None:
         self._current_doc_id = doc_id
         self._current_obj_id = obj_id
-        self._refresh()
-
-    def _on_edit_succeeded(self, *_args) -> None:
-        # Edits don't auto-commit, but if the user committed externally
-        # between selections, refreshing keeps the table honest. Cheap.
-        self._refresh()
+        self.refresh()
 
     def _on_committed(self, *_args) -> None:
         # New commit just landed — pull the updated log so the new row shows.
-        self._refresh()
+        self.refresh()
+
+    def showEvent(self, event) -> None:  # type: ignore[override]
+        super().showEvent(event)
+        if self._load_on_show:
+            self.refresh()
 
     # --- table ------------------------------------------------------------
 
-    def _refresh(self) -> None:
+    def refresh(self) -> None:
+        """Re-read the shown object's history. An edit can't change it, so this
+        is for a new selection and a new commit, from here or a git client.
+
+        Walking history is slow on a large repo and selecting an object is
+        frequent, so while the tab is hidden this waits until it is shown.
+        """
+        if not self.isVisible():
+            self._load_on_show = True
+            return
+        self._load_on_show = False
         if self._current_doc_id is None or self._current_obj_id is None:
             self._table.setRowCount(0)
             self._stack.setCurrentWidget(self._empty)

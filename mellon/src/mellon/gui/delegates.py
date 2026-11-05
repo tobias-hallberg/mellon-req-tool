@@ -431,6 +431,8 @@ class _GridDescriptionEditor(QTextEdit):
 _FIGURE_GAP = 6  # pixels between the description text and the thumbnail
 _FIGURE_MAX_HEIGHT = 240  # cap on rendered thumbnail height
 _FIGURE_CACHE_LIMIT = 64  # bounded LRU-ish cap on the per-delegate pixmap cache
+# Plenty for one document at a few column widths; clearing only costs a re-measure.
+_TEXT_HEIGHT_CACHE_LIMIT = 50_000
 _TABLE_CACHE_LIMIT = 64  # bounded cap on the grid-preview pixmap cache
 
 
@@ -534,6 +536,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         # the tint defeats stale renders after a theme switch.
         self._table_cache: dict[tuple, tuple[QPixmap, int]] = {}
         self._preview_table: InlineTableWidget | None = None
+        self._text_heights: dict[tuple[str, int, str], int] = {}
 
     def _thumbnail(self, figure_path: str, target_width: int) -> QPixmap | None:
         """Render `figure_path` to a `QPixmap` sized to fit `target_width`.
@@ -586,6 +589,23 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         self._pixmap_cache[key] = pm
         return pm
 
+    def _text_height(self, text: str, wrap_w: int, font) -> int:
+        """Height of wrapped `text`. A model reset re-measures every row, and
+        laying out text is the slow part, so unchanged text isn't laid out again."""
+        key = (text, wrap_w, font.key())
+        height = self._text_heights.get(key)
+        if height is None:
+            doc = QTextDocument()
+            doc.setDocumentMargin(0)
+            doc.setDefaultFont(font)
+            doc.setPlainText(text)
+            doc.setTextWidth(wrap_w)
+            height = int(doc.size().height())
+            if len(self._text_heights) >= _TEXT_HEIGHT_CACHE_LIMIT:
+                self._text_heights.clear()
+            self._text_heights[key] = height
+        return height
+
     def sizeHint(self, option, index):
         table = index.data(OBJ_TABLE_ROLE)
         if table is not None:
@@ -606,14 +626,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         if not text and not figure_path:
             return super().sizeHint(option, index)
         wrap_w = max(option.rect.width() - 2 * _GRID_CELL_PADDING_H, 1)
-        text_h = 0
-        if text:
-            doc = QTextDocument()
-            doc.setDocumentMargin(0)
-            doc.setDefaultFont(option.font)
-            doc.setPlainText(text)
-            doc.setTextWidth(wrap_w)
-            text_h = int(doc.size().height())
+        text_h = self._text_height(text, wrap_w, option.font) if text else 0
         # +1 guards against an off-by-one clip on the last wrapped line, same
         # as `_GridDescriptionEditor.content_height`.
         h = text_h + 2 * _GRID_CELL_PADDING_V + 1

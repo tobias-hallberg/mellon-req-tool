@@ -25,7 +25,9 @@ Related pages:
 
 Documents sit directly under the repo root; nested document folders are not supported. Mellon commits but never pulls, pushes, or merges. Sync with an external git client as described in [TEAM.md](TEAM.md).
 
-Mellon is designed for documents of up to about **500 objects**.
+Keep each document to **1,000 objects** or fewer, counting headings and information text. Split a larger specification into components, each with its own set of documents. An object can only link within its own document or to a declared parent, so requirements the components share belong in a common parent document.
+
+Nothing enforces the limit, and larger documents still work, more slowly. PDF export took 191 s at 2,000 objects against tectonic's 300 s timeout, and at 5,000 it doesn't finish. Opening or reloading a 5,000-object document takes several seconds. [SCALING.md](SCALING.md) has the numbers.
 
 ## On-disk format
 
@@ -460,7 +462,9 @@ Composite tools that save AI clients many calls:
   - `search_objects(query, …)` does a case-insensitive substring search, with an optional attribute filter.
   - `inspect_object(doc_id, obj_id)` returns the object together with its trace and history.
 - **Repo-wide:** `repo_health()` and `validate_repo()` answer "what state is this in?" in one call.
-- **Compact reads:** `list_documents` and `show_document` return counts and `current_issue` by default. Pass `include=["metadata", "parents", "attributes", "outline", "views", "filters"]` (or `["*"]`) for more.
+- **Compact reads:**
+  - `list_documents` and `show_document` return counts and `current_issue` by default. Pass `include=["metadata", "parents", "attributes", "outline", "views", "filters"]` (or `["*"]`) for more.
+  - `outline(doc_id, depth=1)` lists only the top-level objects, and `outline(doc_id, root=obj_id)` lists only the objects under `obj_id`. A row whose children were left out carries `descendants_omitted`, so an agent can read a large document one section at a time.
 - **Auto-commit:**
   - Every write tool except `tag_issue` takes an optional `commit_message=…`. When it is set, the files the call changed are committed with a `Via: mellon-mcp` trailer, and the response carries `{commit: {short_hash, commit_message}}`.
   - If that commit fails, the response carries `commit_error` instead, and the write itself stays on disk.
@@ -473,6 +477,25 @@ Naming notes:
 
 - `set_attribute` sets an object's value. `define_attribute` adds a schema entry.
 - The four old view tools are merged into `manage_view(action=…)`.
+
+### Gate: `mellon-check [--repo-root <path>]`
+
+`mellon-check` is a pass/fail check for CI, using the same checks as the GUI and the MCP server. It comes with a dev or `uv tool` install, not with the Windows installer. It prints one line per problem, then a summary. `--repo-root` defaults as for `mellon-mcp`.
+
+| Exit status | Meaning |
+|---|---|
+| 0 | Clean, or the repo has no documents. |
+| 1 | A document fails to load, or there is a validation error, or a suspect or broken link. |
+| 2 | The root can't be checked: see [Repository requirements](#repository-requirements). |
+
+A CI checkout has to be a full clone, or the result is status 2:
+
+```yaml
+- uses: actions/checkout@v7
+  with:
+    fetch-depth: 0
+- run: mellon-check --repo-root .
+```
 
 ### Library
 
@@ -621,7 +644,11 @@ This is the core quality gate. Assume `VCU3-SRS-1` satisfies `VCU3-SyRS-42`, and
    - MCP `suspects` reports the link.
 3. **Review** what changed on the parent:
    - **GUI:** double-click the outgoing link in the Inspector to jump to the parent, then use the History tab ("View at this commit…").
-   - **MCP:** `review_suspect_link` returns the parent text at the ack and now, plus the commits in between.
+   - **MCP:** `review_suspect_link` returns the parent text and attributes at the ack and now, the commits in between, and:
+     - `changed_fields`: what an ack would accept, meaning what differs between the acked commit and HEAD, from `description`, `attr:<name>`, `table` and `figure`. It is `null` when there is nothing to compare with: no ack, an ack that can't be resolved, or a parent that wasn't there at the ack. Empty on a suspect link means only the file's formatting changed.
+     - `ack_found`: false when there is no ack or it can't be resolved, for example after a rebase and gc.
+     - `parent_uncommitted`: the parent has edits an ack wouldn't cover. The "now" fields read the work tree, so they show those edits, and the link goes suspect again once they are committed.
+     - `commits_between_truncated`: more than the 20 commits listed.
    - **git:** `git log -p -- VCU3-SyRS/objects/VCU3-SyRS-42.xml VCU3-SyRS/figures/VCU3-SyRS-42.svg`.
 4. **Update the child if needed.** Edit `VCU3-SRS-1` and commit.
 5. **Acknowledge.** This rewrites the `ack` in `VCU3-SRS/links/VCU3-SRS-1.xml` to the parent's current hash. You can do it in any of these ways:
@@ -639,7 +666,9 @@ The two-commit structure is enforced by git: a commit can't contain its own hash
 
 ### Merges, squashes and rebases
 
-The current hash follows git's history simplification. It is the same commit that `git log -1 --format=%h -- <object.xml> <figure.svg>` reports from HEAD.
+The current hash follows git's history simplification. It is the same commit that `git log -1 --format=%h -- <object.xml> <figure.svg>` reports from HEAD, except that a commit changing only a file's mode doesn't count.
+
+Mellon keeps these answers in `.git/mellon-link-index.json`, so a new process needn't walk history again. It's a cache that is never committed, and deleting it is always safe: the next scan just takes longer. `mellon-check` ignores it and computes everything from scratch.
 
 - **Merge commits keep acks valid.** Branch commits keep their hashes through a merge, whether fast-forward or `--no-ff`. A merge commit counts as a change only when its result differs from every parent, for example a conflict resolution that produced new text. Links to that object then turn SUSPECT, which is correct.
 - **Squash merges, rebases, and cherry-picks invalidate acks.** They create new commits with new hashes, so acks recorded on the branch no longer match, and those links read SUSPECT after the merge. Re-ack on the target branch. For this reason the team routine is merge commits only (see [TEAM.md](TEAM.md)).
@@ -653,7 +682,8 @@ A document whose files can't be parsed is listed with its error instead of disap
 |---|---|
 | Project Explorer | The document is greyed out with a warning icon, and its tooltip shows the error. Double-clicking it shows the error instead of opening the document. |
 | Open editor, F5 | The real load error. The window keeps the last good copy behind the "Changed on disk" banner, and edits are refused. |
-| MCP | `list_documents` lists it as `{doc_id, folder, load_error: {doc_id, file, line, message}}`. `validate_repo` returns `ok: false` with `load_errors`. `repo_health` adds `load_errors` (the other fields are then incomplete). |
+| MCP | `list_documents` lists it as `{doc_id, folder, load_error: {doc_id, file, line, message}}`. `validate_repo` returns `ok: false` with `load_errors`. `repo_health` adds `load_errors` (the other fields are then incomplete). `suspects()` without a `doc_id` is refused, naming the documents; asking about a document that loads still works. |
+| `mellon-check` | A `LOAD_ERROR` line per document, and exit status 1. |
 | Delete | Refused repo-wide until every document loads again. |
 
 To recover, fix the named file (for merge conflicts, see [Merging branches](#merging-branches)), then press **F5** in the Project Explorer and in open editors, and run **Validate**. After any pull, press F5: the Explorer notices added or removed document folders by itself, but not a document that broke in place.

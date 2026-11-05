@@ -53,6 +53,30 @@ jobs:
           MELLON_REQUIRE_FIXTURE: "1"
         run: uv run --no-sync pytest -q -rs
 
+  check:
+    # Fails on any load error, validation error, or suspect or broken link in
+    # this repo's own documents. Suspect detection needs the full history.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: mellon
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Check documents
+        run: uv run --no-sync mellon-check --repo-root ..
+
   wheel-smoke:
     # Installs the built wheel WITHOUT uv.lock, the way `uv tool install`
     # does, so an unbounded dependency that breaks a fresh install fails here.
@@ -87,4 +111,5 @@ jobs:
         run: |
           "$RUNNER_TEMP/venv/bin/mellon-mcp" --version
           "$RUNNER_TEMP/venv/bin/mellon-gui" --version
+          "$RUNNER_TEMP/venv/bin/mellon-check" --version
           "$RUNNER_TEMP/venv/bin/python" -c "import mellon.mcp.server, mellon.gui.main_window"

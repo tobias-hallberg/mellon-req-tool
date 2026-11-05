@@ -56,23 +56,41 @@ class OutlineModel(QStandardItemModel):
         super().__init__()
         self._controller = controller
         self._chapter_map: dict[str, str] = {}
+        self._items: dict[str, QStandardItem] = {}
+        self._doc_id: str | None = None
         self.setHorizontalHeaderLabels(["Outline"])
         controller.document_selected.connect(self._rebuild)
+        controller.object_changed.connect(self._on_object_changed)
 
     def _rebuild(self, doc_id: str) -> None:
         self.removeRows(0, self.rowCount())
+        self._items = {}
+        self._doc_id = doc_id
         doc = self._controller.document(doc_id)
         self._chapter_map = _chapter_numbers(doc.outline, doc.objects)
         for node in doc.outline:
             self.appendRow(self._item_for(node, doc))
 
-    def _item_for(self, node: OutlineNode, doc: Document) -> QStandardItem:
-        obj = doc.objects.get(node.ref_id)
-        chapter_no = self._chapter_map.get(node.ref_id)
+    def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
+        """Update labels in place, so the tree keeps its expansion and selection."""
+        item = self._items.get(obj_id)
+        if doc_id != self._doc_id or item is None:
+            return
+        doc = self._controller.document(doc_id)
+        if _is_heading(obj_id, doc.objects) != (obj_id in self._chapter_map):
+            # Became or stopped being a heading: every later chapter renumbers.
+            self._chapter_map = _chapter_numbers(doc.outline, doc.objects)
+            for ref_id, each in self._items.items():
+                self._set_label(each, ref_id, doc)
+        else:
+            self._set_label(item, obj_id, doc)
+
+    def _set_label(self, item: QStandardItem, ref_id: str, doc: Document) -> None:
+        obj = doc.objects.get(ref_id)
+        chapter_no = self._chapter_map.get(ref_id)
         if chapter_no is not None:
             title = obj.description.strip() if obj and obj.description else ""
             label = f"{chapter_no}  {title}" if title else chapter_no
-            item = QStandardItem(label)
             # QStandardItem.font() on a fresh item returns a default QFont
             # with pointSize=-1, which trips Qt's setPointSize warning when
             # the view repaints. Inherit from the application font instead.
@@ -83,8 +101,15 @@ class OutlineModel(QStandardItemModel):
             first_line = ""
             if obj and obj.description:
                 first_line = obj.description.splitlines()[0]
-            label = f"{node.ref_id}" + (f": {first_line}" if first_line else "")
-            item = QStandardItem(label)
+            label = f"{ref_id}" + (f": {first_line}" if first_line else "")
+            item.setData(None, Qt.ItemDataRole.FontRole)
+        if item.text() != label:
+            item.setText(label)
+
+    def _item_for(self, node: OutlineNode, doc: Document) -> QStandardItem:
+        item = QStandardItem()
+        self._set_label(item, node.ref_id, doc)
+        self._items[node.ref_id] = item
         item.setData(node.ref_id, OBJ_ID_ROLE)
         item.setEditable(False)
         for child in node.children:

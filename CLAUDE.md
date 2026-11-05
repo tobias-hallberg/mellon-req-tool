@@ -13,6 +13,7 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── CLAUDE.md                   <-- this file
 ├── README.md                   overview, install, quickstart
 ├── LICENSE                     copy of mellon/LICENSE, so GitHub detects the license
+├── .gitattributes              LF line endings, as TEAM.md recommends
 ├── .github/workflows/
 │   ├── ci.yml                  CI: ubuntu + windows tests, wheel smoke job
 │   └── installer.yml           Windows installer build (manual, or v* tag → draft release)
@@ -21,12 +22,14 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 │   ├── INSTALL.md              installer, MCP client config, dev env setup (uv, Python 3.12)
 │   ├── USAGE.md                on-disk format, schema rules, suspect workflow
 │   ├── STATUS.md               authoritative current state + file map
+│   ├── SCALING.md              measurements at scale, and the work that remains
 │   ├── CHANGELOG.md            per-release changes (Keep a Changelog)
 │   ├── TEAM.md                 team routine: setup, pull/F5/edit/commit/push, conflicts
 │   ├── LICENSE                 GPL-3.0-or-later (packaged into the wheel and installer)
 │   ├── pyproject.toml / uv.lock
 │   ├── src/mellon/             source
 │   ├── tests/                  pytest suite
+│   ├── benchmarks/             scale benchmarks (not packaged, not run in CI)
 │   ├── packaging/              Windows installer: build.ps1, mellon.spec, mellon.iss, notices
 │   └── tools/                  (gitignored) optional vendored tectonic for source checkouts
 ├── req-test.bundle             test fixture (committed)
@@ -48,7 +51,8 @@ All run from inside `mellon/`:
 | Command | Purpose |
 |---|---|
 | `uv sync` | Install/update env from `uv.lock` |
-| `uv run pytest` | Run the full suite (~1200 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
+| `uv run pytest` | Run the full suite (~1420 tests; clones fixture on first run; set `QT_QPA_PLATFORM=offscreen` for headless GUI tests) |
+| `uv run mellon-check --repo-root ..` | Pass/fail gate over load errors, validation and link states: exit 0 clean, 1 problems, 2 unusable root. CI runs it |
 | `uv run mellon-mcp [--repo-root <path>] [--read-only]` | MCP stdio server (45 tools). The root defaults to `$CLAUDE_PROJECT_DIR`, then the cwd, and must be the root of a full git clone (otherwise exit 2) |
 | `uv run mellon-gui [path]` | PySide6 GUI (Project Explorer + per-doc Document Editor windows) |
 | `powershell -ExecutionPolicy Bypass -File packaging\build.ps1` | Build `build\Mellon-Setup-<version>.exe` (needs uv, git, Inno Setup 6.3+, internet) |
@@ -58,13 +62,15 @@ All run from inside `mellon/`:
 | File | What lives there |
 |---|---|
 | `schema.py` | Frozen dataclasses: `Document`, `Metadata`, `Attribute`, `OutlineNode`, `RequirementObject`, `Link`, `Table`/`TableRow`/`TableColumn`/`TableCell`; `table_geometry_errors` (shared tiling check) |
-| `loader.py` | XML → `Document` |
+| `loader.py` | XML → `Document`. Keeps parsed files while their modified time and size stay the same, so only changed files are re-parsed |
 | `validator.py` | Structural checks |
 | `editor.py` | **Every mutation lives here** — single source of truth for create/edit/delete/move/link. Atomic LF writes, text sanitiser, `_child_path` path guard |
 | `suspects.py` | `scan_document`, `scan_repo`, `ack_all` |
+| `link_index.py` | `current_hashes`: every object's last commit from one history walk, following `last_commit_for_paths`' rule. Answers are kept per commit, so they can't go stale, and in `.git/mellon-link-index.json`. `from_scratch` ignores them, for `mellon-check` |
 | `trace.py` | Recursive up/down traversal, cycle-safe |
 | `repo.py` | Multi-doc discovery, `load_all` + `DocLoadError` (failed docs are reported, not dropped), cross-doc incoming links, `folders_fingerprint`/`doc_folder_names` staleness helpers |
-| `git_ops.py` | `pygit2` wrappers (`check_repo_root`, `last_commit_for_paths`, `commit`, `discard_paths`, `show_blob_at`, `log_for_path`, `head_summary`, `dirty_count`, `current_issue`, `create_issue_tag`) |
+| `git_ops.py` | `pygit2` wrappers (`check_repo_root`, `last_commit_for_paths`, `commit`, `discard_paths`, `show_blob_at`, `blob_id_at`, `log_for_path`, `head_summary`, `dirty_paths_under`, `current_issue`, `create_issue_tag`) |
+| `check.py` | `mellon-check`: the CI gate (load errors, validation, suspect and broken links) |
 | `filter.py` | Saved-filter engine: `evaluate(doc, filt)`, operators per attribute kind |
 | `coverage.py` | `coverage_report` (direct + transitive, headings-aware) |
 | `search.py` | `search_objects`: case-insensitive substring scan with ranked hits |

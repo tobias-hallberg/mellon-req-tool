@@ -734,3 +734,230 @@ def test_properties_attribute_delete_strips_objects(window):
     doc = load_document(root / "VCU3-SRS")
     assert doc.attribute("scratch") is None
     assert "scratch" not in doc.objects["VCU3-SRS-0"].attrs
+
+
+# --- field edits update one row, with no model reset -----------------------
+
+
+@pytest.fixture
+def srs(window):
+    """The editor on VCU3-SRS, shown small so the grid can scroll."""
+    w, root = window
+    w.controller.select_document("VCU3-SRS")
+    w.resize(900, 300)
+    w.show()
+    return w, root
+
+
+def _set(w, obj_id: str, column: str, value: str) -> None:
+    grid = w.grid_pane._model
+    index = grid.index(grid.row_for_obj_id(obj_id), grid.column_index(column))
+    assert grid.setData(index, value)
+
+
+def test_field_edit_keeps_model_scroll_and_selection(srs, qapp):
+    w, _ = srs
+    grid = w.grid_pane._model
+    table = w.grid_pane.table
+    w.controller.select_object("VCU3-SRS", "VCU3-SRS-15")
+    bar = table.verticalScrollBar()
+    assert bar.maximum() > 0
+    bar.setValue(bar.maximum() // 2)
+    scrolled = bar.value()
+    resets = []
+    grid.modelReset.connect(lambda: resets.append(1))
+
+    _set(w, "VCU3-SRS-15", "status", "Draft")
+    _set(w, "VCU3-SRS-15", "heading_or_text", "Changed text.")
+    qapp.processEvents()
+
+    assert resets == []
+    assert bar.value() == scrolled
+    assert grid.obj_id_at(w.grid_pane._proxy.mapToSource(table.currentIndex()).row()) == "VCU3-SRS-15"
+    row = grid.row_for_obj_id("VCU3-SRS-15")
+    assert grid.data(grid.index(row, grid.column_index("heading_or_text"))) == "Changed text."
+    assert grid.data(grid.index(row, grid.column_index("status"))) == "Draft"
+
+
+def test_field_edit_reruns_no_suspect_scan(srs, monkeypatch):
+    import mellon.service.document as service_module
+
+    w, _ = srs
+    w.controller.build_link_states("VCU3-SRS")
+    scans = []
+    real = service_module.scan_document
+    monkeypatch.setattr(
+        service_module, "scan_document", lambda *a: (scans.append(a), real(*a))[1]
+    )
+
+    _set(w, "VCU3-SRS-15", "status", "Draft")
+    _set(w, "VCU3-SRS-15", "heading_or_text", "Changed text.")
+    w.controller.build_link_states("VCU3-SRS")
+    assert scans == []
+
+    # The control: a real reload does re-scan.
+    w.controller.reload_document("VCU3-SRS")
+    assert scans
+
+
+def test_field_edit_keeps_link_states_right(srs):
+    """Link states are kept across a field edit, so they must still be correct."""
+    w, _ = srs
+    before = w.controller.object_worst_state("VCU3-SRS", "VCU3-SRS-15")
+    assert before == "suspect"
+    _set(w, "VCU3-SRS-15", "status", "Draft")
+    assert w.controller.object_worst_state("VCU3-SRS", "VCU3-SRS-15") == before
+
+
+def test_field_edit_refits_only_its_row(srs):
+    w, _ = srs
+    grid = w.grid_pane._model
+    table = w.grid_pane.table
+    row = grid.row_for_obj_id("VCU3-SRS-15")
+    other = grid.row_for_obj_id("VCU3-SRS-16")
+    tall, other_height = table.rowHeight(row), table.rowHeight(other)
+    _set(w, "VCU3-SRS-15", "heading_or_text", "\n".join(["line"] * 12))
+    assert table.rowHeight(row) > tall
+    assert table.rowHeight(other) == other_height
+
+
+def test_field_edit_marks_only_its_object_dirty(srs):
+    from mellon.gui.models.objects_grid import OBJ_DIRTY_ROLE
+
+    w, _ = srs
+    grid = w.grid_pane._model
+    dirty = lambda oid: grid.index(grid.row_for_obj_id(oid), 0).data(OBJ_DIRTY_ROLE)
+    assert not dirty("VCU3-SRS-15")
+    _set(w, "VCU3-SRS-15", "status", "Draft")
+    assert dirty("VCU3-SRS-15")
+    assert not dirty("VCU3-SRS-16")
+
+
+def test_field_edit_updates_outline_label(srs):
+    w, _ = srs
+    outline = w.outline_pane._outline_model
+    _set(w, "VCU3-SRS-15", "heading_or_text", "First line\nsecond line")
+    assert outline._items["VCU3-SRS-15"].text() == "VCU3-SRS-15: First line"
+
+
+def test_type_change_renumbers_chapters_like_a_rebuild(srs):
+    """The first heading stops being one, so the later chapters move up. Then back."""
+    w, _ = srs
+    outline = w.outline_pane._outline_model
+    labels = lambda: {oid: item.text() for oid, item in outline._items.items()}
+    bold = lambda: {oid: item.font().bold() for oid, item in outline._items.items()}
+    original = labels()
+    assert original["VCU3-SRS-14"].startswith("2 ")
+    assert outline._items["VCU3-SRS-0"].font().bold()
+
+    _set(w, "VCU3-SRS-0", "type", "Requirement")
+    assert labels()["VCU3-SRS-14"].startswith("1 ")
+    assert not outline._items["VCU3-SRS-0"].font().bold()
+    in_place, in_place_bold = labels(), bold()
+    outline._rebuild("VCU3-SRS")
+    assert labels() == in_place
+    assert bold() == in_place_bold
+
+    _set(w, "VCU3-SRS-0", "type", "Heading")
+    assert labels() == original
+
+
+def test_edit_that_stops_matching_the_saved_filter_hides_the_row(srs):
+    from mellon.schema import Filter, FilterRule
+
+    w, _ = srs
+    grid = w.grid_pane._model
+    proxy = w.grid_pane._proxy
+    w.grid_pane.apply_filter(
+        Filter(
+            slug="drafts",
+            name="Drafts",
+            rules=(FilterRule(kind="attr", attr="status", op="eq", value="Draft"),),
+            keep_ancestors=False,
+        )
+    )
+    row = grid.row_for_obj_id("VCU3-SRS-2")
+    assert proxy.mapFromSource(grid.index(row, 0)).isValid()
+    shown = proxy.rowCount()
+    _set(w, "VCU3-SRS-2", "status", "Approved")
+    assert not proxy.mapFromSource(grid.index(row, 0)).isValid()
+    assert proxy.rowCount() == shown - 1
+
+
+def test_edit_that_stops_matching_the_text_filter_hides_the_row(srs):
+    w, _ = srs
+    grid = w.grid_pane._model
+    proxy = w.grid_pane._proxy
+    row = grid.row_for_obj_id("VCU3-SRS-2")
+    w.grid_pane.filter_box.setText("VCU3-SRS-2")
+    assert proxy.mapFromSource(grid.index(row, 0)).isValid()
+    w.grid_pane.filter_box.setText("zzzunique")
+    assert not proxy.mapFromSource(grid.index(row, 0)).isValid()
+    _set(w, "VCU3-SRS-2", "heading_or_text", "now has zzzunique in it")
+    assert proxy.mapFromSource(grid.index(row, 0)).isValid()
+
+
+def test_grid_edit_shows_in_the_inspector(srs):
+    w, _ = srs
+    w.controller.select_object("VCU3-SRS", "VCU3-SRS-15")
+    _set(w, "VCU3-SRS-15", "heading_or_text", "From the grid.")
+    assert w.inspector._description.toPlainText() == "From the grid."
+    # Another object's edit leaves the shown one alone.
+    _set(w, "VCU3-SRS-16", "heading_or_text", "Elsewhere.")
+    assert w.inspector._description.toPlainText() == "From the grid."
+
+
+def test_inspector_edit_shows_in_the_grid(srs):
+    w, _ = srs
+    grid = w.grid_pane._model
+    w.controller.select_object("VCU3-SRS", "VCU3-SRS-15")
+    resets = []
+    grid.modelReset.connect(lambda: resets.append(1))
+    w.inspector._description.setPlainText("From the inspector.")
+    w.inspector._commit_description()
+    row = grid.row_for_obj_id("VCU3-SRS-15")
+    assert grid.data(grid.index(row, grid.column_index("heading_or_text"))) == "From the inspector."
+    assert resets == []
+
+
+def test_field_edit_can_be_undone_and_redone(srs):
+    w, _ = srs
+    grid = w.grid_pane._model
+    index = grid.index(grid.row_for_obj_id("VCU3-SRS-15"), grid.column_index("heading_or_text"))
+    original = grid.data(index)
+    _set(w, "VCU3-SRS-15", "heading_or_text", "Changed.")
+    w._undo_act.trigger()
+    index = grid.index(grid.row_for_obj_id("VCU3-SRS-15"), grid.column_index("heading_or_text"))
+    assert grid.data(index) == original
+    w._redo_act.trigger()
+    index = grid.index(grid.row_for_obj_id("VCU3-SRS-15"), grid.column_index("heading_or_text"))
+    assert grid.data(index) == "Changed."
+
+
+def test_field_edit_does_not_flag_the_window_stale(srs):
+    w, _ = srs
+    _set(w, "VCU3-SRS-15", "status", "Draft")
+    assert not w.controller.is_doc_stale()
+
+
+def test_reset_reuses_measured_text_heights(srs, monkeypatch):
+    """A reset only lays out text it hasn't measured, and new text is measured."""
+    import mellon.gui.delegates as delegates
+
+    w, _ = srs
+    table = w.grid_pane.table
+    laid_out = []
+    real = delegates.QTextDocument
+    monkeypatch.setattr(
+        delegates, "QTextDocument", lambda *a: (laid_out.append(1), real(*a))[1]
+    )
+    w.controller.reload_document("VCU3-SRS")
+    assert laid_out == []
+
+    grid = w.grid_pane._model
+    row = grid.row_for_obj_id("VCU3-SRS-15")
+    before = table.rowHeight(row)
+    w.controller.service.set_description("VCU3-SRS", "VCU3-SRS-15", "\n".join(["line"] * 12))
+    w.controller.reload_document("VCU3-SRS")
+    assert laid_out
+    assert table.rowHeight(row) > before

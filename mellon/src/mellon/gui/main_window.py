@@ -38,7 +38,7 @@ from PySide6.QtCore import Qt
 from ..drawio import DOWNLOAD_URL, find_drawio
 from ..editor import Journal
 from ..export import TectonicError, pdf as export_pdf
-from ..git_ops import GitError, dirty_count, discover_repo, head_summary
+from ..git_ops import GitError, discover_repo, head_summary
 from ..schema import Document
 from ..suspects import LinkState, LinkStatus
 from ..service import DocumentService, ServiceError
@@ -363,6 +363,7 @@ class DocumentEditorWindow(QMainWindow):
         # Same for the Inspector's link tags + Ack buttons and the banner's
         # "Ack selected".
         self.inspector.refresh_links()
+        self.right_pane.history.refresh()
         self._refresh_action_states()
 
     def _set_stale(self, on: bool) -> None:
@@ -2310,7 +2311,7 @@ class DocumentEditorWindow(QMainWindow):
         else:
             text = f"{branch} @ {short}"
         try:
-            n = dirty_count(repo)
+            n = len(self.controller.service.uncommitted_document_paths())
         except Exception:  # noqa: BLE001
             n = 0
         if n:
@@ -2319,7 +2320,9 @@ class DocumentEditorWindow(QMainWindow):
         self._git_cell.setToolTip(
             "HEAD is detached. Commits made here won't be on any branch."
             if branch is None and short is not None
-            else f"{n} file(s) with uncommitted changes" if n else "working tree clean"
+            else f"{n} document file(s) with uncommitted changes"
+            if n
+            else "no uncommitted document changes"
         )
 
 

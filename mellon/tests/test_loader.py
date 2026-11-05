@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import os
+import shutil
+import time
 from pathlib import Path
 
 import pytest
 
-from mellon import load_document
+from mellon import load_document, loader
 from mellon.loader import LoaderError
 
 
@@ -529,3 +532,156 @@ def test_figure_path_ignores_orphan_svgs(doc_folder: Path) -> None:
     doc = load_document(doc_folder)
     # Should not raise, should not populate any object's figure_path.
     assert all(o.figure_path is None for o in doc.objects.values())
+
+
+# --- parse cache -----------------------------------------------------------
+
+
+@pytest.fixture
+def parses(monkeypatch: pytest.MonkeyPatch) -> list[str]:
+    """Names of the files parsed, in order."""
+    seen: list[str] = []
+    real = loader._parse_xml
+
+    def counting(path: Path):
+        seen.append(path.name)
+        return real(path)
+
+    monkeypatch.setattr(loader, "_parse_xml", counting)
+    return seen
+
+
+def _age(folder: Path) -> None:
+    """Make every file old enough to be kept (see `loader._RACY_NS`)."""
+    old = time.time_ns() - 3_600_000_000_000
+    for f in folder.rglob("*"):
+        if f.is_file():
+            os.utime(f, ns=(old, old))
+
+
+def _rewrite(path: Path, old_text: str, new_text: str) -> None:
+    """Change a file and keep it old, as a write long ago would have."""
+    stamp = time.time_ns() - 1_800_000_000_000
+    path.write_text(path.read_text(encoding="utf-8").replace(old_text, new_text), encoding="utf-8")
+    os.utime(path, ns=(stamp, stamp))
+
+
+def test_second_load_parses_nothing(doc_folder: Path, parses: list[str]) -> None:
+    _age(doc_folder)
+    first = load_document(doc_folder)
+    assert sorted(parses) == ["DOC-0.xml", "DOC-1.xml", "DOC-1.xml", "DOC.xml"]
+    parses.clear()
+    assert load_document(doc_folder) == first
+    assert parses == []
+
+
+def test_load_parses_only_the_changed_file(doc_folder: Path, parses: list[str]) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    parses.clear()
+    _rewrite(doc_folder / "objects" / "DOC-0.xml", "<description>", "<description>changed ")
+    doc = load_document(doc_folder)
+    assert parses == ["DOC-0.xml"]
+    assert doc.objects["DOC-0"].description.startswith("changed")
+
+
+def test_changed_links_and_manifest_are_read(doc_folder: Path, parses: list[str]) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    parses.clear()
+    _rewrite(doc_folder / "DOC.xml", "</outline>", '<ref id="DOC-9"/></outline>')
+    _rewrite(doc_folder / "links" / "DOC-1.xml", 'type="', 'type="x')
+    doc = load_document(doc_folder)
+    assert sorted(parses) == ["DOC-1.xml", "DOC.xml"]
+    assert doc.outline[-1].ref_id == "DOC-9"
+    assert doc.links["DOC-1"][0].type.startswith("x")
+
+
+def test_same_size_rewrite_in_the_same_clock_tick_is_read(doc_folder: Path) -> None:
+    """The time and size don't change, so only the racy-write rule catches it."""
+    path = doc_folder / "objects" / "DOC-0.xml"
+    text = path.read_text(encoding="utf-8")
+    assert "<description>" in text
+    stamp = time.time_ns()
+    path.write_text(text.replace("<description>", "<description>AAA "), encoding="utf-8")
+    os.utime(path, ns=(stamp, stamp))
+    assert load_document(doc_folder).objects["DOC-0"].description.startswith("AAA")
+    path.write_text(text.replace("<description>", "<description>BBB "), encoding="utf-8")
+    os.utime(path, ns=(stamp, stamp))
+    assert load_document(doc_folder).objects["DOC-0"].description.startswith("BBB")
+
+
+def test_deleted_file_is_gone(doc_folder: Path) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    (doc_folder / "links" / "DOC-1.xml").unlink()
+    assert "DOC-1" not in load_document(doc_folder).links
+
+
+def test_renamed_file_fails_as_it_would_uncached(doc_folder: Path) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    objects = doc_folder / "objects"
+    (objects / "DOC-0.xml").rename(objects / "DOC-7.xml")
+    with pytest.raises(LoaderError, match="does not match"):
+        load_document(doc_folder)
+
+
+def test_figure_path_follows_the_disk_not_the_kept_object(doc_folder: Path) -> None:
+    _age(doc_folder)
+    assert load_document(doc_folder).objects["DOC-0"].figure_path is None
+    figures = doc_folder / "figures"
+    figures.mkdir()
+    (figures / "DOC-0.svg").write_text("<svg/>", encoding="utf-8")
+    assert load_document(doc_folder).objects["DOC-0"].figure_path == "figures/DOC-0.svg"
+    (figures / "DOC-0.svg").unlink()
+    assert load_document(doc_folder).objects["DOC-0"].figure_path is None
+
+
+def test_folder_named_like_an_object_stays_an_error(doc_folder: Path) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    (doc_folder / "objects" / "DOC-5.xml").mkdir()
+    for _ in range(2):
+        with pytest.raises(LoaderError, match="cannot read"):
+            load_document(doc_folder)
+
+
+def test_broken_file_is_not_kept(doc_folder: Path) -> None:
+    _age(doc_folder)
+    load_document(doc_folder)
+    path = doc_folder / "objects" / "DOC-0.xml"
+    good = path.read_text(encoding="utf-8")
+    _rewrite(path, "</object>", "")
+    for _ in range(2):
+        with pytest.raises(LoaderError, match="XML parse error"):
+            load_document(doc_folder)
+    path.write_text(good, encoding="utf-8")
+    assert "DOC-0" in load_document(doc_folder).objects
+
+
+def test_copied_folder_checks_its_own_manifest_id(doc_folder: Path, tmp_path: Path) -> None:
+    """Kept parses belong to a path: a copy under another name mustn't pass."""
+    _age(doc_folder)
+    load_document(doc_folder)
+    copy = tmp_path / "OTHER"
+    shutil.copytree(doc_folder, copy, copy_function=shutil.copy2)
+    (copy / "DOC.xml").rename(copy / "OTHER.xml")
+    with pytest.raises(LoaderError, match="does not match"):
+        load_document(copy)
+
+
+def test_objects_load_in_sorted_order(doc_folder: Path) -> None:
+    objects = doc_folder / "objects"
+    for name in ("DOC-10", "DOC-2"):
+        text = (objects / "DOC-0.xml").read_text(encoding="utf-8")
+        (objects / f"{name}.xml").write_text(text.replace("DOC-0", name), encoding="utf-8")
+    expected = [p.stem for p in sorted(objects.glob("*.xml"))]
+    assert list(load_document(doc_folder).objects) == expected
+
+
+@pytest.mark.skipif(os.name != "nt", reason="a glob is case-sensitive elsewhere")
+def test_uppercase_suffix_matches_on_windows(doc_folder: Path) -> None:
+    objects = doc_folder / "objects"
+    (objects / "DOC-0.xml").rename(objects / "DOC-0.XML")
+    assert "DOC-0" in load_document(doc_folder).objects

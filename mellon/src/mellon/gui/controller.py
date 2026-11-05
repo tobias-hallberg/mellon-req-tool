@@ -101,6 +101,7 @@ class RepoController(QObject):
     repo_load_failed = Signal(str, str)
     edit_failed = Signal(str, str, str, str)
     edit_succeeded = Signal(str, str, str)
+    object_changed = Signal(str, str)  # (doc_id, obj_id): see refresh_object
     committed = Signal(str, str)  # (doc_id, short_hash)
     views_changed = Signal(str)   # doc_id whose views set just changed
     filters_changed = Signal(str) # doc_id whose filters set just changed
@@ -261,6 +262,17 @@ class RepoController(QObject):
             )
             if first is not None:
                 self.select_object(doc_id, first)
+
+    def refresh_object(self, doc_id: str, obj_id: str) -> None:
+        """Tell listeners one object's fields changed, after a service write.
+
+        For description, attribute and table edits, which change neither the
+        outline's shape, the links nor the object list. Unlike
+        `reload_document`, panes update that one object, so the grid keeps its
+        scroll position and nothing large is rebuilt.
+        """
+        self.object_changed.emit(doc_id, obj_id)
+        self.refresh_disk_snapshot()
 
     # --- disk freshness ---------------------------------------------------
 

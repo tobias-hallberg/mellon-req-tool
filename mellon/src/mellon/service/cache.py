@@ -65,6 +65,10 @@ class RepoCache:
             self._docs.pop(did, None)
             self._suspects.pop(did, None)
 
+    def forget_document(self, doc_id: str) -> None:
+        """Drop one loaded document, keeping its suspect scan."""
+        self._docs.pop(doc_id, None)
+
     def invalidate_all(self) -> None:
         self._docs.clear()
         self._load_errors = ()

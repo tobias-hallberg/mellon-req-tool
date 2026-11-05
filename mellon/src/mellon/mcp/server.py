@@ -174,25 +174,47 @@ def _service_error_result(err: ServiceError, *, message: str) -> dict:
     }
 
 
-def _flat_outline(doc) -> list[dict]:
+def _flat_outline(doc, nodes=None, level: int = 0, levels: int | None = None) -> list[dict]:
+    """Pre-order rows for `nodes` (default: the whole outline), `levels` deep.
+
+    `level` is the document depth of `nodes`. A row whose children fall below
+    `levels` gets `descendants_omitted`, the number of objects left out under it.
+    """
     out: list[dict] = []
 
-    def walk(nodes, depth: int) -> None:
+    def count(nodes) -> int:
+        return sum(1 + count(n.children) for n in nodes)
+
+    def walk(nodes, depth: int, left: int | None) -> None:
         for n in nodes:
             obj = doc.objects.get(n.ref_id)
             text = obj.description if obj else ""
             first_line = text.splitlines()[0] if text else ""
-            out.append(
-                {
-                    "id": n.ref_id,
-                    "depth": depth,
-                    "heading_or_text": first_line[:200],
-                }
-            )
-            walk(n.children, depth + 1)
+            row = {
+                "id": n.ref_id,
+                "depth": depth,
+                "heading_or_text": first_line[:200],
+            }
+            out.append(row)
+            if left == 1:
+                if n.children:
+                    row["descendants_omitted"] = count(n.children)
+            else:
+                walk(n.children, depth + 1, None if left is None else left - 1)
 
-    walk(doc.outline, 0)
+    walk(doc.outline if nodes is None else nodes, level, levels)
     return out
+
+
+def _outline_node(nodes, ref_id: str, depth: int = 0):
+    """The outline node for `ref_id` and its document depth, or (None, 0)."""
+    for n in nodes:
+        if n.ref_id == ref_id:
+            return n, depth
+        found, found_depth = _outline_node(n.children, ref_id, depth + 1)
+        if found is not None:
+            return found, found_depth
+    return None, 0
 
 
 def _trim_tree(edges: list[dict], depth_left: int) -> list[dict]:
@@ -466,11 +488,37 @@ def inspect_object(
 
 
 @mcp.tool()
-def outline(doc_id: str) -> list[dict]:
-    """Flat pre-order outline of a document."""
-    log.info("outline %s", doc_id)
+def outline(
+    doc_id: str,
+    root: str | None = None,
+    depth: int | None = None,
+) -> list[dict]:
+    """Flat pre-order outline of a document, or of the part under one object.
+
+    Each row is `{id, depth, heading_or_text}`; `depth` is the row's level in
+    the whole document (0 = top level), whichever part was asked for.
+
+    Knobs:
+      - `root` lists only the objects under that object, not the object itself.
+      - `depth` bounds how many levels are listed: `1` gives the top-level
+        objects, or `root`'s direct children. A row whose children were left
+        out carries `descendants_omitted`, the number of objects under it;
+        pass that row's id as `root` to list them.
+
+    On a large document, start with `depth=1` and work down one section at
+    a time instead of reading the whole outline.
+    """
+    log.info("outline %s root=%s depth=%s", doc_id, root, depth)
     _require_doc(doc_id)
-    return _flat_outline(_svc().get_document(doc_id))
+    if depth is not None and depth < 1:
+        raise ValueError(f"depth must be 1 or more, got {depth}")
+    doc = _svc().get_document(doc_id)
+    if root is None:
+        return _flat_outline(doc, levels=depth)
+    node, level = _outline_node(doc.outline, root)
+    if node is None:
+        raise ValueError(f"No object {root!r} in the outline of document {doc_id!r}")
+    return _flat_outline(doc, node.children, level + 1, depth)
 
 
 @mcp.tool()
@@ -562,10 +610,20 @@ def repo_health() -> dict:
 
 @mcp.tool()
 def suspects(doc_id: str | None = None) -> list[dict]:
-    """Scan outgoing links for OK / SUSPECT / BROKEN state."""
+    """Scan outgoing links for OK / SUSPECT / BROKEN state.
+
+    Returns the links that aren't OK. Without `doc_id`, refused while any
+    document fails to load: it can't be scanned, so an empty answer wouldn't
+    mean clean. `repo_health` gives the partial picture with `load_errors`.
+    """
     log.info("suspects doc_id=%s", doc_id)
     svc = _svc()
     if doc_id is None:
+        failed: list[DocLoadError] = []
+        svc.get_all_documents(load_errors=failed)
+        if failed:
+            names = ", ".join(e.doc_id for e in failed)
+            raise ValueError(f"cannot scan every document; failed to load: {names}")
         scoped = svc.scan_suspects(None)
     else:
         _require_doc(doc_id)
@@ -2011,6 +2069,46 @@ def _parse_object_xml(xml_text: str) -> dict:
     }
 
 
+_REVIEW_MAX_COMMITS = 20
+
+
+def _table_xml(xml_text: str) -> bytes | None:
+    """An object-file blob's `<table>` as canonical XML, ignoring indentation."""
+    parser = etree.XMLParser(remove_blank_text=True)
+    table = etree.fromstring(xml_text.encode("utf-8"), parser).find("table")
+    return None if table is None else etree.tostring(table, method="c14n")
+
+
+def _changed_fields(
+    repo, target_rel: str, figure_rel: str, ref_a: str, ref_b: str
+) -> list[str] | None:
+    """What differs in an object between two commits, for `review_suspect_link`.
+
+    None if the object isn't readable at both.
+    """
+    try:
+        xml_a = git_ops.show_blob_at(repo, target_rel, ref_a)
+        xml_b = git_ops.show_blob_at(repo, target_rel, ref_b)
+        a, b = _parse_object_xml(xml_a), _parse_object_xml(xml_b)
+        table_changed = _table_xml(xml_a) != _table_xml(xml_b)
+        figure_changed = git_ops.blob_id_at(
+            repo, figure_rel, ref_a
+        ) != git_ops.blob_id_at(repo, figure_rel, ref_b)
+    except (GitError, etree.XMLSyntaxError):
+        return None
+    changed: list[str] = []
+    if a["description"] != b["description"]:
+        changed.append("description")
+    for name in sorted(a["attrs"].keys() | b["attrs"].keys()):
+        if a["attrs"].get(name) != b["attrs"].get(name):
+            changed.append(f"attr:{name}")
+    if table_changed:
+        changed.append("table")
+    if figure_changed:
+        changed.append("figure")
+    return changed
+
+
 @mcp.tool()
 def commit_changes(
     message: str,
@@ -2093,7 +2191,19 @@ def review_suspect_link(
 
     `commits_between` lists the parent's commits since the ack, including
     ones that changed only its figure; for those the parent text before and
-    now is the same.
+    now is the same. It holds the newest 20; `commits_between_truncated` says
+    when there are more.
+
+    `changed_fields` says what an ack would accept: what differs between the
+    acked commit and HEAD, from `description`, `attr:<name>`, `table` and
+    `figure`. It is None when there is nothing to compare with: no ack, an
+    ack that can't be resolved (`ack_found` false, for example after a rebase
+    and gc), or a parent that wasn't there at the ack. Empty on a suspect link
+    means only the file's formatting changed.
+
+    `parent_text_now` and `parent_attrs_now` read the work tree.
+    `parent_uncommitted` is true when that differs from HEAD: an ack doesn't
+    cover those edits, and the link goes suspect again once they are committed.
     """
     log.info(
         "review_suspect_link %s/%s -> %s/%s",
@@ -2135,25 +2245,24 @@ def review_suspect_link(
 
     repo, root = discover_repo(folder)
     target_rel = f"{target_doc}/objects/{target_id}.xml"
+    figure_rel = _figure_rel(target_doc, target_id)
     target_path = root / target_rel
 
-    parent_text_now: str | None = None
+    parent_now: dict | None = None
     if target_path.is_file():
         try:
-            parent_text_now = _parse_object_xml(
-                target_path.read_text(encoding="utf-8")
-            )["description"]
+            parent_now = _parse_object_xml(target_path.read_text(encoding="utf-8"))
         except etree.XMLSyntaxError:
-            parent_text_now = None
+            parent_now = None
 
     acked = link.ack
-    parent_text_at_ack: str | None = None
+    parent_at_ack: dict | None = None
     if acked is not None:
         try:
             xml_at_ack = git_ops.show_blob_at(repo, target_rel, acked)
-            parent_text_at_ack = _parse_object_xml(xml_at_ack)["description"]
+            parent_at_ack = _parse_object_xml(xml_at_ack)
         except (GitError, etree.XMLSyntaxError):
-            parent_text_at_ack = None
+            parent_at_ack = None
 
     commits_between: list[dict] = []
     if (
@@ -2165,12 +2274,20 @@ def review_suspect_link(
             # A figure-only revision makes the link suspect too, so list it.
             commits_between = git_ops.log_for_path(
                 repo,
-                [target_rel, _figure_rel(target_doc, target_id)],
-                max_entries=20,
+                [target_rel, figure_rel],
+                max_entries=_REVIEW_MAX_COMMITS + 1,
                 since_commit=acked,
             )
         except GitError:
             commits_between = []
+
+    ack_found = False
+    if acked is not None:
+        try:
+            git_ops.blob_id_at(repo, target_rel, acked)
+            ack_found = True
+        except GitError:
+            pass
 
     return {
         "source_doc": source_doc,
@@ -2180,11 +2297,24 @@ def review_suspect_link(
         "link_type": link.type,
         "state": state,
         "reason": reason,
-        "parent_text_at_ack": parent_text_at_ack,
-        "parent_text_now": parent_text_now,
+        "parent_text_at_ack": parent_at_ack["description"] if parent_at_ack else None,
+        "parent_text_now": parent_now["description"] if parent_now else None,
+        "parent_attrs_at_ack": parent_at_ack["attrs"] if parent_at_ack else None,
+        "parent_attrs_now": parent_now["attrs"] if parent_now else None,
+        "parent_uncommitted": bool(
+            git_ops.dirty_paths_under(repo, target_rel)
+            or git_ops.dirty_paths_under(repo, figure_rel)
+        ),
+        "changed_fields": (
+            _changed_fields(repo, target_rel, figure_rel, acked, current_commit)
+            if ack_found and current_commit is not None
+            else None
+        ),
+        "ack_found": ack_found,
         "acked_at_commit": acked,
         "current_commit": current_commit,
-        "commits_between": commits_between,
+        "commits_between": commits_between[:_REVIEW_MAX_COMMITS],
+        "commits_between_truncated": len(commits_between) > _REVIEW_MAX_COMMITS,
     }
 
 

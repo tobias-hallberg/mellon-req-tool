@@ -20,6 +20,8 @@ from typing import Any, Callable, Iterable
 
 from datetime import date as _date
 
+from lxml import etree
+
 from .. import editor
 from ..editor import EditorError
 from ..git_ops import (
@@ -244,10 +246,18 @@ class DocumentService:
             self._cache.put(loaded)
         return loaded
 
-    def _reload(self, doc_id: str) -> LoadedDoc:
-        """Force a disk re-read for `doc_id`, refreshing the cache entry."""
+    def _reload(self, doc_id: str, *, keep_scans: bool = False) -> LoadedDoc:
+        """Force a disk re-read for `doc_id`, refreshing the cache entry.
+
+        `keep_scans` is for edits to an object's fields: they can't change
+        links, whether a link target exists, or HEAD, which is all a suspect
+        scan depends on.
+        """
         if self._cache is not None:
-            self._cache.invalidate([doc_id])
+            if keep_scans:
+                self._cache.forget_document(doc_id)
+            else:
+                self._cache.invalidate([doc_id])
         return self._load(doc_id)
 
     def _docs_of(self, paths: Iterable[Path]) -> tuple[str, ...]:
@@ -1200,7 +1210,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded
@@ -1217,7 +1227,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded
@@ -1269,7 +1279,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.LOAD, str(e)) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
-        refreshed = self._reload(doc_id).document
+        refreshed = self._reload(doc_id, keep_scans=True).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
     @_recorded
@@ -1755,6 +1765,8 @@ class DocumentService:
             raise ServiceError(ErrorCode.GIT, str(e)) from e
         except OSError as e:
             raise ServiceError(ErrorCode.IO, str(e)) from e
+        except etree.XMLSyntaxError as e:
+            raise ServiceError(ErrorCode.LOAD, str(e)) from e
         refreshed = self._reload(doc_id).document
         affected = (doc_id,) if rewritten else ()
         return MutationResult(
@@ -1809,30 +1821,36 @@ class DocumentService:
         self, message: str, paths: Iterable[str] | None = None
     ) -> CommitResult:
         """Commit `paths`; with None, every uncommitted change inside the
-        document folders (never other files in the git work tree). A
-        document folder deleted or renamed on disk still counts while HEAD
-        has it, so its deletions are committed too."""
+        document folders (never other files in the git work tree)."""
         self._require_write()
         root = self._require_repo_root()
+        if paths is None:
+            paths = self.uncommitted_document_paths()
         try:
-            if paths is None:
-                repo, git_root = discover_repo(root)
-                names = doc_folder_names(root) | head_doc_folder_names(
-                    repo, root.relative_to(git_root).as_posix()
-                )
-                # One status scan, filtered to the document folders.
-                prefixes = tuple(
-                    (root / name).relative_to(git_root).as_posix() + "/"
-                    for name in names
-                )
-                paths = [
-                    p for p in dirty_paths_under(repo, "") if p.startswith(prefixes)
-                ]
             short_hash = git_commit(root, message, paths)
         except GitError as e:
             raise ServiceError(ErrorCode.GIT, str(e)) from e
         paths_out: tuple[Path, ...] = tuple(Path(p) for p in paths) if paths else ()
         return CommitResult(short_hash=short_hash, paths=paths_out)
+
+    def uncommitted_document_paths(self) -> list[str]:
+        """Uncommitted paths inside the document folders, repo-relative and
+        sorted; other files in the git work tree don't count. A document
+        folder deleted or renamed on disk still counts while HEAD has it."""
+        root = self._require_repo_root()
+        try:
+            repo, git_root = discover_repo(root)
+            names = doc_folder_names(root) | head_doc_folder_names(
+                repo, root.relative_to(git_root).as_posix()
+            )
+            # One status scan, filtered to the document folders.
+            prefixes = tuple(
+                (root / name).relative_to(git_root).as_posix() + "/"
+                for name in names
+            )
+            return [p for p in dirty_paths_under(repo, "") if p.startswith(prefixes)]
+        except GitError as e:
+            raise ServiceError(ErrorCode.GIT, str(e)) from e
 
     def has_uncommitted_changes(self, doc_id: str) -> bool:
         """True iff `doc_id`'s folder has any uncommitted paths (changed in

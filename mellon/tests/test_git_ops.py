@@ -20,7 +20,6 @@ from mellon.git_ops import (
     create_issue_tag,
     create_tag,
     current_issue,
-    dirty_count,
     dirty_paths_under,
     discard_paths,
     discover_repo,
@@ -517,7 +516,7 @@ def test_last_commit_follows_the_parent_a_merge_matches(tmp_git: Path) -> None:
     assert log_for_path(repo, "DOC/objects/A.xml")[0]["commit_oid"] == str(branch)
 
 
-# --- head_summary / dirty_count -----------------------------------------
+# --- head_summary / dirty_paths_under -----------------------------------
 
 
 def test_head_summary_empty_repo(tmp_git: Path) -> None:
@@ -555,25 +554,15 @@ def test_head_summary_detached(tmp_git: Path) -> None:
     assert short is not None
 
 
-def test_dirty_count_clean_and_dirty(tmp_git: Path) -> None:
+def test_dirty_paths_under_empty_folder_means_the_whole_repo(tmp_git: Path) -> None:
     _write(tmp_git, "a.txt", "x")
     commit(tmp_git, "seed")
     repo = pygit2.Repository(str(tmp_git))
-    assert dirty_count(repo) == 0
+    assert dirty_paths_under(repo, "") == []
 
     _write(tmp_git, "a.txt", "y")       # modify
     _write(tmp_git, "b.txt", "new")     # untracked
-    assert dirty_count(repo) == 2
-
-
-def test_dirty_count_skips_editor_side_files(tmp_git: Path) -> None:
-    _write(tmp_git, "a.txt", "x")
-    commit(tmp_git, "seed")
-    _write(tmp_git, "DOC/figures/.$DOC-1.svg.bkp", "backup")
-    _write(tmp_git, "DOC/figures/.$DOC-1.svg.dtmp", "draft")
-    _write(tmp_git, "DOC/~$notes.docx", "lock")
-    repo = pygit2.Repository(str(tmp_git))
-    assert dirty_count(repo) == 0
+    assert dirty_paths_under(repo, "") == ["a.txt", "b.txt"]
 
 
 def test_dirty_paths_under_skips_editor_side_files(tmp_git: Path) -> None:
@@ -583,6 +572,7 @@ def test_dirty_paths_under_skips_editor_side_files(tmp_git: Path) -> None:
     commit(tmp_git, "seed")
     _write(tmp_git, "DOC/figures/DOC-1.svg", "<svg/>")
     _write(tmp_git, "DOC/figures/.$DOC-1.svg.bkp", "<svg/>")
+    _write(tmp_git, "DOC/figures/.$DOC-1.svg.dtmp", "<svg/>")
     _write(tmp_git, "DOC/~$DOC.xml", "lock")
     repo = pygit2.Repository(str(tmp_git))
     assert dirty_paths_under(repo, "DOC") == ["DOC/figures/DOC-1.svg"]
@@ -618,6 +608,18 @@ def test_dirty_paths_under_does_not_match_prefix_collisions(tmp_git: Path) -> No
     assert dirty_paths_under(repo, "DOC") == ["DOC/DOC.xml"]
 
 
+def test_dirty_paths_under_accepts_a_single_file(tmp_git: Path) -> None:
+    _write(tmp_git, "DOC/objects/DOC-1.xml", "<object/>")
+    _write(tmp_git, "DOC/objects/DOC-11.xml", "<object/>")
+    commit(tmp_git, "seed")
+    repo = pygit2.Repository(str(tmp_git))
+    assert dirty_paths_under(repo, "DOC/objects/DOC-1.xml") == []
+
+    _write(tmp_git, "DOC/objects/DOC-1.xml", "<object><x/></object>")
+    _write(tmp_git, "DOC/objects/DOC-11.xml", "<object><x/></object>")
+    assert dirty_paths_under(repo, "DOC/objects/DOC-1.xml") == ["DOC/objects/DOC-1.xml"]
+
+
 def test_dirty_paths_under_includes_deletes(tmp_git: Path) -> None:
     _write(tmp_git, "DOC/objects/DOC-1.xml", "<object/>")
     commit(tmp_git, "seed")
@@ -649,7 +651,6 @@ def test_dirty_paths_under_includes_staged_only_changes(tmp_git: Path) -> None:
         "DOC/objects/DOC-2.xml",
         "DOC/objects/DOC-3.xml",
     ]
-    assert dirty_count(repo) == 3
 
     commit(tmp_git, "doc", paths=dirty_paths_under(repo, "DOC"))
     repo = pygit2.Repository(str(tmp_git))
@@ -858,6 +859,48 @@ def test_log_for_path_since_commit_truncates(tmp_git: Path) -> None:
     entries = log_for_path(repo, "file.txt", since_commit=c1)
     # Walk stops at (exclusive) c1, so we see v3 and v2 only.
     assert [e["message"] for e in entries] == ["v3", "v2"]
+
+
+@pytest.mark.parametrize("ack_first", [True, False])
+def test_log_for_path_since_commit_keeps_other_side_of_a_merge(
+    tmp_git: Path, ack_first: bool
+) -> None:
+    """Like `git log ack..HEAD -- <paths>`: a change merged in from a branch
+    that forked before the ack is news to whoever acked, in either parent
+    order."""
+    paths = ["DOC/objects/A.xml", "DOC/figures/A.svg"]
+    _write(tmp_git, paths[0], "v1")
+    commit(tmp_git, "seed")
+    repo = pygit2.Repository(str(tmp_git))
+    base = repo.head.target
+    acked = _commit_on(repo, [base], {paths[0]: "v2"}, "acked revision")
+    branch = _commit_on(repo, [base], {paths[1]: "<svg/>"}, "figure on a branch")
+    parents = [acked, branch] if ack_first else [branch, acked]
+    merge = _commit_on(repo, parents, {paths[0]: "v2", paths[1]: "<svg/>"}, "merge")
+    repo.reset(merge, pygit2.GIT_RESET_HARD)
+
+    entries = log_for_path(repo, paths, since_commit=str(acked)[:7])
+
+    # The merge counts too: as one unit, its result differs from both parents.
+    assert [e["message"] for e in entries] == ["merge", "figure on a branch"]
+
+
+def test_log_for_path_since_commit_off_history_stops_at_common_ancestor(
+    tmp_git: Path,
+) -> None:
+    """An ack left behind by a rebase is no ancestor of HEAD. What it already
+    contained must not be reported as new."""
+    _write(tmp_git, "file.txt", "v1")
+    commit(tmp_git, "seed")
+    repo = pygit2.Repository(str(tmp_git))
+    base = repo.head.target
+    dropped = _commit_on(repo, [base], {"file.txt": "v2"}, "before rebase")
+    rebased = _commit_on(repo, [base], {"file.txt": "v2"}, "after rebase")
+    repo.reset(rebased, pygit2.GIT_RESET_HARD)
+
+    entries = log_for_path(repo, "file.txt", since_commit=str(dropped)[:7])
+
+    assert [e["message"] for e in entries] == ["after rebase"]
 
 
 # --- issue helpers + tags -----------------------------------------------

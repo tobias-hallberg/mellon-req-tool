@@ -477,6 +477,19 @@ def test_os_error_during_ack_all_is_io(git_repo: Path, monkeypatch):
     assert ei.value.code is ErrorCode.IO
 
 
+def test_malformed_links_file_during_ack_all_is_load(git_repo: Path):
+    """The links file broke after the scan, say a hand edit or a pull."""
+    svc = DocumentService(git_repo)
+    statuses = svc.scan_suspects("CHILD")["CHILD"]
+    links = git_repo / "CHILD" / "links" / "CHILD-0.xml"
+    links.write_text("<links source=", encoding="utf-8")
+
+    with pytest.raises(ServiceError) as ei:
+        svc.ack_all("CHILD", statuses)
+    assert ei.value.code is ErrorCode.LOAD
+    assert links.read_text(encoding="utf-8") == "<links source="
+
+
 def test_doc_id_cannot_reach_a_document_outside_the_repo(tmp_path: Path):
     from mellon.editor import create_document
 
@@ -635,9 +648,8 @@ def test_prepare_document_commit_includes_suspect_links(git_repo: Path):
     assert s.source_id == "CHILD-0"
     assert s.link.target_doc == "PARENT"
     assert s.link.target_id == "PARENT-1"
-    # Either SUSPECT (never reviewed) or BROKEN (target not in history yet);
-    # both states constitute a warning.
-    assert s.state.value in ("suspect", "broken")
+    assert s.state.value == "suspect"
+    assert s.reason == "never reviewed"
 
 
 def test_prepare_document_commit_no_suspect_links_when_acked(git_repo: Path):

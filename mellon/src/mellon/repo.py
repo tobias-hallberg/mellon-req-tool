@@ -7,6 +7,7 @@ to <doc>/<id>" can work across document boundaries.
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -120,17 +121,23 @@ def folders_fingerprint(
     out: set[tuple[str, int, int]] = set()
     for folder in folders:
         folder = Path(folder)
-        try:
-            files = [f for f in folder.rglob("*") if f.is_file()]
-        except OSError:
-            continue
-        for f in files:
+        stack = [(str(folder), f"{folder.name}/")]
+        while stack:
+            path, prefix = stack.pop()
             try:
-                st = f.stat()
+                with os.scandir(path) as entries:
+                    for entry in entries:
+                        key = f"{prefix}{entry.name}"
+                        try:
+                            if entry.is_dir(follow_symlinks=False):
+                                stack.append((entry.path, f"{key}/"))
+                            elif entry.is_file():
+                                st = entry.stat()
+                                out.add((key, st.st_mtime_ns, st.st_size))
+                        except OSError:
+                            continue
             except OSError:
                 continue
-            rel = f.relative_to(folder).as_posix()
-            out.add((f"{folder.name}/{rel}", st.st_mtime_ns, st.st_size))
     return frozenset(out)
 
 
