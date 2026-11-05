@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-15">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_document_missing_at_from_lists_everything_as_added
+tests/test_diff.py::test_doc_added_wholesale
+tests/test_diff.py::test_doc_removed_wholesale</attr>
+  <description>Compare a version without the document with one that has it; every object is Added (or Deleted the other way).</description>
+</object>

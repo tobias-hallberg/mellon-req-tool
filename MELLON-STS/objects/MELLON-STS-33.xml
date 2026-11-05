@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_comparing_changes_nothing</attr>
+  <description>Compare history with the working copy both ways; no file, index entry or ref changes.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <description>If a version can't be resolved, the dialog shall name it in an error message and keep the previous result.</description>
+</object>

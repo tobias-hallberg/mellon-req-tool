@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <description>An object whose parent or position in the outline changed shall be listed as Moved, alongside any other change it has.</description>
+</object>

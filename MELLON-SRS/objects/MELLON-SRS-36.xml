@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">1,000 objects is the recommended document size (SCALING.md).</attr>
+  <description>Comparing two versions of a 1,000-object document shall complete within 2 s in the scale benchmark.</description>
+</object>

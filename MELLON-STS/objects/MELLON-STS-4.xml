@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-4">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_menu_compare_action_opens_the_dialog
+tests/test_gui_compare.py::test_opening_again_raises_the_same_dialog</attr>
+  <description>Trigger Compare… from the Document Editor menu; the Compare dialog opens for the open document.</description>
+</object>

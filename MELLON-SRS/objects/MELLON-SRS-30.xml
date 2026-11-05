@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <description>An attribute that is set on only one side shall be shown as "(not set)" on the other.</description>
+</object>

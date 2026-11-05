@@ -44,6 +44,7 @@ from ..schema import Table, TableCell, TableColumn, TableRow
 from ..service import DocumentService, ErrorCode, ServiceError
 from .serialize import (
     coverage_report_to_dict,
+    document_diff_to_dict,
     document_summary_to_dict,
     link_status_to_dict,
     load_error_to_dict,
@@ -2178,6 +2179,50 @@ def show_object_at(doc_id: str, obj_id: str, commit_ref: str) -> dict:
     resolved = repo.revparse_single(commit_ref).peel(pygit2.Commit)
     parsed["commit"] = str(resolved.id)[:7]
     return parsed
+
+
+@mcp.tool()
+def compare_document(
+    doc_id: str,
+    from_ref: str | None = None,
+    to_ref: str | None = None,
+    max_changes: int = 100,
+) -> dict:
+    """What changed in a document between two versions: the changes the
+    GUI's Compare dialog lists.
+
+    A version is a commit hash, a branch, a tag (an issue is
+    `<doc_id>-issue-<n>`), `HEAD`, or `"working copy"` for the files on
+    disk, uncommitted edits included. `to_ref` defaults to the latest
+    commit. `from_ref` defaults to the latest issue, or the issue before it
+    when the document hasn't changed since; with no issue, pass it.
+
+    `changes` come in outline order. Each has `changes` (Added, Deleted,
+    Modified, Moved, Link reviewed) and the first line of the object's
+    `text`. A modified object carries its changed fields with `from` and `to`
+    values (`attrs`, `description`, `links`, `table`, `figure`); an added or
+    deleted one carries the whole `object` at the version where it exists;
+    a moved one its outline position (`moved`). `unreadable` names a file
+    that couldn't be parsed at a version. `max_changes` caps the list
+    (`truncated`); `counts` and `total_changes` cover all of it.
+    """
+    log.info("compare_document %s %s..%s", doc_id, from_ref, to_ref)
+    svc = _svc()
+    try:
+        ref_a, ref_b = from_ref, to_ref
+        if not ref_a or not ref_b:
+            default_from, default_to = svc.default_compare_versions(doc_id)
+            ref_a = ref_a or default_from
+            ref_b = ref_b or default_to
+        if ref_a is None:
+            raise ValueError(
+                f"{doc_id} has no issue to compare from; pass from_ref "
+                "(a commit, branch or tag)"
+            )
+        diff = svc.compare_document(doc_id, ref_a, ref_b)
+    except ServiceError as e:
+        raise ValueError(str(e)) from e
+    return document_diff_to_dict(diff, max_changes=max(0, max_changes))
 
 
 @mcp.tool()

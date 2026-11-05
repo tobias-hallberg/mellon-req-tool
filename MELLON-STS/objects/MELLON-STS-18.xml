@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-18">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_rows_in_outline_order_with_change_and_text
+tests/test_diff.py::test_changes_follow_the_outline_with_deleted_objects_in_place</attr>
+  <description>A deleted object's row shows its text at From.</description>
+</object>

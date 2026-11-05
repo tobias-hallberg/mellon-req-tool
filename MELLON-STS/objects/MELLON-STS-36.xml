@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_unreadable_object_is_marked
+tests/test_gui_compare.py::test_unreadable_outline_is_reported
+tests/test_diff.py::test_unreadable_object_is_marked_and_the_rest_still_compared
+tests/test_diff.py::test_unreadable_links_file_is_not_read_as_no_links
+tests/test_diff.py::test_missing_manifest_is_reported_not_silent
+tests/test_diff.py::test_unparseable_manifest_is_reported</attr>
+  <description>Commit an object file, a links file and a manifest that don't parse; each is reported as unreadable at that version, links aren't shown as removed, and the other changes still show.</description>
+</object>

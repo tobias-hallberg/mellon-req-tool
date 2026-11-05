@@ -4,7 +4,9 @@ Listens to the same `controller.object_selected` signal as the inspector and
 re-fetches the commit list whenever the selection changes. Each row shows
 short hash, date, author, and the first line of the commit message. The
 "View at this commit…" button opens a read-only `ObjectAtCommitDialog` for
-the selected commit.
+the selected commit; "Compare with latest…" asks the window (through
+`compare_requested`) to compare the whole document there with the latest
+commit.
 
 History is per-file: there's no fall-through to document-level commits when
 no object is selected — the panel just shows its empty-state label.
@@ -14,7 +16,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -39,6 +41,9 @@ _HASH_ROLE = Qt.ItemDataRole.UserRole + 1
 
 
 class HistoryTab(QWidget):
+    # A commit's short hash: compare the document there with the latest commit.
+    compare_requested = Signal(str)
+
     EMPTY_MESSAGE = "Select a requirement to view its history."
 
     COLUMNS = ("Hash", "Issue", "Date", "Author", "Message")
@@ -59,6 +64,12 @@ class HistoryTab(QWidget):
         self._view_button = QPushButton("View at this commit…")
         self._view_button.clicked.connect(self._view_at_commit)
         self._view_button.setEnabled(False)
+        self._compare_button = QPushButton("Compare with latest…")
+        self._compare_button.setToolTip(
+            "Compare the whole document at this commit with the latest commit"
+        )
+        self._compare_button.clicked.connect(self._compare_with_latest)
+        self._compare_button.setEnabled(False)
 
         self._table = QTableWidget(0, len(self.COLUMNS))
         self._table.setHorizontalHeaderLabels(list(self.COLUMNS))
@@ -89,6 +100,7 @@ class HistoryTab(QWidget):
         toolbar = QHBoxLayout()
         toolbar.setContentsMargins(0, 0, 0, 0)
         toolbar.addWidget(self._view_button)
+        toolbar.addWidget(self._compare_button)
         toolbar.addStretch(1)
         toolbar.addWidget(self._refresh_button)
         content_layout.addLayout(toolbar)
@@ -117,6 +129,7 @@ class HistoryTab(QWidget):
         self._table.setRowCount(0)
         self._stack.setCurrentWidget(self._empty)
         self._view_button.setEnabled(False)
+        self._compare_button.setEnabled(False)
 
     def _on_selection(self, doc_id: str, obj_id: str) -> None:
         self._current_doc_id = doc_id
@@ -149,6 +162,7 @@ class HistoryTab(QWidget):
             self._table.setRowCount(0)
             self._stack.setCurrentWidget(self._empty)
             self._view_button.setEnabled(False)
+            self._compare_button.setEnabled(False)
             return
 
         commits = self._controller.object_history(
@@ -163,6 +177,7 @@ class HistoryTab(QWidget):
             )
             self._stack.setCurrentWidget(self._error_label)
             self._view_button.setEnabled(False)
+            self._compare_button.setEnabled(False)
             return
 
         self._populate_table(commits)
@@ -198,7 +213,14 @@ class HistoryTab(QWidget):
     # --- row interactions -------------------------------------------------
 
     def _on_selection_changed(self) -> None:
-        self._view_button.setEnabled(self._selected_hash() is not None)
+        selected = self._selected_hash() is not None
+        self._view_button.setEnabled(selected)
+        self._compare_button.setEnabled(selected)
+
+    def _compare_with_latest(self) -> None:
+        short_hash = self._selected_hash()
+        if short_hash is not None:
+            self.compare_requested.emit(short_hash)
 
     def _on_row_double_clicked(self, item: QTableWidgetItem) -> None:
         short_hash = item.data(_HASH_ROLE)

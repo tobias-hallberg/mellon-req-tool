@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document id="MELLON-SRS">
+  <metadata>
+    <title>Mellon Software Requirements Specification</title>
+    <author>Tobias Hallberg</author>
+    <date>2026-11-05</date>
+  </metadata>
+  <attributes>
+    <attribute name="type" kind="enum" required="true" label="Type">
+      <option>Heading</option>
+      <option>Requirement</option>
+      <option>Information</option>
+      <option>Note</option>
+    </attribute>
+    <attribute name="req-type" kind="enum" required="false" label="Requirement Type">
+      <option>Functional</option>
+      <option>Performance</option>
+      <option>Interface</option>
+      <option>Usability</option>
+      <option>Design Constraint</option>
+    </attribute>
+    <attribute name="priority" kind="enum" required="false" label="Priority">
+      <option>Must</option>
+      <option>Should</option>
+      <option>Could</option>
+      <option>Won't</option>
+    </attribute>
+    <attribute name="status" kind="enum" required="true" label="Status">
+      <option>Draft</option>
+      <option>Reviewed</option>
+      <option>Approved</option>
+      <option>Deleted</option>
+    </attribute>
+    <attribute name="verification-method" kind="enum" required="false" label="Verification Method">
+      <option>Test</option>
+      <option>Analysis</option>
+      <option>Inspection</option>
+      <option>Demonstration</option>
+    </attribute>
+    <attribute name="rationale" kind="text" required="false" label="Rationale"/>
+  </attributes>
+  <outline>
+    <ref id="MELLON-SRS-0">
+      <ref id="MELLON-SRS-1"/>
+      <ref id="MELLON-SRS-2"/>
+    </ref>
+    <ref id="MELLON-SRS-3">
+      <ref id="MELLON-SRS-4"/>
+      <ref id="MELLON-SRS-5">
+        <ref id="MELLON-SRS-6"/>
+        <ref id="MELLON-SRS-7"/>
+        <ref id="MELLON-SRS-8"/>
+      </ref>
+      <ref id="MELLON-SRS-9">
+        <ref id="MELLON-SRS-10"/>
+        <ref id="MELLON-SRS-11"/>
+        <ref id="MELLON-SRS-12"/>
+        <ref id="MELLON-SRS-13"/>
+        <ref id="MELLON-SRS-14"/>
+        <ref id="MELLON-SRS-15"/>
+        <ref id="MELLON-SRS-16"/>
+        <ref id="MELLON-SRS-17"/>
+      </ref>
+      <ref id="MELLON-SRS-18">
+        <ref id="MELLON-SRS-19"/>
+        <ref id="MELLON-SRS-20"/>
+        <ref id="MELLON-SRS-21"/>
+        <ref id="MELLON-SRS-22"/>
+        <ref id="MELLON-SRS-23"/>
+        <ref id="MELLON-SRS-24"/>
+        <ref id="MELLON-SRS-25"/>
+        <ref id="MELLON-SRS-26"/>
+      </ref>
+      <ref id="MELLON-SRS-27">
+        <ref id="MELLON-SRS-28"/>
+        <ref id="MELLON-SRS-29"/>
+        <ref id="MELLON-SRS-30"/>
+        <ref id="MELLON-SRS-31"/>
+        <ref id="MELLON-SRS-32"/>
+        <ref id="MELLON-SRS-33"/>
+      </ref>
+      <ref id="MELLON-SRS-34">
+        <ref id="MELLON-SRS-35"/>
+        <ref id="MELLON-SRS-36"/>
+        <ref id="MELLON-SRS-37"/>
+        <ref id="MELLON-SRS-38"/>
+        <ref id="MELLON-SRS-39"/>
+        <ref id="MELLON-SRS-40"/>
+      </ref>
+    </ref>
+  </outline>
+</document>

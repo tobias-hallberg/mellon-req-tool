@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-32">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <description>A change to an object's table or figure shall mark the object Modified and show the table or figure at From and at To.</description>
+</object>

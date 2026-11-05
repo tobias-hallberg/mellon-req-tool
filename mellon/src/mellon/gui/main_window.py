@@ -46,6 +46,7 @@ from . import branding, icons
 from .controller import RepoController, describe_load_error
 from .dialogs.about_dialog import show_about
 from .dialogs.commit_dialog import CommitDialog
+from .dialogs.compare_dialog import LATEST, CompareDialog
 from .dialogs.link_picker import LinkPicker
 from .dialogs.trace_view import TraceView
 from .models.objects_grid import STALE_EDIT_MESSAGE
@@ -172,6 +173,8 @@ class DocumentEditorWindow(QMainWindow):
         # The running PDF export's signals and (doc_id, target, doc), if any.
         self._export_signals: _ExportSignals | None = None
         self._export_ctx: tuple[str, str] | None = None
+        # The open Compare dialog, if any (it deletes itself on close).
+        self._compare_dialog: CompareDialog | None = None
         # HEAD short hash as last read by `_refresh_git_cell`, and the HEAD
         # the grid's link states were last refreshed for.
         self._git_head: str | None = None
@@ -249,6 +252,9 @@ class DocumentEditorWindow(QMainWindow):
         self.grid_pane.clear_filters_requested.connect(self._clear_all_filters)
         self.grid_pane.filter_edit_requested.connect(self._open_filter_dialog)
         self.grid_pane.table_editor_changed.connect(self._on_table_editor_changed)
+        self.right_pane.history.compare_requested.connect(
+            lambda ref: self.open_compare(ref, LATEST)
+        )
         # Every apply_filter (including pill `[×]`) flows through this slot
         # so the QSettings entry stays in sync with the in-session state and
         # the next launch doesn't re-apply a deactivated filter.
@@ -424,6 +430,14 @@ class DocumentEditorWindow(QMainWindow):
         # Export action lives on the toolbar too; reuse it here so the
         # shortcut + enabled state stay in sync.
         menu.addAction(self._export_act)
+        # Comparing only reads, so it stays enabled in read-only mode.
+        self._compare_act = QAction("C&ompare…", self)
+        self._compare_act.setToolTip(
+            "Show what changed in this document between two versions: "
+            "issues, branches, commits or the working copy"
+        )
+        self._compare_act.triggered.connect(lambda: self.open_compare())
+        menu.addAction(self._compare_act)
         # Back to the last commit in one go. No shortcut: it can't be undone.
         self._discard_act = QAction(
             "&Discard uncommitted changes to this document…", self
@@ -1208,6 +1222,30 @@ class DocumentEditorWindow(QMainWindow):
             return
         dlg = TraceView(self.controller, doc_id, sel, self)
         dlg.exec()
+
+    # --- compare ----------------------------------------------------------
+
+    def open_compare(
+        self, from_ref: str | None = None, to_ref: str | None = None
+    ) -> CompareDialog:
+        """Show the Compare dialog for this document. Without refs, an open
+        dialog is just brought to the front, and a new one starts from the
+        document's default versions; with refs, it compares those."""
+        dlg = self._compare_dialog
+        if dlg is None:
+            dlg = CompareDialog(self.controller, self._doc_id, self)
+            dlg.destroyed.connect(self._forget_compare_dialog)
+            self._compare_dialog = dlg
+            dlg.start(from_ref, to_ref)
+        elif from_ref is not None or to_ref is not None:
+            dlg.start(from_ref, to_ref)
+        dlg.show()
+        dlg.raise_()
+        dlg.activateWindow()
+        return dlg
+
+    def _forget_compare_dialog(self, *_args) -> None:
+        self._compare_dialog = None
 
     # --- figures --------------------------------------------------------
 

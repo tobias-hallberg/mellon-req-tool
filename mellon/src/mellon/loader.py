@@ -16,7 +16,7 @@ import dataclasses
 import os
 import time
 from collections.abc import Callable
-from pathlib import Path
+from pathlib import Path, PurePath, PurePosixPath
 from typing import Any, TypeVar
 
 from lxml import etree
@@ -143,10 +143,55 @@ def load_document(folder: str | Path) -> Document:
     )
 
 
-def _parse_manifest(
-    path: Path,
-) -> tuple[Metadata, tuple[str, ...], tuple[Attribute, ...], tuple[OutlineNode, ...]]:
-    manifest = _parse_xml(path)
+_Manifest = tuple[Metadata, tuple[str, ...], tuple[Attribute, ...], tuple[OutlineNode, ...]]
+
+
+def parse_manifest_bytes(data: bytes, path: str | Path) -> _Manifest:
+    """Parse a manifest's bytes as `load_document` parses the file at `path`.
+
+    For versions of a document that aren't on disk, such as a blob read from
+    git. `path` (`<doc_id>/<doc_id>.xml`) names the file in messages, and its
+    folder name must match the manifest's id. Returns `(metadata, parents,
+    attributes, outline)`; raises `LoaderError`.
+    """
+    path = _message_path(path)
+    return _manifest_from_root(_parse_xml_bytes(data, path), path)
+
+
+def parse_object_bytes(data: bytes, path: str | Path) -> RequirementObject:
+    """Parse an object file's bytes as `load_document` parses the file at
+    `path` (`.../objects/<id>.xml`, whose stem must match the object id).
+    The result has no `figure_path`. Raises `LoaderError`."""
+    path = _message_path(path)
+    return _object_from_root(_parse_xml_bytes(data, path), path)
+
+
+def parse_links_bytes(data: bytes, path: str | Path) -> tuple[str, tuple[Link, ...]]:
+    """Parse a links file's bytes as `load_document` parses the file at
+    `path` (`.../links/<id>.xml`). Returns `(source_id, links)`; raises
+    `LoaderError`."""
+    path = _message_path(path)
+    return _links_from_root(_parse_xml_bytes(data, path), path)
+
+
+def _message_path(path: str | Path) -> PurePath:
+    """A path given as a string is a git path: keep its forward slashes in
+    messages (a `Path` would show backslashes on Windows)."""
+    return PurePosixPath(path) if isinstance(path, str) else path
+
+
+def _parse_xml_bytes(data: bytes, path: PurePath) -> etree._Element:
+    try:
+        return etree.fromstring(data)
+    except etree.XMLSyntaxError as e:
+        raise LoaderError(f"{path}: XML parse error: {e}") from e
+
+
+def _parse_manifest(path: Path) -> _Manifest:
+    return _manifest_from_root(_parse_xml(path), path)
+
+
+def _manifest_from_root(manifest: etree._Element, path: Path) -> _Manifest:
     if manifest.tag != "document":
         raise LoaderError(
             f"{path}: root element must be <document>, got <{manifest.tag}>"
@@ -316,7 +361,10 @@ def _parse_refs(parent: etree._Element) -> tuple[OutlineNode, ...]:
 
 
 def _parse_object(path: Path) -> RequirementObject:
-    root = _parse_xml(path)
+    return _object_from_root(_parse_xml(path), path)
+
+
+def _object_from_root(root: etree._Element, path: Path) -> RequirementObject:
     if root.tag != "object":
         raise LoaderError(f"{path}: root must be <object>, got <{root.tag}>")
     obj_id = root.get("id")
@@ -561,7 +609,10 @@ _ALL_ATTR_OPS: frozenset[str] = frozenset(
 
 
 def _parse_links(path: Path) -> tuple[str, tuple[Link, ...]]:
-    root = _parse_xml(path)
+    return _links_from_root(_parse_xml(path), path)
+
+
+def _links_from_root(root: etree._Element, path: Path) -> tuple[str, tuple[Link, ...]]:
     if root.tag != "links":
         raise LoaderError(f"{path}: root must be <links>, got <{root.tag}>")
     source = root.get("source")

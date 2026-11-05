@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_filters_hide_rows_by_change</attr>
+  <description>Untick change kinds under Show; their rows hide, and tick them again to show them.</description>
+</object>

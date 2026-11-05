@@ -413,3 +413,74 @@ def test_main_repo_root_defaults_to_cwd(
     monkeypatch.chdir(req_test_copy)
     assert server.main([]) == 0
     assert server._State.repo_root == req_test_copy.resolve()
+
+
+# --- compare_document -------------------------------------------------------
+
+
+def test_compare_document_defaults_to_latest_issue_and_commit(req_test_copy: Path) -> None:
+    out = server.compare_document("VCU3-SRS")
+    assert out["from"]["ref"] == "VCU3-SRS-issue-1"
+    assert out["to"]["ref"] == "HEAD"
+    assert out["total_changes"] == len(out["changes"]) > 0
+    assert out["truncated"] is False
+    assert set(out["counts"]) == {"Added", "Deleted", "Modified", "Moved", "Link reviewed"}
+    first = out["changes"][0]
+    assert set(first) >= {"obj_id", "changes", "text"}
+    # Attribute changes carry the manifest's label.
+    attrs = [a for c in out["changes"] for a in c.get("attrs", [])]
+    assert any(a["label"] == "Requirement Type" for a in attrs)
+
+
+def test_compare_document_matches_the_dialog_engine(req_test_copy: Path) -> None:
+    from mellon.diff import compare_document
+
+    out = server.compare_document("VCU3-SRS", max_changes=1000)
+    diff = compare_document(req_test_copy, "VCU3-SRS", "VCU3-SRS-issue-1", "HEAD")
+    assert [c["obj_id"] for c in out["changes"]] == [c.obj_id for c in diff.changes]
+    assert [c["changes"] for c in out["changes"]] == [
+        [str(k) for k in c.kinds] for c in diff.changes
+    ]
+
+
+def test_compare_document_working_copy(req_test_copy: Path) -> None:
+    assert server.edit_description("VCU3-SRS", "VCU3-SRS-2", "Uncommitted text.")["ok"]
+    created = server.new_object("VCU3-SRS", description="Brand new.")
+    assert created["ok"]
+    out = server.compare_document("VCU3-SRS", from_ref="HEAD", to_ref="working copy")
+    assert out["to"] == {"ref": "working copy", "short": "working copy", "present": True}
+    by_id = {c["obj_id"]: c for c in out["changes"]}
+    assert by_id["VCU3-SRS-2"]["changes"] == ["Modified"]
+    assert by_id["VCU3-SRS-2"]["description"]["to"] == "Uncommitted text."
+    added = [c for c in out["changes"] if c["changes"] == ["Added"]]
+    assert len(added) == 1
+    assert added[0]["object"]["description"] == "Brand new."
+    assert added[0]["object"]["figure"] is False
+
+
+def test_compare_document_caps_the_list(req_test_copy: Path) -> None:
+    out = server.compare_document("VCU3-SRS", max_changes=2)
+    assert len(out["changes"]) == 2
+    assert out["truncated"] is True
+    assert out["total_changes"] > 2
+
+
+def test_compare_document_without_an_issue_needs_from(req_test_copy: Path) -> None:
+    repo = pygit2.Repository(str(req_test_copy))
+    repo.references.delete("refs/tags/VCU3-STS-issue-1")
+    with pytest.raises(ValueError, match="no issue to compare from"):
+        server.compare_document("VCU3-STS")
+    out = server.compare_document("VCU3-STS", from_ref="HEAD~3")
+    assert out["from"]["ref"] == "HEAD~3"
+
+
+def test_compare_document_names_a_bad_version(req_test_copy: Path) -> None:
+    with pytest.raises(ValueError, match="no-such-version"):
+        server.compare_document("VCU3-SRS", from_ref="no-such-version")
+
+
+def test_compare_document_works_read_only(
+    req_test_copy: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(server._State, "read_only", True)
+    assert server.compare_document("VCU3-SRS")["total_changes"] > 0

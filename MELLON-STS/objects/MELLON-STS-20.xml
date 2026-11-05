@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_no_differences_says_so
+tests/test_diff.py::test_identical_refs_yields_empty_diff</attr>
+  <description>Compare a version with itself; the dialog says there are no differences.</description>
+</object>

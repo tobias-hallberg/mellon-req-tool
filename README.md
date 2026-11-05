@@ -13,8 +13,9 @@ The current version is 0.3.0. A document is meant to hold up to 1,000 objects, c
 - **Saved views and filters.** A view saves column visibility and order; a filter is a DOORS-style multi-rule filter. Both are stored as files in the document folder, so they are versioned with it.
 - **Tables and figures.** A table belongs to one object; it can have header rows, column alignment and merged cells, and is edited in place in the grid. Each object can also have one SVG figure (draw.io `.drawio.svg` works), shown as a thumbnail in the grid.
 - **Issue tags.** You cut a document issue as a git tag `<doc-id>-issue-<n>` from the commit dialog. A plain commit creates no tag.
+- **Compare.** See what changed in a document between two issues, branches, commits or the working copy: added, deleted, modified and moved objects, with each changed field side by side and changed words highlighted. Also over MCP (`compare_document`).
 - **PDF export** (`Ctrl+E`). The cover and running header come from the document's ID, title, author, date and current issue. Tables are typeset. Attached figures are rendered by draw.io desktop; without it, each one prints as a placeholder line. The Windows installer includes the TeX engine (tectonic) and its cache, so export works offline.
-- **MCP server for AI agents.** `mellon-mcp` has 45 tools (13 read, 27 write, 5 git/review). Use `--read-only` to refuse every write.
+- **MCP server for AI agents.** `mellon-mcp` has 46 tools (13 read, 27 write, 6 git/review). Use `--read-only` to refuse every write.
 - **Safe with git.**
   - A GUI commit contains only that document's files, never unrelated staged changes.
   - Commits are refused without a git identity or while a merge is in progress.

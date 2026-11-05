@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Must</attr>
+  <attr name="req-type">Design Constraint</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">Users compare while editing. Unlike the DOORS Classic comparison wizard, comparing creates nothing.</attr>
+  <description>Comparing shall not change any file in the working tree, the git index or any ref.</description>
+</object>

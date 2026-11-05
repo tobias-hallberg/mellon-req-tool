@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-14">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_unresolvable_version_is_named_and_the_result_kept
+tests/test_diff.py::test_unresolvable_ref_is_named
+tests/test_service.py::test_compare_errors</attr>
+  <description>Type a version that doesn't exist; the error names it and the previous result and summary stay.</description>
+</object>

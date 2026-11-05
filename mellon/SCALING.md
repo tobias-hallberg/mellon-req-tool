@@ -80,6 +80,19 @@ The targets were estimates set before the work. The open and reload times are mo
 
 **First read of new files.** The very first open after the files were written took 21 s at 500 objects, about 80–97 s at 2,000 and 81 s at 5,000, on old and new code alike. A second open is far faster, so this is the cost of reading files for the first time, which on this machine looks like antivirus scanning. That wasn't verified. Expect it after a fresh clone, not in daily use.
 
+## Compare
+
+`bench_core.py` times the Compare dialog's engine, `diff.compare_document`. MELLON-SRS asks for 2 s at 1,000 objects.
+
+| Compare | 1,000 | 5,000 |
+|---|---|---|
+| First commit to HEAD (every object changed) | 0.19 s | 1.0 s |
+| HEAD to the working copy (reads every file) | 0.15 s | 0.77 s |
+| A few commits apart | | 0.04 s |
+| Versions to offer (`document_versions`) | 0.01 s | 0.03 s |
+
+Files are compared by blob id before anything is parsed, so the cost follows how many objects changed. The working copy has no index of what changed, so every file is read and hashed. The dialog compares on the thread pool, so the window stays usable either way.
+
 ## Why it was slow
 
 **The suspect scan.** It walked history separately for every link target, so its cost grew with targets × commits. Each step also read the target document's `objects` tree, and that tree grows with the document. At 5,000 objects this filled libgit2's process-wide 256 MB object cache during the first scan, and each target then cost about 1 s instead of a few milliseconds. The 222 s rescan at 2,000 fits the same cause, though the cliff itself was only reproduced in a separate test.

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-5">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_compare_is_available_in_read_only_mode
+tests/test_service.py::test_compare_document_reads_history_and_the_working_copy</attr>
+  <description>With the editor in read-only mode, Compare… is enabled and compares.</description>
+</object>

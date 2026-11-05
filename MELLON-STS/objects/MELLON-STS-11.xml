@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-11">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_opens_with_latest_issue_to_latest_commit
+tests/test_gui_compare.py::test_opens_with_the_issue_before_when_the_latest_commit_is_an_issue
+tests/test_diff.py::test_default_versions_compare_the_latest_issue_with_the_latest_commit
+tests/test_diff.py::test_default_versions_at_an_issue_compare_it_with_the_one_before</attr>
+  <description>Open the dialog on a document with issues: From is the latest issue, or the issue before it when the document hasn't changed since; To is the latest commit.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_moved_and_link_reviewed_rows
+tests/test_diff.py::test_object_moved_to_another_parent
+tests/test_diff.py::test_reordering_marks_only_the_object_that_moved
+tests/test_diff.py::test_inserting_an_object_moves_nothing
+tests/test_diff.py::test_modified_and_moved_has_both</attr>
+  <description>Move an object to another parent, reorder siblings, and insert an object; only the objects that moved are Moved, also when modified.</description>
+</object>

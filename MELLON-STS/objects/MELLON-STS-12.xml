@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-12">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_without_an_issue_prompts_for_from
+tests/test_diff.py::test_default_versions_without_an_issue
+tests/test_diff.py::test_default_versions_at_the_only_issue_has_no_from
+tests/test_diff.py::test_default_versions_before_the_first_commit</attr>
+  <description>Open the dialog on a document with no issue: From is empty, the dialog asks for a version and compares nothing until one is chosen.</description>
+</object>

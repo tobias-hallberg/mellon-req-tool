@@ -59,7 +59,7 @@ are documented in [USAGE.md](USAGE.md).
   whether a target changed. The service caches suspect scans keyed by HEAD, so
   a commit invalidates them.
 
-### MCP server (45 tools)
+### MCP server (46 tools)
 
 `mellon-mcp [--repo-root <path>] [--read-only] [--log-level …] [--version]`
 starts an MCP stdio server.
@@ -77,7 +77,7 @@ Client configuration (`claude mcp add`, Claude Desktop) is in
 |---|---|
 | **Read (13)** | `list_documents`, `show_document`, `show_object`, `inspect_object`, `outline`, `validate_document`, `validate_repo`, `repo_health`, `suspects`, `trace`, `incoming_links`, `coverage_report`, `search_objects` |
 | **Write (27)** | `new_object`, `update_object`, `copy_object`, `bulk_set_attribute`, `set_attribute`, `edit_description`, `edit_metadata`, `tag_issue`, `set_figure`, `clear_figure`, `set_table`, `clear_table`, `add_parent_doc`, `remove_parent_doc`, `add_attr_option`, `define_attribute`, `change_attribute_required`, `delete_attribute`, `remove_attr_option`, `create_document`, `move_object`, `reorder_outline`, `add_link`, `remove_link`, `delete_object`, `ack_suspects`, `manage_view` |
-| **Git / review / export (5)** | `commit_changes`, `git_history`, `show_object_at`, `review_suspect_link`, `export_document` |
+| **Git / review / export (6)** | `commit_changes`, `git_history`, `show_object_at`, `compare_document`, `review_suspect_link`, `export_document` |
 
 **Write results and commits**
 
@@ -592,12 +592,29 @@ A table is structured content on one object: `<table>` inside
   - `<then>` takes `<attr name=… status=required|optional|forbidden>` and
     `<link target-doc=… status=required>` (`RULE_LINK_REQUIRED_MISSING`).
 
-### Library-only modules
+### Compare
+
+Specified in `../MELLON-SRS` under "Compare dialog", the first feature
+specified in Mellon before it was built.
 
 - `diff.py`: `compare_document(repo_root, doc_id, ref_a, ref_b)` returns a
-  `DocumentDiff`. It covers object membership, plus attribute, description and
-  outgoing-link deltas for modified objects. It has no MCP or GUI surface (see
-  Deferred).
+  `DocumentDiff` between two versions: any git ref, or `WORKING_COPY` (the
+  files on disk). Each changed object is an `ObjectChange` with its kinds
+  (`Change`: Added, Deleted, Modified, Moved, Link reviewed), its state at
+  both versions, and field deltas (attributes, description, links, table,
+  figure). Files are compared by blob id first, so only differing objects
+  are parsed; one that can't be parsed is reported with an `error`, not read
+  as empty. Moves ignore inserted and deleted siblings. `changes` follow
+  the outline at B, deleted objects where they stood at A.
+  `document_versions` lists what to offer; `default_versions` picks the
+  latest issue (or the one before, when the document hasn't changed since)
+  and the latest commit.
+- GUI: `CompareDialog`, from the Document Editor menu (also read-only) and
+  the History tab's **Compare with latest…**. Non-modal; compares on the
+  thread pool.
+- MCP: `compare_document(doc_id, from_ref?, to_ref?, max_changes=100)`.
+- At 1,000 objects a worst-case compare (every object changed) takes about
+  0.2 s; see [SCALING.md](SCALING.md).
 
 ### Packaging (Windows installer)
 
@@ -649,7 +666,7 @@ no documents of its own yet, so the job passes trivially for now.
 
 ### Tests
 
-**1426 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-11-05).
+**1506 tests** (`uv run --no-sync pytest --collect-only -q`, 2026-11-05).
 They cover the library, git_ops, MCP read/write/git, and the GUI (smoke,
 edits, outline, links, suspect, polish, theme, filter, reload, commit,
 export, tables, figures, app). They also cover the filter engine, coverage,
@@ -660,15 +677,13 @@ the draw.io integration (`test_drawio.py`, which fakes the draw.io process).
 - GUI tests run headless with `QT_QPA_PLATFORM=offscreen`.
 - `MELLON_REQUIRE_FIXTURE=1` makes a missing fixture an error instead of a
   skip. CI sets it.
+- `test_mellon_sts.py` checks this repo's own `MELLON-STS`: every pytest node
+  id a test case lists must name an existing test. It reads the test files'
+  syntax trees rather than importing them.
 
 ## Deferred / pending
 
 Ordered roughly by usefulness.
-
-### Compare dialog
-
-There is no GUI Compare dialog yet. `diff.py` stays a library-only module,
-with no MCP diff tools.
 
 ### Known limitations in 0.3.0
 
@@ -758,7 +773,8 @@ src/mellon/
   filter.py      filter engine: evaluate(doc, filt) → set[obj_id]; OPS_BY_KIND, OPERATORS_LABEL
   coverage.py    CoverageRow, CoverageReport, coverage_report (direct + transitive, headings-aware)
   search.py      SearchHit, search_objects (substring scan, ranked)
-  diff.py        compare_document → DocumentDiff (library only)
+  diff.py        compare_document → DocumentDiff (refs or WORKING_COPY), document_versions,
+                 default_versions, word_diff
   merge.py       resolve a conflicted git merge of documents: pending, plan, resolve
                  (id clashes renumbered, link sets, outline merge, mine/theirs picks)
   export.py      LaTeX/PDF export: render_latex, build_pdf, pdf, unrendered_figures (tectonic)
@@ -766,7 +782,7 @@ src/mellon/
                  qt_svg (QtSvg-friendly rewrite), export_pdfs (batch CLI render)
   templates/syrs/  main.tex.j2 (incl. the Traceability section) + syrs.cls
   mcp/
-    server.py    FastMCP stdio server; 45 tools: read (13) / write (27) / git+review (5)
+    server.py    FastMCP stdio server; 46 tools: read (13) / write (27) / git+review (6)
     serialize.py dataclass → JSON-serializable dict helpers
   service/
     document.py  DocumentService (the only object MCP/GUI talk to for mutations);
@@ -793,7 +809,7 @@ src/mellon/
     dialogs/                       LinkPicker, TraceView, CommitDialog, DocumentPropertiesDialog,
                                    FilterDialog + ManageFiltersDialog, NewViewDialog +
                                    ManageViewsDialog, NewDocumentDialog, ObjectAtCommitDialog,
-                                   FigureViewDialog, MergeDialog, AboutDialog
+                                   FigureViewDialog, MergeDialog, CompareDialog, AboutDialog
 
 packaging/       build.ps1, mellon.spec, mellon.iss, launch_gui.py, launch_mcp.py,
                  THIRD-PARTY-NOTICES.txt

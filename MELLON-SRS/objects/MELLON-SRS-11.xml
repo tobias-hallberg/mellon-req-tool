@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <description>The user shall be able to type a commit hash, tag or branch name as a version.</description>
+</object>

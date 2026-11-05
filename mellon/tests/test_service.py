@@ -1372,3 +1372,43 @@ def test_undo_refused_read_only(svc_readonly: DocumentService, mcp_repo: Path):
     with pytest.raises(ServiceError) as ei:
         svc_readonly.undo_changes(changes)
     assert ei.value.code is ErrorCode.READ_ONLY
+
+
+# --- compare --------------------------------------------------------------
+
+
+def test_compare_document_reads_history_and_the_working_copy(git_repo: Path) -> None:
+    from mellon.diff import LATEST, WORKING_COPY
+
+    svc = DocumentService(git_repo)
+    svc.set_description("CHILD", "CHILD-0", "Changed, not committed.")
+    diff = svc.compare_document("CHILD", LATEST, WORKING_COPY)
+    assert [(c.obj_id, [str(k) for k in c.kinds]) for c in diff.changes] == [
+        ("CHILD-0", ["Modified"])
+    ]
+    # Comparing never writes, so a read-only service may do it.
+    ro = DocumentService(git_repo, read_only=True)
+    assert ro.compare_document("CHILD", LATEST, WORKING_COPY).changes == diff.changes
+
+
+def test_compare_versions_and_defaults(git_repo: Path) -> None:
+    from mellon.diff import LATEST, WORKING_COPY
+
+    svc = DocumentService(git_repo)
+    refs = [v.ref for v in svc.compare_versions("CHILD")]
+    assert refs[:2] == [WORKING_COPY, LATEST]
+    assert svc.default_compare_versions("CHILD") == (None, LATEST)
+
+
+def test_compare_errors(git_repo: Path, mcp_repo: Path) -> None:
+    svc = DocumentService(git_repo)
+    with pytest.raises(ServiceError) as ei:
+        svc.compare_document("CHILD", "no-such-version", "HEAD")
+    assert ei.value.code is ErrorCode.GIT
+    assert "no-such-version" in str(ei.value)
+    with pytest.raises(ServiceError) as ei:
+        svc.compare_document("../CHILD", "HEAD", "HEAD")
+    assert ei.value.code is ErrorCode.VALIDATION
+    with pytest.raises(ServiceError) as ei:
+        svc.compare_document("NOPE", "HEAD", "HEAD")
+    assert ei.value.code is ErrorCode.GIT

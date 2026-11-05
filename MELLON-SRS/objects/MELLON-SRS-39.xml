@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="verification-method">Test</attr>
+  <description>The MCP server shall have a tool that returns the same changes the dialog shows for two versions of a document.</description>
+</object>

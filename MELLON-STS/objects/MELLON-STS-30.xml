@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Draft</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_table_and_figure_changes_shown_at_both_versions
+tests/test_diff.py::test_table_change
+tests/test_diff.py::test_figure_change</attr>
+  <description>Add a table and a figure to an object; it is Modified and the details show the table and figure at both versions.</description>
+</object>

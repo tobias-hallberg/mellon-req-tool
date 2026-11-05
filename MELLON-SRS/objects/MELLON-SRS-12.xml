@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="status">Draft</attr>
+  <attr name="priority">Should</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="rationale">Lets the user review everything since the last issue before cutting the next one.</attr>
+  <description>The user shall be able to set To to the working copy, so that uncommitted edits are included.</description>
+</object>

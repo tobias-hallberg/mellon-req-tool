@@ -8,6 +8,24 @@ All notable changes to Mellon. The format follows
 
 ### Added
 
+- **Compare dialog.** Hamburger menu → **Compare…** shows what changed in a
+  document between two versions: an issue, a branch, a commit, the latest
+  commit or the working copy. It opens on the latest issue against the
+  latest commit, lists added, deleted, modified and moved objects in outline
+  order (an ack-only change is **Link reviewed**), and shows each changed
+  field at both versions with changed words highlighted. Filters, swap,
+  copy to clipboard, double-click to jump; works in read-only mode and
+  compares in the background. The History tab has **Compare with latest…**.
+  Specified first in `MELLON-SRS`, Mellon's own requirements, now kept in
+  this repo next to `MELLON-STS`.
+- **MCP `compare_document`** returns the same changes (46 tools).
+- `tests/test_mellon_sts.py`: fails when a `MELLON-STS` test case lists a
+  pytest node id that names no test, so the test specification can't drift
+  from the suite.
+- `diff.compare_document` covers outline moves, tables, figures and the
+  working copy (`WORKING_COPY`); new `document_versions`, `default_versions`,
+  `word_diff`. Also `loader.parse_object_bytes` / `parse_links_bytes` /
+  `parse_manifest_bytes` and `git_ops.issue_tags`.
 - **`mellon-check`.** A pass/fail gate for CI: exit 0 when clean, 1 for any
   document that fails to load, validation error, or suspect or broken link,
   and 2 for a root it can't check, such as a shallow clone. It isn't in the
@@ -31,6 +49,10 @@ All notable changes to Mellon. The format follows
 
 ### Changed
 
+- **`diff.compare_document` parses each file as the loader does** and
+  reports one it can't parse with an `error`, where it used to read it as an
+  empty object. Results also carry `changes`, in display order, alongside
+  the id-sorted `added_objects` / `removed_objects` / `modified_objects`.
 - **Documents are meant for up to 1,000 objects,** counting headings and
   information text. Split a larger specification into components, each with
   its own set of documents. Nothing enforces it; `SCALING.md` explains the
