@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-64">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an object ID names one object for good, because links on other branches, history, Compare and issued PDFs refer to it. Fixing ID reuse was decided on 2026-11-06 (open question Q7). Either side may have used numbers the other hasn't seen.</attr>
+  <description>When Mellon resolves a merge, Mellon shall set each merged document's next object number to the highest of both sides' numbers and one more than the merged document's highest object number.</description>
+</object>

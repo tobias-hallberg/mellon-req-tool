@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an object ID names one object for good, because links on other branches, history, Compare and issued PDFs refer to it. Fixing ID reuse was decided on 2026-11-06 (open question Q7). Deleting an object leaves the number as it is, so a deleted object's ID isn't given out again.</attr>
+  <description>When Mellon creates an object, Mellon shall set the document's next object number to one more than the new object's number.</description>
+</object>

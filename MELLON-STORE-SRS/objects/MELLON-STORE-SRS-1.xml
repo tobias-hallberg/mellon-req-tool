@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-1">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an object ID names one object for good, because links on other branches, history, Compare and issued PDFs refer to it. The next number has to survive a squashed or rewritten history, so it is kept with the document rather than worked out from history. A manifest without it counts as 0, so documents from before it still load. Decided on 2026-11-06 (open question Q7).</attr>
+  <description>The manifest shall hold the document's next object number as the next-object-number attribute of its document element.</description>
+</object>

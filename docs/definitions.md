@@ -20,6 +20,8 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 |---|---|
 | Object | One entry in a document. It has an object ID, attribute values and a description, and can have a table, a figure and outgoing links. |
 | Object ID | `<document ID>-<n>`, where `n` is a whole number. An object ID is never given to a second object in the same document. |
+| Object number | The whole number `n` in an object ID `<document ID>-<n>`. |
+| Next object number | The object number a document's manifest records for the next object to be created. A manifest that records none counts as recording 0. |
 | Type | The attribute named `type`, which says what kind of object it is, such as `Heading` or `Requirement`. |
 | Heading | An object whose type is `Heading`. Headings structure the outline, and coverage doesn't count them. |
 | Description | An object's main text. On a heading it's the heading's title, and on a table it's the caption. |

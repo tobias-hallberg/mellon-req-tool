@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a damaged number must not go unnoticed, although creating objects stays safe because the highest object number present is also taken into account.</attr>
+  <description>If a manifest's next object number isn't a whole number of 0 or more, Mellon shall report a validation error for the document.</description>
+</object>

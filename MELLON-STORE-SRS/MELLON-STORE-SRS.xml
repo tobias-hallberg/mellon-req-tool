@@ -30,5 +30,10 @@
     </attribute>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-STORE-SRS-0">
+      <ref id="MELLON-STORE-SRS-1"/>
+      <ref id="MELLON-STORE-SRS-2"/>
+    </ref>
+  </outline>
 </document>
