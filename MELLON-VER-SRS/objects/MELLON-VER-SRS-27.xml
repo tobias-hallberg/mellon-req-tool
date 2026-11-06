@@ -5,5 +5,5 @@
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
   <attr name="rationale">stakeholder: reading an unreadable file as an empty object would give a silent wrong answer. Made binding (shall) with the person on 2026-11-06.</attr>
-  <description>If a file of an object can't be read at From or at To, Mellon shall report the object as unreadable at that version.</description>
+  <description>If an object's file or links file can't be read at From or at To, Mellon shall report the object as unreadable at that version.</description>
 </object>

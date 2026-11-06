@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: commits that didn't change the document would only lengthen the list. Split out of the requirement that lists what is offered, which didn't say "only".</attr>
+  <description>The Compare dialog shall not offer a commit that didn't change the document, other than the latest commit, an issue or a branch.</description>
+</object>

@@ -4,6 +4,6 @@
   <attr name="req-type">Quality</attr>
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: the label is the name the user sees everywhere else.</attr>
-  <description>The Compare dialog shall name each attribute by its label.</description>
+  <attr name="rationale">stakeholder: the label is the name the user sees everywhere else, and To is the version being reviewed.</attr>
+  <description>The Compare dialog shall name each attribute by its label at To, or at From for an attribute that only From defines.</description>
 </object>
