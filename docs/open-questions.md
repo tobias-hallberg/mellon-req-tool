@@ -39,3 +39,35 @@ Raised by the requirements view of the Compare section and answered the same day
 - A shown result is marked out of date when a version it was found for changes. It isn't recomputed under the reader. Proposed.
 - The version list stays as built. Tags are typed, not listed.
 - When From and To are on divergent branches, the dialog warns that an object ID can name different objects. Proposed.
+
+## Q4: Should editing be refused while a merge is in progress?
+
+- **Raised by:** architecture view, 2026-11-05 (failure analysis F1)
+- **Affects:** `MELLON-VER-SRS` (merging), `MELLON-GUI-SRS`, `MELLON-MCP-SRS`
+- **What's there:** editing goes on during a merge. Resolving it then rewrites every file both sides changed, so edits made after the merge stopped are lost without a warning.
+- **Recommendation:** refuse edits in the GUI and over MCP while a merge is in progress, with a message that says to resolve or abort the merge first. That is simpler, and safer, than detecting which files were edited since.
+- **Answer:** open, for the VER area
+
+## Q5: When should the GUI check for changes on disk?
+
+- **Raised by:** architecture view, 2026-11-05 (F2)
+- **Affects:** `MELLON-GUI-SRS`, `MELLON-VER-SRS` (commit)
+- **What's there:** only when a window is activated. An agent can change a file while the window stays active.
+- **Recommendation:** check before each write and before each commit, and refuse with the "Changed on disk" banner as now. A commit should also validate what it commits, not the cached copy.
+- **Answer:** open, for the GUI area
+
+## Q6: Should an acknowledgement record the commit the reviewer looked at?
+
+- **Raised by:** architecture view, 2026-11-05 (F7)
+- **Affects:** `MELLON-TRACE-SRS`
+- **What's there:** acknowledging records the target's latest commit at that moment, so a change made between reading and acknowledging is accepted unseen.
+- **Recommendation:** yes. The review returns the commit it showed, and acknowledging takes that commit and refuses if the target has changed since.
+- **Answer:** open, for the TRACE area
+
+## Q7: How are object IDs kept from being reused?
+
+- **Raised by:** architecture view, 2026-11-05 (F4, confirmed)
+- **Affects:** `MELLON-EDIT-SRS`, `MELLON-STORE-SRS` (format)
+- **What's there:** a new object gets one more than the highest number in the document now. After the highest-numbered object is deleted, its ID goes to the next new object, and links on other branches, history, Compare and issued PDFs then tie the old ID to a different requirement.
+- **Recommendation:** keep the next free number in the manifest (a format change, so it needs the format version too). A new object takes the larger of that and one more than the highest number present, which also covers a manifest from before the change.
+- **Answer:** open, for the STORE and EDIT areas
