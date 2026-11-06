@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a deleted object shows where it was. Several deleted objects keep their order at From.</attr>
+  <description>The Compare dialog should put each deleted object after the nearest object before the deleted object at From that exists at To, or first if none does.</description>
+</object>

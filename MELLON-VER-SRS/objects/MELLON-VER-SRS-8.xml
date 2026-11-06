@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: lets the user review everything since the last issue before cutting the next one. Either side, so that swapping the versions keeps working. Decided with the person on 2026-11-06.</attr>
+  <description>The Compare dialog should offer the working copy as a choice for From and for To.</description>
+</object>

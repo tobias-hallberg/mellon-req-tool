@@ -26,10 +26,13 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Outline | The order and nesting of a document's objects, as a tree. |
 | Sub-object | An object directly below another object in the outline. |
 | Attribute | A named value on an object, defined in the manifest with a kind and, for an enumeration, its options. |
+| Label | The name an attribute is shown by: the label the manifest gives it, or its name when it has none. |
 | Kind | What values an attribute takes: enumeration, text, integer, real, boolean or date. |
 | Required attribute | An attribute that every object must have a value for. |
 | Table | Rows and cells kept on one object, with column alignment, header rows and merged cells. |
 | Figure | A picture kept with one object, as an SVG file. A draw.io figure also carries the diagram that draw.io edits. |
+| Field | One part of an object that a comparison looks at: an attribute value, the description, the table, the figure, or the outgoing links, each with its target and link type. |
+| Word | A run of characters between whitespace in a description. |
 
 ## Links
 
@@ -54,11 +57,16 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Working copy | The files on disk, including changes that aren't committed yet. |
 | Uncommitted change | A file in a document folder that differs from the latest commit. |
 | Issue | A numbered release of one document, recorded as the tag `<document ID>-issue-<n>` on a commit. Its number is one or more whole numbers separated by dots. |
-| Current issue | The highest issue of a document reachable from the latest commit. |
+| Issue order | Issues are ordered by their numbers part by part, as whole numbers, so 2.9 comes before 2.10. When one issue's parts begin the other's, the shorter comes first, so 2 comes before 2.0. |
+| Current issue | The highest issue of a document, in issue order, whose commit is the latest commit or an ancestor of it. |
+| Issue before | For a given issue, the highest issue of the same document that comes before it in issue order and whose commit is the latest commit or an ancestor of it. |
 | Tag | A named commit that marks a milestone for the whole repository, apart from the issue tags. |
-| Version | One state of a document to compare: an issue, a branch, a commit or the working copy. |
-| From, To | The two versions a comparison shows the changes between, from the older to the newer as the user chose them. |
-| Added, Deleted, Modified, Moved, Link reviewed | The changes an object can have between two versions. **Moved** means its parent changed, or its order among the siblings it has at both versions changed: inserting or deleting a sibling moves nothing. **Link reviewed** means only the acknowledged commit of one or more of its outgoing links changed. |
+| Version | One state of a document to compare: an issue, a tag, a branch, a commit or the working copy. |
+| Doesn't exist at a version | A document doesn't exist at a version when its folder is absent there. An object doesn't exist at a version when its object file is absent there. |
+| Can't be read | A file can't be read at a version when it is there but isn't a well-formed file of its kind. |
+| Changed since an issue | A document has changed since an issue when a file in its folder differs between the issue's commit and the latest commit. |
+| From, To | The two versions a comparison shows the changes between. The changes are what it takes to go from From to To, whichever is older. |
+| Added, Deleted, Modified, Moved, Link reviewed | The changes an object can have between From and To. **Added**: it exists at To and not at From. **Deleted**: it exists at From and not at To. **Modified**: it exists at both and a field differs. A difference only in a file's line endings, indentation or order of XML attributes is no change. **Moved**: it exists at both, and its parent changed, or it isn't in the largest set of its siblings at both versions whose order is the same at From and at To. Inserting or deleting a sibling moves nothing. When two such sets are equally large, the sibling that comes later at From is the one Moved. **Link reviewed**: its only change is to the acknowledged commits of its outgoing links. Moved can go with Modified or with Link reviewed. |
 | Merge in progress | A git merge that stopped because files conflict, and that hasn't been committed or aborted. |
 
 ## Checks
@@ -77,6 +85,8 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Mellon | The whole application: the GUI, the MCP server and `mellon-check`. |
 | Project Explorer | The GUI's main window, which lists the documents in a repository. |
 | Document Editor | The GUI window for one document. |
+| History tab | The Document Editor tab that lists the commits that changed the selected object. |
+| Compare dialog | The GUI window that shows the changes between two versions of one document. |
 | Read-only mode | A Document Editor state in which no edit can be made. A window opens in it. |
 | MCP server | The program that offers Mellon's functions to an agent over the Model Context Protocol, on standard input and output. |
 | Read-only server | The MCP server started so that it refuses every tool that would change a file, commit or export. |

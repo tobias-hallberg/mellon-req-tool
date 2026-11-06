@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-33">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the size of a change is the first thing a reviewer wants to know, whatever is hidden. A change with no objects needn't be counted.</attr>
+  <description>The Compare dialog shall show the number of objects with each change, counting hidden rows.</description>
+</object>

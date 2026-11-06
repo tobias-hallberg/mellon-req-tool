@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: changes read in document order.</attr>
+  <description>The Compare dialog should order the rows of objects that exist at To as the outline at To reads, each object before its sub-objects.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer is often given a version by name or hash. 4 hex digits is the shortest prefix git accepts.</attr>
+  <description>The Compare dialog should accept as From or To a typed name that git resolves to one commit: a commit hash, a unique prefix of at least 4 hex digits, a tag, or a branch.</description>
+</object>

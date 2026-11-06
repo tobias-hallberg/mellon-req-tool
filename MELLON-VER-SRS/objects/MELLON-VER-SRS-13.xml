@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: comparing an issue with the unchanged document shows nothing, so the two latest issues are compared instead. A commit to another document doesn't change this one. Decided with the person on 2026-11-06. (open question Q1)</attr>
+  <description>When the Compare… action opens the Compare dialog on a document unchanged since its current issue, the Compare dialog shall set From to the issue before and To to the latest commit.</description>
+</object>

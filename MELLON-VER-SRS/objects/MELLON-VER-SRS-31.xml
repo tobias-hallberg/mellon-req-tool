@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-31">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the list is what a reviewer works through.</attr>
+  <description>The Compare dialog shall show one row for each object that Mellon reports as Added, Deleted, Modified, Moved or Link reviewed.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer often looks at one kind of change at a time. A row that is Modified and Moved stays while either is shown.</attr>
+  <description>The Compare dialog should let the user hide rows by change, hiding a row only when each of its changes is hidden.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty value and an unset one must not look alike.</attr>
+  <description>When an attribute is set at only one of From and To, the Compare dialog shall show the attribute as "(not set)" at the other version.</description>
+</object>

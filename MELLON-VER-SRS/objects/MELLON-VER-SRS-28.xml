@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: one broken file shouldn't hide the rest of the review.</attr>
+  <description>If an object can't be read at From or at To, Mellon shall report the changes of the other objects.</description>
+</object>

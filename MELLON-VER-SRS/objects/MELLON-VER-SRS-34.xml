@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-34">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty list can't be told apart from a comparison that failed. It says "no object changed", not "no differences", because changes to the manifest aren't compared yet. Decided with the person on 2026-11-06.</attr>
+  <description>When Mellon reports no object as changed, the Compare dialog shall say that no object changed instead of showing an empty list.</description>
+</object>

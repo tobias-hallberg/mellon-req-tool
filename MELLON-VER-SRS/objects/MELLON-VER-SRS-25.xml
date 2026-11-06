@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: these change what the objects mean, and a reviewer could otherwise sign off a changed document as unchanged. Decided with the person on 2026-11-06. Not built yet.</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall report each change to the document's metadata, parent documents and attribute definitions.</description>
+</object>

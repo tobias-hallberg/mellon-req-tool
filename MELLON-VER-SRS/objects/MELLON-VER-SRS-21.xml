@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the reviewer needs every changed object. A field includes the table and the figure, so a change to either alone is a modification. Made binding (shall) with the person on 2026-11-06.</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall report as Modified each object that exists at both versions and has a field that differs.</description>
+</object>

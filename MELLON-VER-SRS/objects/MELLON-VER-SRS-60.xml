@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent must not take a failed comparison for an empty one.</attr>
+  <description>If a version given to the MCP server's compare tool resolves to no commit, the MCP server should return an error naming the version.</description>
+</object>

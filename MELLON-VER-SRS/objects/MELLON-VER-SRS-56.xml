@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: users compare while editing. Unlike the DOORS Classic comparison wizard, comparing creates nothing.</attr>
+  <description>While comparing two versions, Mellon shall not change a file in the working copy, the git index or a git reference.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: with no issue, or only the issue the document still is, there is no obvious version to start from. Decided with the person on 2026-11-06. (open question Q1)</attr>
+  <description>When the Compare… action opens the Compare dialog and the document has no issue to set From to, the Compare dialog shall leave From unset and set To to the latest commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the dialog belongs to the document's window, and selecting an object from it needs that window.</attr>
+  <description>When the Document Editor that opened a Compare dialog closes, the Compare dialog shall close.</description>
+</object>

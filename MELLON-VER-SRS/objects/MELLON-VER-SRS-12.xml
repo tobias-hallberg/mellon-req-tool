@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "what changed between Issue 1 and Issue 2" is the common question.</attr>
+  <description>When the Compare… action opens the Compare dialog on a document changed since its current issue, the Compare dialog shall set From to the current issue and To to the latest commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: agents review changes too, and they must get the same answer as a person.</attr>
+  <description>The MCP server should have a tool that, given a document and two versions, returns the changes Mellon reports between the two versions, with each changed field at both.</description>
+</object>

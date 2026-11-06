@@ -30,5 +30,75 @@
     </attribute>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-VER-SRS-0">
+      <ref id="MELLON-VER-SRS-1">
+        <ref id="MELLON-VER-SRS-2"/>
+        <ref id="MELLON-VER-SRS-3"/>
+        <ref id="MELLON-VER-SRS-4"/>
+        <ref id="MELLON-VER-SRS-5"/>
+      </ref>
+      <ref id="MELLON-VER-SRS-6">
+        <ref id="MELLON-VER-SRS-7"/>
+        <ref id="MELLON-VER-SRS-8"/>
+        <ref id="MELLON-VER-SRS-9"/>
+        <ref id="MELLON-VER-SRS-10"/>
+        <ref id="MELLON-VER-SRS-11"/>
+        <ref id="MELLON-VER-SRS-12"/>
+        <ref id="MELLON-VER-SRS-13"/>
+        <ref id="MELLON-VER-SRS-14"/>
+        <ref id="MELLON-VER-SRS-15"/>
+        <ref id="MELLON-VER-SRS-16"/>
+        <ref id="MELLON-VER-SRS-17"/>
+      </ref>
+      <ref id="MELLON-VER-SRS-18">
+        <ref id="MELLON-VER-SRS-19"/>
+        <ref id="MELLON-VER-SRS-20"/>
+        <ref id="MELLON-VER-SRS-21"/>
+        <ref id="MELLON-VER-SRS-22"/>
+        <ref id="MELLON-VER-SRS-23"/>
+        <ref id="MELLON-VER-SRS-24"/>
+        <ref id="MELLON-VER-SRS-25"/>
+        <ref id="MELLON-VER-SRS-26"/>
+        <ref id="MELLON-VER-SRS-27"/>
+        <ref id="MELLON-VER-SRS-28"/>
+        <ref id="MELLON-VER-SRS-29"/>
+      </ref>
+      <ref id="MELLON-VER-SRS-30">
+        <ref id="MELLON-VER-SRS-31"/>
+        <ref id="MELLON-VER-SRS-32"/>
+        <ref id="MELLON-VER-SRS-33"/>
+        <ref id="MELLON-VER-SRS-34"/>
+        <ref id="MELLON-VER-SRS-35"/>
+        <ref id="MELLON-VER-SRS-36"/>
+        <ref id="MELLON-VER-SRS-37"/>
+        <ref id="MELLON-VER-SRS-38"/>
+        <ref id="MELLON-VER-SRS-39"/>
+        <ref id="MELLON-VER-SRS-40"/>
+        <ref id="MELLON-VER-SRS-41"/>
+        <ref id="MELLON-VER-SRS-42"/>
+      </ref>
+      <ref id="MELLON-VER-SRS-43">
+        <ref id="MELLON-VER-SRS-44"/>
+        <ref id="MELLON-VER-SRS-45"/>
+        <ref id="MELLON-VER-SRS-46"/>
+        <ref id="MELLON-VER-SRS-47"/>
+        <ref id="MELLON-VER-SRS-48"/>
+        <ref id="MELLON-VER-SRS-49"/>
+        <ref id="MELLON-VER-SRS-50"/>
+        <ref id="MELLON-VER-SRS-51"/>
+        <ref id="MELLON-VER-SRS-52"/>
+        <ref id="MELLON-VER-SRS-53"/>
+        <ref id="MELLON-VER-SRS-54"/>
+      </ref>
+      <ref id="MELLON-VER-SRS-55">
+        <ref id="MELLON-VER-SRS-56"/>
+        <ref id="MELLON-VER-SRS-57"/>
+        <ref id="MELLON-VER-SRS-58"/>
+        <ref id="MELLON-VER-SRS-59"/>
+        <ref id="MELLON-VER-SRS-60"/>
+        <ref id="MELLON-VER-SRS-61"/>
+      </ref>
+    </ref>
+  </outline>
 </document>

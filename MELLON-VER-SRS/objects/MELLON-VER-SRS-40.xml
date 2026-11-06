@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a slower, earlier comparison finishing last would otherwise show a result for versions no longer chosen.</attr>
+  <description>When From or To changes while a comparison runs, the Compare dialog shall show only the result for the latest From and To.</description>
+</object>

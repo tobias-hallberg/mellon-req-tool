@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an added or deleted object has no other version to compare with.</attr>
+  <description>When the user selects an Added or Deleted object, the Compare dialog shall show each field of the object at the version where the object exists.</description>
+</object>

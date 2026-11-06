@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a link is a traceability claim, and a reviewer must see each one that appears or goes.</attr>
+  <description>When an object's outgoing links changed, the Compare dialog shall show each link added and each link removed.</description>
+</object>

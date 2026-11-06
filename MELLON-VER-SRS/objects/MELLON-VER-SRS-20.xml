@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the reviewer needs every removed object. This also covers a document that doesn't exist at To.</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall report as Deleted each object that exists at From and not at To.</description>
+</object>

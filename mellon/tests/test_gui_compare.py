@@ -293,7 +293,7 @@ def test_no_differences_says_so(qtbot, dialog) -> None:
     dialog.compare()
     _wait(qtbot, dialog)
     assert dialog._stack.currentWidget() is dialog.empty_label
-    assert dialog.empty_label.text().startswith("No differences: SPEC is the same at")
+    assert dialog.empty_label.text().startswith("No object changed: SPEC's objects are the same at")
     assert not dialog.copy_button.isEnabled()
 
 
@@ -490,4 +490,4 @@ def test_unreadable_outline_is_reported(qtbot, repo) -> None:
     _wait(qtbot, dlg)
     assert dlg.message_label.isVisible()
     assert "Can't read the outline at To" in dlg.message_label.text()
-    assert dlg.empty_label.text().startswith("No differences")
+    assert dlg.empty_label.text().startswith("No object changed")

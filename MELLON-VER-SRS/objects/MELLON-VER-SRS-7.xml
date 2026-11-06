@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: these are the versions a reviewer refers to. Commits that didn't change the document would only lengthen the list. Tags are reached by typing them.</attr>
+  <description>The Compare dialog shall offer the latest commit, each issue of the document, each local and remote-tracking branch, and each commit that changed the document as a choice for From and for To.</description>
+</object>

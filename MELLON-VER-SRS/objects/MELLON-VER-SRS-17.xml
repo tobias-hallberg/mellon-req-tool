@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a user who picked the versions the wrong way round shouldn't have to pick both again.</attr>
+  <description>The Compare dialog should have a control that swaps From and To.</description>
+</object>

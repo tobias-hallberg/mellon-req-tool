@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a comparison is about one document, so it starts from that document's window.</attr>
+  <description>The Document Editor menu shall have a Compare… action that opens the Compare dialog for the open document.</description>
+</object>

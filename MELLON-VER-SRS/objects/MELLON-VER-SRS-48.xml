@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a change marks no word, so the row would show a modification with nothing visible changed. Not built yet.</attr>
+  <description>When a description's only change is in whitespace, the Compare dialog should say so.</description>
+</object>

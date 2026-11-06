@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer checks which links were reviewed, and against what.</attr>
+  <description>When the user selects a Link reviewed object, the Compare dialog should show each link whose acknowledged commit changed, with that commit at From and at To.</description>
+</object>

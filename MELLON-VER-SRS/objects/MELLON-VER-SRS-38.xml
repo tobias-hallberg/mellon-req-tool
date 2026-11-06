@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: with every kind of change hidden the list is empty, which looks like no change. Not built yet.</attr>
+  <description>While rows are hidden, the Compare dialog should show how many are hidden.</description>
+</object>

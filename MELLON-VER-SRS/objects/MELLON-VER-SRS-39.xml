@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an edit to the working copy, or a pull that moves a branch or the latest commit, leaves the result describing versions that are gone. Marked rather than recomputed, so the list doesn't change under a reviewer who is reading it. Decided with the person on 2026-11-06. Not built yet.</attr>
+  <description>When a version that a shown result was found for changes, the Compare dialog shall mark the result out of date.</description>
+</object>

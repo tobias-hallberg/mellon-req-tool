@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a comparison against nothing would list every object as Added.</attr>
+  <description>While From or To is unset, the Compare dialog shall ask the user to choose a version instead of comparing.</description>
+</object>

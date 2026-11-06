@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: reviewing a suspect link doesn't change the requirement.</attr>
+  <description>When Mellon compares two versions of a document, Mellon should report as Link reviewed, not as Modified, an object whose only change is to the acknowledged commits of its outgoing links.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-57">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: 1,000 objects is the recommended document size, and every object changed is the worst case for the number of changes. The time covers finding the changes, not the dialog filling its list. Decided with the person on 2026-11-06. (open question Q2)</attr>
+  <description>On the reference machine, Mellon shall compare two commits of a 1,000-object document, each object's description and one attribute changed, in at most 2 s from start to result.</description>
+</object>

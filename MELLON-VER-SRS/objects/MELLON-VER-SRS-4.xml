@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the History tab is where a user finds an older commit of an object, and the next question is what changed since. To is the latest commit, not the working copy, because the History tab lists commits.</attr>
+  <description>The History tab should have a Compare with latest… action that opens the Compare dialog with From set to the selected commit and To set to the latest commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-54">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer who finds something to fix goes straight to it.</attr>
+  <description>When the user double-clicks a row whose object exists in the open document, the Compare dialog should select the object in the Document Editor.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: object IDs are unique only along one line of history, so two branches can each create the same ID for different objects. Decided with the person on 2026-11-06. Not built yet.</attr>
+  <description>When neither From nor To is an ancestor of the other, the Compare dialog should warn that an object ID can name different objects at From and at To.</description>
+</object>

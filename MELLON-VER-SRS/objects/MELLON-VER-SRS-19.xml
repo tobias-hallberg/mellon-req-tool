@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-19">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the reviewer needs every new object. This also covers a document that doesn't exist at From.</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall report as Added each object that exists at To and not at From.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: without the outline Mellon can't tell a move, and guessing would give a wrong answer that looks right.</attr>
+  <description>If the manifest can't be read at From or at To, Mellon shall report that, and report no object as Moved.</description>
+</object>

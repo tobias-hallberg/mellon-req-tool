@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a typing mistake mustn't clear the comparison on screen, and the result must not look as if it were for the new versions.</attr>
+  <description>If a comparison fails, the Compare dialog shall keep showing the previous result with the versions that result was found for.</description>
+</object>

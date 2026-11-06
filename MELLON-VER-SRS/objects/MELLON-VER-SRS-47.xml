@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a one-word change in a long requirement is easy to miss. Few words should be marked, but the requirement is that nothing changed is left unmarked.</attr>
+  <description>When a description changed, the Compare dialog shall mark words deleted at From and inserted at To, so that the unmarked words at From and at To are the same.</description>
+</object>
