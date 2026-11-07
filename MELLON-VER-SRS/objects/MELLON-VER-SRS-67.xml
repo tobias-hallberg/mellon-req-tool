@@ -4,6 +4,6 @@
   <attr name="req-type">Functional</attr>
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: a branch, the latest commit, a re-created tag or an expression such as HEAD~2 later names other commits, so a review record that holds only names can't be checked. Decided with the person on 2026-11-07, with typed expressions kept (failure analysis CF2, CF4, CF9).</attr>
-  <description>Mellon shall report with each comparison result the commit that From and To each resolved to, by its hash, or that the version was the working copy.</description>
+  <attr name="rationale">stakeholder: a branch, the latest commit, a re-created tag or an expression such as HEAD~2 later names other commits, so a review record that holds only names can't be checked. Decided with the person on 2026-11-07, with typed expressions kept (failure analysis CF2, CF4, CF9). 7 digits is git's usual short form, readable on screen; MELLON-VER-SRS-87 gives agents the full hash.</attr>
+  <description>Mellon shall report with each comparison result the commit that From and To each resolved to, by at least the first 7 digits of its hash, or that the version was the working copy.</description>
 </object>

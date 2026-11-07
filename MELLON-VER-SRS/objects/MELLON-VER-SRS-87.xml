@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent writes review records that must stay checkable for years, and a 7-digit prefix can become ambiguous as a repository grows. Decided with the person on 2026-11-07, with MELLON-VER-SRS-67.</attr>
+  <description>The MCP server's compare tool shall return with each result the full hash of the commit that From and To each resolved to.</description>
+</object>
