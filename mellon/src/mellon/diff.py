@@ -685,7 +685,9 @@ def _read_manifest(
     if side.manifest is None:
         return None, {}, f"{path} is missing"
     try:
-        _meta, _parents, attributes, outline = parse_manifest_bytes(side.manifest, path)
+        _meta, _parents, attributes, outline, _next = parse_manifest_bytes(
+            side.manifest, path
+        )
     except LoaderError as e:
         return None, {}, str(e)
     labels = {a.name: attribute_display_name(a.name, a) for a in attributes}

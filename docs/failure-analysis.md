@@ -197,7 +197,7 @@ The first architecture view found these. Each is handled when its area is specif
 | F1 | VER | Data loss | Editing isn't refused while a merge is in progress, and resolving the merge rewrites every file both sides changed, so edits made since the merge stopped are lost without warning. |
 | F2 | GUI | Data loss | A window checks for external changes only when it is activated. An edit can overwrite an agent's change to the same field, and a commit validates the cached copy but commits the files on disk. |
 | F3 | STORE | Data loss | Two processes rewriting one manifest, or allocating an ID, at the same moment can lose an outline change or give two objects one ID. |
-| F4 | EDIT | Wrong answer | Deleting the highest-numbered object and creating a new one reuses its ID, which `definitions.md` says never happens. Confirmed by a scratch run. |
+| F4 | EDIT | Wrong answer | Deleting the highest-numbered object and creating a new one reuses its ID, which `definitions.md` says never happens. Confirmed by a scratch run. Specified 2026-11-06 in MELLON-STORE-SRS-1, -2, MELLON-EDIT-SRS-1, -2 and MELLON-VER-SRS-64, -65; a merge git finishes on its own is open question Q8. |
 | F5 | TRACE | Wrong answer | When the suspect scan fails, the GUI shows links as OK and exports without the suspect warning. |
 | F6 | TRACE | Wrong answer | Trace, incoming links, coverage and search silently leave out a document that fails to load. |
 | F7 | TRACE | Wrong answer | An acknowledgement records the target's latest commit, not the one the reviewer read, so a change made in between is accepted unseen. |

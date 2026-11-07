@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import os
+import random
+import re
 from pathlib import Path
 
 import pygit2
 import pytest
+from lxml import etree
 
 from mellon import (
     EditorError,
@@ -30,6 +33,7 @@ from mellon import (
     delete_filter,
     delete_object,
     delete_view,
+    editor,
     figure_path,
     load_document,
     move_object,
@@ -1496,7 +1500,8 @@ def test_delete_object_removes_figure_so_reused_id_starts_clean(
     report = delete_object(doc_folder, "DOC-1")
     assert not fig.exists()
     assert fig in report.removed_files
-    # DOC-1 was the highest id, so max+1 allocation hands it out again.
+    # The fixture's manifest records no next object number, as an older
+    # Mellon leaves it, so DOC-1, the highest id, is handed out again.
     assert create_object(doc_folder, description="unrelated") == "DOC-1"
     assert load_document(doc_folder).objects["DOC-1"].figure_path is None
 
@@ -1670,3 +1675,499 @@ def test_inner_failure_rolls_back_only_itself(
     assert doc.objects["DOC-1"].description == "Kept."
     assert doc.attribute("rationale") is not None
     assert [p.name for p in outer.paths] == ["DOC-1.xml"]
+
+
+# --- object IDs are never given out twice ----------------------------------
+#
+# Written blind, from MELLON-STORE-SRS-1, MELLON-EDIT-SRS-1, -2 and the
+# definitions alone (object ID `<document ID>-<n>`, object number `n`); the
+# expected values come from those, never from the code's output. The helpers
+# are shared with test_loader, test_validator and test_merge.
+
+DOC = "DOC"
+ATTR = "next-object-number"
+
+
+# --------------------------------------------------------------------------
+# Helpers: reading and hand-editing the on-disk format
+# --------------------------------------------------------------------------
+
+
+def manifest_path(folder: Path) -> Path:
+    return folder / f"{folder.name}.xml"
+
+
+def manifest_root(folder: Path) -> etree._Element:
+    return etree.parse(str(manifest_path(folder))).getroot()
+
+
+def read_next(folder: Path) -> str | None:
+    """The manifest's ``next-object-number`` attribute, or None when absent."""
+    return manifest_root(folder).get(ATTR)
+
+
+def write_next(folder: Path, value: str | None) -> None:
+    """Hand-edit the manifest's number, as a person or an older Mellon would.
+
+    ``None`` removes the attribute, which is how a manifest written by a
+    Mellon from before MELLON-STORE-SRS-1 looks.
+    """
+    path = manifest_path(folder)
+    tree = etree.parse(str(path))
+    root = tree.getroot()
+    if value is None:
+        if ATTR in root.attrib:
+            del root.attrib[ATTR]
+    else:
+        root.set(ATTR, value)
+    path.write_bytes(etree.tostring(tree, xml_declaration=True, encoding="UTF-8") + b"\n")
+
+
+def number_of(obj_id: str, doc_id: str = DOC) -> int:
+    """The object number ``n`` of an object ID ``<document ID>-<n>``."""
+    match = re.fullmatch(re.escape(doc_id) + r"-([0-9]+)", obj_id)
+    assert match, f"object ID {obj_id!r} is not of the form {doc_id}-<n>"
+    return int(match.group(1))
+
+
+def new_document(root: Path, doc_id: str = DOC) -> Path:
+    return editor.create_document(root, doc_id, title=f"{doc_id} title")
+
+
+def populate(folder: Path, count: int, *, label: str = "object") -> list[str]:
+    return [editor.create_object(folder, description=f"{label} {i}") for i in range(count)]
+
+
+def delete(folder: Path, obj_id: str) -> None:
+    report = editor.delete_object(folder, obj_id, force=True)
+    assert report.performed, f"setup: deleting {obj_id} was not performed"
+
+
+def object_file(folder: Path, obj_id: str) -> Path:
+    return folder / "objects" / f"{obj_id}.xml"
+
+
+# --------------------------------------------------------------------------
+# MELLON-STORE-SRS-1: where the number is kept
+# --------------------------------------------------------------------------
+
+
+def test_store_srs_1_create_records_number_on_document_element(tmp_path):
+    """MELLON-STORE-SRS-1: after creating an object, the manifest's root
+    ``document`` element carries the ``next-object-number`` attribute."""
+    folder = new_document(tmp_path)
+    editor.create_object(folder, description="first")
+    root = manifest_root(folder)
+    assert etree.QName(root).localname == "document", (
+        f"manifest root element is {root.tag!r}, expected 'document'"
+    )
+    assert root.get(ATTR) is not None, (
+        "after creating an object the manifest's document element has no next-object-number attribute"
+    )
+
+def test_store_srs_1_manifest_without_number_counts_as_0(tmp_path):
+    """MELLON-STORE-SRS-1 with MELLON-EDIT-SRS-1: an empty document whose
+    manifest has no number counts as 0, so its first object is number 0."""
+    folder = new_document(tmp_path)
+    write_next(folder, None)
+    new_id = editor.create_object(folder, description="first")
+    assert number_of(new_id) == 0, (
+        f"first object of an empty document without next-object-number is {new_id}, expected {DOC}-0"
+    )
+
+
+MANIFEST_EDITS = {
+    "set_metadata": lambda folder, ids: editor.set_metadata(folder, "title", "Renamed"),
+    "move_object": lambda folder, ids: editor.move_object(folder, ids[2], before=ids[0]),
+    "add_attribute": lambda folder, ids: editor.add_attribute(folder, "priority", "text", False),
+    "delete_lowest_object": lambda folder, ids: delete(folder, ids[0]),
+    "delete_highest_object": lambda folder, ids: delete(folder, ids[-1]),
+}
+
+
+@pytest.mark.parametrize("edit", sorted(MANIFEST_EDITS))
+def test_store_srs_1_other_manifest_edits_keep_the_number(tmp_path, edit):
+    """MELLON-STORE-SRS-1 ('The manifest shall hold the document's next object
+    number'), and for deletion MELLON-EDIT-SRS-2's rationale ('Deleting an
+    object leaves the number as it is'): an editor operation that rewrites the
+    manifest for another reason leaves the recorded number unchanged.
+
+    Assumption: an edit other than creating an object must not change the
+    number; no requirement names one that does.
+    """
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    write_next(folder, "42")
+    MANIFEST_EDITS[edit](folder, ids)
+    assert read_next(folder) == "42", (
+        f"{edit} changed next-object-number from '42' to {read_next(folder)!r}"
+    )
+
+
+# --------------------------------------------------------------------------
+# MELLON-EDIT-SRS-1: the number a new object gets
+# --------------------------------------------------------------------------
+
+
+def test_edit_srs_1_first_object_of_fresh_document_is_number_0(tmp_path):
+    """MELLON-EDIT-SRS-1: a fresh document's next object number is 0 (none
+    recorded counts as 0) and it has no objects, so the first object is 0.
+
+    Assumption: with no objects, 'one more than the highest object number'
+    contributes nothing, so only the next object number decides.
+    """
+    folder = new_document(tmp_path)
+    new_id = editor.create_object(folder, description="first")
+    assert new_id == f"{DOC}-0", f"first object of a fresh document is {new_id}, expected {DOC}-0"
+
+
+def test_edit_srs_1_created_object_file_holds_the_returned_id(tmp_path):
+    """MELLON-EDIT-SRS-1: the number given is the one on disk: the new object's
+    file is ``objects/<id>.xml`` and its ``<object id>`` is that ID."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    delete(folder, ids[-1])
+    new_id = editor.create_object(folder, description="after delete")
+    path = object_file(folder, new_id)
+    assert path.is_file(), f"no object file at {path} for the created object {new_id}"
+    on_disk = etree.parse(str(path)).getroot().get("id")
+    assert on_disk == new_id, f"object file {path.name} holds id {on_disk!r}, expected {new_id!r}"
+
+
+def test_edit_srs_1_empty_document_with_recorded_number_uses_it(tmp_path):
+    """MELLON-EDIT-SRS-1: an empty document whose manifest records 7 gives its
+    first object number 7."""
+    folder = new_document(tmp_path)
+    write_next(folder, "7")
+    new_id = editor.create_object(folder, description="first")
+    assert new_id == f"{DOC}-7", f"with next-object-number 7 and no objects got {new_id}, expected {DOC}-7"
+
+
+def test_edit_srs_1_after_deleting_highest_object_its_number_is_not_given_again(tmp_path):
+    """MELLON-EDIT-SRS-1 with -2: objects 0, 1, 2 leave the number at 3; deleting
+    2 leaves it at 3, so the next object is 3, not 2 (the defect being fixed)."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    highest = max(number_of(i) for i in ids)
+    delete(folder, ids[-1])
+    new_id = editor.create_object(folder, description="after delete")
+    assert number_of(new_id) == highest + 1, (
+        f"after deleting {ids[-1]} the new object is {new_id}, expected {DOC}-{highest + 1}"
+    )
+
+
+def test_edit_srs_1_after_deleting_several_highest_objects(tmp_path):
+    """MELLON-EDIT-SRS-1 with -2: create 0..5, delete 5, 3 and 4; the next object
+    is one more than the highest ever created, 6."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 6)
+    highest = max(number_of(i) for i in ids)
+    for obj_id in (ids[5], ids[3], ids[4]):
+        delete(folder, obj_id)
+    new_id = editor.create_object(folder, description="after deletes")
+    assert number_of(new_id) == highest + 1, (
+        f"after deleting the three highest objects the new object is {new_id}, expected {DOC}-{highest + 1}"
+    )
+
+
+def test_edit_srs_1_after_deleting_every_object(tmp_path):
+    """MELLON-EDIT-SRS-1 with -2: create 0..2 and delete them all; the document
+    is empty but its number is 3, so the next object is 3, not 0."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    highest = max(number_of(i) for i in ids)
+    for obj_id in ids:
+        delete(folder, obj_id)
+    new_id = editor.create_object(folder, description="after emptying")
+    assert number_of(new_id) == highest + 1, (
+        f"after deleting every object the new object is {new_id}, expected {DOC}-{highest + 1}"
+    )
+
+
+def test_edit_srs_1_sub_object_after_deleting_highest_sibling(tmp_path):
+    """MELLON-EDIT-SRS-1: numbering is per document, whatever the parent:
+    a sub-object created after its highest-numbered sibling was deleted still
+    gets one more than the highest ever created."""
+    folder = new_document(tmp_path)
+    parent = editor.create_object(folder, description="parent")
+    children = [editor.create_object(folder, parent_id=parent, description=f"child {i}") for i in range(2)]
+    highest = max(number_of(i) for i in [parent, *children])
+    delete(folder, children[-1])
+    new_id = editor.create_object(folder, parent_id=parent, description="new child")
+    assert number_of(new_id) == highest + 1, (
+        f"new sub-object after deleting {children[-1]} is {new_id}, expected {DOC}-{highest + 1}"
+    )
+
+
+def test_edit_srs_1_manifest_without_number_uses_highest_present(tmp_path):
+    """MELLON-EDIT-SRS-1: a manifest written without next-object-number (counts
+    as 0) with objects 0..2 present gives max(0, 2 + 1) = 3."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    highest = max(number_of(i) for i in ids)
+    write_next(folder, None)
+    new_id = editor.create_object(folder, description="older manifest")
+    assert number_of(new_id) == highest + 1, (
+        f"manifest without next-object-number and highest object {highest}: got {new_id}, "
+        f"expected {DOC}-{highest + 1}"
+    )
+
+
+def test_edit_srs_1_object_numbers_compare_as_whole_numbers(tmp_path):
+    """MELLON-EDIT-SRS-1 and the definition of object number (a whole number):
+    with objects 0..10 and no recorded number, the highest is 10 (not '9' by
+    text order), so the new object is 11."""
+    folder = new_document(tmp_path)
+    populate(folder, 11)
+    write_next(folder, None)
+    new_id = editor.create_object(folder, description="twelfth")
+    assert new_id == f"{DOC}-11", f"with objects {DOC}-0..{DOC}-10 got {new_id}, expected {DOC}-11"
+
+
+def test_edit_srs_1_document_id_with_hyphen_and_digits(tmp_path):
+    """MELLON-EDIT-SRS-1 and the definitions (document ID may hold hyphens and
+    digits; object ID is '<document ID>-<n>'): in document SYS-2 with objects
+    SYS-2-0..SYS-2-2 and no recorded number, the new object is SYS-2-3."""
+    doc_id = "SYS-2"
+    folder = new_document(tmp_path, doc_id)
+    populate(folder, 3)
+    write_next(folder, None)
+    new_id = editor.create_object(folder, description="fourth")
+    assert new_id == f"{doc_id}-3", f"in document {doc_id} got {new_id}, expected {doc_id}-3"
+
+
+# Objects 0..4 are present (highest 4, so highest + 1 = 5). Each case is
+# (recorded number, expected new object number) by max(recorded, 5).
+RECORDED_VS_HIGHEST = [
+    ("0", 5),   # recorded 0 (as an older Mellon leaves it): highest wins
+    ("3", 5),   # recorded lower than the highest present
+    ("4", 5),   # just below highest + 1
+    ("5", 5),   # exactly highest + 1
+    ("6", 6),   # just above highest + 1: recorded wins
+    ("10", 10),  # well above any object present
+    ("9223372036854775808", 9223372036854775808),  # 2**63, past a 64-bit integer
+]
+
+
+@pytest.mark.parametrize(("recorded", "expected"), RECORDED_VS_HIGHEST)
+def test_edit_srs_1_higher_of_recorded_and_highest_plus_one(tmp_path, recorded, expected):
+    """MELLON-EDIT-SRS-1 (T2, T7, T8): with objects 0..4 present the new object
+    gets max(recorded number, 5)."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 5)
+    assert max(number_of(i) for i in ids) == 4, f"setup: expected objects {DOC}-0..{DOC}-4, got {ids}"
+    write_next(folder, recorded)
+    new_id = editor.create_object(folder, description="new")
+    assert number_of(new_id) == expected, (
+        f"with next-object-number {recorded} and highest object 4 got {new_id}, expected {DOC}-{expected}"
+    )
+
+
+@pytest.mark.parametrize("recorded", ["abc", "-1", "1.5", ""])
+def test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id(tmp_path, recorded):
+    """MELLON-EDIT-SRS-1 with MELLON-STORE-SRS-2's rationale ('creating objects
+    stays safe because the highest object number present is also taken into
+    account'): with objects 0..2 and a damaged number, the new object's number
+    is at least 3, so no present ID is given out again.
+
+    Assumption (requirement gap): creating still succeeds with a damaged
+    number, and nothing fixes which number at or above 3 it gets.
+    """
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    highest = max(number_of(i) for i in ids)
+    write_next(folder, recorded)
+    new_id = editor.create_object(folder, description="new")
+    assert number_of(new_id) > highest, (
+        f"with next-object-number {recorded!r} and highest object {highest} got {new_id}, "
+        f"which is not above the highest present"
+    )
+
+
+# --------------------------------------------------------------------------
+# MELLON-EDIT-SRS-2: the number recorded after creating
+# --------------------------------------------------------------------------
+
+
+def test_edit_srs_2_number_after_first_object_is_1(tmp_path):
+    """MELLON-EDIT-SRS-2: after the first object (number 0) the manifest
+    records 1."""
+    folder = new_document(tmp_path)
+    editor.create_object(folder, description="first")
+    assert read_next(folder) == "1", f"after creating {DOC}-0 next-object-number is {read_next(folder)!r}, expected '1'"
+
+
+def test_edit_srs_2_number_after_create_following_delete_of_highest(tmp_path):
+    """MELLON-EDIT-SRS-2: create 0..2, delete 2, create (gets 3 by -1): the
+    manifest then records 4."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    delete(folder, ids[-1])
+    new_id = editor.create_object(folder, description="after delete")
+    expected = str(number_of(new_id) + 1)
+    assert read_next(folder) == expected, (
+        f"after creating {new_id} next-object-number is {read_next(folder)!r}, expected {expected!r}"
+    )
+
+
+def test_edit_srs_2_number_written_when_manifest_had_none(tmp_path):
+    """MELLON-EDIT-SRS-2: a manifest without the attribute gets one more than
+    the new object's number when an object is created."""
+    folder = new_document(tmp_path)
+    populate(folder, 3)
+    write_next(folder, None)
+    new_id = editor.create_object(folder, description="older manifest")
+    expected = str(number_of(new_id) + 1)
+    assert read_next(folder) == expected, (
+        f"after creating {new_id} in a manifest without the attribute, next-object-number is "
+        f"{read_next(folder)!r}, expected {expected!r}"
+    )
+
+
+@pytest.mark.parametrize(("recorded", "expected_new"), RECORDED_VS_HIGHEST)
+def test_edit_srs_2_number_is_one_more_than_new_object(tmp_path, recorded, expected_new):
+    """MELLON-EDIT-SRS-2: whichever term of MELLON-EDIT-SRS-1 decided the new
+    number, the manifest afterwards records that number plus one."""
+    folder = new_document(tmp_path)
+    populate(folder, 5)
+    write_next(folder, recorded)
+    new_id = editor.create_object(folder, description="new")
+    expected = str(number_of(new_id) + 1)
+    assert read_next(folder) == expected, (
+        f"recorded {recorded}, created {new_id}: next-object-number is {read_next(folder)!r}, expected {expected!r}"
+    )
+
+
+@pytest.mark.parametrize("recorded", ["abc", "-1", "1.5", ""])
+def test_edit_srs_2_damaged_number_replaced_on_create(tmp_path, recorded):
+    """MELLON-EDIT-SRS-2: creating an object sets the number to one more than
+    the new object's, so a damaged number is replaced by a whole number."""
+    folder = new_document(tmp_path)
+    populate(folder, 3)
+    write_next(folder, recorded)
+    new_id = editor.create_object(folder, description="new")
+    expected = str(number_of(new_id) + 1)
+    assert read_next(folder) == expected, (
+        f"damaged number {recorded!r}, created {new_id}: next-object-number is "
+        f"{read_next(folder)!r}, expected {expected!r}"
+    )
+
+
+# --------------------------------------------------------------------------
+# MELLON-EDIT-SRS-1, -2 with generated inputs (T11)
+# --------------------------------------------------------------------------
+
+SEEDS = range(8)
+STEPS = 30
+
+
+def random_sequence(folder: Path, seed: int):
+    """Drive a seeded random run of creates and deletes on one document.
+
+    Yields ``(step, op, obj_id, highest_ever)`` after each operation, where
+    ``highest_ever`` is the highest object number created so far. Deletes
+    favour the highest-numbered object, which is the case that reused IDs.
+    """
+    rng = random.Random(seed)
+    present: list[str] = []
+    highest_ever: int | None = None
+    for step in range(STEPS):
+        roll = rng.random()
+        if not present or roll < 0.5:
+            obj_id = editor.create_object(folder, description=f"seed {seed} step {step}")
+            present.append(obj_id)
+            number = number_of(obj_id)
+            yield step, "create", obj_id, highest_ever
+            highest_ever = number if highest_ever is None else max(highest_ever, number)
+        else:
+            if roll < 0.8:
+                obj_id = max(present, key=number_of)
+            else:
+                obj_id = rng.choice(present)
+            delete(folder, obj_id)
+            present.remove(obj_id)
+            yield step, "delete", obj_id, highest_ever
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_edit_srs_1_generated_no_object_id_given_out_twice(tmp_path, seed):
+    """MELLON-EDIT-SRS-1, -2 and the definition of object ID ('never given to a
+    second object in the same document'): over a random run of creates and
+    deletes, every created ID is new."""
+    folder = new_document(tmp_path)
+    issued: set[str] = set()
+    for step, op, obj_id, _ in random_sequence(folder, seed):
+        if op == "create":
+            assert obj_id not in issued, f"seed {seed} step {step}: {obj_id} was given out a second time"
+            issued.add(obj_id)
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever(tmp_path, seed):
+    """MELLON-EDIT-SRS-1 with -2: since each create records its number plus one
+    and deletes leave it, each new object's number is one more than the highest
+    ever created (0 for the first)."""
+    folder = new_document(tmp_path)
+    for step, op, obj_id, highest_before in random_sequence(folder, seed):
+        if op == "create":
+            expected = 0 if highest_before is None else highest_before + 1
+            assert number_of(obj_id) == expected, (
+                f"seed {seed} step {step}: created {obj_id}, expected {DOC}-{expected}"
+            )
+
+
+@pytest.mark.parametrize("seed", SEEDS)
+def test_edit_srs_2_generated_number_is_one_more_than_highest_ever(tmp_path, seed):
+    """MELLON-EDIT-SRS-2 (and its rationale that deleting leaves the number):
+    after every create and delete in a random run, the manifest records one
+    more than the highest object number ever created."""
+    folder = new_document(tmp_path)
+    highest_ever: int | None = None
+    for step, op, obj_id, _ in random_sequence(folder, seed):
+        if op == "create":
+            number = number_of(obj_id)
+            highest_ever = number if highest_ever is None else max(highest_ever, number)
+        expected = str(highest_ever + 1)
+        assert read_next(folder) == expected, (
+            f"seed {seed} step {step} ({op} {obj_id}): next-object-number is "
+            f"{read_next(folder)!r}, expected {expected!r}"
+        )
+
+
+# Beyond the blind tests: the editor's own guarantees for the number.
+
+
+def test_allocate_next_id_takes_the_recorded_number(doc_folder: Path) -> None:
+    """`allocate_next_id` gives the id `create_object` will: the fixture has
+    DOC-0 and DOC-1, so a recorded 7 wins and a recorded 1 doesn't."""
+    write_next(doc_folder, "7")
+    assert allocate_next_id(load_document(doc_folder)) == "DOC-7"
+    write_next(doc_folder, "1")
+    assert allocate_next_id(load_document(doc_folder)) == "DOC-2"
+
+
+def test_create_object_records_ref_and_number_in_one_manifest_write(
+    doc_folder: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The outline ref and the number land together, so no crash can leave
+    a new object listed without its number recorded."""
+    written: list[str] = []
+    real = editor._write_tree
+
+    def spy(tree, path):
+        written.append(path.name)
+        real(tree, path)
+
+    monkeypatch.setattr(editor, "_write_tree", spy)
+    new_id = create_object(doc_folder, description="new")
+    assert written == [f"{new_id}.xml", "DOC.xml"]
+    assert read_next(doc_folder) == "3"
+
+
+def test_create_object_that_fails_leaves_the_number(doc_folder: Path) -> None:
+    write_next(doc_folder, "5")
+    before = (doc_folder / "DOC.xml").read_bytes()
+    with pytest.raises(EditorError, match="not found"):
+        create_object(doc_folder, parent_id="DOC-999")
+    assert (doc_folder / "DOC.xml").read_bytes() == before
+    assert not (doc_folder / "objects" / "DOC-5.xml").exists()

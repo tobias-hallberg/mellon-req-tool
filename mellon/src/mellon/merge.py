@@ -11,13 +11,15 @@ base, ours (HEAD) and theirs (MERGE_HEAD) — and works out, per document:
 
 - **Renumbered:** an id both branches created for different objects isn't a
   conflict. The object committed later yields: its branch is rewritten as if
-  it had used the next id free on both branches from the start — its object,
-  links and figure files, its outline ref, and every link that branch made to
-  it, in any document.
+  it had used the next id neither branch has given out from the start (at or
+  above both sides' next object number) — its object, links and figure
+  files, its outline ref, and every link that branch made to it, in any
+  document.
 - **Merged by itself:** a file or field changed on one side only takes that
   side. Objects merge field by field (each attribute, the text, the table),
   links files as sets of links, a manifest's outline by object position and
-  its properties field by field.
+  its properties field by field. The merged manifest's next object number is
+  the highest of both sides' and one more than its highest object number.
 - **Merged by hand:** a field both branches changed differently — an
   object's text or an attribute, a table, a figure, a metadata field, an
   attribute definition, a view, a filter, the rules — and an object deleted
@@ -46,6 +48,7 @@ from lxml import etree
 
 from .editor import EditorError, _sanitize_text
 from .git_ops import GitError, _replace_file, discover_repo
+from .schema import NEXT_OBJECT_NUMBER_ATTR, object_number, whole_number
 
 Side = Literal["ours", "theirs"]
 # text: merged text to type in; value / whole: "ours" or "theirs"
@@ -279,7 +282,13 @@ def _find_renumbered(st: _State) -> list[Renumbered]:
         both = [i for i in both if st.ours[ours_ids[i]] != st.theirs[theirs_ids[i]]]
         if not both:
             continue
-        next_n = _max_number(doc, base_ids, ours_ids, theirs_ids) + 1
+        # MELLON-VER-SRS-65: no lower than either side's next object number,
+        # so a number one side used and deleted isn't given out again.
+        next_n = max(
+            _max_number(doc, base_ids, ours_ids, theirs_ids) + 1,
+            _recorded_number(st.ours, doc),
+            _recorded_number(st.theirs, doc),
+        )
         for obj_id in both:
             path = ours_ids[obj_id]
             t_ours = _added_time(st, st.ours_commit, path)
@@ -300,6 +309,18 @@ def _find_renumbered(st: _State) -> list[Renumbered]:
 def _id_sort_key(obj_id: str) -> tuple[int, str]:
     tail = obj_id.rsplit("-", 1)[-1]
     return (int(tail), obj_id) if tail.isdigit() else (-1, obj_id)
+
+
+def _recorded_number(files: Files, doc: str) -> int:
+    """The next object number `doc`'s manifest in `files` records; 0 when
+    it records none, or none that's a whole number."""
+    data = files.get(f"{doc}/{doc}.xml")
+    if data is None:
+        return 0
+    try:
+        return whole_number(_parse(data).get(NEXT_OBJECT_NUMBER_ATTR)) or 0
+    except etree.XMLSyntaxError:
+        return 0
 
 
 def _max_number(doc: str, *id_maps: Mapping[str, str]) -> int:
@@ -986,6 +1007,7 @@ def resolve(
     results = _compute(st, edits or {}, delete).results
     for doc in {p.partition("/")[0] for p in results}:
         _reconcile_outline(root, doc, results)
+        _record_next_number(st, root, doc, results)
 
     index = st.repo.index
     done: list[str] = []
@@ -1031,13 +1053,7 @@ def _reconcile_outline(
     outline = doc_root.find("outline")
     if outline is None:
         return
-    objects = {
-        p.stem for p in (root / doc / "objects").glob("*.xml")
-    } if (root / doc / "objects").is_dir() else set()
-    for path, content in results.items():
-        if path.startswith(f"{doc}/objects/") and path.endswith(".xml"):
-            stem = path.rsplit("/", 1)[-1][:-4]
-            (objects.add if content is not None else objects.discard)(stem)
+    objects = _merged_objects(root, doc, results)
     changed = False
     for ref in list(outline.iter("ref")):
         if ref.get("id") not in objects:
@@ -1052,4 +1068,51 @@ def _reconcile_outline(
         etree.SubElement(outline, "ref", id=obj_id)
         changed = True
     if changed:
+        results[manifest] = _dump(doc_root)
+
+
+def _merged_objects(
+    root: Path, doc: str, results: Mapping[str, bytes | None]
+) -> set[str]:
+    """The ids of the objects `doc` keeps: the work tree's, as the merge
+    leaves them."""
+    objects = {
+        p.stem for p in (root / doc / "objects").glob("*.xml")
+    } if (root / doc / "objects").is_dir() else set()
+    for path, content in results.items():
+        if path.startswith(f"{doc}/objects/") and path.endswith(".xml"):
+            stem = path.rsplit("/", 1)[-1][:-4]
+            (objects.add if content is not None else objects.discard)(stem)
+    return objects
+
+
+def _record_next_number(
+    st: _State, root: Path, doc: str, results: dict[str, bytes | None]
+) -> None:
+    """Set the merged manifest's next object number, so neither side's new
+    objects nor a renumbered one can have their ids given out again."""
+    manifest = f"{doc}/{doc}.xml"
+    data = results.get(manifest)
+    if data is None and manifest in results:
+        return  # the document itself goes
+    if data is None:
+        path = root / manifest
+        if not path.is_file():
+            return
+        data = path.read_bytes()
+    try:
+        doc_root = _parse(data)
+    except etree.XMLSyntaxError:
+        return
+    numbers = (object_number(i, doc) for i in _merged_objects(root, doc, results))
+    highest = max((n for n in numbers if n is not None), default=-1)
+    # MELLON-VER-SRS-64: the highest of both sides' numbers and one more than
+    # the merged document's highest object number.
+    number = str(max(
+        _recorded_number(st.ours, doc),
+        _recorded_number(st.theirs, doc),
+        highest + 1,
+    ))
+    if doc_root.get(NEXT_OBJECT_NUMBER_ATTR) != number:
+        doc_root.set(NEXT_OBJECT_NUMBER_ATTR, number)
         results[manifest] = _dump(doc_root)

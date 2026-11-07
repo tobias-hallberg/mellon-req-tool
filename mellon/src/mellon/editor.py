@@ -37,11 +37,14 @@ from .link_index import current_hashes
 from .loader import LoaderError, load_document
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
+    NEXT_OBJECT_NUMBER_ATTR,
     TABLE_ALIGNMENTS,
     Document,
     FilterRule,
     Table,
+    object_number,
     table_geometry_errors,
+    whole_number,
 )
 
 
@@ -305,17 +308,23 @@ def _child_path(folder: Path, name: str) -> Path:
 
 
 def allocate_next_id(doc: Document) -> str:
-    """Return the next unused id for `doc`: `<doc.id>-<N>` with N = max+1 (or 0)."""
-    prefix = f"{doc.id}-"
-    used = []
-    for obj_id in doc.objects:
-        if not obj_id.startswith(prefix):
-            continue
-        tail = obj_id[len(prefix):]
-        if tail.isdigit():
-            used.append(int(tail))
-    n = max(used) + 1 if used else 0
-    return f"{prefix}{n}"
+    """Return the id `create_object` gives `doc`'s next object: `<doc.id>-<N>`.
+
+    N is the higher of the manifest's next object number (`next-object-number`;
+    missing or not a whole number counts as 0) and one more than the highest
+    object number present (0 with none). Creating records N + 1 and deleting
+    leaves it, so a deleted object's id isn't given out again, and a manifest
+    from a Mellon that doesn't record the number still gets an unused id.
+    """
+    return f"{doc.id}-{_next_object_number(doc)}"
+
+
+def _next_object_number(doc: Document) -> int:
+    # MELLON-EDIT-SRS-1: the higher of the recorded number and one more than
+    # the highest object number present.
+    numbers = (object_number(obj_id, doc.id) for obj_id in doc.objects)
+    highest = max((n for n in numbers if n is not None), default=-1)
+    return max(whole_number(doc.next_object_number) or 0, highest + 1)
 
 
 @_atomic
@@ -326,14 +335,18 @@ def create_object(
 ) -> str:
     """Create a new object in `folder`. Returns the new object id.
 
-    If `parent_id` is given, nest the new object as its last child in the
-    outline. Otherwise append as a new top-level sibling.
+    The id is `allocate_next_id`'s, and the manifest's `next-object-number`
+    becomes one more than its number. If `parent_id` is given, nest the new
+    object as its last child in the outline. Otherwise append as a new
+    top-level sibling.
     """
     description = _sanitize_text(description, "description")
     doc = load_document(folder)
-    new_id = allocate_next_id(doc)
+    number = _next_object_number(doc)
+    new_id = f"{doc.id}-{number}"
 
-    # The object file, then the outline ref (`_atomic` undoes both on failure).
+    # The object file, then the outline ref and the next object number
+    # (`_atomic` undoes both on failure).
     obj_path = folder / "objects" / f"{new_id}.xml"
     if obj_path.exists():
         raise EditorError(f"object file already exists: {obj_path}")
@@ -345,7 +358,7 @@ def create_object(
     obj_path.parent.mkdir(parents=True, exist_ok=True)
     _write_tree(tree, obj_path)
 
-    _add_outline_ref(folder / f"{doc.id}.xml", new_id, parent_id)
+    _add_outline_ref(folder / f"{doc.id}.xml", new_id, parent_id, number + 1)
     return new_id
 
 
@@ -1795,10 +1808,14 @@ def set_filter_rules(
 
 
 def _add_outline_ref(
-    manifest: Path, new_id: str, parent_id: Optional[str]
+    manifest: Path, new_id: str, parent_id: Optional[str], next_number: int
 ) -> None:
+    """Add a new object's outline ref and record the next object number, in
+    one write of the manifest."""
     tree = etree.parse(str(manifest))
     root = tree.getroot()
+    # MELLON-EDIT-SRS-2: one more than the new object's number.
+    root.set(NEXT_OBJECT_NUMBER_ATTR, str(next_number))
     outline = root.find("outline")
     if outline is None:
         outline = etree.SubElement(root, "outline")

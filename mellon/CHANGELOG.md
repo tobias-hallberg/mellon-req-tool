@@ -83,6 +83,21 @@ All notable changes to Mellon. The format follows
 
 ### Fixed
 
+- **An object ID is no longer given out again after the highest-numbered
+  object is deleted.** Before, the next new object took the deleted one's ID,
+  so links on other branches, History, Compare and issued PDFs named a
+  different object. The manifest now records the next object number as
+  `next-object-number` on its `<document>` element: a new object takes the
+  higher of it and one more than the highest object number present, and
+  raises it; deleting leaves it. A value that isn't a whole number is
+  `DOC_BAD_NEXT_NUMBER`. Resolving a merge keeps the higher of both sides'
+  numbers and renumbers a clashing object from above both. A manifest without
+  the number counts as 0, so existing documents need no change, and an older
+  Mellon that doesn't write the number still works with this one, because the
+  higher of the two is taken. Specified in `MELLON-STORE-SRS-1`, `-2`,
+  `MELLON-EDIT-SRS-1`, `-2` and `MELLON-VER-SRS-64`, `-65`.
+  `loader.parse_manifest_bytes` returns the number as a fifth item, and
+  `Document.next_object_number` holds it.
 - `git_ops.log_for_path(since_commit=…)` now matches `git log <since>..HEAD`.
   On a merged history it could drop commits from the other side of a merge,
   and when the commit was no longer on HEAD's history (after a rebase) it

@@ -15,10 +15,12 @@ from mellon import (
     TableColumn,
     TableRow,
     add_attribute,
+    editor,
     load_document,
     set_attribute,
     validate,
 )
+from tests.test_editor import number_of, new_document, populate, write_next
 
 
 def _codes(errors: list) -> set[str]:
@@ -481,3 +483,94 @@ def test_validate_flags_bad_span() -> None:
 def test_validate_flags_no_columns() -> None:
     bad = Table(columns=(), rows=(TableRow((TableCell("x"),)),))
     assert "TABLE_NO_COLUMNS" in _codes(validate(_doc_with_table(bad)))
+
+
+# --- the next object number (MELLON-STORE-SRS-2) ----------------------------
+#
+# Written blind from the requirement; see test_editor's object ID tests.
+
+
+@pytest.fixture
+def valid_folder(tmp_path) -> Path:
+    """A document with objects 0..2 and the number 3, which validates clean."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    for obj_id in ids:  # the default schema makes `type` required
+        editor.set_attribute(folder, obj_id, "type", "Information")
+    write_next(folder, str(max(number_of(i) for i in ids) + 1))
+    errors = validate(load_document(folder))
+    assert errors == [], f"setup: the document should validate clean before the number is changed, got {errors}"
+    return folder
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "-1",  # just below the limit 0
+        "-7",  # negative
+        "abc",  # not a number
+        "1.5",  # not whole
+        "",  # empty
+        "NaN",  # not a number
+        " ",  # whitespace only
+    ],
+)
+def test_store_srs_2_invalid_number_is_a_validation_error(valid_folder, value):
+    """MELLON-STORE-SRS-2: a next object number that isn't a whole number of 0
+    or more makes the document (which still loads) report a validation error."""
+    write_next(valid_folder, value)
+    doc = load_document(valid_folder)
+    errors = validate(doc)
+    assert errors, f"next-object-number {value!r} produced no validation error"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "0",  # exactly on the limit (and lower than the highest object present)
+        "1",  # just above the limit (still lower than the highest present)
+        "3",  # one more than the highest object present
+        "9223372036854775808",  # 2**63
+        "123456789012345678901234567890",  # a large whole number
+    ],
+)
+def test_store_srs_2_whole_number_of_0_or_more_is_valid(valid_folder, value):
+    """MELLON-STORE-SRS-2: a whole number of 0 or more is no validation error,
+    even one lower than the highest object number present (EDIT-SRS-1's
+    rationale: an older Mellon could leave it so).
+
+    Assumption: the requirement names the only number condition that is an
+    error, so no other check fires on these values.
+    """
+    write_next(valid_folder, value)
+    errors = validate(load_document(valid_folder))
+    assert errors == [], f"next-object-number {value!r} produced validation errors {errors}"
+
+
+def test_store_srs_2_absent_number_is_valid(valid_folder):
+    """MELLON-STORE-SRS-2 with -1: an absent number counts as 0, which is a
+    whole number of 0 or more, so no validation error."""
+    write_next(valid_folder, None)
+    errors = validate(load_document(valid_folder))
+    assert errors == [], f"a manifest without next-object-number produced validation errors {errors}"
+
+
+# Beyond the blind tests: the code, and what counts as a whole number.
+
+
+@pytest.mark.parametrize("value", ["+3", " 3", "3 ", "1_000", "٣", "0x10"])
+def test_validate_flags_bad_next_number(doc_folder: Path, value: str) -> None:
+    """Only ASCII digits make a whole number here, though Python's `int`
+    also takes a sign, spaces, underscores and other scripts' digits."""
+    write_next(doc_folder, value)
+    errors = [
+        e for e in validate(load_document(doc_folder))
+        if e.code == "DOC_BAD_NEXT_NUMBER"
+    ]
+    assert len(errors) == 1
+    assert repr(value) in errors[0].message
+
+
+def test_validate_passes_next_number_with_leading_zeros(doc_folder: Path) -> None:
+    write_next(doc_folder, "007")
+    assert "DOC_BAD_NEXT_NUMBER" not in _codes(validate(load_document(doc_folder)))

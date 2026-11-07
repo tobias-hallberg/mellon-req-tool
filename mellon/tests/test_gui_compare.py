@@ -53,7 +53,8 @@ def _build(root: Path, *, issue: bool = True) -> Path:
         _tag(root, "1")
     editor.set_description(folder, "SPEC-1", "The VCU must stop.")
     editor.set_attribute(folder, "SPEC-2", "rationale", "Because.")
-    # Created before the delete, or the new object would reuse SPEC-3.
+    # SPEC-4 whether it's created before or after the delete: SPEC-3's id
+    # isn't given out again.
     editor.create_object(folder, "SPEC-0", "Requirement 4.")
     editor.delete_object(folder, "SPEC-3")
     commit(root, "edits")

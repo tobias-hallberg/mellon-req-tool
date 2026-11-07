@@ -22,6 +22,7 @@ from typing import Any, TypeVar
 from lxml import etree
 
 from .schema import (
+    NEXT_OBJECT_NUMBER_ATTR,
     TABLE_ALIGNMENTS,
     Attribute,
     Document,
@@ -66,7 +67,7 @@ def load_document(folder: str | Path) -> Document:
         manifest_stat = os.stat(manifest_path)
     except OSError as e:
         raise LoaderError(f"{manifest_path}: cannot read file: {e}") from e
-    metadata, parents, attributes, outline = _cached_parse(
+    metadata, parents, attributes, outline, next_object_number = _cached_parse(
         _manifests,
         _manifests,
         os.path.abspath(manifest_path),
@@ -140,10 +141,13 @@ def load_document(folder: str | Path) -> Document:
         rules=rules,
         views=tuple(views),
         filters=tuple(filters),
+        next_object_number=next_object_number,
     )
 
 
-_Manifest = tuple[Metadata, tuple[str, ...], tuple[Attribute, ...], tuple[OutlineNode, ...]]
+_Manifest = tuple[
+    Metadata, tuple[str, ...], tuple[Attribute, ...], tuple[OutlineNode, ...], str | None
+]
 
 
 def parse_manifest_bytes(data: bytes, path: str | Path) -> _Manifest:
@@ -152,7 +156,7 @@ def parse_manifest_bytes(data: bytes, path: str | Path) -> _Manifest:
     For versions of a document that aren't on disk, such as a blob read from
     git. `path` (`<doc_id>/<doc_id>.xml`) names the file in messages, and its
     folder name must match the manifest's id. Returns `(metadata, parents,
-    attributes, outline)`; raises `LoaderError`.
+    attributes, outline, next_object_number)`; raises `LoaderError`.
     """
     path = _message_path(path)
     return _manifest_from_root(_parse_xml_bytes(data, path), path)
@@ -207,6 +211,7 @@ def _manifest_from_root(manifest: etree._Element, path: Path) -> _Manifest:
         _parse_parents(manifest.find("parents")),
         _parse_attributes(manifest.find("attributes")),
         _parse_outline(manifest.find("outline")),
+        manifest.get(NEXT_OBJECT_NUMBER_ATTR),
     )
 
 

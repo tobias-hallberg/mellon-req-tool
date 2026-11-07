@@ -7,6 +7,7 @@ instances.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 
@@ -294,6 +295,31 @@ class Filter:
         return not self.rules
 
 
+# MELLON-STORE-SRS-1: the manifest's <document> element holds the next object
+# number under this attribute.
+NEXT_OBJECT_NUMBER_ATTR = "next-object-number"
+
+_WHOLE_NUMBER_RE = re.compile(r"[0-9]+")
+
+
+def whole_number(text: str | None) -> int | None:
+    """`text` as a whole number of 0 or more (ASCII digits only), else None."""
+    if text is None or not _WHOLE_NUMBER_RE.fullmatch(text):
+        return None
+    try:
+        return int(text)
+    except ValueError:  # more digits than Python converts
+        return None
+
+
+def object_number(obj_id: str, doc_id: str) -> int | None:
+    """The object number `n` of an object ID `<doc_id>-<n>`, else None."""
+    prefix = f"{doc_id}-"
+    if not obj_id.startswith(prefix):
+        return None
+    return whole_number(obj_id[len(prefix):])
+
+
 @dataclass(frozen=True, slots=True)
 class Metadata:
     """Edit metadata embedded in a manifest's `<metadata>` block.
@@ -321,6 +347,9 @@ class Document:
     rules: tuple[Rule, ...] = ()
     views: tuple[View, ...] = ()
     filters: tuple[Filter, ...] = ()
+    # The manifest's `next-object-number` as written, None when it has none.
+    # `whole_number` reads it; anything it rejects counts as 0 when creating.
+    next_object_number: str | None = None
 
     def attribute(self, name: str) -> Attribute | None:
         for a in self.attributes:

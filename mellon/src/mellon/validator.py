@@ -13,11 +13,13 @@ from dataclasses import dataclass
 from datetime import date as _date
 
 from .schema import (
+    NEXT_OBJECT_NUMBER_ATTR,
     TABLE_ALIGNMENTS,
     Document,
     RequirementObject,
     Rule,
     table_geometry_errors,
+    whole_number,
 )
 
 
@@ -34,6 +36,7 @@ def validate(doc: Document) -> list[ValidationError]:
     """Return a list of problems found in `doc`. Empty = valid."""
     errors: list[ValidationError] = []
     errors.extend(_check_metadata(doc))
+    errors.extend(_check_next_number(doc))
     errors.extend(_check_outline(doc))
     errors.extend(_check_attrs(doc))
     errors.extend(_check_tables(doc))
@@ -58,6 +61,21 @@ def _check_metadata(doc: Document) -> list[ValidationError]:
                 )
             )
     return errors
+
+
+def _check_next_number(doc: Document) -> list[ValidationError]:
+    # MELLON-STORE-SRS-2: the next object number, when the manifest has one,
+    # is a whole number of 0 or more.
+    number = doc.next_object_number
+    if number is None or whole_number(number) is not None:
+        return []
+    return [
+        ValidationError(
+            "DOC_BAD_NEXT_NUMBER",
+            f"manifest: {NEXT_OBJECT_NUMBER_ATTR}={number!r} is not "
+            f"a whole number of 0 or more",
+        )
+    ]
 
 
 def _check_outline(doc: Document) -> list[ValidationError]:

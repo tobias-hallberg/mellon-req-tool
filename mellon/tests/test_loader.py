@@ -9,6 +9,7 @@ import pytest
 
 from mellon import load_document, loader
 from mellon.loader import LoaderError
+from tests.test_editor import new_document, populate, write_next
 
 
 def test_load_minimal_document(doc_folder: Path) -> None:
@@ -693,8 +694,11 @@ def test_uppercase_suffix_matches_on_windows(doc_folder: Path) -> None:
 def test_parse_bytes_matches_load_document(doc_folder: Path) -> None:
     doc = load_document(doc_folder)
     manifest = (doc_folder / "DOC.xml").read_bytes()
-    _meta, _parents, attributes, outline = loader.parse_manifest_bytes(manifest, "DOC/DOC.xml")
+    _meta, _parents, attributes, outline, next_number = loader.parse_manifest_bytes(
+        manifest, "DOC/DOC.xml"
+    )
     assert attributes == doc.attributes and outline == doc.outline
+    assert next_number == doc.next_object_number
     obj = loader.parse_object_bytes(
         (doc_folder / "objects" / "DOC-0.xml").read_bytes(), "DOC/objects/DOC-0.xml"
     )
@@ -713,3 +717,21 @@ def test_parse_bytes_errors_name_the_path() -> None:
         loader.parse_object_bytes(b'<object id="DOC-1"/>', "DOC/objects/DOC-0.xml")
     with pytest.raises(LoaderError, match="does not match folder name"):
         loader.parse_manifest_bytes(b'<document id="X"/>', "DOC/DOC.xml")
+
+
+# --- the next object number (MELLON-STORE-SRS-1) ----------------------------
+#
+# Written blind from the requirement; see test_editor's object ID tests.
+
+
+def test_store_srs_1_manifest_without_number_still_loads(tmp_path):
+    """MELLON-STORE-SRS-1: 'A manifest without it counts as 0, so documents
+    from before it still load.' A manifest with objects and no attribute loads
+    with every object."""
+    folder = new_document(tmp_path)
+    ids = populate(folder, 3)
+    write_next(folder, None)
+    doc = load_document(folder)
+    assert set(doc.objects) == set(ids), (
+        f"a manifest without next-object-number loaded objects {sorted(doc.objects)}, expected {sorted(ids)}"
+    )

@@ -68,7 +68,7 @@ Naming rules (the loader enforces these):
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<document id="VCU3-SRS">
+<document id="VCU3-SRS" next-object-number="4">
   <metadata>
     <title>VCU3 Software Requirements Specification</title>
     <author>A. Engineer</author>
@@ -108,6 +108,7 @@ Naming rules (the loader enforces these):
 | Element | Content |
 |---|---|
 | `<document id>` | Root element. `id` must equal the folder name. |
+| `<document next-object-number>` | The next object number, the `n` of the next object id `<document id>-<n>`. A new object gets the higher of it and one more than the highest object number present, and sets it to one more than its own; deleting leaves it, so a deleted object's id isn't given out again. Missing counts as 0, so older manifests, and an older Mellon that doesn't write it, keep working. It must be a whole number of 0 or more in ASCII digits; anything else is `DOC_BAD_NEXT_NUMBER`, and creating then goes by the highest object number present. |
 | `<metadata>` | `<title>`, `<author>`, and `<date>`, all optional. `date` is ISO `YYYY-MM-DD`; anything else is `META_BAD_DATE`. The PDF cover and running header use these fields. The document's issue is **not** stored here (see [Issue tags](#issue-tags)), and a leftover `<issue>` element is ignored. |
 | `<parents>` | One `<parent doc="..."/>` per upstream document. Links may target only this document or a declared parent. The tools refuse anything else, and the validator reports it as `LINK_NOT_ALLOWED`. |
 | `<attributes>` | The attribute schema. Each `<attribute>` has a required `name` and `kind`, an optional `required` (`true`/`false`, default `false`), and an optional `label` (display name, which falls back to `name`; `type` defaults to "Type"). `kind` is one of `enum`, `text`, `integer`, `real`, `boolean`, `date`. An `enum` must list at least one `<option>`, and other kinds must list none. Tools accept attribute names of letters, digits, `-`, and `_`. |
@@ -704,7 +705,7 @@ Work can happen on several branches at once. New objects get the next free numbe
 
 While a merge is in progress, the Project Explorer shows **Merge in progress** (checked on F5 and when the window is activated). **Resolve merge…** reads the three commits involved (the common ancestor, yours and theirs), not git's conflict markers, and works like git does, per object:
 
-- **Same id created on both branches: renumbered, no question.** It isn't a conflict. The requirement committed later yields and becomes the next id free on both branches. Its object, links and figure files, its place in the outline, and every link its branch made to it (in any document) follow it. The dialog shows one line per renumbered requirement.
+- **Same id created on both branches: renumbered, no question.** It isn't a conflict. The requirement committed later yields and becomes the next id neither branch has given out: one more than the highest present, and at least both branches' `next-object-number`. Its object, links and figure files, its place in the outline, and every link its branch made to it (in any document) follow it. The dialog shows one line per renumbered requirement.
 - **Changed on one branch only: taken.** Not shown.
 - **Same requirement changed on both branches: merged per field.** Different fields (say the status on one branch and the text on the other) merge by themselves, like git merges separate lines.
 - **Same field changed on both branches: merged by hand.** The block for the requirement starts with **Traces to**: the requirements it links to, with their text, so you can judge the merge against what it traces to. Then, per field:
@@ -715,7 +716,7 @@ While a merge is in progress, the Project Explorer shows **Merge in progress** (
 - **Deleted on one branch, changed on the other:** **Keep** the requirement (ticked by default) or untick to delete it.
 - **Document properties:** merged per field too. Metadata fields both changed are merged by hand like text; parents are united; an attribute definition changed on both sides is kept from one side (yours by default).
 - **Views, filters and rules changed on both branches:** keep yours (the default) or theirs.
-- **Merged automatically.** Link files merge as sets: both sides' new links are kept, and a link changed on both sides keeps yours. The outline merges by object position: their additions, moves and deletions are applied to yours, and an object moved on both sides stays where you put it.
+- **Merged automatically.** Link files merge as sets: both sides' new links are kept, and a link changed on both sides keeps yours. The outline merges by object position: their additions, moves and deletions are applied to yours, and an object moved on both sides stays where you put it. Each merged document's `next-object-number` becomes the highest of both branches' and one more than its highest object number.
 - **Outside documents.** Conflicts in other files are left for your git client.
 
 Every choice has a default, so **Resolve** works straight away. It writes the result and marks the files resolved in the index. Make the merge commit in your git client, then F5 and **Validate**. It can be run again: it starts from the commits each time.
