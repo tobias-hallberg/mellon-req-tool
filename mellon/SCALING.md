@@ -24,7 +24,21 @@ Limits of these numbers:
 
 - The data is synthetic, and the history is linear.
 - Qt runs offscreen, so real painting isn't included unless `bench_gui.py` is given `--real-window`.
-- Timings are from one Windows machine with antivirus scanning on.
+- Timings are from one Windows machine with antivirus scanning on: the reference machine below.
+
+## Reference machine
+
+Mellon's performance requirements are measured on this machine (definitions: Reference machine). Re-measure there when it changes, and record the new one here.
+
+| | |
+|---|---|
+| CPU | AMD Ryzen 7 PRO 7840U, 8 cores, 16 threads (a laptop part) |
+| Memory | 28 GB usable |
+| Disk | Samsung 990 EVO Plus NVMe SSD |
+| OS | Windows 11 Pro, build 26300 |
+| Antivirus | Microsoft Defender, real-time protection on |
+
+Recorded on 2026-11-07, with the measurement of MELLON-VER-SRS-57 under [Compare](#compare).
 
 ## Before this work
 
@@ -82,7 +96,7 @@ The targets were estimates set before the work. The open and reload times are mo
 
 ## Compare
 
-`bench_core.py` times the Compare dialog's engine, `diff.compare_document`. MELLON-VER-SRS-57 asks for 2 s at 1,000 objects.
+`bench_core.py` times the Compare dialog's engine, `diff.compare_document`. MELLON-VER-SRS-57 asks for 2 s at 1,000 objects, with every object's description and one attribute changed; `bench_compare.py` times exactly that, on a repo from `gen_repo.py`.
 
 | Compare | 1,000 | 5,000 |
 |---|---|---|
@@ -90,6 +104,7 @@ The targets were estimates set before the work. The open and reload times are mo
 | HEAD to the working copy (reads every file) | 0.15 s | 0.77 s |
 | A few commits apart | | 0.04 s |
 | Versions to offer (`document_versions`) | 0.01 s | 0.03 s |
+| MELLON-VER-SRS-57: two commits, every object's description and one attribute changed (`bench_compare.py`, best of 5, 2026-11-07) | 1.0 s | |
 
 Files are compared by blob id before anything is parsed, so the cost follows how many objects changed. The working copy has no index of what changed, so every file is read and hashed. The dialog compares on the thread pool, so the window stays usable either way.
 
