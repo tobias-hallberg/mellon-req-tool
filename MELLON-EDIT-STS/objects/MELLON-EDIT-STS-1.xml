@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-1">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_1_first_object_of_fresh_document_is_number_0
+tests/test_editor.py::test_edit_srs_1_created_object_file_holds_the_returned_id
+tests/test_editor.py::test_edit_srs_1_empty_document_with_recorded_number_uses_it
+tests/test_editor.py::test_edit_srs_1_after_deleting_highest_object_its_number_is_not_given_again
+tests/test_editor.py::test_edit_srs_1_after_deleting_several_highest_objects
+tests/test_editor.py::test_edit_srs_1_after_deleting_every_object
+tests/test_editor.py::test_edit_srs_1_sub_object_after_deleting_highest_sibling
+tests/test_editor.py::test_edit_srs_1_manifest_without_number_uses_highest_present
+tests/test_editor.py::test_edit_srs_1_object_numbers_compare_as_whole_numbers
+tests/test_editor.py::test_edit_srs_1_document_id_with_hyphen_and_digits
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one
+tests/test_editor.py::test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever
+tests/test_editor.py::test_allocate_next_id_takes_the_recorded_number</attr>
+  <attr name="rationale">as implemented: the object ID fix of 2026-11-06, tested by blind tests written from the requirements alone, plus the code agent's tests for what they missed.</attr>
+  <description>Create objects: in a new document; after deleting the highest-numbered object, several of them, or all; under a heading; with a recorded next object number above, at and below the highest present, with none, and with a damaged one; and in seeded random runs of creating and deleting. Expected: each new object gets the higher of the recorded number and one more than the highest present, so no object ID is given out twice.</description>
+</object>

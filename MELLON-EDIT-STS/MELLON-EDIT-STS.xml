@@ -42,5 +42,10 @@
     <attribute name="automated-tests" kind="text" required="false" label="Automated Tests"/>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-EDIT-STS-0">
+      <ref id="MELLON-EDIT-STS-1"/>
+      <ref id="MELLON-EDIT-STS-2"/>
+    </ref>
+  </outline>
 </document>

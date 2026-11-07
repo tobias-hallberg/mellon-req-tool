@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-2">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_2_number_after_first_object_is_1
+tests/test_editor.py::test_edit_srs_2_number_after_create_following_delete_of_highest
+tests/test_editor.py::test_edit_srs_2_number_written_when_manifest_had_none
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object
+tests/test_editor.py::test_edit_srs_2_damaged_number_replaced_on_create
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever
+tests/test_editor.py::test_create_object_records_ref_and_number_in_one_manifest_write
+tests/test_editor.py::test_create_object_that_fails_leaves_the_number</attr>
+  <attr name="rationale">as implemented: the object ID fix of 2026-11-06, tested by blind tests written from the requirements alone, plus the code agent's tests for what they missed.</attr>
+  <description>Create objects as above, and once with a create that fails part way. Expected: after each create, the manifest records one more than the new object's number, written with the outline entry; a damaged number is replaced; a failed create leaves the number as it was.</description>
+</object>

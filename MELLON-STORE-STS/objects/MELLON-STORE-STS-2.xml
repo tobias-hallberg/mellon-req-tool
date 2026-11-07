@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-2">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid
+tests/test_validator.py::test_store_srs_2_absent_number_is_valid
+tests/test_validator.py::test_validate_flags_bad_next_number
+tests/test_validator.py::test_validate_passes_next_number_with_leading_zeros</attr>
+  <attr name="rationale">as implemented: the object ID fix of 2026-11-06, tested by blind tests written from the requirements alone, plus the code agent's tests for what they missed.</attr>
+  <description>Validate documents whose manifest records as next object number: -1, -7, abc, 1.5, nothing, NaN, a space, +3, ' 3', 1_000, a digit outside ASCII, 0x10; then 0, 007, a large whole number, and no attribute at all. Expected: a validation error for each of the first set, none for the second.</description>
+</object>
