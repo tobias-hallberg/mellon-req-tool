@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-67">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a branch, the latest commit, a re-created tag or an expression such as HEAD~2 later names other commits, so a review record that holds only names can't be checked. Decided with the person on 2026-11-07, with typed expressions kept (failure analysis CF2, CF4, CF9).</attr>
+  <description>Mellon shall report with each comparison result the commit that From and To each resolved to, by its hash, or that the version was the working copy.</description>
+</object>

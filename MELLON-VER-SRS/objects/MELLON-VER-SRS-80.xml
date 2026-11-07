@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a client can cut a large result short, and the counts let an agent tell. Found by the Compare failure analysis on 2026-11-06 (CF40).</attr>
+  <description>When the MCP server's compare tool returns a result, the MCP server shall return with the result the number of objects with each change.</description>
+</object>

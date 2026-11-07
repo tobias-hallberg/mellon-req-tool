@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-79">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a copy without its hidden rows reads as the whole review. Found by the Compare failure analysis on 2026-11-06 (CF36).</attr>
+  <description>While rows are hidden, the Compare dialog should copy with the shown rows the number of rows hidden.</description>
+</object>

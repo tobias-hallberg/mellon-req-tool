@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-66">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a branch or tag that moves during a comparison would mix two commits into one result that looks real. Found by the Compare failure analysis on 2026-11-06 (CF1).</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall read each version other than the working copy from the one commit that the version named when the comparison started.</description>
+</object>

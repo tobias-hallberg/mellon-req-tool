@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a branch named like the working copy would silently compare the wrong version. Found by the Compare failure analysis on 2026-11-06 (CF5).</attr>
+  <description>If a typed version names both the working copy and a branch or tag, Mellon shall report an error naming the version.</description>
+</object>

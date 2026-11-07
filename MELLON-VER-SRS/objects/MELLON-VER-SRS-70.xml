@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a branch can be named like an issue tag, and a commit message can read like an issue. Found by the Compare failure analysis on 2026-11-06 (CF8).</attr>
+  <description>The Compare dialog shall show with each version offered whether the version is the working copy, the latest commit, an issue, a branch or a commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: rules, views and filters files change what is valid and shown, so without this a changed document can read as unchanged. Wanted by the person on 2026-11-07, next to MELLON-VER-SRS-25 (failure analysis CF27).</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall report by name each file in the document's folder that differs between From and To and holds no object, link or figure.</description>
+</object>

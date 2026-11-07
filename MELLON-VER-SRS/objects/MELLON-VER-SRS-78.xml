@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-78">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the copy goes into a review record (MELLON-VER-SRS-61), which must be readable on its own (MELLON-VER-SRS-41). Found by the Compare failure analysis on 2026-11-06 (CF36).</attr>
+  <description>When the Compare dialog copies rows to the clipboard, the Compare dialog should copy with the rows the From and To that the result was found for.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: content Mellon doesn't model would read as no change at both versions alike, so the files are the independent check. Found by the Compare failure analysis on 2026-11-06 (CF24).</attr>
+  <description>When an object's files at From and at To differ in the files' canonical forms and in no field, Mellon shall report the object as Modified, naming the file.</description>
+</object>

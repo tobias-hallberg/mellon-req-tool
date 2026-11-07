@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a merge that renumbers changes what an object ID names along one line of history, so From's object reads as rewritten. Deferred with the person on 2026-11-07: rare, and it needs the merge to record what it renumbered first (failure analysis CF28).</attr>
+  <description>When a merge between From and To gave an object a new object ID, Mellon shall report the object's object ID at From and at To.</description>
+</object>

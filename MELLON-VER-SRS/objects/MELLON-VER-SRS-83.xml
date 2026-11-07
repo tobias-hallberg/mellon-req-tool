@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: listing the commits that changed a document walks the whole history, which takes seconds in a repository of thousands of commits. Found by the Compare failure analysis on 2026-11-06 (CF6).</attr>
+  <description>While the Compare dialog lists the versions to choose from, the Document Editor windows and the Compare dialog should respond to input.</description>
+</object>

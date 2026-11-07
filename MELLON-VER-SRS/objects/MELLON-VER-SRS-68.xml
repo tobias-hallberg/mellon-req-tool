@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MELLON-VER-SRS-60 covers only a version that resolves to no commit, and git picks one of two clashing names without a warning. Found by the Compare failure analysis on 2026-11-06 (CF3).</attr>
+  <description>If a version given to the MCP server's compare tool resolves to more than one commit, the MCP server should return an error naming the version.</description>
+</object>

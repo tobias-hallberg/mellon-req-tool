@@ -4,6 +4,6 @@
   <attr name="req-type">Constraint</attr>
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: users compare while editing. Unlike the DOORS Classic comparison wizard, comparing creates nothing.</attr>
-  <description>While comparing two versions, Mellon shall not change a file in the working copy, the git index or a git reference.</description>
+  <attr name="rationale">stakeholder: users compare while editing. Unlike the DOORS Classic comparison wizard, comparing creates nothing. Pending edits are saved first (MELLON-VER-SRS-73), as decided with the person on 2026-11-07.</attr>
+  <description>While comparing two versions, Mellon shall not change a file in the working copy, the git index or a git reference, other than by saving pending edits.</description>
 </object>

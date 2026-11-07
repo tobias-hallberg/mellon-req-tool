@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-82">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a commit from another clone skips Mellon's text cleanup, and such characters make what is shown differ from what is stored. Found by the Compare failure analysis on 2026-11-06 (CF35).</attr>
+  <description>When a description at From or at To holds a character that changes text direction or has no width, the Compare dialog shall mark the character.</description>
+</object>

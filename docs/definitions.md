@@ -13,6 +13,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Metadata | A document's title, author and date. |
 | Parent document | A document that another document declares it derives from. Coverage and the PDF traceability section are worked out against parent documents. |
 | Load error | A document that Mellon can't read, reported with its file, line and reason. A document with a load error is still listed. |
+| Canonical form | A file as Canonical XML 1.1 writes it, with whitespace-only text between elements removed. Line endings, indentation, the order of XML attributes and the quote style don't show in it. |
 
 ## Objects
 
@@ -58,11 +59,13 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Commit | A git commit. |
 | Latest commit | The commit at git's `HEAD`. |
 | Working copy | The files on disk, including changes that aren't committed yet. |
+| Pending edit | Text typed in a Document Editor that Mellon hasn't written to the working copy yet. |
 | Uncommitted change | A file in a document folder that differs from the latest commit. |
 | Issue | A numbered release of one document, recorded as the tag `<document ID>-issue-<n>` on a commit. Its number is one or more whole numbers separated by dots. |
 | Issue order | Issues are ordered by their numbers part by part, as whole numbers, so 2.9 comes before 2.10. When one issue's parts begin the other's, the shorter comes first, so 2 comes before 2.0. |
 | Current issue | The highest issue of a document, in issue order, whose commit is the latest commit or an ancestor of it. |
 | Issue before | For a given issue, the highest issue of the same document that comes before it in issue order and whose commit is the latest commit or an ancestor of it. |
+| Branch | A git branch, local or remote-tracking. |
 | Tag | A named commit that marks a milestone for the whole repository, apart from the issue tags. |
 | Version | One state of a document to compare: an issue, a tag, a branch, a commit or the working copy. |
 | Doesn't exist at a version | A document doesn't exist at a version when its folder is absent there. An object doesn't exist at a version when its object file is absent there. |

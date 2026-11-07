@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a blank pane looks like an emptied figure. Found by the Compare failure analysis on 2026-11-06 (CF34).</attr>
+  <description>If a figure at From or at To can't be drawn, the Compare dialog shall say so in place of that figure.</description>
+</object>

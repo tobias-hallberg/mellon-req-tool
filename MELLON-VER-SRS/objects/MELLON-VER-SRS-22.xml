@@ -4,6 +4,6 @@
   <attr name="req-type">Functional</attr>
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: a git client can change line endings, and a hand-edited file can be re-indented, without changing a requirement.</attr>
-  <description>When Mellon compares two versions of a document, Mellon shall count a difference only in a file's line endings, indentation or order of XML attributes as no change.</description>
+  <attr name="rationale">stakeholder: a git client can change line endings, and a hand-edited file can be re-indented, without changing a requirement. Widened to canonical forms with the person on 2026-11-07, so a change in how files are written, such as the quote style, marks no object Modified.</attr>
+  <description>When Mellon compares two versions of a document, Mellon shall count as no change a difference between a file at From and at To that is gone in the file's canonical form.</description>
 </object>

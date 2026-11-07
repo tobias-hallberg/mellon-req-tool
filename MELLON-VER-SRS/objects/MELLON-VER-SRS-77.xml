@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-77">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: rows are ordered by an outline (MELLON-VER-SRS-35 and -36), and an object missing from it would otherwise be dropped or placed arbitrarily. Found by the Compare failure analysis on 2026-11-06 (CF16).</attr>
+  <description>The Compare dialog should put each row whose object has no place in the outline the rows are ordered by last, in object ID order.</description>
+</object>

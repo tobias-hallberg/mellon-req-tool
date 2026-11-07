@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a hung comparison keeps the GUI from quitting and blocks every MCP tool. 30 s is 15 times MELLON-VER-SRS-57's 2 s, and 1.0 s was measured at 5,000 objects. Decided with the person on 2026-11-07 (failure analysis CF31, CF41).</attr>
+  <description>If a comparison hasn't finished within 30 s, Mellon shall stop the comparison and report that the comparison didn't finish.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: marking words in a very long description or drawing a large figure can freeze every window, and MELLON-VER-SRS-58 covers only a running comparison. Found by the Compare failure analysis on 2026-11-06 (CF33).</attr>
+  <description>While the Compare dialog prepares an object's changes for display, the Document Editor windows and the Compare dialog should respond to input.</description>
+</object>
