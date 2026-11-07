@@ -16,8 +16,8 @@ All notable changes to Mellon. The format follows
   field at both versions with changed words highlighted. Filters, swap,
   copy to clipboard, double-click to jump; works in read-only mode and
   compares in the background. The History tab has **Compare with latest…**.
-  Specified first in `MELLON-SRS`, Mellon's own requirements, now kept in
-  this repo next to `MELLON-STS`.
+  Specified first, in `MELLON-VER-SRS`, Mellon's own requirements, kept in
+  this repo next to its test cases in `MELLON-VER-STS`.
 - **MCP `compare_document`** returns the same changes (46 tools).
 - `tests/test_mellon_spec.py`: fails when a test case in Mellon's own
   specification lists a pytest node id that names no test, so the test

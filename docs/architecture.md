@@ -184,7 +184,7 @@ From `SCALING.md` (one Windows machine, antivirus on, often under load; syntheti
 | Open window (index on disk) | 5.3-6.4 s at 5,000 | ≤ 5 s | not met |
 | Edit one cell | 0.41-0.49 s at 5,000 | ≤ 0.5 s | met, narrowly |
 | F5 reload / new object | 3.5-4.6 s at 5,000 | ≤ 3 s | not met |
-| Compare, worst case | 0.19 s at 1,000; 1.0 s at 5,000 | 2 s at 1,000 (MELLON-SRS) | about 10× |
+| Compare, worst case | 0.19 s at 1,000; 1.0 s at 5,000 | 2 s at 1,000 (MELLON-VER-SRS-57) | about 10× |
 | First read after a fresh clone | 21 s at 500; about 80-97 s at 2,000 | — | — |
 | Has-incoming filter | 5-14 s at 5,000 | — | — |
 | MCP `outline`, whole document | 1 MB of JSON at 5,000 | — | `root` and `depth` added |

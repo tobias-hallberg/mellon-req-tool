@@ -743,3 +743,35 @@ def test_unparseable_manifest_is_reported(tmp_git: Path, spec: Path) -> None:
 def test_default_versions_before_the_first_commit(tmp_git: Path) -> None:
     editor.create_document(tmp_git, "SPEC", title="Spec")
     assert default_versions(tmp_git, "SPEC") == (None, WORKING_COPY)
+
+
+def _in_place_by_definition(kept_a: list[str], kept_b: list[str]) -> set[str]:
+    """MELLON-VER-SRS-23 worked out the long way: every set of siblings whose
+    order is the same at both versions; the largest; of those, the one whose
+    From positions, in order, come first."""
+    from itertools import combinations
+
+    at_b = {k: i for i, k in enumerate(kept_b)}
+    for size in range(len(kept_a), 0, -1):
+        for picked in combinations(range(len(kept_a)), size):  # in order, smallest first
+            order_b = [at_b[kept_a[i]] for i in picked]
+            if order_b == sorted(order_b):
+                return {kept_a[i] for i in picked}
+    return set()
+
+
+def test_siblings_left_in_place_follow_the_definition_for_every_order() -> None:
+    """MELLON-VER-SRS-23: for every order of up to 7 siblings, the ones not
+    Moved are the largest same-order set, and on a tie the later at From is
+    Moved. Regression: the old matcher kept the longest unbroken run, so
+    A B C D -> B D C A moved three."""
+    from itertools import permutations
+
+    from mellon.diff import _in_place
+
+    for n in range(2, 8):
+        kept_a = [f"S-{i}" for i in range(n)]
+        for kept_b in permutations(kept_a):
+            expected = _in_place_by_definition(kept_a, list(kept_b))
+            got = _in_place(kept_a, list(kept_b))
+            assert got == expected, f"{kept_a} -> {list(kept_b)}: kept {sorted(got)}, expected {sorted(expected)}"

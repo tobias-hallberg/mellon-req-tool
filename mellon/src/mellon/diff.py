@@ -24,6 +24,7 @@ can't be parsed doesn't stop the comparison: the object is reported with an
 
 from __future__ import annotations
 
+import bisect
 import difflib
 import os
 import re
@@ -710,14 +711,56 @@ def _moved(common: set[str], a: _Outline, b: _Outline) -> set[str]:
             continue
         kept = set(kept_b)
         kept_a = [k for k in a.children.get(parent, []) if k in kept]
-        matcher = difflib.SequenceMatcher(None, kept_a, kept_b, autojunk=False)
-        in_place = {
-            kept_b[j]
-            for block in matcher.get_matching_blocks()
-            for j in range(block.b, block.b + block.size)
-        }
-        moved |= kept - in_place
+        if kept_a == kept_b:
+            continue
+        moved |= kept - _in_place(kept_a, kept_b)
     return moved
+
+
+def _in_place(kept_a: list[str], kept_b: list[str]) -> set[str]:
+    """The siblings that didn't move: the same ids in From order (`kept_a`)
+    and To order (`kept_b`).
+
+    MELLON-VER-SRS-23: the largest set of siblings whose order is the same at
+    From and at To. Of equally large sets, the one whose siblings come
+    earliest at From, so the sibling that comes later at From is Moved.
+
+    Siblings in the same order at both versions are an increasing run of
+    their From positions read in To order, so this is the longest
+    increasing subsequence, taken smallest first: O(n log n).
+    """
+    at_a = {k: i for i, k in enumerate(kept_a)}
+    pos = [at_a[k] for k in kept_b]  # From positions, in To order
+    n = len(pos)
+    # longest[i]: the longest increasing run that starts at i. Read
+    # backwards, a run that starts at i is an increasing run of -pos that
+    # ends there.
+    longest = [0] * n
+    tails: list[int] = []
+    for i in range(n - 1, -1, -1):
+        at = bisect.bisect_left(tails, -pos[i])
+        if at == len(tails):
+            tails.append(-pos[i])
+        else:
+            tails[at] = -pos[i]
+        longest[i] = at + 1
+    # Starts of runs of each length, left to right. Their From positions
+    # fall: a later start with a higher position would make a longer run.
+    starts: dict[int, list[int]] = {}
+    for i in range(n):
+        starts.setdefault(longest[i], []).append(i)
+    # The k-th sibling of the smallest longest run starts a run of exactly
+    # the remaining length, and is the one with the lowest From position
+    # above the previous sibling's: the last start with a higher position.
+    keep: set[str] = set()
+    last = -1
+    for length in range(len(tails), 0, -1):
+        group = starts[length]
+        neg = [-pos[i] for i in group]  # rising
+        chosen = group[bisect.bisect_left(neg, -last) - 1]
+        keep.add(kept_b[chosen])
+        last = pos[chosen]
+    return keep
 
 
 def _id_sort_key(obj_id: str) -> tuple[int, str]:

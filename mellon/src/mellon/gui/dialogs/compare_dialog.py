@@ -10,7 +10,7 @@ thread pool so the editor stays responsive. It only reads, so the dialog is
 available in read-only mode too. Non-modal: double-clicking a row selects
 the object in the Document Editor and leaves the dialog open.
 
-Specified in MELLON-SRS, under "Compare dialog".
+Specified in MELLON-VER-SRS, under "Compare".
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from __future__ import annotations
 import html
 from typing import Callable
 
-from PySide6.QtCore import QByteArray, QObject, QRunnable, Qt, QThreadPool, QUrl, Signal
+from PySide6.QtCore import QByteArray, QObject, QRunnable, QSignalBlocker, Qt, QThreadPool, QUrl, Signal
 from PySide6.QtGui import QColor, QGuiApplication, QImage, QPainter, QTextDocument
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import (
@@ -515,7 +515,20 @@ class CompareDialog(QDialog):
         )
         combo.activated.connect(lambda *_: self.compare())
         combo.lineEdit().returnPressed.connect(self.compare)
+        combo.editTextChanged.connect(self._on_version_text_changed)
         return combo
+
+    def _on_version_text_changed(self, _text: str) -> None:
+        # MELLON-VER-SRS-40: typing changes From or To, so the comparison
+        # running is for versions no longer chosen. Its result is dropped
+        # when it arrives, and Compare is free for the typed version. (A
+        # pick or a swap changes the text too, then compares at once.)
+        if not self._busy:
+            return
+        self._request += 1
+        self._end_busy()
+        note = "From or To changed: press Compare to compare them."
+        self.summary_label.setText(f"{self._summary()}. {note}" if self.diff is not None else note)
 
     # --- public API -------------------------------------------------------
 
@@ -651,7 +664,11 @@ class CompareDialog(QDialog):
         diff = self.diff
         assert diff is not None
         tokens = ThemeManager.instance().current_tokens()
+        # MELLON-VER-SRS-31: clearing moves the current row through the old
+        # rows, whose indexes belong to the old result, not `self.diff`.
+        blocker = QSignalBlocker(self.list)
         self.list.clear()
+        blocker.unblock()
         self.details.clear()
         for index, change in enumerate(diff.changes):
             item = QTreeWidgetItem([change.obj_id, change_label(change), change.text])

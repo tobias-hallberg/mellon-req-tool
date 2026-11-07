@@ -82,7 +82,7 @@ The targets were estimates set before the work. The open and reload times are mo
 
 ## Compare
 
-`bench_core.py` times the Compare dialog's engine, `diff.compare_document`. MELLON-SRS asks for 2 s at 1,000 objects.
+`bench_core.py` times the Compare dialog's engine, `diff.compare_document`. MELLON-VER-SRS-57 asks for 2 s at 1,000 objects.
 
 | Compare | 1,000 | 5,000 |
 |---|---|---|

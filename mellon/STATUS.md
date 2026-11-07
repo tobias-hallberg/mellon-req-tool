@@ -594,7 +594,7 @@ A table is structured content on one object: `<table>` inside
 
 ### Compare
 
-Specified in `../MELLON-SRS` under "Compare dialog", the first feature
+Specified in `../MELLON-VER-SRS` under "Compare", the first feature
 specified in Mellon before it was built.
 
 - `diff.py`: `compare_document(repo_root, doc_id, ref_a, ref_b)` returns a

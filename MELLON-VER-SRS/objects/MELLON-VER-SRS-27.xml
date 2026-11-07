@@ -4,6 +4,6 @@
   <attr name="req-type">Functional</attr>
   <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: reading an unreadable file as an empty object would give a silent wrong answer. Made binding (shall) with the person on 2026-11-06.</attr>
-  <description>If an object's file or links file can't be read at From or at To, Mellon shall report the object as unreadable at that version.</description>
+  <attr name="rationale">stakeholder: reading an unreadable file as an empty object would give a silent wrong answer. Made binding (shall) with the person on 2026-11-06. Narrowed with the person on 2026-11-07 to files that differ: a file with the same content at both versions isn't a change, and loading the document and mellon-check already report it.</attr>
+  <description>If an object's file or links file can't be read at From or at To, and its content isn't the same at both, Mellon shall report the object as unreadable at that version.</description>
 </object>

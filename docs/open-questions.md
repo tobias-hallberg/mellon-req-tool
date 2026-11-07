@@ -70,4 +70,23 @@ Raised by the requirements view of the Compare section and answered the same day
 - **Affects:** `MELLON-EDIT-SRS`, `MELLON-STORE-SRS` (format)
 - **What's there:** a new object gets one more than the highest number in the document now. After the highest-numbered object is deleted, its ID goes to the next new object, and links on other branches, history, Compare and issued PDFs then tie the old ID to a different requirement.
 - **Recommendation:** keep the next free number in the manifest (a format change, so it needs the format version too). A new object takes the larger of that and one more than the highest number present, which also covers a manifest from before the change.
-- **Answer:** open, for the STORE and EDIT areas
+- **Answer:** fix it, 2026-11-06. Specified in MELLON-STORE-SRS-1 and -2, MELLON-EDIT-SRS-1 and -2, and MELLON-VER-SRS-64 and -65: the manifest's `next-object-number` attribute, raised on each create and kept by a merge. No format version was needed: a manifest without the number counts as 0, and Mellon 0.3.0 keeps the attribute when it rewrites a manifest (checked with the released build). 0.3.0 doesn't raise the number, so while a team mixes versions, a 0.3.0 user can still reuse a deleted ID.
+
+## Q8: What about a merge that git finishes on its own?
+
+- **Raised by:** blind test author for the ID-reuse fix, 2026-11-06 (analysis, not run)
+- **Affects:** `MELLON-VER-SRS` (merging), `MELLON-CHECK-SRS`
+- **What's there:** one branch creates DOC-3 and deletes it; another creates DOC-3. Both raise the next object number from 3 to 4, so git merges the manifests cleanly, adds the other branch's DOC-3, and commits without stopping. Mellon's merge resolution never runs, and DOC-3 now names an object other than the one the first branch gave it to. The same holds for any two branches: each gives out numbers the other can't see until they meet, and only a conflict (both create the same ID) lets Mellon renumber.
+- **Recommendation:** accept it as a limit and say so in the definitions: an object ID is unique along one line of history, and a merge keeps it unique where git stops for Mellon. Catching the clean case needs a walk through both branches' history for IDs that were deleted on one side and created on the other, at every merge or in `mellon-check`. That costs more than the case is worth while branches live for days, not months.
+- **Answer:** open
+
+## Q9: The Compare blind tests' questions (2026-11-07)
+
+- **Raised by:** the blind test authors for Compare, 2026-11-06
+- **Affects:** `MELLON-VER-SRS-27`, `-40`, `-45`, `-47`, and `definitions.md`
+- **Answers, with the person on 2026-11-07:**
+  - **Words:** each punctuation mark is a word of its own, as built, so `stop.` → `stop!` marks only `.` and `!`. The definition of Word changed.
+  - **Unreadable files:** an object whose unreadable file has the same content at both versions isn't listed. MELLON-VER-SRS-27 was narrowed.
+  - **Labels:** `type` is shown as `Type` when the manifest gives it no label, as everywhere else in Mellon. The definition of Label changed.
+  - **Typed versions:** typing into From or To changes it, before Enter or Compare. So a comparison running when the user types is dropped when it finishes, and Compare is enabled again. Added as the definition "From or To changes"; the dialog was changed to match.
+- **Defects found and fixed:** Moved didn't take the largest same-order set of siblings (MELLON-VER-SRS-23), and re-comparing with a later row selected raised an error (MELLON-VER-SRS-31).

@@ -1,7 +1,7 @@
 """Tests for the Compare dialog (`gui/dialogs/compare_dialog.py`) and the
 two ways into it: the Document Editor menu and the History tab.
 
-Specified in MELLON-SRS, under "Compare dialog"; MELLON-STS maps each test
+Specified in MELLON-VER-SRS, under "Compare"; MELLON-VER-STS maps each test
 to its requirement. Each test builds a small repo with the editor:
 
     seed      SPEC-0 "Heading" over SPEC-1..3      tagged SPEC-issue-1
@@ -116,7 +116,7 @@ def _choose(dlg, combo, ref: str) -> None:
     combo.setCurrentIndex(combo.findData(ref))
 
 
-# --- opening the dialog (MELLON-SRS-6..8) -----------------------------------
+# --- opening the dialog (MELLON-VER-SRS-1..5) -------------------------------
 
 
 def test_menu_compare_action_opens_the_dialog(qtbot, window) -> None:
@@ -169,7 +169,7 @@ def test_history_tab_compares_a_commit_with_the_latest(qtbot, window, repo) -> N
     assert [r[0] for r in _rows(dlg)] == ["SPEC-1", "SPEC-2", "SPEC-3", "SPEC-4"]
 
 
-# --- choosing versions (MELLON-SRS-10..17) ------------------------------------
+# --- choosing versions (MELLON-VER-SRS-6..17, -62) --------------------------
 
 
 def test_versions_offered(dialog) -> None:
@@ -269,7 +269,7 @@ def test_unresolvable_version_is_named_and_the_result_kept(qtbot, dialog) -> Non
     assert not dialog.message_label.isVisible()
 
 
-# --- listing changes (MELLON-SRS-19..26) --------------------------------------
+# --- listing changes (MELLON-VER-SRS-30..42) ---------------------------------
 
 
 def test_rows_in_outline_order_with_change_and_text(dialog) -> None:
@@ -339,7 +339,7 @@ def test_filters_hide_rows_by_change(qtbot, dialog) -> None:
     assert len(_rows(dialog)) == 4
 
 
-# --- showing an object's changes (MELLON-SRS-28..33) --------------------------
+# --- showing an object's changes (MELLON-VER-SRS-43..54) ---------------------
 
 
 def test_modified_object_shows_each_field_at_from_and_to(dialog) -> None:
@@ -420,7 +420,7 @@ def test_double_click_selects_the_object_in_the_editor(qtbot, window, dialog) ->
     assert "SPEC-3 isn't in the open document" in dialog.message_label.text()
 
 
-# --- general (MELLON-SRS-35..40) ----------------------------------------------
+# --- general (MELLON-VER-SRS-55..61) -----------------------------------------
 
 
 def test_comparison_runs_in_the_background(qtbot, dialog) -> None:

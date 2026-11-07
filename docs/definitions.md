@@ -28,14 +28,14 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Outline | The order and nesting of a document's objects, as a tree. |
 | Sub-object | An object directly below another object in the outline. |
 | Attribute | A named value on an object, defined in the manifest with a kind and, for an enumeration, its options. |
-| Label | The name an attribute is shown by: the label the manifest gives it, or its name when it has none. |
+| Label | The name an attribute is shown by: the label the manifest gives it; when it has none, `Type` for the `type` attribute, and its name for any other. |
 | Kind | What values an attribute takes: enumeration, text, integer, real, boolean or date. |
 | Required attribute | An attribute that every object must have a value for. |
 | Set, not set | An attribute is set on an object when the object's file gives it a value, even an empty one, and not set when the file doesn't mention it. |
 | Table | Rows and cells kept on one object, with column alignment, header rows and merged cells. |
 | Figure | A picture kept with one object, as an SVG file. A draw.io figure also carries the diagram that draw.io edits. |
 | Field | One part of an object that a comparison looks at: an attribute value, the description, the table, the figure, or the outgoing links, each with its target and link type. |
-| Word | A run of characters between whitespace in a description. |
+| Word | In a description: a run of letters, digits and underscores, or one other character that isn't whitespace. So each punctuation mark is a word of its own, and `stop.` is the two words `stop` and `.`. Whitespace separates words and isn't one. |
 
 ## Links
 
@@ -70,6 +70,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Changed since an issue | A document has changed since an issue when a file in its folder differs between the issue's commit and the latest commit. |
 | From, To | The two versions a comparison shows the changes between. The changes are what it takes to go from From to To, whichever is older. |
 | Unset | A From or To that names no version: nothing chosen, and nothing typed but whitespace. |
+| From or To changes | A version is picked in it, or the text typed in it changes, whether or not Enter or Compare has been pressed since. |
 | Added, Deleted, Modified, Moved, Link reviewed | The changes an object can have between From and To. **Added**: it exists at To and not at From. **Deleted**: it exists at From and not at To. **Modified**: it exists at both and a field differs. A difference only in a file's line endings, indentation or order of XML attributes is no change. **Moved**: it exists at both, and its parent changed, or it isn't in the largest set of its siblings at both versions whose order is the same at From and at To. Inserting or deleting a sibling moves nothing. When two such sets are equally large, the sibling that comes later at From is the one Moved. **Link reviewed**: its only change is to the acknowledged commits of its outgoing links. Moved can go with Modified or with Link reviewed. |
 | Merge in progress | A git merge that stopped because files conflict, and that hasn't been committed or aborted. |
 

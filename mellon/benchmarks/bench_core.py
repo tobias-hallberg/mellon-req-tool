@@ -52,7 +52,7 @@ t("repo.status()", lambda: repo.status())
 t("dirty_paths_under(SRS)", lambda: git_ops.dirty_paths_under(repo, "SRS"))
 t("folders_fingerprint(SRS,SYS)", lambda: folders_fingerprint([ROOT / "SRS", ROOT / "SYS"]))
 
-# Compare (MELLON-SRS: within 2 s at 1,000 objects). From the first commit to
+# Compare (MELLON-VER-SRS-57: within 2 s at 1,000 objects). From the first commit to
 # HEAD changes the most objects; the working copy reads every file.
 first_commit = str(list(repo.walk(repo.head.target, pygit2.GIT_SORT_TOPOLOGICAL))[-1].id)
 diff = t("compare_document(SRS), first..HEAD", lambda: compare_document(ROOT, "SRS", first_commit, "HEAD"))
