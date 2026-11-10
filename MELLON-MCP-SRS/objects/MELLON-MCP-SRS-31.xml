@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-31">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a misspelt `--read-only` that is ignored gives a read-write server where the person chose read-only (CF-M1, review Q21). The failure analysis proposed status 2 (D-M6), but 2 already means an unusable root, so the review left the status open; it is pinned after testing 0.3.0.</attr>
+  <description>If started with an option or option value that the MCP server doesn't take, the MCP server shall exit with status TBD without answering a Model Context Protocol message.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a server left running keeps `mellon-mcp.exe` open, which blocks the installer, and stopping mid-call leaves a multi-file change half done (CF-M11, CF-M65, review Q19). Decided on 2026-11-10 that the call in progress finishes first. Tested on the installed program (rung 4). Probably true of 0.3.0 apart from the value; set Implemented once a test shows it.</attr>
+  <description>When the MCP server's standard input closes, the MCP server shall exit at most TBD s after finishing the tool call in progress.</description>
+</object>

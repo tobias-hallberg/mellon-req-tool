@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: no option lets an agent edit without committing, so a team can't keep each agent change for a person to review and commit (CF-M50). Decided on 2026-11-10 (Q-M4).</attr>
+  <description>When started with `--no-commit`, the MCP server should refuse each call of `commit_changes`, and each write tool call that gives a `commit_message`.</description>
+</object>

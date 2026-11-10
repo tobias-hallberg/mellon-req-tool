@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-32">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the person reading the client's log sees what to write instead (review Q21).</attr>
+  <description>If started with an option that the MCP server doesn't take, the MCP server shall write the options that the MCP server takes to standard error.</description>
+</object>

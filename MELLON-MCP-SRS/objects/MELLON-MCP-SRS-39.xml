@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent written for the previous release keeps working. `outline`'s `root` and `depth` were added this way after 0.3.0. Covers what a call writes as well as what it returns (review Q16). MELLON-MCP-SRS-75 is the accepted reason to break this where a default result is too long (review Q10).</attr>
+  <description>The MCP server should give each parameter added since the previous release a default under which a call leaving the parameter out returns and writes what the previous release did.</description>
+</object>

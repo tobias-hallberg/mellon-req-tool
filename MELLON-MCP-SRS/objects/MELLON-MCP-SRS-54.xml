@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-54">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a disk fault isn't the agent's input to fix, and a retry can succeed. Reworded so that "can't be read" doesn't read as the defined term (review Q6). The test holds a file open on Windows and expects `OSError`, not the read-only server's `PermissionError`, whose name stays (CF-M21, Q-M9).</attr>
+  <description>If a write tool call fails because the operating system refuses to read or write a file, the MCP server shall return `error_type` `OSError`.</description>
+</object>

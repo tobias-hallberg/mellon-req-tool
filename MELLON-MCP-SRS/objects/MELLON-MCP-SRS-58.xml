@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-58">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a misspelt `dry_run` on `ack_suspects` would acknowledge each suspect link in the document, and a misspelt `commit_message` would leave the change uncommitted without a word (CF-M17). Decided on 2026-11-10. Expected to fail on 0.3.0; MELLON-MCP-SRS-64 says no file changes.</attr>
+  <description>If a tool call gives a parameter that the tool doesn't have, the MCP server shall refuse the call.</description>
+</object>

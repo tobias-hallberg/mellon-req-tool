@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-10">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the client shows only that the server failed, and the client's log holds standard error. Absolute, so that a relative or inherited root is visible; whatever the log level, so that `--log-level ERROR` can't hide it (review Q42).</attr>
+  <description>When the MCP server exits with status 2, the MCP server shall write the reason and the absolute path of the refused folder to standard error, whatever the log level.</description>
+</object>

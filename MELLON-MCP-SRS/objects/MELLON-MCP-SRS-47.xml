@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a refusal made before the tool runs, for a missing, unknown or mistyped parameter, would otherwise skip the shape of MELLON-MCP-SRS-45 and MELLON-MCP-SRS-46 (review Q7, CF-M20).</attr>
+  <description>When the MCP server refuses a tool call, the MCP server shall return `ok` false, an `error` message and an `error_type`.</description>
+</object>

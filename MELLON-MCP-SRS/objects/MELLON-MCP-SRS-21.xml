@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the client's record of a session then shows which Mellon made a change. Added in 0.2.0. Tested over standard input and output on the installed program, because nothing else checks the value an agent sees (CF-M3, review Q27).</attr>
+  <description>When an agent connects, the MCP server shall report as the server version the same `&lt;version&gt;` that `--version` writes.</description>
+</object>

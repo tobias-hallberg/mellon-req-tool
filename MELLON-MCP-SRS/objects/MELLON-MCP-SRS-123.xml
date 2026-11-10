@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-123">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: clients keep their logs, and a confidential project's requirement text would end up outside the repository (CF-M62). Decided on 2026-11-10 (Q-M10): descriptions and commit messages are logged at `DEBUG` only.</attr>
+  <description>While the log level isn't `DEBUG`, the MCP server shall write no parameter value of a tool call to standard error other than IDs, attribute names and paths.</description>
+</object>

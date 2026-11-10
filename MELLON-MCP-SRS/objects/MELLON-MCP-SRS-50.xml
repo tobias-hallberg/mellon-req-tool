@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: read tools return the working copy, so a person's uncommitted draft reads as the requirement (CF-M52). Generalised from `show_object` and `inspect_object` (D-M36) to each tool that returns an object; the object's files are its object, links and figure files.</attr>
+  <description>When a tool returns an object read from the working copy, the MCP server shall state in the result whether the object's files differ from the latest commit.</description>
+</object>

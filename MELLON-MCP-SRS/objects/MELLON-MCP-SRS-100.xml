@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-100">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an agent can tell a refusal by configuration from a failed edit and stop retrying. The name stays (Q-M9); MELLON-MCP-SRS-54 keeps a locked file apart.</attr>
+  <description>If the read-only server refuses a tool call, the MCP server shall return `error_type` `PermissionError`.</description>
+</object>

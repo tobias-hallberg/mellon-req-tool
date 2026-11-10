@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an internal error, a git failure or a write to a document with a load error has no `error_type` today, so the set would stay open (review Q5). One fixed value, not an exception's name.</attr>
+  <description>If a tool call fails for a reason that no other requirement gives an `error_type` for, the MCP server shall return `error_type` TBD.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the agent can report the commit without another call.</attr>
+  <description>When the MCP server commits for a `commit_message`, the MCP server shall return `commit` with the commit's `short_hash` and `commit_message`.</description>
+</object>

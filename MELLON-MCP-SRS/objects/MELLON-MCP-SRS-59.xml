@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a value converted silently, the string "false" read as true for instance, runs the call with a meaning the agent didn't intend (CF-M18). Decided on 2026-11-10. The types are those of MELLON-MCP-SRS-34 to MELLON-MCP-SRS-36.</attr>
+  <description>If a tool call gives a parameter a value of a type that the parameter doesn't take, the MCP server shall refuse the call.</description>
+</object>

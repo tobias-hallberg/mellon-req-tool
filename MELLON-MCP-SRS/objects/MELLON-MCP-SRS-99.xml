@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: these change a file, commit, tag or write a PDF. They are offered and refused, not hidden, so an agent learns why; kept as built on 2026-11-10. A dry run of `ack_suspects` is refused too (review Q38, open).</attr>
+  <description>The read-only server shall refuse each call of a write tool, `commit_changes` or `export_document`.</description>
+</object>

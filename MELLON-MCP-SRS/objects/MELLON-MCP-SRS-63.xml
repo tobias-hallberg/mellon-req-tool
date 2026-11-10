@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-63">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a document ID also names a folder, so `..`, a drive or `:` can reach outside the repository (CF-M57; TRACE review). The characters are those of the definition of Document ID.</attr>
+  <description>If a tool call gives a document ID that holds a character other than a letter, digit, hyphen or underscore, the MCP server shall refuse the call.</description>
+</object>

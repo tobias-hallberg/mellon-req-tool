@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the commit would carry another writer's half-done change under the agent's message, or a manifest naming object files nobody committed, which breaks the document for each person who pulls (CF-M32, review Q4). Decided on 2026-11-10 (Q-M2): the write stays, `commit_error` names the files, and the agent commits with `commit_changes` after checking, or asks the person.</attr>
+  <description>If a file in a write tool call's `affected_files` differed from the latest commit before the call, the MCP server shall not commit for the call's `commit_message`.</description>
+</object>

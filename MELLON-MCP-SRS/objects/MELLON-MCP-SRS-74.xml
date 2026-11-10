@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: for search, trace and incoming links any document could hold a match or a link, so an answer that silently leaves one out reads as complete (review Q17). `validate_repo`, `repo_health` and `suspects` already name such documents.</attr>
+  <description>If a document in the repository has a load error, the MCP server shall name the document in the result of each tool call whose answer covers more than one document.</description>
+</object>

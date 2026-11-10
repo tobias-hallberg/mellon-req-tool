@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: no tool moves the server to another folder, so an agent can't reach a repository the person didn't configure; a second repository needs a second server entry. Reworded to be testable (review Q35).</attr>
+  <description>The MCP server shall answer each tool call from the folder to serve that was chosen when the MCP server started.</description>
+</object>

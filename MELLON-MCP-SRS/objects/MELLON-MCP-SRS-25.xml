@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: only the client that started the server can reach it, so nothing on the network can read or edit the repository through it. The negative is a real prohibition (review Q43).</attr>
+  <description>The MCP server shall not listen for network connections.</description>
+</object>

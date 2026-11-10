@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the read-only server is chosen where an agent must leave the repository as it is, yet the suspect scan writes its answers to a file in the git folder, and reading the status can rewrite git's index (CF-M43, CF-M44; architecture review; review Q11). Decided on 2026-11-10: the suspect scan's answers stay in memory. Bounded to the repository so that the test can compare each file's bytes before and after each of the 46 tools, which also checks that the refused set in MELLON-MCP-SRS-99 is complete (CF-M45).</attr>
+  <description>The read-only server shall not create, change or delete a file in the folder to serve or in the repository's git folder.</description>
+</object>

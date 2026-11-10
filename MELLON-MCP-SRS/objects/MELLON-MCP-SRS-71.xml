@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the restore can fail for the same reason the write did, a full disk or a file held open on Windows, and the agent then has to know what is on disk (CF-M33). Kept as the fallback of MELLON-MCP-SRS-70 rather than withdrawn (review Q3). Today `new_object` and `bulk_set_attribute` return `partial` after any failure partway, which MELLON-MCP-SRS-70 replaces.</attr>
+  <description>If a write tool call fails and the MCP server can't put each file back as the file was before the call, the MCP server shall return `partial`, listing each file left changed.</description>
+</object>

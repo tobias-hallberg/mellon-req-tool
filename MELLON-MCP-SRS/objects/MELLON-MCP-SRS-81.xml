@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: files that someone else changed or staged stay out of the commit. When a commit is refused is in MELLON-VER-SRS. If MELLON-MCP-SRS-84 is accepted, this gains its condition.</attr>
+  <description>When a write tool call with a `commit_message` succeeds, the MCP server shall commit exactly the files in the call's `affected_files`, with `commit_message` as the message.</description>
+</object>

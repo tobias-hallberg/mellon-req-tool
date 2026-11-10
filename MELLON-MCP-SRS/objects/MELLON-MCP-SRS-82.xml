@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-82">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the commit would be empty or, if an empty list were read as no paths given, would take other writers' uncommitted files under the agent's message (CF-M31, review Q14).</attr>
+  <description>If a write tool call with a `commit_message` changes no file, the MCP server shall make no commit.</description>
+</object>

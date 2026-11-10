@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a relative path in a client's configuration is otherwise read from a folder the person doesn't choose, and the server exits or serves another clone (CF-M2, review Q34). Decided on 2026-11-10. Probably what 0.3.0 does; set Implemented once a test shows it.</attr>
+  <description>When `--repo-root` gives a relative path, the MCP server shall read the path from the current working directory.</description>
+</object>

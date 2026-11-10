@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the protocol has dated revisions, and a client on another revision can fail to connect or lose fields; no revision is stated (review Q39).</attr>
+  <description>The MCP server shall answer agents that use Model Context Protocol revision TBD.</description>
+</object>

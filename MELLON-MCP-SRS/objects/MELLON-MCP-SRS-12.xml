@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a repository without documents is also what a server started in the wrong clone sees. Conditioned on the log level so that MELLON-MCP-SRS-120 can hold (review Q9).</attr>
+  <description>If the folder to serve holds no document while the log level is `DEBUG`, `INFO` or `WARNING`, the MCP server shall write a warning to standard error.</description>
+</object>

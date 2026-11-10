@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-120">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: `DEBUG` helps a person find why a call failed, and `WARNING` or `ERROR` keeps a busy client's log short. States what a level does (review Q9).</attr>
+  <description>When started with `--log-level` and one of `DEBUG`, `INFO`, `WARNING` or `ERROR`, the MCP server shall write to standard error only the log messages at that log level or a more severe one.</description>
+</object>

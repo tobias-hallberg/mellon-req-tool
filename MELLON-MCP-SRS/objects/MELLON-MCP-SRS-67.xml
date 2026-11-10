@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-67">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the list is what an agent commits and what a person reviews; 0.2.0 fixed tools that left files out. "Exactly", because an extra or missing path breaks the commit, and git's own cache files aren't commit material (CF-M29, CF-M30, review Q4). The test hashes each file under the root before and after each write tool and compares with the list both ways.</attr>
+  <description>When a write tool call succeeds, the MCP server shall list in `affected_files` exactly the files under the repository's root folder, outside git's own folder, that the call created, changed or deleted.</description>
+</object>

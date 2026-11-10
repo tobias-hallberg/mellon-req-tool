@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-93">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `ok` stays true when only the commit fails (MELLON-MCP-SRS-92), so an agent that checks `ok` reports a commit that wasn't made (CF-M36).</attr>
+  <description>When a write tool call gives a `commit_message`, the MCP server shall state in the result whether the MCP server made the commit.</description>
+</object>

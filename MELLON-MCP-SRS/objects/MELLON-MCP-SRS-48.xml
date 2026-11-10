@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `ok` false inside a result the protocol marks as a success reads as success to a client display, hook or script (CF-M19, review Q7).</attr>
+  <description>If a tool call fails or the MCP server refuses the call, the MCP server shall mark the result as an error in the way the Model Context Protocol defines.</description>
+</object>

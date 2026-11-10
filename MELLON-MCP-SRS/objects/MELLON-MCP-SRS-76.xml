@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a shortened list reads as complete (CF-M23). Triggered by what was left out, whatever the reason, so a limit parameter counts too (review Q31). `compare_document`, `outline` and `review_suspect_link` say so today; the docs don't say it for `search_objects`, `git_history`, `trace` or `inspect_object`.</attr>
+  <description>When a tool result leaves out items that match the call, the MCP server shall say in the result how many items were left out.</description>
+</object>

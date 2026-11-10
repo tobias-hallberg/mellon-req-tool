@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-98">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer, or a person who wants an agent only to read, starts the server so that the agent can't change the repository.</attr>
+  <description>When started with `--read-only`, the MCP server shall run as the read-only server.</description>
+</object>

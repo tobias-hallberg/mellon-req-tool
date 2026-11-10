@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: as MELLON-MCP-SRS-34. `compare_document` is the tool MELLON-VER-SRS-59 asks for and came after 0.3.0, so this is Accepted. Decided on 2026-11-10 (review Q2).</attr>
+  <description>The MCP server shall offer the git, review and export tools and parameters in this requirement's table.</description>
+  <table>
+    <columns>
+      <col align="left"/>
+      <col align="left"/>
+      <col align="left"/>
+      <col align="left"/>
+      <col align="left"/>
+    </columns>
+    <row header="true">
+      <cell>Tool</cell>
+      <cell>Parameter</cell>
+      <cell>Type</cell>
+      <cell>Required</cell>
+      <cell>Default</cell>
+    </row>
+    <row>
+      <cell>`commit_changes`</cell>
+      <cell>`message`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`commit_changes`</cell>
+      <cell>`paths`</cell>
+      <cell>array of strings or null</cell>
+      <cell>no</cell>
+      <cell>null</cell>
+    </row>
+    <row>
+      <cell>`commit_changes`</cell>
+      <cell>`include_trailer`</cell>
+      <cell>boolean</cell>
+      <cell>no</cell>
+      <cell>true</cell>
+    </row>
+    <row>
+      <cell>`git_history`</cell>
+      <cell>`doc_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`git_history`</cell>
+      <cell>`obj_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`git_history`</cell>
+      <cell>`max_entries`</cell>
+      <cell>integer</cell>
+      <cell>no</cell>
+      <cell>10</cell>
+    </row>
+    <row>
+      <cell>`show_object_at`</cell>
+      <cell>`doc_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`show_object_at`</cell>
+      <cell>`obj_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`show_object_at`</cell>
+      <cell>`commit_ref`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`compare_document`</cell>
+      <cell>`doc_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`compare_document`</cell>
+      <cell>`from_ref`</cell>
+      <cell>string or null</cell>
+      <cell>no</cell>
+      <cell>null</cell>
+    </row>
+    <row>
+      <cell>`compare_document`</cell>
+      <cell>`to_ref`</cell>
+      <cell>string or null</cell>
+      <cell>no</cell>
+      <cell>null</cell>
+    </row>
+    <row>
+      <cell>`compare_document`</cell>
+      <cell>`max_changes`</cell>
+      <cell>integer</cell>
+      <cell>no</cell>
+      <cell>100</cell>
+    </row>
+    <row>
+      <cell>`review_suspect_link`</cell>
+      <cell>`source_doc`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`review_suspect_link`</cell>
+      <cell>`source_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`review_suspect_link`</cell>
+      <cell>`target_doc`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`review_suspect_link`</cell>
+      <cell>`target_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`export_document`</cell>
+      <cell>`doc_id`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`export_document`</cell>
+      <cell>`out_path`</cell>
+      <cell>string</cell>
+      <cell>yes</cell>
+      <cell>—</cell>
+    </row>
+    <row>
+      <cell>`export_document`</cell>
+      <cell>`attrs`</cell>
+      <cell>array of strings or null</cell>
+      <cell>no</cell>
+      <cell>null</cell>
+    </row>
+    <row>
+      <cell>`export_document`</cell>
+      <cell>`rev`</cell>
+      <cell>string or null</cell>
+      <cell>no</cell>
+      <cell>null</cell>
+    </row>
+  </table>
+</object>

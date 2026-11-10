@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: `INFO` shows the repository served (MELLON-MCP-SRS-15) and the warnings.</attr>
+  <description>When started without `--log-level`, the MCP server shall use the log level `INFO`.</description>
+</object>

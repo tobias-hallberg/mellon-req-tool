@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: stated before only in a rationale (review Q7, CF-M20). Probably true of 0.3.0; set Implemented once a test shows it.</attr>
+  <description>If a tool call leaves out a parameter that the tool requires, the MCP server shall refuse the call.</description>
+</object>

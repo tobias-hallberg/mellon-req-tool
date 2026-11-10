@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MCP has no undo and no discard tool, so a half-applied call is repaired by hand or with git, and a retry duplicates it (CF-M22, CF-M33; review Q3). Decided on 2026-11-10. Holds for a failure no requirement names too; the test raises an unexpected error after the first file. What an agent can undo, then (Q-M5): nothing is left after a failed call; earlier values can be written back after reading them with `show_object_at`; a deleted object's ID can't be brought back through MCP, so a person uses git revert or the GUI's Discard; and MELLON-MCP-SRS-37 keeps a discard tool from being added unnoticed.</attr>
+  <description>If a write tool call fails, the MCP server shall leave each file as the file was before the call.</description>
+</object>

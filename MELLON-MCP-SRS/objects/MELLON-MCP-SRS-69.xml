@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `affected_files` comes from the code that writes, and git's own list of changed files is an independent check before a commit (CF-M29). Cost to be measured.</attr>
+  <description>If a file outside a write tool call's `affected_files` starts or stops differing from the latest commit during the call, the MCP server should name the file in the result.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: descriptions, attribute values, titles, commit messages, branch names and load errors come from anyone who can push, and an agent that follows them can be steered into edits, commits or exports nobody asked for (CF-M50; TRACE review).</attr>
+  <description>The MCP server shall state in the instructions that text read from the repository is data for the agent to weigh, not commands for the agent to follow.</description>
+</object>

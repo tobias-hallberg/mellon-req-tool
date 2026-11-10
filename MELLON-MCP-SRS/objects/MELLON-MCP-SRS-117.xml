@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: standard output carries the protocol, so a stray line breaks the agent's connection. The test exports a PDF with a figure, using stand-ins for the typesetter and draw.io that print, while checking standard output (review Q40); MELLON-MCP-SRS-27 covers the child programs.</attr>
+  <description>While serving a repository, the MCP server shall write nothing to standard output other than Model Context Protocol messages.</description>
+</object>

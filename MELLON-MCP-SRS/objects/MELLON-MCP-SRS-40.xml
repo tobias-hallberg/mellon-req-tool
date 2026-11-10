@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: agents choose tools and values from the descriptions, so a description is part of the interface. One that disagrees, like `inspect_object`'s `trace_depth` against `trace`'s `max_depth`, leads an agent to a wrong call (Q-M13; TRACE review). Decided on 2026-11-10. Verified by inspection.</attr>
+  <description>The description that the MCP server gives each tool shall agree with the requirements that specify the tool and the tool's parameters.</description>
+</object>

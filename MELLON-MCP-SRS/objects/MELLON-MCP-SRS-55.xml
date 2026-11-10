@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: agents branch on `error_type`, so the set is closed, and a rewrite returns the same strings. Result fields stay with each area's tool requirements; this keeps only the closed list (review Q2, Q5). TBD values are open.</attr>
+  <description>The MCP server shall return as `error_type` only the values in this requirement's table.</description>
+  <table>
+    <columns>
+      <col align="left"/>
+      <col align="left"/>
+    </columns>
+    <row header="true">
+      <cell>`error_type`</cell>
+      <cell>Returned when</cell>
+    </row>
+    <row>
+      <cell>`AlreadyExists`</cell>
+      <cell>a write tool call adds an item that already exists (MELLON-MCP-SRS-52)</cell>
+    </row>
+    <row>
+      <cell>`EditorError`</cell>
+      <cell>a write tool call names a missing item or gives a value that is refused (MELLON-MCP-SRS-53)</cell>
+    </row>
+    <row>
+      <cell>`OSError`</cell>
+      <cell>the operating system refuses to read or write a file (MELLON-MCP-SRS-54)</cell>
+    </row>
+    <row>
+      <cell>`PermissionError`</cell>
+      <cell>the read-only server refuses a call (MELLON-MCP-SRS-100)</cell>
+    </row>
+    <row>
+      <cell>`TectonicError`</cell>
+      <cell>PDF export can't find or run its typesetter (MELLON-PDF-SRS)</cell>
+    </row>
+    <row>
+      <cell>TBD</cell>
+      <cell>a tool other than a write tool is given a document or object that doesn't exist (MELLON-MCP-SRS-61)</cell>
+    </row>
+    <row>
+      <cell>TBD</cell>
+      <cell>a write tool call is refused while a git operation is in progress (MELLON-MCP-SRS-107)</cell>
+    </row>
+    <row>
+      <cell>TBD</cell>
+      <cell>no other row applies (MELLON-MCP-SRS-56)</cell>
+    </row>
+  </table>
+</object>

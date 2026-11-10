@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an MCP client gives up on a server that doesn't answer in time, and the session then has no Mellon tools (CF-M9). The test case uses the first start after cloning (review Q20). Values open, measured first.</attr>
+  <description>On the reference machine, the installed MCP server shall answer a `list_documents` call sent on connecting at most TBD s after its process starts, on a repository of TBD documents of 1,000 objects each.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: agents, prompts and scripts name tools, parameters and fields, so a rename, a removed field or a newly required parameter breaks them. Holds in 0.x too: a break needs a reason recorded in the changelog (decided on 2026-11-10; review Q16). Harmonising parameter names was left out of 0.3.0 for that reason.</attr>
+  <description>The MCP server should offer each tool, parameter, parameter type, parameter default, result field and `error_type` value that the previous release offered, with each optional parameter still optional.</description>
+</object>

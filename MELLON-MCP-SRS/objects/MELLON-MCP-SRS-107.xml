@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: resolving a merge rewrites each file both sides changed, and a rebase folds an edit into someone else's replayed commit, so an edit made meanwhile is lost or misattributed (CF-M48, CF-M49; open question Q4). VER owns editing during a git operation for each interface; this is the MCP server's refusal, kept here on 2026-11-10 rather than deleted (review Q22). Its `error_type` is open (MELLON-MCP-SRS-55).</attr>
+  <description>While a git operation is in progress, the MCP server should refuse each write tool call.</description>
+</object>

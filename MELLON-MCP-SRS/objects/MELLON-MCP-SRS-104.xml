@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the GUI, a git client and draw.io change files and commits while the server runs, and an answer from an older state looks right. Reworded without the undefined "git history" (review Q30). The test case includes a rewrite of the same size within the file system's timestamp resolution (CF-M24).</attr>
+  <description>When files in the folder to serve, the latest commit, a branch or a tag change between two tool calls, the MCP server shall answer the second call from the changed state.</description>
+</object>

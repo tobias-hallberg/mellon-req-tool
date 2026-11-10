@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-79">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: commits stay explicit, so a person can review an agent's changes before they enter history; the editing functions write files and the caller commits. The git index too, because a staged file leaks into the person's next commit (review Q14). An empty or blank message is refused instead (MELLON-MCP-SRS-80).</attr>
+  <description>When a write tool call gives no `commit_message`, or gives null, the MCP server shall leave the commits, branches and git index unchanged.</description>
+</object>

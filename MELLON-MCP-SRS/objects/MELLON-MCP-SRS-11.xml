@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a new repository has no document until `create_document` makes the first. Because a server started in the wrong clone sees the same, MELLON-MCP-SRS-18 tells the agent (CF-M7).</attr>
+  <description>If the folder to serve holds no document, the MCP server shall start serving the folder.</description>
+</object>

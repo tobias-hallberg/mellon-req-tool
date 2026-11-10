@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: without the version, a failure in the client's log can't be tied to a release, and a development build editing Mellon's own specification goes unnoticed (CF-M3).</attr>
+  <description>When the MCP server starts serving while the log level is `DEBUG` or `INFO`, the MCP server shall write Mellon's version to standard error.</description>
+</object>

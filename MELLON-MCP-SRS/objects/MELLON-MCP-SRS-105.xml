@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: two calls can't interleave their writes. Reworded from the mechanism to the property (review Q13); the test sends a second call before the first is answered, also in the wheel smoke job (CF-M14). A long call holds up the calls after it (MELLON-VER-SRS-86).</attr>
+  <description>When two tool calls overlap, the MCP server shall give each call the result and file changes that running the calls one after the other gives.</description>
+</object>

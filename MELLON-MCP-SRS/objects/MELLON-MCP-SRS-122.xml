@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: after a timeout or a wrong report by the agent, a person needs a record of what each write changed that doesn't depend on the agent's account (CF-M15, CF-M63).</attr>
+  <description>When a write tool call ends while the log level is `DEBUG` or `INFO`, the MCP server shall write to standard error the tool's name, whether the call succeeded and each file in `affected_files`.</description>
+</object>

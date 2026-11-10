@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the root is checked only at start, and a folder deleted, replaced or made shallow later gives answers that look clean, while a write can recreate folders under a deleted root (CF-M8, review Q29).</attr>
+  <description>If the folder to serve stops being the root folder of a repository while the MCP server runs, the MCP server should refuse each later tool call, naming the reason.</description>
+</object>

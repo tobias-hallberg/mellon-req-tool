@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: suspect links need the full history, and a subfolder of a clone would be served without the documents beside it. Added in 0.2.0. Which folders are a repository's root is a rule shared with the GUI and mellon-check, so it is handed to STORE; a path that isn't a folder is one such case (review Q8). Exiting before the handshake keeps a client from listing tools of a server that then fails.</attr>
+  <description>If the folder to serve isn't the root folder of a repository, the MCP server shall exit with status 2 without answering a Model Context Protocol message.</description>
+</object>

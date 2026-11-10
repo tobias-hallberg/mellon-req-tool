@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checks an installed copy from a terminal; the installer's smoke test runs it. Stream, status and independence from the folder to serve made explicit (review Q27).</attr>
+  <description>When started with `--version`, the MCP server shall write `mellon-mcp &lt;version&gt;` to standard output and exit with status 0, whatever the folder to serve.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a commit of part of a change would put a half-applied state into history. Probably true of 0.3.0; set Implemented once a test shows it (review Q28).</attr>
+  <description>If a write tool call fails, the MCP server shall not make the commit that the call's `commit_message` asks for.</description>
+</object>

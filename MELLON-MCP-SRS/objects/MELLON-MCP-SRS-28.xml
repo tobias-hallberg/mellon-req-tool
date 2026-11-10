@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a client bug or a cut message would otherwise take the agent's tools away for the session (CF-M13).</attr>
+  <description>If a message from the agent's client isn't a well-formed Model Context Protocol message, the MCP server should go on answering later tool calls.</description>
+</object>

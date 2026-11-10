@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a remote URL can hold a token, results go to the agent's model provider, and logs persist (CF-M61).</attr>
+  <description>The MCP server shall write no part of a git remote's URL to a tool result or to standard error.</description>
+</object>

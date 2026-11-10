@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs give the failure shape for write tools only, and an agent must tell a failed read from an empty answer, which looks like a clean result. Decided on 2026-11-10.</attr>
+  <description>If a call of a tool other than a write tool fails, the MCP server shall return `ok` false, an `error` message and an `error_type`.</description>
+</object>

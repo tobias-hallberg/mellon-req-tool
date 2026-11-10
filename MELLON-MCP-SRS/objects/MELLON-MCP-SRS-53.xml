@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an unknown object or attribute, a bad enumeration value, or a link target the document may not link to is the agent's to fix. Reworded so that "rule" doesn't read as the defined term Rule (review Q6). A missing required parameter is MELLON-MCP-SRS-60's case, not this one's (CF-M20).</attr>
+  <description>If a write tool call fails because a parameter names a missing item or gives a value that the tool or the document's attribute definitions refuse, the MCP server shall return `error_type` `EditorError`.</description>
+</object>

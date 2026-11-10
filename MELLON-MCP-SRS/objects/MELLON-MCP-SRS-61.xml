@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent must not take a missing item for an empty answer, and the name shows which of several IDs was wrong (TRACE review). On a write tool the `error_type` is `EditorError` (MELLON-MCP-SRS-53); on other tools it is open (MELLON-MCP-SRS-55).</attr>
+  <description>If a tool call names a document or object that doesn't exist, the MCP server shall return `ok` false and an `error` naming the document or object.</description>
+</object>

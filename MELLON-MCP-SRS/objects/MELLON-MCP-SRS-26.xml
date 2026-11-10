@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a program on Windows can default to the console's code page, and text read wrongly and then written back changes a requirement without anyone asking (CF-M10). The test round-trips `å≤µ°中😀` on the installed program under code pages 437 and 1252.</attr>
+  <description>The MCP server shall read and write Model Context Protocol messages as UTF-8, whatever code page the operating system is set to.</description>
+</object>

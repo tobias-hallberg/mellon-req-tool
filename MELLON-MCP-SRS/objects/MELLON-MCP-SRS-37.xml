@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: with the tables, a tool or parameter can't be added unnoticed, and a discard or merge tool can't appear without a decision. Replaces the tool count, which had to be edited for each new tool (review Q2).</attr>
+  <description>The MCP server shall offer no tool and no parameter other than the tools and parameters in the tables of MELLON-MCP-SRS-34, MELLON-MCP-SRS-35 and MELLON-MCP-SRS-36.</description>
+</object>

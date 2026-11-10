@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a logged value holding a line break could forge a `mellon-mcp serving &lt;other path&gt;` line and mislead the person checking which repository is served (CF-M60).</attr>
+  <description>The MCP server shall write each log message as one line, with each line break inside a logged value escaped.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: one registration per clone needs no arguments, because Claude Code sets the variable to the folder it was started in, as INSTALL.md describes; a rung-5 check confirms it. Made the default in 0.2.0. "Not empty" added for MELLON-MCP-SRS-7 (review Q33).</attr>
+  <description>When started without `--repo-root` while the environment variable `CLAUDE_PROJECT_DIR` is set and not empty, the MCP server shall take the folder that `CLAUDE_PROJECT_DIR` names as the folder to serve.</description>
+</object>

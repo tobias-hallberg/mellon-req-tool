@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an empty value read as a path gives the current directory silently, or an error (CF-M6, review Q33). Decided on 2026-11-10 that empty counts as unset.</attr>
+  <description>When started without `--repo-root` while `CLAUDE_PROJECT_DIR` is empty, the MCP server shall take the current working directory as the folder to serve.</description>
+</object>

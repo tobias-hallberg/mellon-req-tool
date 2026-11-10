@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-114">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: opening a network path makes Windows send the person's credentials to that host, and repository text can steer an agent to one (CF-M53).</attr>
+  <description>If `source_path` or `out_path` is a network path, the MCP server shall refuse the call without opening the path.</description>
+</object>

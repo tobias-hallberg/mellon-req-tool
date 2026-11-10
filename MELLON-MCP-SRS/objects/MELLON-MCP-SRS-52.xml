@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-52">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an agent repeating an add can tell the item is already there. Covers `create_document`, `add_parent_doc`, `define_attribute`, `add_attr_option` and `add_link`. A link is identified by its source and target, as the links file and `remove_link` identify it, so a second link type to the same target counts as existing; review Q26 proposed also matching the link type. Whether an existing issue tag gives `AlreadyExists` is open. The `error_type` values are this implementation's names, and a rewrite returns the same strings (review Q5).</attr>
+  <description>If a write tool call asks to add a document, parent document, attribute or option that already exists, or a second link from one source to one target, the MCP server shall return `error_type` `AlreadyExists`.</description>
+</object>

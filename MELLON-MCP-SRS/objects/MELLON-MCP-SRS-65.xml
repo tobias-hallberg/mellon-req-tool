@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an oversized value bloats a document for each person who pulls and later times out the PDF export, and injected text can steer an agent to send one (CF-M16). The value comes from measuring the largest real description and table (Q-M7). EDIT may take it over.</attr>
+  <description>If a tool call gives a text value longer than TBD characters, the MCP server shall refuse the call.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent writes review records that must stay checkable, and a short hash can become ambiguous as a repository grows; the reasoning of MELLON-VER-SRS-87. The field name `hash` is the review's recommendation and still open (review Q32).</attr>
+  <description>When the MCP server commits for a `commit_message`, the MCP server should return the commit's full hash in `commit` as `hash`.</description>
+</object>

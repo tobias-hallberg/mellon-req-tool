@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent started in the wrong clone edits the wrong repository, and standard error goes to the client's log, which the agent doesn't read (architecture review; CF-M5; review Q41 for the prefix). Decided on 2026-11-10. A client can drop the instructions (CF-M4), so MELLON-MCP-SRS-49 puts the path in write results too.</attr>
+  <description>The MCP server shall give the absolute path of the repository's root folder in the instructions.</description>
+</object>

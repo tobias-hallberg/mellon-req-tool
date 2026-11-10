@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-92">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `ok` false would invite a retry that writes twice: a repeated `new_object` creates a second object. With `ok` true, MELLON-MCP-SRS-70 and MELLON-MCP-SRS-94 don't contradict (review Q3). Decided on 2026-11-10. Probably what 0.3.0 does; set Implemented once a test shows it.</attr>
+  <description>If the commit for a `commit_message` fails after the call's write succeeded, the MCP server shall return `ok` true and no `commit`.</description>
+</object>

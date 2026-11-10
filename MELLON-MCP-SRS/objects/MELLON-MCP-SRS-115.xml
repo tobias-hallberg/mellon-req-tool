@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the server's working directory depends on the client, so a relative path would otherwise land in a folder the agent can't predict. STATUS.md says so for both `source_path` and `out_path` (review Q24 asked to confirm `out_path`); widened to each path a call gives, which takes in `commit_changes`' `paths`.</attr>
+  <description>The MCP server shall resolve each relative path that a tool call gives against the repository's root folder.</description>
+</object>

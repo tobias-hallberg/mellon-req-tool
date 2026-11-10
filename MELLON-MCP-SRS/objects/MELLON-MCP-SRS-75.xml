@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the whole outline of a 5,000-object document was 1 MB, too much for an agent, and MCP clients cut or refuse long results (CF-M23). Set from the client's token cap, measured first (review Q10). This is the accepted reason to break MELLON-MCP-SRS-39 for the tools whose default result it shortens.</attr>
+  <description>With default parameters, on a repository of TBD documents of 1,000 objects each, the MCP server should return each tool result in at most TBD characters of JSON text.</description>
+</object>

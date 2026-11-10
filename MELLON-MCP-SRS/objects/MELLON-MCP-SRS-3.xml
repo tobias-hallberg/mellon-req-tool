@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-3">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a client that has no project folder, like Claude Desktop, names the repository explicitly. The test uses a path with spaces and non-ASCII letters (review Q34).</attr>
+  <description>When started with `--repo-root &lt;path&gt;`, the MCP server shall take the folder that `&lt;path&gt;` names as the folder to serve.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: repository-wide reads take seconds, and a pull meanwhile mixes two states into one answer that looks complete (CF-M26).</attr>
+  <description>If the latest commit changes during a tool call, other than by the call's own commit, the MCP server shall state in the result that the latest commit changed.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: Mellon's own documents must be edited with a released build, and the history can then show which build made each agent commit (CF-M3). Decided on 2026-11-10 (Q-M6); `git log --grep "Via: mellon-mcp"` still matches.</attr>
+  <description>When the MCP server makes a commit, the MCP server should give Mellon's version after `mellon-mcp` in the `Via` trailer.</description>
+</object>

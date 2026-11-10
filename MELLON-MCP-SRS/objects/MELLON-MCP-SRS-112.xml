@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-112">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: each parameter that reaches outside the repository lets a misled agent read or overwrite a person's files, so there are two. MELLON-MCP-SRS-113 narrows this. What each of the two may name is EDIT's and PDF's (review Q12).</attr>
+  <description>The MCP server shall accept a path to a file outside the repository only in `set_figure`'s `source_path` and `export_document`'s `out_path`.</description>
+</object>

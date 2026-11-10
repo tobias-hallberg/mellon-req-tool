@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-89">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a checkout between calls or a detached HEAD puts the commit somewhere the agent doesn't expect, and a commit on no branch drops out of sight at the next checkout (CF-M27, CF-M39).</attr>
+  <description>When the MCP server makes a commit, the MCP server shall return the name of the branch that the commit was added to, or state that the commit is on no branch.</description>
+</object>

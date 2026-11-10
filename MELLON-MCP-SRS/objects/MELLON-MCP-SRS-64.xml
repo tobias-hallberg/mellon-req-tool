@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-64">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a refusal the agent can trust leaves nothing to clean up (TRACE review). The refusals in MELLON-MCP-SRS-58 to MELLON-MCP-SRS-63, MELLON-MCP-SRS-65, MELLON-MCP-SRS-80, MELLON-MCP-SRS-96, MELLON-MCP-SRS-99 and MELLON-MCP-SRS-107 rely on it.</attr>
+  <description>When the MCP server refuses a tool call, the MCP server shall not create, change or delete a file.</description>
+</object>

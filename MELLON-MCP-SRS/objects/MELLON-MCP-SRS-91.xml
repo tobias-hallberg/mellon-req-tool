@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-91">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a missing git identity or a merge in progress refuses the commit, and the agent has to tell the person.</attr>
+  <description>If the commit for a `commit_message` fails, the MCP server shall return `commit_error` with the reason.</description>
+</object>

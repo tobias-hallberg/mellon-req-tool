@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-77">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a client gives up after its own timeout while the write still completes, and the agent then retries a write that happened (CF-M15). Values measured first, set at half the shortest per-call timeout among the clients in use (Q-M8).</attr>
+  <description>On the reference machine, the MCP server should answer each tool call other than `export_document` and `compare_document` at most TBD s after receiving the call, on a repository of TBD documents of 1,000 objects each.</description>
+</object>

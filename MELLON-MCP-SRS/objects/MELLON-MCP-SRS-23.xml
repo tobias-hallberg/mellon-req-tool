@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the agent's client starts the server as a program of its own and talks to it through its standard input and output.</attr>
+  <description>The MCP server shall exchange Model Context Protocol messages with an agent over standard input and standard output.</description>
+</object>

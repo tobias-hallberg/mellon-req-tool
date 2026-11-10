@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-18">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MELLON-MCP-SRS-11 serves such a clone, which is also what a server started in the wrong folder sees, and MELLON-MCP-SRS-12's warning reaches only the client's log (CF-M7).</attr>
+  <description>If the folder to serve holds no document when the MCP server starts, the MCP server shall state in the instructions that the repository holds no document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent that writes before reading, or a client with two Mellon servers, then sees where each write went, even when the client drops the instructions (CF-M5, CF-M4). Decided on 2026-11-10 (Q-M1).</attr>
+  <description>When a write tool call succeeds, the MCP server should return the absolute path of the repository's root folder in the result.</description>
+</object>

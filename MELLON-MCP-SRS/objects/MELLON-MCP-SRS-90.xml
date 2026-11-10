@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-90">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `commit_changes` without `paths` commits each uncommitted document file, a person's edits too, and the agent can't see which (CF-M40). Decided on 2026-11-10 (Q-M3); whether `paths` becomes required is open, for VER.</attr>
+  <description>When the MCP server makes a commit, the MCP server shall return the path of each file that the commit changed.</description>
+</object>

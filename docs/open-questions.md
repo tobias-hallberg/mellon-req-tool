@@ -200,3 +200,38 @@ Raised by the requirements view of the Compare section and answered the same day
   - -169, -170, -185: how long to retry a file another program holds, and to wait for another Mellon process. Recommendation: retry at least 1 s and report within 5 s; wait for another process at least 10 s, or the longest bulk operation measured.
   - -239, -240: the time limits for opening and reloading a 1,000-object reference document. Recommendation: measure on the reference machine with the content-based change test in place, and set each at about twice the result.
 - **Answer:** open
+
+## Q13: The MCP specification's questions (2026-11-11)
+
+- **Raised by:** the MCP author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-MCP-SRS`, by the IDs below
+- **How they were handled:** as for Q10 to Q12: answered with the recommendation that night, with anything that would change built behaviour created as `Proposed`, for the person to confirm. Built behaviour stays `Implemented` beside the Proposed requirement that would replace it.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - The tool interface is in the specification: three tables (read tools; write tools; git, review and export tools) name each tool and parameter, with its type, whether it is required and its default. There is no separate interface file and no tool count.
+  - A trailer goes on each commit the server makes, with Mellon's version in it (should).
+  - Each write tool call is all or nothing. `partial` is returned only when restoring the files fails; when only the commit fails, the call returns `ok` true with `commit_error`.
+  - The served root is named in the instructions and in each write result (should).
+  - The server exits when standard input closes, after finishing the call in progress.
+  - A relative `--repo-root` is read from the working directory, and an empty `CLAUDE_PROJECT_DIR` counts as unset.
+  - The commit a write call asks for is refused when one of its files already had an uncommitted change. Commits return the paths committed, and a `--no-commit` start option (should) turns them off.
+  - Unknown parameters and parameters of the wrong type are refused. Read tools fail with the same result shape as write tools. Paths in `affected_files` are relative, use `/`, and keep the file system's letter case.
+  - The read-only server writes no file, `.git` included.
+  - Writes are refused while a git operation is in progress (should; see `MELLON-VER-SRS`).
+  - Invisible characters in stored text are flagged (should).
+  - Size and time limits are TBD, to be measured first.
+  - At log level `INFO`, logs hold only names, IDs and paths.
+  - An empty or whitespace `commit_message` is refused; a missing one means no commit.
+  - Tool names are kept while Mellon is 0.x (should).
+- **Still open, each with a recommendation:**
+  - -8: a linked worktree's root and a partial clone as the folder to serve? Recommendation: accept the first when its repository is a complete clone, refuse the second (as `MELLON-STORE-SRS` does).
+  - -13: when the folder stops being a repository root, refuse later calls or exit? Recommendation: refuse each later call with the reason.
+  - -24: which Model Context Protocol revision? Recommendation: the one the released build negotiates by default, recorded by the rung-3 test.
+  - -29, -30, -65, -75, -77: the exit delay, start-up time, text size, result size and per-call time. Recommendation: measure the installed program on 10 documents of 1,000 objects first, then set each against the clients in use.
+  - -31: the exit status for an unknown option. Recommendation: 2, as for an unusable root; standard error tells the two apart.
+  - -55: `error_type` values for an unexpected failure, a missing item and a git operation in progress. Recommendation: `InternalError`, `NotFound`, `GitOperationInProgress`; an existing issue tag gives `AlreadyExists`.
+  - -88: the full hash's field name, and whether the returned message holds the trailer. Recommendation: `hash`, and the message as committed.
+  - -85: `include_trailer=false` once every commit has a trailer. Recommendation: refuse it from the next release, with the reason in the changelog.
+  - -90: should `commit_changes` require `paths`? Recommendation: yes, from the next release (as `MELLON-VER-SRS` decided).
+  - -105: does a cancelled or timed-out write finish or roll back? Recommendation: finish it and log it.
+  - -99: an `ack_suspects` dry run on the read-only server. The MCP author recommends refusing it; `MELLON-TRACE-SRS-143` (Q11) recommends allowing it. Recommendation: allow it, since a dry run changes nothing and shows the reviewer what an ack would record.
+- **Answer:** open

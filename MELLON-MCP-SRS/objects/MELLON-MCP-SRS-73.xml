@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-73">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a server that stops takes the agent's tools away for the rest of the session, and the real risk is an error nobody anticipated (review Q37). The docs say a missing tectonic is reported rather than stopping the server, but don't say so in general.</attr>
+  <description>If a tool call fails or ends in an error that no requirement names, the MCP server shall go on answering later tool calls.</description>
+</object>

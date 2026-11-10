@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an empty message either skips the commit silently or commits with only the trailer (CF-M38). Review Q14 proposed treating it as no message; refusing is chosen because the agent meant to commit, and a silent skip is what both want to avoid.</attr>
+  <description>If a write tool call gives a `commit_message` that is empty or holds only whitespace, the MCP server shall refuse the call.</description>
+</object>

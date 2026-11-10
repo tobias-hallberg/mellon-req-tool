@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the last fallback, for a client started in the clone's root folder.</attr>
+  <description>When started without `--repo-root` while `CLAUDE_PROJECT_DIR` is unset, the MCP server shall take the current working directory as the folder to serve.</description>
+</object>

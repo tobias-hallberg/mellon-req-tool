@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a full standard-error pipe blocks the server mid-call, possibly between a write and its result, and the agent then retries (CF-M59).</attr>
+  <description>If the agent's client stops reading standard error, the MCP server should go on answering tool calls.</description>
+</object>

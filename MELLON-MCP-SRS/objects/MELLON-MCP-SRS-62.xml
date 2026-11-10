@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an object ID also names a file, so a malformed one can reach outside its folder (CF-M57; TRACE review).</attr>
+  <description>If a tool call gives an object ID that isn't of the form `&lt;document ID&gt;-&lt;n&gt;`, the MCP server shall refuse the call.</description>
+</object>

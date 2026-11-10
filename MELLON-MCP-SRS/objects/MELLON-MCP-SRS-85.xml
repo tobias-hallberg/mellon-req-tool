@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-85">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the agent and the person share one git identity, so only the trailer shows which commits an agent made, and `git log --grep` finds them. Decided on 2026-11-10 (review Q1; CF-M37, CF-M38): `commit_changes` included, and an agent's own `Co-Authored-By` lines stay trailers. Built for `commit_message` commits and for `commit_changes` by default; `include_trailer` false and the trailer's paragraph are what changes. Tested with git's trailer parser.</attr>
+  <description>The MCP server shall add `Via: mellon-mcp` to the trailers of each commit message that the MCP server writes, keeping each trailer that the given message ends with as a trailer.</description>
+</object>

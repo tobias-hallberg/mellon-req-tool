@@ -31,6 +31,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Conflict markers | In one file, a line starting with `<<<<<<<`, a later line starting with `=======`, and a later line starting with `>>>>>>>`, as git writes them into a file whose changes it couldn't merge. |
 | Partial clone | A clone that git was told to make without some of the history's files or folders, to fetch them when needed. |
 | Sparse checkout | A working copy that git was told to fill with only some of the latest commit's folders. |
+| Network path | A Windows path that starts with two slashes or two backslashes, other than a long local path (`\\?\C:\...`); `\\?\UNC\...` is a network path. |
 
 ## Objects
 
@@ -55,6 +56,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Figure | A picture kept with one object, as an SVG file. A draw.io figure also carries the diagram that draw.io edits. |
 | Field | One part of an object that a comparison looks at: an attribute value, the description, the table, the figure, or the outgoing links, each with its target and link type. |
 | Word | In a description: a run of letters, digits and underscores, or one other character that isn't whitespace. So each punctuation mark is a word of its own, and `stop.` is the two words `stop` and `.`. Whitespace separates words and isn't one. |
+| Invisible character | A character that Unicode gives the property Bidi_Control or Default_Ignorable_Code_Point. This takes in tag characters, zero-width characters and variation selectors. |
 
 ## Links
 
@@ -99,6 +101,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | From or To changes | A version is picked in it, or the text typed in it changes, whether or not Enter or Compare has been pressed since. |
 | Added, Deleted, Modified, Moved, Link reviewed | The changes an object can have between From and To. **Added**: it exists at To and not at From. **Deleted**: it exists at From and not at To. **Modified**: it exists at both and a field differs. A difference only in a file's line endings, indentation or order of XML attributes is no change. **Moved**: it exists at both, and its parent changed, or it isn't in the largest set of its siblings at both versions whose order is the same at From and at To. Inserting or deleting a sibling moves nothing. When two such sets are equally large, the sibling that comes later at From is the one Moved. **Link reviewed**: its only change is to the acknowledged commits of its outgoing links. Moved can go with Modified or with Link reviewed. |
 | Merge in progress | A git merge that stopped because files conflict, and that hasn't been committed or aborted. |
+| Git operation in progress | A merge, rebase, cherry-pick or revert that git stopped and that hasn't been finished or aborted. |
 
 ## Checks
 
@@ -134,6 +137,13 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | MCP server | The program that offers Mellon's functions to an agent over the Model Context Protocol, on standard input and output. |
 | Read-only server | The MCP server started so that it refuses every tool that would change a file, commit or export. |
 | Agent | A program that uses the MCP server, such as an AI assistant. |
+| Tool | A named operation, with named parameters, that the MCP server offers an agent under the Model Context Protocol. |
+| Tool call | One request from an agent to run one tool, and the result the MCP server returns for it. |
+| Write tool | A tool that the table of MELLON-MCP-SRS-35 names. |
+| Folder to serve | The folder that MELLON-MCP-SRS-3 to -7 choose when the MCP server starts. |
+| Instructions | The text the MCP server returns when an agent connects, in the Model Context Protocol's `instructions` field, which the agent's client can pass to the agent. |
+| Log level | How much the MCP server writes to standard error: `DEBUG`, `INFO`, `WARNING` or `ERROR`, from the most messages to the fewest. Each log message has one of these levels, and each level is more severe than the ones before it. |
+| Trailer | A `Key: value` line in the last paragraph of a commit message, as git defines trailers. |
 | Released build | A Mellon build from a published release, as opposed to a development build. |
 | Reference machine | The computer that performance requirements are measured on: the one `mellon/SCALING.md` records its measurements on. See open question Q2. |
 | Reference document | A document made for a performance requirement as `mellon/SCALING.md`'s method makes one: of the stated number of objects, each object other than a heading linking to one object of a parent document of the same size, with as many commits as objects in its history. |

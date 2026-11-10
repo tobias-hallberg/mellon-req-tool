@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a repository whose documents can't be found would read as one without documents. Same ending as MELLON-MCP-SRS-8 (review Q8).</attr>
+  <description>If the MCP server can't list the folders in the folder to serve, the MCP server shall exit with status 2 without answering a Model Context Protocol message.</description>
+</object>

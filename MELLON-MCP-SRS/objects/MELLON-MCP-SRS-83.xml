@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a file holds a whole object or the whole outline, so a write and its commit carry whatever another writer left in the file (CF-M32).</attr>
+  <description>When a write tool call changes a file that already differed from the latest commit before the call, the MCP server shall name the file in the result.</description>
+</object>

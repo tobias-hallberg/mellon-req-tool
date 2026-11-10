@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the line `mellon-mcp serving ...` tells a person reading the client's log which repository the agent works on. Conditioned on the log level and made absolute (review Q9); the test checks the path is absolute.</attr>
+  <description>When the MCP server starts serving while the log level is `DEBUG` or `INFO`, the MCP server shall write the absolute path of the repository's root folder to standard error.</description>
+</object>

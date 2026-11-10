@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-41">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a changed description changes how agents call the tool, so the change needs the same recorded reason as a renamed parameter (MELLON-MCP-SRS-38; Q-M13). Decided on 2026-11-10.</attr>
+  <description>The MCP server should give each tool that the previous release offered the description that the previous release gave the tool.</description>
+</object>

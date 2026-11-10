@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: tag, zero-width and direction-changing characters carry text that a person checking the transcript can't see (CF-M51, review Q15). Flagged, not stripped, so text an agent writes back stays as stored. Decided on 2026-11-10. The term Invisible character is shared with MELLON-VER-SRS-82.</attr>
+  <description>If text that a tool returns holds an invisible character, the MCP server should name in the result each object or commit whose text holds one.</description>
+</object>

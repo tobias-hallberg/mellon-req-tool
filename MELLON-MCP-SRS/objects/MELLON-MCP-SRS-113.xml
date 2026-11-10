@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-SRS-113">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: `.git/config` and `.github` files are inside the repository but no tool's business, and an ID, a name or `commit_changes`' `paths` can reach them (CF-M57). Whether `commit_changes` may name a file outside the document folders is VER's to decide.</attr>
+  <description>The MCP server shall accept a path to a file outside the document folders only in `set_figure`'s `source_path` and `export_document`'s `out_path`.</description>
+</object>
