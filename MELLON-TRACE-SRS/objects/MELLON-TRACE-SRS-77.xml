@@ -2,8 +2,8 @@
 <object id="MELLON-TRACE-SRS-77">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: a target from another clone can name a path outside the repository, or a UNC share that makes Windows offer the user's credentials; a target that isn't an object ID names no object (CF-T1).</attr>
+  <attr name="rationale">derived: a target from another clone can name a path outside the repository, or a UNC share that makes Windows offer the user's credentials; a target that isn't an object ID names no object (CF-T1). Accepted on 2026-11-10 as a security fix, because the scan of a cloned repository already opened such paths (confirmed in the code); to confirm with the person (open question Q11).</attr>
   <description>If a link's target isn't an object ID, Mellon shall report the link as broken without opening a file or folder for the target.</description>
 </object>

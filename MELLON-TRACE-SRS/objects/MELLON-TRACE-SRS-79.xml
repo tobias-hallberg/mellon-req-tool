@@ -2,8 +2,8 @@
 <object id="MELLON-TRACE-SRS-79">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: link targets and object IDs come from other clones and from agents; reading outside the repository discloses files, and on Windows a UNC path offers the user's credentials to another host (CF-T1). A real prohibition.</attr>
+  <attr name="rationale">derived: link targets and object IDs come from other clones and from agents; reading outside the repository discloses files, and on Windows a UNC path offers the user's credentials to another host (CF-T1). A real prohibition. Accepted on 2026-11-10 as a security fix, because the scan of a cloned repository already opened such paths (confirmed in the code); to confirm with the person (open question Q11).</attr>
   <description>Mellon shall not open a file or folder outside the repository to work out a link's state, incoming links, a trace, a coverage report or a review of a suspect link.</description>
 </object>
