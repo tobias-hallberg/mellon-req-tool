@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-224">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S39, CF-S41, D29, review Q18. The path test alone lets .git, a short name such as DOCUME~1, a device name such as CON and a non-ASCII name through, and a UNC name touched before the check sends the user's credential hash to its host. Decided on 2026-11-10 (Q-S8).</attr>
+  <description>If text given to Mellon as a document ID isn't a document ID, Mellon shall refuse the request without accessing a file or folder the text names.</description>
+</object>

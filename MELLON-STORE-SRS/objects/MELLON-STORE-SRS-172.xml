@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-172">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S31, E1. A read-only file or a full disk needs a different fix from a file held by another program, and the retry treats each permission error alike today.</attr>
+  <description>If Mellon can't write or delete a file during an operation, Mellon shall report the failure, naming the file and the reason the file system gave.</description>
+</object>

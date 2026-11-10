@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S16, CF-S17, D9. Anything else is ignored today, so an object moved aside vanishes, and a name that matches only without case reads differently per system and escapes the suspect rule for figures. Dot names cover .gitkeep, draw.io's backups and Mellon's temporary files. Decided on 2026-11-10 (Q-S6).</attr>
+  <description>If a document's folder holds a file or folder whose name, letter case included, the on-disk format doesn't define and doesn't start with a dot, Mellon shall report a validation error naming the entry.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-45">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q3. Without a default a rewrite would have to guess the response to each break: a wrong root element, a missing id or name, a bad span, a missing op. The breaks MELLON-CHECK-SRS gives codes, such as an enum without options, keep the document usable. Decided on 2026-11-10.</attr>
+  <description>If a data file is well-formed XML but breaks a format rule of MELLON-STORE-SRS that MELLON-CHECK-SRS gives no validation error, Mellon shall report a load error naming the file and the rule.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-233">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S22, D16. Figure files keep draw.io's document type declaration, so the refusal for data files can't apply to them, and a declared entity could still expand without bound when the figure is checked, drawn or exported. Decided on 2026-11-10.</attr>
+  <description>If a figure file declares an entity, Mellon shall report a validation error naming the figure file, without expanding the entity.</description>
+</object>

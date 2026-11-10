@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-135">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: views are versioned with the document, so a team shares its column layouts.</attr>
+  <description>Mellon shall keep each view as a view file named &lt;slug&gt;.xml in the views folder of the view's document.</description>
+</object>

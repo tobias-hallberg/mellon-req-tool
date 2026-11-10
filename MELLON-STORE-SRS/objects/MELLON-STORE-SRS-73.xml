@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-73">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the six kinds since 0.1. enum is the stored name of the enumeration kind.</attr>
+  <description>The kind attribute of an attribute definition shall hold enum, text, integer, real, boolean or date.</description>
+</object>

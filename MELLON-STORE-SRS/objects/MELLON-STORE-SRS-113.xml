@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-113">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a table that doesn't tile its grid can't be drawn or edited without guessing. Editing refuses such a table before writing (MELLON-EDIT-SRS).</attr>
+  <description>If a table's cells don't cover each position of the grid exactly once, or a cell spans past the grid's last column or row, Mellon shall report a load error.</description>
+</object>

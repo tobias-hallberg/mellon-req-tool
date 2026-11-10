@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q15. Which files are read was unstated. The dot rule keeps Mellon's temporary files and other tools' hidden files out. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall read as object, links, view and filter files only the files directly in a document's objects, links, views and filters folders whose names end in .xml and don't start with a dot.</description>
+</object>

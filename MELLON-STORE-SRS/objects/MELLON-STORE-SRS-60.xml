@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: links, issue tags and file names use the folder's name, so a different id would name another document.</attr>
+  <description>If a manifest's id attribute differs from the name of the manifest's folder, Mellon shall report a load error.</description>
+</object>

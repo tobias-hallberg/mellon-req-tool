@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-189">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the declaration states the version and encoding to each reader.</attr>
+  <description>Mellon shall begin each data file that Mellon writes with the XML declaration &lt;?xml version="1.0" encoding="UTF-8"?&gt;.</description>
+</object>

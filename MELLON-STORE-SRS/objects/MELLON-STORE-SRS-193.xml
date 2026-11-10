@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-193">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. Byte-identical files from two implementations keep a mixed team from rewriting each other's files, which also turns links suspect. USAGE.md's example shows this order. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall write a manifest's children in the order metadata, parents, attributes, outline, and a metadata element's in the order title, author, date.</description>
+</object>

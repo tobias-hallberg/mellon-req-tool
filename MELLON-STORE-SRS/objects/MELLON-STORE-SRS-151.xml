@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-151">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a filter compares values written the same way as the objects' values.</attr>
+  <description>A filter file shall hold a date, integer or real value in the form an object file holds a value of that kind.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-10">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S1. A partial clone isn't shallow, so it passes the root check, but Mellon can't fetch its missing folders and file contents; history, Compare and merge then fail, and a failed suspect scan shows links as OK (E28). Decided on 2026-11-10 (Q-S13).</attr>
+  <description>If the repository in the folder Mellon is asked to open is a partial clone, Mellon shall refuse the folder.</description>
+</object>

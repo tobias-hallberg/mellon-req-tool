@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-125">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the link type is free text; the GUI offers those four (MELLON-TRACE-SRS). Stated positively, since the draft's negative couldn't be tested (review Q30).</attr>
+  <description>Mellon shall accept a link type other than satisfies, verifies, refines and implements.</description>
+</object>

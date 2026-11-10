@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: links name their target by object ID and history is kept per file, so the two must agree.</attr>
+  <description>If an object file's name without .xml differs from the id attribute of its object element, Mellon shall report a load error.</description>
+</object>

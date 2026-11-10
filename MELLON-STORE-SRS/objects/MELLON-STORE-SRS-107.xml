@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an unmerged cell needs no span.</attr>
+  <description>A cell element shall hold the number of rows the cell spans in a rowspan attribute, or leave the attribute out for 1.</description>
+</object>

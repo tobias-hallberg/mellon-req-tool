@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q31. One way of writing the default keeps files identical across implementations. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall write an align attribute only when the column's alignment is center or right.</description>
+</object>

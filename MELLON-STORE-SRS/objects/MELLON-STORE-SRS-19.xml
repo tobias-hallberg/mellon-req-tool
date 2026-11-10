@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-19">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a requirements repository can also hold source code, documentation and CI files, as Mellon's own repository does. The exceptions are folders that look like damaged documents, which are reported instead (CF-S6, CF-S7).</attr>
+  <description>Mellon shall ignore a folder directly under the repository root that holds no file whose name is &lt;folder name&gt;.xml when letter case is ignored, and no file objects/&lt;folder name&gt;-&lt;n&gt;.xml or links/&lt;folder name&gt;-&lt;n&gt;.xml.</description>
+</object>

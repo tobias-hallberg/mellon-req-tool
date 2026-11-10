@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-217">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md lists the loader's whitespace stripping; hand-written and imported files indent this text. Confirm against 0.3.0 which of the three it strips.</attr>
+  <description>When Mellon reads a description, attribute value or table cell, Mellon shall remove whitespace at the start and end of the text.</description>
+</object>

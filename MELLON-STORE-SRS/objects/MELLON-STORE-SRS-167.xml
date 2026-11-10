@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-167">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a full disk or a crash must not leave a truncated requirement. Since 0.2.0. A power loss is the next requirement. The failure analysis expects the GUI commit dialog's put-back of the manifest to be a plain write (CF-S34): its test case must cover that path.</attr>
+  <description>If a write of a file fails, or Mellon stops during the write, Mellon shall leave the file holding either its content before the write or the full content written.</description>
+</object>

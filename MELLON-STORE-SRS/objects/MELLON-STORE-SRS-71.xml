@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rules file's when element names attributes as XML attribute names, which can't start with a digit or a hyphen, so such an attribute can't be tested by a rule. Decided on 2026-11-10. Tools accept a digit or hyphen first today (USAGE.md); an existing name that breaks this is a validation error (MELLON-CHECK-SRS).</attr>
+  <description>An attribute definition's name shall start with one of A–Z, a–z and underscore, followed by zero or more of A–Z, a–z, 0–9, hyphen and underscore.</description>
+</object>

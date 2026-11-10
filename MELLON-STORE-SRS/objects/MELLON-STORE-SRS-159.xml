@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-159">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the rules file is optional; a document without one has no rules.</attr>
+  <description>Mellon shall keep a document's rules in a rules file named &lt;document ID&gt;.rules.xml beside the manifest.</description>
+</object>

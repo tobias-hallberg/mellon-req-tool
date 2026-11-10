@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-201">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. Covers the rules file's elements and content Mellon doesn't know, so a rewrite doesn't reorder them. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>When Mellon rewrites an element whose kind the written form gives no XML attribute order, Mellon shall keep the order of the element's XML attributes.</description>
+</object>

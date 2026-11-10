@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-27">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a pull that leaves conflict markers in a file is common, and a document that silently disappeared would let checks that skip it look clean. Since 0.2.0. Can't be read now also covers a file that can't be opened or read in full (CF-S13).</attr>
+  <description>If a data file of a document can't be read, Mellon shall list the document with a load error instead of leaving the document out.</description>
+</object>

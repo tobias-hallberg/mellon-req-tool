@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a new repository has no documents until the first one is created in Mellon. The MCP server starts with a warning; what mellon-check reports for such a root is MELLON-CHECK-SRS's to say.</attr>
+  <description>Mellon shall accept a repository root that holds no document.</description>
+</object>

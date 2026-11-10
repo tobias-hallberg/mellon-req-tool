@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-196">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. The docs don't show the order; read it from 0.3.0's output before deciding.</attr>
+  <description>Mellon shall write a links file's link elements in the order TBD.</description>
+</object>

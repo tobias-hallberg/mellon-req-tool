@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q15. draw.io's .$&lt;id&gt;.svg.bkp backups are left out. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall read as figure files only the files directly in a document's figures folder whose names end in .svg and don't start with a dot.</description>
+</object>

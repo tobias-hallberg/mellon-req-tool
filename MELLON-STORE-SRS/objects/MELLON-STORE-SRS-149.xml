@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an attribute's kind can change after a filter is saved. The mismatch is reported when the filter is applied (MELLON-EDIT-SRS), and the document stays usable meanwhile.</attr>
+  <description>If an operator in a filter file doesn't fit the kind of the attribute tested, Mellon shall read the document without a load error.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-120">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the three are required on each link.</attr>
+  <description>A links file shall hold each outgoing link as a link element whose target-doc, target-id and type attributes hold the target's document ID, the target's object ID and the link type.</description>
+</object>

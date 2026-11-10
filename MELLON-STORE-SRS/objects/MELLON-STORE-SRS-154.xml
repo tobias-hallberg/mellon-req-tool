@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-154">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: two names can give one slug, and neither file is overwritten. Renaming a view to a name with its own slug keeps the slug (review Q23).</attr>
+  <description>If a derived slug names the file of another view or filter of the same kind, Mellon shall append a hyphen and the lowest whole number from 2 that frees the slug.</description>
+</object>

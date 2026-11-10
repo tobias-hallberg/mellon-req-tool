@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a link changes with its source, so the link is kept and committed with the source's document. Incoming links are found by reading the repository (MELLON-TRACE-SRS).</attr>
+  <description>Mellon shall keep an object's outgoing links in a links file named &lt;object ID&gt;.xml in the links folder of the object's document.</description>
+</object>

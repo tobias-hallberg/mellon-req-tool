@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-210">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: none of these shows a change in git (review Q56). Comparing with the working copy saves pending edits first (MELLON-VER-SRS-73).</attr>
+  <description>When Mellon opens, reloads, checks, compares or exports a document, or answers an MCP tool that only reads, Mellon shall leave each data file and figure file unchanged, other than by saving pending edits.</description>
+</object>

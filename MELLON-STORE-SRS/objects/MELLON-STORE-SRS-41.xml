@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-41">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent must not take a document that failed to load for one that doesn't exist (review Q48).</attr>
+  <description>The MCP server's list_documents tool shall return a document with a load error as doc_id, folder and load_error, the last holding doc_id, file, line and message, and no counts.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-219">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: XML 1.0 can't store these either, and the docs name only the control characters, so such text from an agent can be written and then fail to load (CF-S37).</attr>
+  <description>If stored text holds U+FFFE, U+FFFF or a surrogate code point, Mellon shall refuse the operation with an error naming the character.</description>
+</object>

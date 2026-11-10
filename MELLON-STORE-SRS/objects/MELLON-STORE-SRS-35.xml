@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the tooltip gives the file, line and reason without opening anything.</attr>
+  <description>When the pointer rests on a document with a load error, the Project Explorer shall show the load error.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-236">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q52. Deep nesting, in the outline or anywhere else in a file, can exhaust the stack of a reader.</attr>
+  <description>If a data file nests elements deeper than TBD levels, Mellon shall report a load error naming the file.</description>
+</object>

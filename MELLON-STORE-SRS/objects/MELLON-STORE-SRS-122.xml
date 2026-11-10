@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 7 digits is git's usual short form (USAGE.md). A link without an ack reads suspect, never reviewed (MELLON-TRACE-SRS). To be replaced by the full hash: Decided on 2026-11-10, with TRACE.</attr>
+  <description>A link element shall hold the link's acknowledged commit as the first 7 hex digits of the commit's hash in an ack attribute, or leave the attribute out when the link has none.</description>
+</object>

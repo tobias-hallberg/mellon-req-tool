@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-175">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: new_object, update_object, copy_object and bulk_set_attribute return a partial result when a write fails partway, leaving a half-made change for the agent to clean up, unlike the GUI. Decided on 2026-11-10.</attr>
+  <description>If a file can't be written or deleted during an MCP tool call that edits a document, Mellon shall return each file the call already wrote or deleted to its state before the call.</description>
+</object>

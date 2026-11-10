@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-199">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. USAGE.md's example shows these orders. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall write a filter element's XML attributes in the order name, combinator, keep-ancestors, and a filter file's rule element's in the order kind, op, attr, value.</description>
+</object>

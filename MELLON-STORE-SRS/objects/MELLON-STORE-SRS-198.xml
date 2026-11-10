@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-198">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. USAGE.md's example shows this order. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall write a link element's XML attributes in the order target-doc, target-id, type, ack.</description>
+</object>

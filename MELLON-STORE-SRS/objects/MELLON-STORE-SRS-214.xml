@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-214">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: XML 1.0 can't store these characters, and naming the character lets the user find and remove it. Since 0.2.0. Stored text now covers each text written into a data file (CF-S37): confirm link types, names and options against 0.3.0.</attr>
+  <description>If stored text holds a character from U+0000 to U+001F other than tab, LF, CR, vertical tab and form feed, Mellon shall refuse the operation with an error naming the character.</description>
+</object>

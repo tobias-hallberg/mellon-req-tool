@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: documents sit directly under the repository root, so a subfolder, often one document's own folder, would show part of the repository and miss incoming links from the rest.</attr>
+  <description>If the folder Mellon is asked to open is a subfolder of a git work tree, Mellon shall refuse the folder.</description>
+</object>

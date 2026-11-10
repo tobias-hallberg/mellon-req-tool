@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-79">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the nesting of ref elements is the nesting of the outline (review Q59).</attr>
+  <description>A sub-object's ref element shall be a child of its parent object's ref element.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an object without outgoing links has no links file, so an empty file never shows as a change.</attr>
+  <description>When Mellon removes an object's last outgoing link, Mellon shall delete the object's links file.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-178">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S29, Q-S1. A file changed since is only reported, so a later change isn't undone. Returning files only on confirmation keeps opening a repository from writing. Decided on 2026-11-10.</attr>
+  <description>When the user confirms, Mellon shall return each file of a reported interrupted operation that still holds what the operation wrote to the file's state before the operation.</description>
+</object>

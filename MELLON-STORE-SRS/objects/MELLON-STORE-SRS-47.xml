@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S15. A hand typo such as &lt;descripton&gt; loads as a missing value with no message. A validation error keeps the document usable, and the rewrite still keeps the content. Decided on 2026-11-10 (Q-S9): when a newer Mellon adds to the format, a team upgrades together.</attr>
+  <description>If a data file holds an element or XML attribute that the on-disk format doesn't define, Mellon shall report a validation error naming the file and the element or attribute.</description>
+</object>

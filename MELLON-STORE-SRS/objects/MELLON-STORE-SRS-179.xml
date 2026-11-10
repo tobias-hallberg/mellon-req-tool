@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-179">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S37, CF-S26, F9. One check on the written content protects the text cleanup, whitespace handling and the writer together: a value they can't store fails before the file is replaced, not at the next load.</attr>
+  <description>If the content Mellon is about to write to a data file loads differently from what the operation means to store, Mellon shall refuse the operation.</description>
+</object>

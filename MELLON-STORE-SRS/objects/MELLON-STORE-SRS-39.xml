@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an edit made from the old copy could overwrite the file on disk with stale content. The refusal comes with the Changed on disk banner and isn't read-only mode, which the user can leave (review Q19).</attr>
+  <description>While a Document Editor shows a copy of a document that can't be read now, the Document Editor shall refuse each edit, also after the user leaves read-only mode.</description>
+</object>

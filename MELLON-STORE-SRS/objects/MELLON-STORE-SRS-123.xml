@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-123">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: acks move to the full hash, and SHA-256 repositories use 64 digits (Decided on 2026-11-10, with TRACE; review Q11). A release that reads both forms has to come before one that writes the full hash. What an ack matching no commit or several means is MELLON-TRACE-SRS's.</attr>
+  <description>Mellon shall read an ack attribute of 7 to 64 hex digits, in either letter case, as the commit whose hash begins with the ack's digits.</description>
+</object>

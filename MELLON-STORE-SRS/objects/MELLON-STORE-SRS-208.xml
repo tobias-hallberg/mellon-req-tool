@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-208">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: later edits are stable, so git shows only real changes (review Q55). The first write of a hand-written file re-indents it once and drops blank lines between manifest sections.</attr>
+  <description>If a data file is in the written form and an operation leaves the file's canonical form unchanged, Mellon shall leave the file's bytes unchanged.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-232">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S21, D16. Mellon's format needs no document type declaration, and refusing one rules out entity expansion that exhausts memory, along with external entities. Data files only: draw.io figures carry a declaration. Decided on 2026-11-10.</attr>
+  <description>If a data file holds a document type declaration, Mellon shall report a load error for the file's document.</description>
+</object>

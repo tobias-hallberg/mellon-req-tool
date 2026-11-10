@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rewrite has to accept exactly the same values, so no plus sign, spaces, underscores or other digits. Decided on 2026-11-10; MELLON-CHECK-SRS checks the same form. 0.3.0 writes this form and accepts whatever its parser takes (review Q21).</attr>
+  <description>An object file shall hold an integer value as an optional minus sign followed by one or more of the digits 0 to 9, and nothing else.</description>
+</object>

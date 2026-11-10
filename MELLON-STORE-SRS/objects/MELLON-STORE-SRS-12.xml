@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: each reason has a different fix: clone the repository, open its root, run git fetch --unshallow, or clone to a local disk. The refusals of partial clones and sparse checkouts are Proposed and carry their own reasons.</attr>
+  <description>When Mellon refuses the folder Mellon was asked to open, Mellon shall report whether the folder is outside a git work tree, a subfolder of one, a shallow clone, or a repository git can't open.</description>
+</object>

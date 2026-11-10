@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-182">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S45, CF-S47, E5, F3, review Q1. Processes read, change and replace whole files with no lock, so a change made in between is lost, and a lost move doesn't even show as a validation error. Undo already refuses this way. Decided on 2026-11-10. Writers outside Mellon, a git client or a text editor, can still write between the check and the replace: that risk is accepted, as TEAM.md asks for one writer per document (Q-S3).</attr>
+  <description>If a file that an operation writes or deletes changed after Mellon read the copy the operation is based on, Mellon shall refuse the operation, naming the file.</description>
+</object>

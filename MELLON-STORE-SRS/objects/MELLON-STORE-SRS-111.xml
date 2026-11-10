@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the only placement USAGE.md's tiling rule allows, since a covered position has no cell element of its own (review Q5). The tiling check depends on it, so two readers must agree.</attr>
+  <description>Mellon shall place each cell element of a row at the leftmost grid position of the row that no cell element earlier in the table covers.</description>
+</object>

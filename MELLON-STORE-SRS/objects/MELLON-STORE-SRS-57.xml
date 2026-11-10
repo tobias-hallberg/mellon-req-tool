@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-57">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q26. The format uses no namespace; an element in a namespace is then not one the format defines. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall read and write the elements and XML attributes of data files in no XML namespace.</description>
+</object>

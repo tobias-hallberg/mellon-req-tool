@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: suspect detection needs the whole history, and in a shallow clone each link would read suspect (USAGE.md, Repository requirements). A CI checkout needs fetch-depth: 0 for the same reason.</attr>
+  <description>If the repository in the folder Mellon is asked to open is a shallow clone, Mellon shall refuse the folder.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-226">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: object IDs from agents become the names of object, links and figure files. Path traversal through figure IDs was fixed in 0.2.0. The next requirement narrows it to the characters of an ID.</attr>
+  <description>If an object ID given to Mellon names a file outside the object's document folder, Mellon shall refuse the request.</description>
+</object>

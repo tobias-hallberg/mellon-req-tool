@@ -7,16 +7,30 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Term | Meaning |
 |---|---|
 | Repository | A git repository that holds documents in folders directly under its root. Mellon works only on the root folder of a complete clone, not a shallow one. |
+| Work tree | The folder tree that git checks a repository's files out into, with the repository's `.git` folder, or a `.git` file pointing to it, at the top. |
+| Repository root | The top folder of a repository's work tree, which holds `.git` and the document folders. |
+| Dot folder | A folder whose name starts with a dot, such as `.git`. No dot folder holds a document. |
 | Document | A set of objects with one manifest, kept in a folder directly under the repository root. The folder's name is the document ID. |
-| Document ID | The name of a document, made of letters, digits, hyphens and underscores. |
+| Document ID | The name of a document: one or more characters from A–Z, a–z, 0–9, hyphen and underscore, other than `CON`, `PRN`, `AUX`, `NUL`, `COM1` to `COM9` and `LPT1` to `LPT9` in any letter case. MELLON-STORE-SRS sets its greatest length. |
 | Manifest | The file that holds a document's metadata, parent documents, attribute definitions and outline. |
 | Metadata | A document's title, author and date. |
 | Parent document | A document that another document declares it derives from. Coverage and the PDF traceability section are worked out against parent documents. |
-| Load error | A document that Mellon can't read, reported with its file, line and reason. A document with a load error is still listed. |
+| Data file | A file of a document that Mellon reads as XML: the manifest, an object file, a links file, a view file, a filter file or the rules file. A figure file isn't a data file. |
+| Object file | The file `objects/<object ID>.xml` in a document's folder, which holds one object's attribute values, description and table. |
+| Links file | The file `links/<object ID>.xml` in a document's folder, which holds one object's outgoing links. |
+| Figure file | The file `figures/<object ID>.svg` in a document's folder, which holds one object's figure. |
+| View file | The file `views/<slug>.xml` in a document's folder, which holds one view. |
+| Filter file | The file `filters/<slug>.xml` in a document's folder, which holds one filter. |
+| Slug | The name of a view file or filter file without `.xml`. A slug matches `[a-z0-9]+(-[a-z0-9]+)*`. |
+| Load error | A report that a document can't be read, with the file, line and reason. A document with a load error is still listed. |
 | On-disk format | The folders, files, elements and XML attributes that Mellon reads and writes in a repository. |
+| Written form | The form in which Mellon writes a data file, as MELLON-STORE-SRS states it under Written form. |
+| Canonical form | A file as Canonical XML 1.1 with comments writes it, with whitespace-only text between elements removed. Line endings, indentation, the order of XML attributes and the quote style don't show in it; comments do. |
+| Stored text | Text that a user or agent gives Mellon to write into a data file. |
+| Operation | One change to the working copy that a user makes with one action in the GUI, or an agent with one MCP tool call, together with each file the change writes or deletes. |
+| Conflict markers | In one file, a line starting with `<<<<<<<`, a later line starting with `=======`, and a later line starting with `>>>>>>>`, as git writes them into a file whose changes it couldn't merge. |
 | Partial clone | A clone that git was told to make without some of the history's files or folders, to fetch them when needed. |
 | Sparse checkout | A working copy that git was told to fill with only some of the latest commit's folders. |
-| Canonical form | A file as Canonical XML 1.1 writes it, with whitespace-only text between elements removed. Line endings, indentation, the order of XML attributes and the quote style don't show in it. |
 
 ## Objects
 
@@ -78,7 +92,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Tag | A named commit that marks a milestone for the whole repository, apart from the issue tags. |
 | Version | One state of a document to compare: an issue, a tag, a branch, a commit or the working copy. |
 | Doesn't exist at a version | A document doesn't exist at a version when its folder is absent there. An object doesn't exist at a version when its object file is absent there. |
-| Can't be read | A file can't be read at a version when it is there but isn't a well-formed file of its kind. A document's manifest also can't be read when the document's folder is there and the manifest isn't. |
+| Can't be read | A file can't be read, in the working copy or at a version, when it is there but can't be opened or read in full, or isn't a well-formed file of its kind: well-formed XML that meets each format rule whose breach MELLON-STORE-SRS makes a load error. A document's manifest also can't be read when the document's folder is there and the manifest isn't. |
 | Changed since an issue | A document has changed since an issue when a file in its folder differs between the issue's commit and the latest commit. |
 | From, To | The two versions a comparison shows the changes between. The changes are what it takes to go from From to To, whichever is older. |
 | Unset | A From or To that names no version: nothing chosen, and nothing typed but whitespace. |
@@ -92,7 +106,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 |---|---|
 | Validation error | A problem that validation finds in a document that loads: in its manifest, rules file, outline, objects, figures or links. Each kind of problem has a fixed code. |
 | Check problem | A load error, a validation error or a suspect link: the three kinds of problem that `mellon-check` reports and fails on. A broken link is reported as a validation error. |
-| Rules file | The file in a document's folder that holds the document's rules. A document needn't have one. |
+| Rules file | The file `<document ID>.rules.xml` beside a document's manifest, which holds the document's rules. A document needn't have one. |
 | Rule | A rule condition and its rule directives, in a document's rules file. |
 | Rule condition | The part of a rule that says which objects the rule applies to: attribute values, and whether an object has outgoing links. A rule condition can name nothing. |
 | Rule directive | The part of a rule that says what an object it applies to must have: an attribute required, optional or forbidden, or an outgoing link to a named document required. |
@@ -122,3 +136,4 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Agent | A program that uses the MCP server, such as an AI assistant. |
 | Released build | A Mellon build from a published release, as opposed to a development build. |
 | Reference machine | The computer that performance requirements are measured on: the one `mellon/SCALING.md` records its measurements on. See open question Q2. |
+| Reference document | A document made for a performance requirement as `mellon/SCALING.md`'s method makes one: of the stated number of objects, each object other than a heading linking to one object of a parent document of the same size, with as many commits as objects in its history. |

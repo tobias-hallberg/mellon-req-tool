@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-51">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S18, review Q16. A merge in which one side deleted an object and the other gave it a first link leaves a links file without its object, whose links then count in targets' incoming links and coverage.</attr>
+  <description>If a links file or figure file names an object that its document doesn't hold, Mellon shall report a validation error naming the file.</description>
+</object>

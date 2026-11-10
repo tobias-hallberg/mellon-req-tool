@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-34">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the document stays in the list, and the user sees that it can't be opened. The entry is also greyed out; that is layout and isn't specified (review Q65).</attr>
+  <description>The Project Explorer shall show a warning icon on a document with a load error.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-18">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the manifest's name marks the folder as a document, so no list of documents has to be kept. Letter case counts, so Windows and Linux see the same documents (CF-S7). A folder that matches but isn't a valid document, such as a code folder build/build.xml, is listed with a load error, so a manifest damaged that way can't vanish: Decided on 2026-11-10 (Q-S12; review Q14 rejected).</attr>
+  <description>Mellon shall treat as a document each folder directly under the repository root that holds a file named &lt;folder name&gt;.xml, letter case included, unless the folder's name starts with a dot.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-91">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the definitions give an object ID this form, but the docs say only that Mellon creates IDs in it. DOC-01 and DOC-1 would be two files for one number (review Q22), and an object named otherwise escapes the next object number.</attr>
+  <description>If an object's object ID isn't the document ID, a hyphen and an object number written without leading zeros, Mellon shall report a validation error.</description>
+</object>

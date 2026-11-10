@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the user has to find the place to fix.</attr>
+  <description>Mellon shall report each load error with the document ID, the file, the reason, and the line where the reason concerns one line.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the user picked the wrong folder, and the root is the folder to open instead.</attr>
+  <description>When Mellon refuses a subfolder of a git work tree, Mellon shall name the work tree's root folder.</description>
+</object>

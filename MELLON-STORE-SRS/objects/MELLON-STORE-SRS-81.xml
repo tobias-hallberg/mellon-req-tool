@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: one file per object keeps each object's history, suspect state and merges apart in git.</attr>
+  <description>Mellon shall keep each object in an object file named &lt;object ID&gt;.xml in the objects folder of the object's document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-108">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an unmerged cell is written the same way each time, so a file changes only where cells are merged or split.</attr>
+  <description>Mellon shall write a colspan or rowspan attribute only when the attribute's value is more than 1.</description>
+</object>

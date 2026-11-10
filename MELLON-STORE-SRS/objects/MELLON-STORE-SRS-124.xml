@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a 7-digit ack can become ambiguous as a repository grows, as MELLON-VER-SRS-87 found for Compare. Decided on 2026-11-10, with TRACE: built one release after reading 7 to 64 digits, so each team member's Mellon reads the new form first; it then replaces the 7-digit form.</attr>
+  <description>Mellon shall write the full hash of a link's acknowledged commit in the ack attribute.</description>
+</object>

@@ -157,3 +157,46 @@ Raised by the requirements view of the Compare section and answered the same day
   - -110, -111, -112, -98: the time limits, measured on the reference machine first.
   - -35, -36, -38, -85, -102, -165, -166, -180, -108: Proposed requirements that may already be built; the test mapping checks them. Does the state gutter mark incoming link states?
 - **Answer:** open
+
+## Q12: The STORE specification's questions (2026-11-11)
+
+- **Raised by:** the STORE author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-STORE-SRS`, by the IDs below
+- **How they were handled:** as for Q10 and Q11: answered with the recommendation that night, with anything that would change built behaviour created as `Proposed`, for the person to confirm. Built behaviour stays `Implemented` as written, beside the Proposed requirement that would replace it.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - Object IDs are limited to ASCII letters, digits, hyphen and underscore. No write can reach a path outside the document today, because every write needs an object that the document loaded from its file names; the rule holds by construction for created IDs.
+  - A data file that breaks a format rule is a load error naming the file and the rule, except where `MELLON-CHECK-SRS` makes the break a validation error.
+  - The written form is pinned: element order, XML attribute order, quotes, escaping (`&#10;` and `&#9;` in XML attributes) and empty elements. Where 0.3.0's choice isn't documented, the rationale says to confirm it, and the attr and link element orders are TBD.
+  - An operation based on a copy that changed on disk since it was read, and creating a file over one that exists, are refused. A second Mellon process's operation waits up to a time limit (TBD), then is refused. Writers outside Mellon are an accepted risk.
+  - Whether a file changed is decided by its content, not only by its modified time and size.
+  - Each file is flushed to disk before it replaces the old one. An operation left half done is reported when the repository next opens, with an offer to put the files back.
+  - A document folder inside another document's folder is a load error, counting only files git tracks. A document folder with object files and no manifest is a load error. Document IDs and object file names that differ only in letter case are reported.
+  - Files the format doesn't define, and elements and XML attributes it doesn't define, are validation errors. Unknown elements are still kept when Mellon rewrites a file.
+  - Data files and figure files have size limits (TBD), and data files a nesting limit (TBD).
+  - Symbolic links, junctions, pipes and devices in a document folder are load errors, without opening them. Mellon refuses to write through a symbolic link.
+  - Mellon reads and writes only inside the document folders, and checks the IDs that data files name before using them as paths.
+  - Document IDs: ASCII letters, digits, hyphen and underscore, no Windows device name, greatest length TBD.
+  - A DTD in a data file is a load error. An entity declared in a figure is a validation error, and is never expanded. Bidirectional control characters in stored text should be a validation error.
+  - Comments count in a file's canonical form, and Mellon keeps them.
+  - A folder holding a non-document `X/X.xml` stays a load error, as built.
+  - A partial clone or sparse checkout that leaves out document files is refused as a repository root.
+  - Whitespace around text is stripped when Mellon writes it, so that reading back gives exactly what was written. Stripping on read, as built, stays Implemented.
+  - Integer and real values use the grammar `MELLON-CHECK-SRS` uses (Q10).
+  - Acknowledged commits record the full hash after one release that reads both forms, as TRACE decided (Q11).
+  - A figure that isn't well-formed SVG is a validation error (`MELLON-CHECK-SRS`). A view or filter name with no letter or digit gets the slug `view` or `filter`. Attribute names are limited so that a rules file can name them. The `requirement-type` alias stays as built.
+  - An MCP tool call is all or nothing. Temporary files are never committed (`MELLON-VER-SRS`).
+- **Still open, each with a recommendation:**
+  - -96: ranges of integer values, real values and object numbers. Recommendation: integers and object numbers -2^63 to 2^63 - 1; reals the finite 64-bit IEEE 754 values. CHECK uses the same.
+  - -209: a format version in the manifest? Recommendation: not yet. Add one with the first addition that can't safely be read as absent, and refuse to write a manifest newer than Mellon.
+  - -69: must a manifest define the `type` attribute? Recommendation: no; without it a document has no headings.
+  - -100: a table without rows, and a header row below a body row? Recommendation: no rows is a validation error, like no columns; a header row below a body row is valid.
+  - -33: a view or filter file that can't be read is a validation error that leaves the view or filter out, not a load error for the document? Recommendation: yes.
+  - -32: a load error for each data file that can't be read, not one per document? Recommendation: yes; the MCP server keeps `load_error` as the first and adds a `load_errors` list.
+  - -67: remove a leftover `issue` element when Mellon rewrites a manifest? Recommendation: yes, as the one exception to keeping content Mellon doesn't model.
+  - -195, -196: the order of an object file's attr elements and a links file's link elements. Recommendation: pin 0.3.0's order if it doesn't depend on edit history; otherwise attributes in the manifest's order and links by target document then target ID.
+  - -184: reads also wait while another Mellon process writes the same document? Recommendation: yes.
+  - -234, -235, -236: the size and nesting limits. Recommendation: well above the largest found in Mellon's own documents and the team repositories.
+  - -225, -157: the greatest length of a document ID and a slug. Recommendation: short enough that the longest temporary file path stays under 260 characters for a root of up to 100 characters.
+  - -169, -170, -185: how long to retry a file another program holds, and to wait for another Mellon process. Recommendation: retry at least 1 s and report within 5 s; wait for another process at least 10 s, or the longest bulk operation measured.
+  - -239, -240: the time limits for opening and reloading a 1,000-object reference document. Recommendation: measure on the reference machine with the content-based change test in place, and set each at about twice the result.
+- **Answer:** open

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-155">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a slug from an agent or a user becomes a file name, so ../ or a path separator must not reach the file system. Fixed in 0.2.0.</attr>
+  <description>If a slug given to Mellon doesn't match [a-z0-9]+(-[a-z0-9]+)*, Mellon shall refuse the request.</description>
+</object>

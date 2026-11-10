@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the status bar has a tooltip for a detached HEAD (STATUS.md), and checking out a tag to review an issue detaches HEAD (review Q46).</attr>
+  <description>Mellon shall accept a repository root whose HEAD is detached.</description>
+</object>

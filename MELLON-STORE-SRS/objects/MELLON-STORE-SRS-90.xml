@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-90">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: existing repositories are written this way, so a reader or a rewrite has to keep reading them.</attr>
+  <description>An object file shall hold the object's table as a table element after the description element.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-142">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: all needs each condition to match and any needs one (MELLON-EDIT-SRS). The two words are the stored codes (review Q67).</attr>
+  <description>A filter element shall hold all or any in a combinator attribute, or leave the attribute out for all.</description>
+</object>

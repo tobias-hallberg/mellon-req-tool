@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q30. An empty or blank type can't be read or picked in the GUI, and a type with spaces looks like another. Existing types that break this become refusals on edit only after a decision.</attr>
+  <description>Mellon shall accept as a link type only text of one or more characters with no whitespace and no control character.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: after a pull the user needs the real reason, not a general failure. Covers F5 (documented) and the re-reads after an edit, a commit or a merge (review Q44): confirm those against 0.3.0.</attr>
+  <description>When a Document Editor reads its document again and a data file of the document can't be read, the Document Editor shall show the load error.</description>
+</object>

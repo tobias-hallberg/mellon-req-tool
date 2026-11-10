@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-72">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a when element gives these two names meanings of their own, and requirement-type keeps matching the attribute named RequirementType (Decided on 2026-11-10, MELLON-CHECK-SRS), so an attribute with either name can't be tested by a rule.</attr>
+  <description>An attribute definition's name shall be neither requirement-type nor has-outgoing-link.</description>
+</object>

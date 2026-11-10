@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-143">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: true keeps the headings above a match visible, the DOORS default (MELLON-EDIT-SRS).</attr>
+  <description>A filter element shall hold true or false in a keep-ancestors attribute, or leave the attribute out for true.</description>
+</object>

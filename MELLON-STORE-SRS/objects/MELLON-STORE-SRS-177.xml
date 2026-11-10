@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-177">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S29, E2, F14. The record that returns files is in memory, so a kill or power loss leaves the operation half applied (a delete can strip incoming links and keep the object), and nothing says so. Decided on 2026-11-10 (Q-S1); the record is kept under .git, so it is never committed.</attr>
+  <description>If Mellon stopped while an operation was under way, Mellon shall report the operation and each file the operation wrote or deleted when Mellon next opens the repository.</description>
+</object>

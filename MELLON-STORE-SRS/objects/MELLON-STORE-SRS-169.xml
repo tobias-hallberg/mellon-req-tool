@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-169">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S13, CF-S32, review Q41. A virus scanner, a sync client, a git client or draw.io can hold a file for a moment on Windows. Today only the replace is retried, for 0.25 s (5 × 50 ms, architecture.md), which a scanner can exceed.</attr>
+  <description>If another program holds a file that Mellon reads, writes or deletes for at most TBD s, Mellon shall complete the read, write or delete.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-191">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4. Indenting inside text would change the text. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall add no whitespace to the text of a description, attr or cell element when indenting a data file.</description>
+</object>

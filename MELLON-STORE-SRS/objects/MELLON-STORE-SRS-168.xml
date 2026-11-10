@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-168">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S27, CF-S28, E3, F14. Without a flush, a file replaced just before a power loss can come back empty or zero-filled and lose its uncommitted edits, which nothing else keeps. Decided on 2026-11-10 (Q-S2): flush before replacing, measured on the reference machine.</attr>
+  <description>If power fails during or after Mellon's write of a file, Mellon shall leave the file holding either its content before the write or the full content written.</description>
+</object>

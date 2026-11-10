@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-101">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: left is the default alignment.</attr>
+  <description>A col element shall hold the column's alignment as left, center or right in an align attribute, or leave the attribute out for left.</description>
+</object>

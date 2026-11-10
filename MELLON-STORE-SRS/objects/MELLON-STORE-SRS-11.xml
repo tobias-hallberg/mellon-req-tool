@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S2. A sparse checkout leaves files out of the working copy, so a document loads without its links or isn't listed, and trace and coverage look complete. A sparse checkout that keeps each document folder whole stays allowed. Decided on 2026-11-10 (Q-S13).</attr>
+  <description>If the folder Mellon is asked to open is a sparse checkout that leaves out a file of a document's folder at the latest commit, Mellon shall refuse the folder.</description>
+</object>

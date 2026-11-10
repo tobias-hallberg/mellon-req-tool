@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-231">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S21, CF-S22, D17, review Q43. An external entity, an external DTD or an image link in a file from a pull could put a local file into Mellon's output or a PDF, or connect to a host that learns who opened the document. Decided on 2026-11-10.</attr>
+  <description>When Mellon reads, draws or exports a data file or figure file, Mellon shall not read another file or network resource that the file refers to.</description>
+</object>

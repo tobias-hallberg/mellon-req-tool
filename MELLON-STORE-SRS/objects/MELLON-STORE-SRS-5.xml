@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: Mellon keeps documents in git, so a folder outside git has no history to commit to or to check links against. Refused by the GUI, the MCP server and mellon-check alike since 0.2.0.</attr>
+  <description>If the folder Mellon is asked to open isn't inside a git work tree, Mellon shall refuse the folder.</description>
+</object>

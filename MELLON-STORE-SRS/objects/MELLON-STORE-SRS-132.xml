@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: draw.io saves the editable diagram there, so one file is both the picture and the draw.io source. Only a draw.io figure opens in draw.io (MELLON-EDIT-SRS). Worded so it can be tested (review Q24); confirm the mxfile test against 0.3.0.</attr>
+  <description>Mellon shall treat a figure as a draw.io figure when the figure file's root svg element has a content attribute whose value is XML with an mxfile root element.</description>
+</object>

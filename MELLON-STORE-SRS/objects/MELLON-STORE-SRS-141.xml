@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the name is required; it is shown in the Filters menu and the filter pill.</attr>
+  <description>A filter file's root element shall be a filter element whose name attribute holds the filter's name.</description>
+</object>

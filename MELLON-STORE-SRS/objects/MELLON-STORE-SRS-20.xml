@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S5, E13. A team that groups documents in a folder, or keeps a copy in an archive folder, would otherwise get a clean mellon-check that checked none of them. Files git doesn't track, the req-test fixture among them, are left out. Decided on 2026-11-10 (Q-S5). Replaces the draft's statement that nested folders aren't documents (review Q62).</attr>
+  <description>If git tracks a file &lt;folder name&gt;.xml with root element document in a folder two or more levels below the repository root, outside dot folders, Mellon shall report a load error for the folder.</description>
+</object>

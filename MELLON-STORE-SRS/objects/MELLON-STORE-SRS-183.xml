@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-183">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S46, E17, F3, review Q7. Two processes creating an object from one next object number, or a view or filter from one slug, would write one file over the other. Decided on 2026-11-10.</attr>
+  <description>If a file that an operation is about to create already exists, Mellon shall refuse the operation.</description>
+</object>

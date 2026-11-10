@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: at most one figure per object, found by the file's name.</attr>
+  <description>Mellon shall keep an object's figure as a figure file named &lt;object ID&gt;.svg in the figures folder of the object's document.</description>
+</object>

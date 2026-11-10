@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: without a label the attribute is shown by its name, or as Type for type (definitions: Label).</attr>
+  <description>An attribute definition shall hold the attribute's label, where the attribute has one, in a label attribute.</description>
+</object>

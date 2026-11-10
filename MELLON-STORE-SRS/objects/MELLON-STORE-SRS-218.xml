@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-218">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: text read back must equal text written, or a save changes files nobody edited. Holds once stripping on write is built. Decided on 2026-11-10.</attr>
+  <description>When Mellon reads a description, attribute value or table cell that Mellon wrote, Mellon shall read the text Mellon wrote, whitespace included.</description>
+</object>

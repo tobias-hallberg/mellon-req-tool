@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a conflict left by a pull is the usual cause, and the fix is to resolve the merge (MELLON-VER-SRS), not to repair the XML by hand.</attr>
+  <description>If a file with a load error holds conflict markers, Mellon shall say in the load error that the file looks like an unresolved merge conflict.</description>
+</object>

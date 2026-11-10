@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q6, CF-S16, and the Compare code review's V8, where the MCP server accepted a document ID in another letter case on Windows. Windows and Linux would otherwise see different repositories in one commit.</attr>
+  <description>Mellon shall compare document IDs, object IDs, and the names of the files and folders that carry the IDs, case-sensitively on each operating system.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-131">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: PNG files and draw.io's compressed .drawio files are refused when attaching (MELLON-EDIT-SRS). The namespace is SVG's own (review Q26). A figure that isn't well-formed SVG is a validation error in MELLON-CHECK-SRS (D-C7).</attr>
+  <description>A figure file shall be an SVG file whose root element is svg in the namespace http://www.w3.org/2000/svg.</description>
+</object>

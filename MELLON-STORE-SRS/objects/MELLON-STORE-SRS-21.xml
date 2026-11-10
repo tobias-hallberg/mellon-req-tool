@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S6, E13, and MELLON-CHECK-SRS's D-C2. A manifest deleted or renamed by hand or in a merge would otherwise drop the document and its outgoing links silently; its object or links files show it was a document. Testing for files named after the folder, not for any objects folder, keeps code folders out.</attr>
+  <description>If a folder directly under the repository root holds no file &lt;folder name&gt;.xml but holds a file objects/&lt;folder name&gt;-&lt;n&gt;.xml or links/&lt;folder name&gt;-&lt;n&gt;.xml, Mellon shall report a load error for the folder.</description>
+</object>

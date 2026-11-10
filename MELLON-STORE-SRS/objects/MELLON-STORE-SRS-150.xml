@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: for example 10|20. Both bounds are included (MELLON-EDIT-SRS).</attr>
+  <description>A filter file shall hold the bounds of the operator between as the lower bound, a vertical bar and the upper bound in the value attribute.</description>
+</object>

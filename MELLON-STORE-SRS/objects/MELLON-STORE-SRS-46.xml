@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 0.3.0 reads a manifest with next-object-number (open question Q7) and ignores a leftover issue element. Confirm for each kind of data file. The format can grow only if older readers do this (review Q9).</attr>
+  <description>When Mellon reads a data file, Mellon shall read the file as if each element and XML attribute that the on-disk format doesn't define were absent.</description>
+</object>

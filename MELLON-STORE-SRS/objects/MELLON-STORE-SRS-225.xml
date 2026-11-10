@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-225">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S36. A long document ID with a deep root takes paths past Windows' 260-character limit, where writes fail and Git for Windows doesn't check files out. Decided on 2026-11-10 (Q-S8): a limit, its value open.</attr>
+  <description>Mellon shall count as a document ID only text of at most TBD characters.</description>
+</object>

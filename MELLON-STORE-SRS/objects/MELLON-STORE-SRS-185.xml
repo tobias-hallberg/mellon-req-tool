@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-185">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: Q-S3. An operation takes milliseconds apart from bulk changes, so a long wait means the other process is stuck. Decided on 2026-11-10.</attr>
+  <description>If Mellon holds an operation back for longer than TBD s, Mellon shall refuse the operation, naming the operation of the other process.</description>
+</object>

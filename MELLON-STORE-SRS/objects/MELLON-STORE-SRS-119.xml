@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the file name and the source must agree, or a link would be read as coming from another object.</attr>
+  <description>If a links file's name without .xml differs from the source attribute of its links element, Mellon shall report a load error.</description>
+</object>

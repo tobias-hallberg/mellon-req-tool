@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-93">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: values compare as text, so case and spacing count. Another value is a validation error (MELLON-CHECK-SRS).</attr>
+  <description>An object file shall hold an enumeration value as one of the attribute's options, written as the manifest writes the option.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-207">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a git client without the recommended .gitattributes converts line endings on checkout, and what a file says must not change with them.</attr>
+  <description>Mellon shall read a data file with CR LF line endings as Mellon reads the same file with LF line endings.</description>
+</object>

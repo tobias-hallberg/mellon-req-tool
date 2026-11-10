@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-212">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: text pasted from Windows programs carries CR LF, and data files use LF only.</attr>
+  <description>When Mellon writes stored text, Mellon shall replace each CR LF pair and each other CR with one LF.</description>
+</object>

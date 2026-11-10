@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-103">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: header rows at the top of a table repeat on each PDF page the table spans (MELLON-PDF-SRS).</attr>
+  <description>A row element shall mark a header row with a header attribute holding true.</description>
+</object>

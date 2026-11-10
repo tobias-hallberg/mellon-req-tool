@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the file is copied, so the draw.io diagram and content Mellon doesn't read survive.</attr>
+  <description>When Mellon attaches a figure, Mellon shall write the figure file with the same bytes as the SVG file attached.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-220">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: these characters reorder how text is displayed, so a requirement can read differently from what is stored; MELLON-VER-SRS-82 marks them in Compare. Ordinary right-to-left text needs none of them, and U+200E and U+200F stay allowed. Decided on 2026-11-10.</attr>
+  <description>If stored text holds a character from U+202A to U+202E or from U+2066 to U+2069, Mellon should refuse the operation with an error naming the character.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: cells hold plain text, with no formatting.</attr>
+  <description>A row element shall hold each of the row's cells as a cell element whose text is the cell's plain text.</description>
+</object>

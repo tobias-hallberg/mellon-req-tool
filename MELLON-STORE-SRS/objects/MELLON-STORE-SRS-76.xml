@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an enumeration without options could take no value.</attr>
+  <description>An attribute definition of kind enum shall hold one or more option elements, each holding one of the attribute's options.</description>
+</object>

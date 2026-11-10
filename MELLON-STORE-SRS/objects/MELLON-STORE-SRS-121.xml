@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q30. A link is identified by its source and target (remove_link and the acknowledge tool's link_keys take no type), so two links to one target can't be told apart, and adding one is already refused.</attr>
+  <description>If a links file holds two link elements with the same target-doc and target-id, Mellon shall report a validation error.</description>
+</object>

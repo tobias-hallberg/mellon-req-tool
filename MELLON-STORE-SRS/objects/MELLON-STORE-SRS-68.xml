@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: links can target only the document itself or a declared parent (MELLON-TRACE-SRS).</attr>
+  <description>The manifest shall hold each parent document as a parent element, inside a parents element, whose doc attribute holds the parent's document ID.</description>
+</object>

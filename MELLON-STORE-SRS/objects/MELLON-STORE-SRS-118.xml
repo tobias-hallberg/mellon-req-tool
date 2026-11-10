@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: existing repositories are written this way, so a reader or a rewrite has to keep reading them.</attr>
+  <description>A links file's root element shall be a links element whose source attribute holds the source object's object ID.</description>
+</object>

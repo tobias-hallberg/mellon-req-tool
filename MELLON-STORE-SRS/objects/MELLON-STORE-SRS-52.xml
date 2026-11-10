@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-52">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S23. Folder names and object files' own IDs are checked elsewhere; the IDs in links, parents, rules, filters and the outline are otherwise unchecked.</attr>
+  <description>If a data file names a document or object with text that isn't a document ID or object ID, Mellon shall report a validation error naming the file.</description>
+</object>

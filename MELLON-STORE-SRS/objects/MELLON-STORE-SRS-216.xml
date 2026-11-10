@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-216">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: Mellon strips this whitespace when reading, so stripping on write makes text read back exactly as written, and a later save no longer changes a file nobody edited (review Q10, CF-S26). Decided on 2026-11-10.</attr>
+  <description>When Mellon writes stored text, Mellon shall remove whitespace at the start and end of the text.</description>
+</object>

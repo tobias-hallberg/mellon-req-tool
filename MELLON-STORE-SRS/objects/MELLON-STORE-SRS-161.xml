@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-161">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md lists the three as reserved; type matches the type attribute as any other name would, and the other two have meanings of their own in the rules engine (MELLON-CHECK-SRS).</attr>
+  <description>A when element shall hold each condition as an XML attribute whose name is an attribute's name, or type, requirement-type or has-outgoing-link, and whose value is the value to match.</description>
+</object>

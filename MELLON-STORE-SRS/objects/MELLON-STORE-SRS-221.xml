@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-221">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S24, review Q36. Refusing on write doesn't reach text from another clone or a hand edit, which reaches the Document Editor and the PDF unmarked. Decided on 2026-11-10 (Q-S10).</attr>
+  <description>If a data file holds a character from U+202A to U+202E or from U+2066 to U+2069, Mellon should report a validation error naming the file and the character.</description>
+</object>

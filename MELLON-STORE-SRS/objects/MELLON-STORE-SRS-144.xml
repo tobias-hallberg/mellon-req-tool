@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-144">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a condition tests an attribute value, outgoing links or incoming links. The XML element is named rule; the requirements call it a condition, since Rule is a defined term for the rules file (review Q32).</attr>
+  <description>A filter file shall hold each condition as a rule element inside the filter element, with a kind attribute holding attr, has-outgoing or has-incoming.</description>
+</object>

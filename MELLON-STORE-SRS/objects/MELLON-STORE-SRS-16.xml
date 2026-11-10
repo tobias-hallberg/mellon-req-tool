@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q46 and CF-S4. The docs describe the root as the folder that contains .git and don't say what happens when .git is a file; git supports both. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall accept a repository root whose .git is a file, as in a linked worktree or a submodule's checkout.</description>
+</object>

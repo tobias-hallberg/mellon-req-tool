@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-213">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: Word's manual line break and page break arrive as these characters when text is pasted from Word or a PDF.</attr>
+  <description>When Mellon writes stored text, Mellon shall replace each vertical tab (U+000B) and each form feed (U+000C) with one LF.</description>
+</object>

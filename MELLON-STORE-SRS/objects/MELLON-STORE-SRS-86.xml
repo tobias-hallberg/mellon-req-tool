@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: set and not set are told apart (definitions: Set, not set), as the Compare dialog shows. Validation counts both as no value for a required attribute (MELLON-CHECK-SRS).</attr>
+  <description>Mellon shall read an attr element with no text as an attribute set to an empty value.</description>
+</object>

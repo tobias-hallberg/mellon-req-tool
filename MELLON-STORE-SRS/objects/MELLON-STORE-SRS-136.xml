@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the name is what the Views menu shows; the file is named by the slug.</attr>
+  <description>A view file's root element shall be a view element whose name attribute holds the view's name.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-234">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S20, D18. A huge file from another clone exhausts memory and stops the GUI or the MCP server. The limit has to exceed the manifest of the largest document, since no object limit is set. Decided on 2026-11-10 (Q-S7): two limits, values open.</attr>
+  <description>If a data file is larger than TBD MB, Mellon shall report a load error for the document, naming the file, without reading the file's content.</description>
+</object>

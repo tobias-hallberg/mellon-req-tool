@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the document is the links' target document for has-outgoing and their source document for has-incoming; an empty or absent attr matches each document (USAGE.md: optional, empty means any).</attr>
+  <description>A filter file's rule element of kind has-outgoing or has-incoming shall hold present or absent in an op attribute, and a document ID in an attr attribute, or leave attr empty or out.</description>
+</object>

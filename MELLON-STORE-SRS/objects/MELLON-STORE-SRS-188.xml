@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-188">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the same bytes on each machine, so git shows no change where nothing changed. TEAM.md recommends a .gitattributes with * text=auto eol=lf so git clients don't convert them.</attr>
+  <description>Mellon shall write each data file with LF line endings.</description>
+</object>

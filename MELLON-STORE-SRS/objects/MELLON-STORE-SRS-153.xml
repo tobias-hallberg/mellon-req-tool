@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-153">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a slug is safe as a file name on each operating system and in git. Only ASCII letters change case, so two implementations agree (review Q57); confirm against 0.3.0 for the Kelvin sign and the dotted capital I, which a Unicode lower-casing turns into k and i.</attr>
+  <description>Mellon shall derive a view's or filter's slug from its name by turning A–Z into a–z, each run of characters other than a–z and 0–9 into one hyphen, and trimming hyphens at either end.</description>
+</object>

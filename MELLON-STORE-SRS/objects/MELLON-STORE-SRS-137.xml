@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the state, ID and description columns are always shown and aren't listed (MELLON-EDIT-SRS).</attr>
+  <description>A view file shall hold the view's attribute columns, in display order, as attribute elements whose name attributes hold the attributes' names.</description>
+</object>

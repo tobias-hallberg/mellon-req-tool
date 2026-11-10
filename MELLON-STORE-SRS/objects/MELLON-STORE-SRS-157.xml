@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-157">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q57. A long name gives a long file name, which with the root and document ID can pass Windows' 260-character path limit (CF-S36).</attr>
+  <description>Mellon shall cut a derived slug to at most TBD characters, with no hyphen at the end.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-170">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q41. An upper bound keeps the GUI from hanging on a file that stays held.</attr>
+  <description>If another program holds a file that Mellon reads, writes or deletes for longer than TBD s, Mellon shall report the failure within TBD s of the first attempt.</description>
+</object>

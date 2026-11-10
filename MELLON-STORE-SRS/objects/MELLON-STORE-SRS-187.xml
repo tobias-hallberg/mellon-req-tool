@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-187">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: one encoding, the one the XML declaration names, and the file starts with the declaration (USAGE.md; review Q25).</attr>
+  <description>Mellon shall write each data file in UTF-8, with no byte order mark.</description>
+</object>

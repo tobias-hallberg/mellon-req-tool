@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-64">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: ISO 8601, which sorts as text and reads the same in each locale; 2026-02-30 and year 0000 are no dates (review Q47). Another form is a validation error (MELLON-CHECK-SRS). Confirm the range against 0.3.0.</attr>
+  <description>A manifest's date element shall hold a date written as YYYY-MM-DD, naming a day of the Gregorian calendar from 0001-01-01 to 9999-12-31.</description>
+</object>

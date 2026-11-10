@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-58">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the folder and the manifest both carry the document ID, so the manifest is found by name.</attr>
+  <description>A document's manifest shall be the file &lt;document ID&gt;.xml directly in the document's folder.</description>
+</object>

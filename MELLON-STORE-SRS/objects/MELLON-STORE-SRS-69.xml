@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: each document carries its own schema.</attr>
+  <description>The manifest shall hold each attribute definition as an attribute element, inside an attributes element, whose name and kind attributes hold the attribute's name and kind.</description>
+</object>

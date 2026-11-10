@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-156">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a name with no letter a–z and no digit, one written in Greek for example, gives an empty slug, and the name should be kept as typed. Decided on 2026-11-10; the numbering rule then gives view-2 and on.</attr>
+  <description>If a view's or filter's name gives an empty slug, Mellon shall use view as the slug of a view and filter as the slug of a filter.</description>
+</object>

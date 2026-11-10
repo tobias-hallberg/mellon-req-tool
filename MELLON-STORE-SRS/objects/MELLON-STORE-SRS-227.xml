@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-227">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: Decided on 2026-11-10. Not reachable today: each write needs the object to exist in the loaded document, whose IDs come from file names. Mellon makes IDs from the document ID and a number, so created IDs meet it by construction. It keeps ../DOC, an NTFS stream such as DOC-5.xml:x and a UNC name out (review Q2, CF-S39, CF-S41).</attr>
+  <description>If text given to Mellon as an object ID holds a character other than A–Z, a–z, 0–9, hyphen and underscore, Mellon shall refuse the request without accessing a file the text names.</description>
+</object>

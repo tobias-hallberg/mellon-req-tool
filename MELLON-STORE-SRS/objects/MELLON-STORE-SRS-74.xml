@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an attribute is optional unless the manifest says otherwise.</attr>
+  <description>An attribute definition shall define a required attribute when its required XML attribute holds true, and an optional one when required holds false or is left out.</description>
+</object>

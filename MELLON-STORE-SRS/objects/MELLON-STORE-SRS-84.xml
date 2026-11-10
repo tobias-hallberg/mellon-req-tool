@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: existing repositories are written this way, so a reader or a rewrite has to keep reading them. A name the manifest doesn't define is a validation error (MELLON-CHECK-SRS).</attr>
+  <description>An object file shall hold each attribute value that is set on the object as an attr element whose name attribute holds the attribute's name and whose text is the value.</description>
+</object>

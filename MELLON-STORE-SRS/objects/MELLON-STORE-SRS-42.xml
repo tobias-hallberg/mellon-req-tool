@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q20. The docs don't say what a write tool does with a document that can't be read. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If an agent asks the MCP server to change a document that has a load error, the MCP server shall refuse the request and return the load error.</description>
+</object>

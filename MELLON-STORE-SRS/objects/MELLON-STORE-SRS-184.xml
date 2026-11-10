@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-184">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S45, CF-S46, E5, E17, F3. The check for a changed file leaves a moment before the replace; between the GUI and MCP servers that moment can be closed. TEAM.md's one writer per document isn't enforced. Decided on 2026-11-10 (Q-S3): wait, then refuse.</attr>
+  <description>While one Mellon process runs an operation that writes files of a document, Mellon shall hold back each operation of another Mellon process that writes files of that document.</description>
+</object>

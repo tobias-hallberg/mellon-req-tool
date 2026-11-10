@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-235">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S20, D18. draw.io figures with embedded pictures are the largest files in a document, so their limit is separate. Decided on 2026-11-10 (Q-S7).</attr>
+  <description>If a figure file is larger than TBD MB, Mellon shall report a load error for the document, naming the file, without reading the file's content.</description>
+</object>

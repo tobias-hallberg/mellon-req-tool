@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-148">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: these are the operator codes of the attribute kinds and link conditions (MELLON-EDIT-SRS); another code means a damaged file.</attr>
+  <description>If a filter file's op attribute holds none of eq, ne, lt, le, gt, ge, between, before, after, contains, not-contains, starts-with, is-empty, is-not-empty, is-true, is-false, present and absent, Mellon shall report a load error.</description>
+</object>

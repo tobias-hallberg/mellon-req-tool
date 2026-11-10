@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-171">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: temporary files are named .&lt;name&gt;.&lt;pid&gt;.tmp (architecture.md, as the failure analysis quotes it), so loading and the check for undefined files skip them (review Q42). Keeping them out of commits is MELLON-VER-SRS's.</attr>
+  <description>Mellon shall begin the name of each temporary file that Mellon writes in a document folder with a dot.</description>
+</object>

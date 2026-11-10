@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-238">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: 1,000 objects is the recommended size, set by PDF export time, and larger documents still work, more slowly; SCALING.md measures 5,000. Replaces a negative that couldn't be verified (review Q40).</attr>
+  <description>Mellon shall read and edit a document of 5,000 objects.</description>
+</object>

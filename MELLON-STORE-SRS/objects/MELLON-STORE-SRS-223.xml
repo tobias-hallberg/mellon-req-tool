@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-223">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: document IDs come from agents and users and become paths, so ../ or a path separator must not reach outside the repository. Fixed in 0.2.0. The next requirement narrows it to text that is a document ID.</attr>
+  <description>If a document ID given to Mellon names a folder other than one directly under the repository root, Mellon shall refuse the request.</description>
+</object>

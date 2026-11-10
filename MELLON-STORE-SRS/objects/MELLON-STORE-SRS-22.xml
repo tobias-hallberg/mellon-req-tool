@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-22">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S7, D9. A case-insensitive file system makes the folder a document on Windows and not on Linux, so one commit is checked on a workstation and skipped in CI.</attr>
+  <description>If a folder directly under the repository root holds a file whose name matches &lt;folder name&gt;.xml only when letter case is ignored, Mellon shall report a load error for the folder.</description>
+</object>

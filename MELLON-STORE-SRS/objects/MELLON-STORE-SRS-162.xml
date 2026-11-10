@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-162">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Validation rules (review Q34). How conditions combine and match is MELLON-CHECK-SRS's.</attr>
+  <description>A when element shall hold true or false as the value of a has-outgoing-link condition.</description>
+</object>

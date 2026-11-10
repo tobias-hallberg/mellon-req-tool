@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-138">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q33. Deleting an attribute can leave it named in a view. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>Mellon shall read a view naming an attribute that the manifest doesn't define as the view without that attribute.</description>
+</object>

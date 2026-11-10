@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a successful reload (F5) clears the Changed on disk banner; read-only mode then applies as before (review Q19).</attr>
+  <description>When a Document Editor reads its document again without a load error, the Document Editor shall stop refusing edits for the load error.</description>
+</object>

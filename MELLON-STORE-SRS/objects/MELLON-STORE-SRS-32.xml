@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-32">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q38. Today one load error is reported per document, so fixing one file only reveals the next. The MCP server's load_error field holds one error, so its shape would grow.</attr>
+  <description>If several data files of a document can't be read, Mellon shall report a load error for each of the files.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-33">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q37. A broken saved view or filter makes the whole document a load error today, which also refuses deleting objects anywhere in the repository. Accepted, this replaces the load error for these two kinds of file.</attr>
+  <description>If a view file or filter file can't be read, Mellon shall report a validation error naming the file and leave the view or filter out.</description>
+</object>

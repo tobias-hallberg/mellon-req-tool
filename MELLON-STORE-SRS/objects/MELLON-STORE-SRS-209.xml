@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-209">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a newer Mellon can add elements or XML attributes that an older one doesn't know, as next-object-number did; an older Mellon that drops them on rewrite loses data while a team mixes versions. 0.3.0 was checked to keep next-object-number (open question Q7). Decided on 2026-11-10. Comments count in the canonical form, so they are kept too (Q-S11).</attr>
+  <description>When Mellon rewrites a data file, Mellon shall change the file's canonical form only by the change being made.</description>
+</object>

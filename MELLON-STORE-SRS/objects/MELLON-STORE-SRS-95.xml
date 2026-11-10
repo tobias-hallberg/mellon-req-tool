@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: no exponent, infinity or NaN, which a filter can't compare and each language parses differently. Decided on 2026-11-10; MELLON-CHECK-SRS checks the same form (review Q21).</attr>
+  <description>An object file shall hold a real value as an optional minus sign, one or more of the digits 0 to 9, and optionally a point followed by digits, nothing else.</description>
+</object>

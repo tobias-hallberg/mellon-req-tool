@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-176">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-S30, review Q12. The return needs the same disk space and the same files as the failed operation, so the cause of the failure can stop the return, and the user then believes nothing changed.</attr>
+  <description>If Mellon can't return a file to its state before a failed operation, Mellon shall report that the operation is half applied, naming each file left changed.</description>
+</object>

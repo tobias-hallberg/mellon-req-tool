@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: git refuses, for example, a repository it doesn't consider the user's, which is common on network drives (INSTALL.md, Troubleshooting).</attr>
+  <description>If git can't open the repository in the folder Mellon is asked to open, Mellon shall refuse the folder.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an issue is a git tag on a commit (MELLON-VER-SRS), so no file can disagree with the tag, and cutting an issue needs no change to the document.</attr>
+  <description>Mellon shall not store a document's issue in the manifest.</description>
+</object>

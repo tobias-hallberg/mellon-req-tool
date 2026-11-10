@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: existing repositories are written this way, so a reader or a rewrite has to keep reading them. MELLON-STORE-SRS-1 adds next-object-number to the same element.</attr>
+  <description>The manifest's root element shall be a document element whose id attribute holds the document ID.</description>
+</object>

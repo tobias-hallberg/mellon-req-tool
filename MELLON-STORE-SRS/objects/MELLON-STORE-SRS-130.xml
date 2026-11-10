@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: attaching or replacing a figure changes one file. The object's history and the suspect state of links to the object count the figure's commits (MELLON-TRACE-SRS).</attr>
+  <description>Mellon shall record that an object has a figure only by the figure file's presence, leaving the object file unchanged.</description>
+</object>

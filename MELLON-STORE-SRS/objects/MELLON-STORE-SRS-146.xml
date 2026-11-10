@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-146">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: those four operators take no value (USAGE.md; review Q32).</attr>
+  <description>A filter file's rule element of kind attr shall hold the value in a value attribute, unless the operator is is-empty, is-not-empty, is-true or is-false.</description>
+</object>

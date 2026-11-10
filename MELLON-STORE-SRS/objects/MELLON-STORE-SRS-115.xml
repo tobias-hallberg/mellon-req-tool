@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: deliberately not the DOORS cells-as-objects model, so a table stays one object and a cell can't be linked on its own (review Q66).</attr>
+  <description>Mellon shall store a table's cells only in the object file of the table's object.</description>
+</object>

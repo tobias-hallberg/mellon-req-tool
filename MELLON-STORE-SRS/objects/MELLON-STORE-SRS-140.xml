@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-140">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: filters belong to one document and are versioned with it, apart from views, so a view combines with a filter freely.</attr>
+  <description>Mellon shall keep each filter as a filter file named &lt;slug&gt;.xml in the filters folder of the filter's document.</description>
+</object>

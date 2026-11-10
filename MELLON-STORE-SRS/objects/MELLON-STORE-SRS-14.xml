@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a team creates its first document before its first commit, and MELLON-VER-SRS-15 already covers the Compare dialog in such a repository (review Q46). Built for Compare; confirm against 0.3.0, which would make this Implemented.</attr>
+  <description>Mellon shall accept a repository root whose repository has no commit.</description>
+</object>

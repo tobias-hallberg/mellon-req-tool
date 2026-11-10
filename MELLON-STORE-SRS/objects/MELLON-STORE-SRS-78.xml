@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-78">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the outline lives in one file, so moving an object changes the manifest and no object file. An object listed twice or not at all is a validation error (MELLON-CHECK-SRS).</attr>
+  <description>The manifest shall hold the outline as ref elements inside an outline element, in outline order, each ref's id attribute holding one object ID.</description>
+</object>

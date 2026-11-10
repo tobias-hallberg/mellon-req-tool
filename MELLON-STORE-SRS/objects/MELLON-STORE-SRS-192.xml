@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-192">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a trailing newline (USAGE.md), stated exactly (review Q64).</attr>
+  <description>Mellon shall end each data file that Mellon writes with exactly one LF after the root element's end tag.</description>
+</object>

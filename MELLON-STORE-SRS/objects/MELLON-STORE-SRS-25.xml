@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the rules file and the objects, links, figures, views and filters folders are each optional. git keeps no empty folder, so a document without objects has no objects folder in a clone.</attr>
+  <description>Mellon shall read a document whose folder holds only the manifest.</description>
+</object>

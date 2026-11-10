@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the PDF cover and running header use these fields (MELLON-PDF-SRS).</attr>
+  <description>The manifest shall hold the document's title, author and date as title, author and date elements inside a metadata element.</description>
+</object>

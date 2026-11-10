@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q21. Without a range a rewrite that uses 64-bit integers overflows where 0.3.0 doesn't. The value is the review's recommendation, not yet decided.</attr>
+  <description>Mellon shall count as an integer value only a whole number from -9223372036854775808 to 9223372036854775807, both included.</description>
+</object>

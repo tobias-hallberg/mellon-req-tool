@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-164">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: required is the only status a link directive has, and the default.</attr>
+  <description>A then element shall hold each link directive as a link element whose target-doc attribute holds a document ID, with a status attribute holding required or left out.</description>
+</object>

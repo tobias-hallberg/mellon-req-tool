@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an editor on a half-read document would invite edits that overwrite what couldn't be read.</attr>
+  <description>When the user opens a document with a load error, the Project Explorer shall show the load error instead of opening a Document Editor.</description>
+</object>
