@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-230">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: diagrams drawn elsewhere belong with their requirement. The figure file gets the chosen file's bytes (MELLON-STORE-SRS-133).</attr>
+  <description>The Figure menu shall have an action that attaches an SVG file the user chooses as the selected object's figure, replacing any existing figure.</description>
+</object>

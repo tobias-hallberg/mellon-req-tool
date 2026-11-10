@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: Windows treats the two folder names as one folder and git on another platform keeps two. Reading such a pair is a load error (MELLON-STORE-SRS-23); this stops Mellon making one.</attr>
+  <description>If a new document ID differs from an existing document ID only in letter case, Mellon shall refuse to create the document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-321">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty grid would look like an empty document.</attr>
+  <description>While no object passes the filters, the grid should say that no object matches and offer to clear the filters.</description>
+</object>

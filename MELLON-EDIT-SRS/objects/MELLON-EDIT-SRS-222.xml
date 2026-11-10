@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-222">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: any other selection can't become one cell, and the docs don't give the response (review Q44).</attr>
+  <description>If the selected cells don't form a rectangle that wholly holds each merged cell the selection touches, the Document Editor shall refuse to merge the cells.</description>
+</object>

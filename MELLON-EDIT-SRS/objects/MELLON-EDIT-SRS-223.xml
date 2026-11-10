@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-223">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say what happens to the text of the cells merged away. Losing it without a warning would lose requirement content (CF-E24, review Q43).</attr>
+  <description>When the user merges cells, the Document Editor shall join the cells' non-empty texts in reading order, row by row and left to right, separated by line breaks.</description>
+</object>

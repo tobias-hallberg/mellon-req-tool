@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-247">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E29. Windows finds a program looked up by bare name in the current folder first, and the MCP server usually runs in the repository, so a program in a pulled commit would run (D-E19).</attr>
+  <description>When Mellon looks for draw.io desktop, Mellon shall leave out the repository folder and the current folder unless MELLON_DRAWIO names a program in one of the two folders.</description>
+</object>

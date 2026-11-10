@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: validation reports such a date (MELLON-CHECK-SRS-42) after it is written, and the PDF cover prints it. An empty date stays allowed (MELLON-CHECK-SRS-43). The form is MELLON-STORE-SRS-64's (review Q18).</attr>
+  <description>If a document date given in an edit is neither empty nor a date written YYYY-MM-DD naming a day from 0001-01-01 to 9999-12-31, Mellon shall refuse the edit.</description>
+</object>

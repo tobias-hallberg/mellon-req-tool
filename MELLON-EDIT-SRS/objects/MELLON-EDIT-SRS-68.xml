@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: adding a column needn't touch each object file. A required attribute then shows as missing on each object until set (MELLON-CHECK-SRS-13).</attr>
+  <description>When Mellon defines an attribute without a default value, Mellon shall leave the document's objects unchanged.</description>
+</object>

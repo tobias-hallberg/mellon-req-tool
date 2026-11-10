@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E10, CF-E11. A value left by a hand edit, another branch or an earlier definition would be replaced unseen, and a rule forbidding the attribute on headings would fail on each heading at once. Answered on 2026-11-11 (failure Q10, review Q26, D-E7). Replaces MELLON-EDIT-SRS-69.</attr>
+  <description>When Mellon defines an attribute with a default value, Mellon shall set the default value only on objects that have no value for the attribute and on which no rule forbids the attribute.</description>
+</object>

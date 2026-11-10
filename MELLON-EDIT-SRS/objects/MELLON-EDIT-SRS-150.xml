@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a copy made for template authoring usually traces to the same parents. Each copied link keeps the acknowledged commit of the link it copies (MELLON-TRACE-SRS-9). Whether copies should count toward coverage before review is an open question (review Q57).</attr>
+  <description>When a copy_object call sets copy_links to true, the MCP server shall give each copy the object's outgoing links.</description>
+</object>

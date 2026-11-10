@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-201">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a table added by mistake, or no longer wanted, is removed without deleting the object.</attr>
+  <description>The Table menu shall have an action that removes the selected object's table.</description>
+</object>

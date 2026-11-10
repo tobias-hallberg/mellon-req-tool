@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-303">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: both mean no value to the user (USAGE.md).</attr>
+  <description>When a filter condition uses is-empty, Mellon shall match an object whose attribute is not set or is set to an empty value.</description>
+</object>

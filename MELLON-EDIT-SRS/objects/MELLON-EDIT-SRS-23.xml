@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: creating a document over an existing folder would mix two sets of files. The MCP server reports it as AlreadyExists.</attr>
+  <description>If the repository root already has a folder named as the new document ID, Mellon shall refuse to create the document.</description>
+</object>

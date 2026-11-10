@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-250">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the author checks the diagram in context straight after drawing it. That the save raises no Changed on disk banner is the GUI area's.</attr>
+  <description>When draw.io desktop saves a figure and the user returns to the Document Editor, the Document Editor shall show the saved figure.</description>
+</object>

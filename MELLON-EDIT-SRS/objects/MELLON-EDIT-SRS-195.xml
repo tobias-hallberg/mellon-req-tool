@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-195">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: as for MELLON-EDIT-SRS-194; `depth` 1 gives the top-level sections. Built after 0.3.0. Worded so that it is clear where counting starts (review Q22).</attr>
+  <description>When an outline call gives `depth` n, the MCP server shall list only objects within n levels, counting a top-level object, or a sub-object of the given root object, as level 1.</description>
+</object>

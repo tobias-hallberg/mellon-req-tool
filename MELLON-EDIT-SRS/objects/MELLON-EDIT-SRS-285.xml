@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-285">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: some questions widen the set, such as missing either of two attributes.</attr>
+  <description>When a filter's combinator is `any`, Mellon shall match an object that meets at least one of the filter's filter conditions.</description>
+</object>

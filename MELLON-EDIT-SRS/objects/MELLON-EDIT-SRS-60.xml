@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent sets up a schema too (review Q27).</attr>
+  <description>The MCP server shall have a define_attribute tool that adds an attribute definition with a name, kind, label, required flag, default value and, for an enumeration, options.</description>
+</object>

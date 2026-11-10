@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-281">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: each filter condition reads as a sentence: status ne Approved.</attr>
+  <description>The Advanced filter dialog shall build each filter condition on an attribute from the attribute, an operator and, where the operator takes a value, a value.</description>
+</object>

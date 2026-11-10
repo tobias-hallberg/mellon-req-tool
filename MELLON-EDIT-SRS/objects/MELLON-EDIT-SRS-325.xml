@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-325">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: different readers need different columns: a developer, a tester, a reviewer.</attr>
+  <description>The Views menu shall list the document's views and make the view the user chooses the active view.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-317">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer working through a filtered set continues where they left off. Clearing the filter removes what was kept, so a cleared filter doesn't come back (review Q20).</attr>
+  <description>When a Document Editor opens, the Document Editor shall make active the filter that was active when the document's editor last closed on the computer, if that filter still exists.</description>
+</object>

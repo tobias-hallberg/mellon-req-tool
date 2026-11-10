@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a process drops states, and an agent removes them too.</attr>
+  <description>The MCP server shall have a remove_attr_option tool that removes an option from an enumeration attribute.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-268">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E33. A document that fails to load is otherwise left out, and no hits looks complete (D-E23).</attr>
+  <description>If a document that a search_objects call covers has a load error, the MCP server shall return the document's ID with the hits.</description>
+</object>

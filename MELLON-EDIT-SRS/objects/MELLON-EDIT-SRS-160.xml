@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-160">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a delete can remove links in other documents, so it always asks, although Undo brings the object back. The option to stop asking was removed in 0.2.0.</attr>
+  <description>When the user asks to delete an object, the Document Editor shall ask the user to confirm before deleting the object.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a declaration allows links that can only fail, and validation reports it only afterwards (MELLON-CHECK-SRS-38). Covers create_document's parents as well as adding one (review Q39).</attr>
+  <description>If a parent document given when creating a document or adding a parent document doesn't exist in the repository, Mellon shall refuse the request.</description>
+</object>

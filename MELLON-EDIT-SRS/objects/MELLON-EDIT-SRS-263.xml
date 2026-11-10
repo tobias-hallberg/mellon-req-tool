@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-263">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the same search gives the same order each time. Built as written; MELLON-EDIT-SRS-264 would replace the object ID part.</attr>
+  <description>The search_objects tool shall order hits by score, highest first, then by document ID and object ID compared as text.</description>
+</object>

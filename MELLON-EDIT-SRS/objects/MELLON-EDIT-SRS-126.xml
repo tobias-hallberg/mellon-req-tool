@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a description is plain text whose line breaks are kept (MELLON-STORE-SRS-89), so a list or a paragraph break can be typed.</attr>
+  <description>When the user edits a description in the Document Editor, the Document Editor shall accept line breaks in the description.</description>
+</object>

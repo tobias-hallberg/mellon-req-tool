@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: deleting an attribute removes a value from each such object (MELLON-EDIT-SRS-98). Undo brings the values back only until the next commit or reload, so the user must see the size of the change first.</attr>
+  <description>When the user deletes an attribute that one or more objects have a value for, the Properties dialog shall first show how many objects have a value and ask the user to confirm.</description>
+</object>

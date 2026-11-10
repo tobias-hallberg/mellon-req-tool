@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-159">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an author removes a requirement that is no longer wanted. A requirement under review is usually set Withdrawn instead. Each delete path, the outline pane's and the grid's, must ask (MELLON-EDIT-SRS-160; failure F9).</attr>
+  <description>The Document Editor shall have a Delete action that deletes the selected object.</description>
+</object>

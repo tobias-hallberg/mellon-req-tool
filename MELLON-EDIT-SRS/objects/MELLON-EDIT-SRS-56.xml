@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent asks for exactly the parts it needs, such as a document's filters (handed over to EDIT).</attr>
+  <description>When a list_documents or show_document call gives include, the MCP server shall also return each named part of metadata, parents, attributes, outline, views and filters, or each part for `*` or `all`.</description>
+</object>

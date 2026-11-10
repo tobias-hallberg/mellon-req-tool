@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent can't be asked to confirm, so the agent needs to see what a removal clears before making it, as ack_suspects allows. The test case checks that no byte changes and that the list equals what the real call then clears (failure part 4).</attr>
+  <description>When the remove_attr_option tool is called with dry_run true, the MCP server shall return each object whose value is the option, and change no file.</description>
+</object>

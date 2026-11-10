@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent writes a complete requirement in one call instead of five to ten.</attr>
+  <description>The MCP server shall have a new_object tool that creates an object with a description, attribute values and outgoing links in one call.</description>
+</object>

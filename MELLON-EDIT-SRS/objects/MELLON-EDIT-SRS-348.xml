@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-348">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: undo after typing undoes the typing, not the edit before it. Worded by what the user sees rather than by internal steps (review Q4).</attr>
+  <description>When the user chooses the Undo action while a pending edit exists, the Document Editor shall discard the pending edit and make the discarded text available to Redo.</description>
+</object>

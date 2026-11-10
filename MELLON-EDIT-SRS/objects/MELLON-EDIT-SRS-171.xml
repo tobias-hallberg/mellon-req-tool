@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-171">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the tool takes a force flag that the docs don't explain. An agent can't be asked to confirm, so refusing until it says so is its form of MELLON-EDIT-SRS-164.</attr>
+  <description>If an object has incoming links and a delete_object call doesn't set force, the MCP server shall refuse to delete the object and name the links.</description>
+</object>

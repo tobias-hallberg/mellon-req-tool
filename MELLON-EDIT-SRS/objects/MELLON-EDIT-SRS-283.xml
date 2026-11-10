@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-283">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "not yet verified by any test" is the commonest review question.</attr>
+  <description>The Advanced filter dialog shall offer filter conditions on whether an object has outgoing links to a document and incoming links from a document.</description>
+</object>

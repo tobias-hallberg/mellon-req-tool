@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-32">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: today a document is deleted by removing its folder in a git client, which leaves links from other documents broken without a warning. Deferred, as recommended (review Q58).</attr>
+  <description>Mellon could delete a document.</description>
+</object>

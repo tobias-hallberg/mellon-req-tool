@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-219">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a table with no column can't be read, and one with no row is recommended as a validation error (open question Q12, MELLON-STORE-SRS-100); the user removes the table instead (review Q51).</attr>
+  <description>If deleting a row or column leaves a table with no row or no column, Mellon shall refuse the deletion.</description>
+</object>

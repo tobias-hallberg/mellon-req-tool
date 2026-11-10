@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-236">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent works in the repository, and the server's own working folder is unknown to the agent.</attr>
+  <description>When a set_figure call gives a relative path, the MCP server shall resolve the path against the repository root.</description>
+</object>

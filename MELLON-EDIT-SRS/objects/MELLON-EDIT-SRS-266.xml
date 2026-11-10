@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-266">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a short text in a large repository matches thousands of objects, too many for an agent.</attr>
+  <description>The search_objects tool shall return no more than the given maximum number of hits, or 50 when the call gives no maximum.</description>
+</object>

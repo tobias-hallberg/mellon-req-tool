@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a rule directive naming an undefined attribute is a validation error (MELLON-CHECK-SRS-72), so it would fail the gate after each deletion. MELLON-EDIT-SRS-101 says what was removed (review Q6, Q57).</attr>
+  <description>When Mellon deletes an attribute, Mellon shall remove each rule directive in the document's rules file that names the attribute.</description>
+</object>

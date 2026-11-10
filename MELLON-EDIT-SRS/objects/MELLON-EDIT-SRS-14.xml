@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: creating an object still resets the grid, which SCALING.md measured at 1.9 s at 2,000 objects on a busy machine (review Q37).</attr>
+  <description>On the reference machine, the Document Editor shall show a new object in a 1,000-object reference document within TBD s of the user choosing New sibling.</description>
+</object>

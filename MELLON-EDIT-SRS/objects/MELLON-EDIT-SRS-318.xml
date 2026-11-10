@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-318">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: what one person is looking at isn't a change to the document, and committing it would disturb the rest of the team.</attr>
+  <description>Mellon shall keep which filter is active for each user and computer, outside the repository.</description>
+</object>

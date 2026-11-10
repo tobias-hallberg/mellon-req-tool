@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-337">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent sets up views for a team too. A clash of slugs is MELLON-STORE-SRS-154's.</attr>
+  <description>The MCP server shall have a manage_view tool that creates, renames, deletes and edits a view.</description>
+</object>

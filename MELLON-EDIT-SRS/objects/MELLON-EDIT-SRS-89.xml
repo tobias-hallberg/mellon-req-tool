@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-89">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: renaming a state today takes adding the new option, a bulk set and removing the old option, and the old values are blanked if the order is wrong.</attr>
+  <description>Mellon could rename an option, changing the value of each object that has the option.</description>
+</object>

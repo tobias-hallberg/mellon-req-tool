@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-172">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the meaning of force isn't documented. Force doesn't override MELLON-EDIT-SRS-162 or MELLON-EDIT-SRS-163, and the links are removed as MELLON-EDIT-SRS-167 says (review Q54).</attr>
+  <description>When a delete_object call sets force, the MCP server shall delete an object that has incoming links.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the working copy is what other windows, agents, git clients and comparisons read, so an edit has to be there at once. Text still being typed is a pending edit: where it lands is MELLON-EDIT-SRS-128 and MELLON-EDIT-SRS-129; when the GUI saves it is the GUI area's.</attr>
+  <description>When Mellon carries out an edit, Mellon shall write each changed file to the working copy before reporting the edit as made.</description>
+</object>

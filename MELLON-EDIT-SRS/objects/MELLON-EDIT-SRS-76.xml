@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a process grows new states, and an agent adds them too.</attr>
+  <description>The MCP server shall have an add_attr_option tool that adds an option to an enumeration attribute.</description>
+</object>

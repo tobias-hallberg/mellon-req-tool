@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E14. MELLON-EDIT-SRS-49 refuses only the document itself; a loop makes coverage and the PDF traceability section circular. Validation reports a loop afterwards (MELLON-CHECK-SRS-39). Answered yes on 2026-11-11 (failure Q3, D-E11).</attr>
+  <description>If adding a parent document makes the document a parent document of itself through other parent documents, Mellon shall refuse to add the parent document.</description>
+</object>

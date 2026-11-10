@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the definitions tell an empty value from one that is not set, and Compare shows the difference. remove_attr_option keeps the attribute set and empty (MELLON-EDIT-SRS-83); the docs don't say what other edits do (review Q8).</attr>
+  <description>When an edit sets an attribute that is set on the object to an empty value, Mellon shall keep the attribute set, with an empty value.</description>
+</object>

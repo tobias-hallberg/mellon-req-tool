@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a condition on a removed value matches no object any more, so a rule stops checking and a filter shows nothing. The GUI names them before the change (MELLON-EDIT-SRS-105), an agent's dry run too (MELLON-EDIT-SRS-108).</attr>
+  <description>When Mellon removes an option that a rule or filter of the document names, Mellon shall report each such rule and filter with the result of the removal.</description>
+</object>

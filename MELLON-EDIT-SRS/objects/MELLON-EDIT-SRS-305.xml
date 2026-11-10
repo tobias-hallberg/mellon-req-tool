@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-305">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say whether these ignore case. The MCP search does (MELLON-EDIT-SRS-260). Whether eq and ne on text ignore case is an open question (review Q32).</attr>
+  <description>When a filter condition uses contains, not-contains or starts-with, Mellon shall ignore letter case.</description>
+</object>

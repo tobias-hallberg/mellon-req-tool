@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the object keeps the attribute, empty, so the user sees a blank to fill instead of a value that vanished. Validation reports a required one (MELLON-CHECK-SRS-14).</attr>
+  <description>When Mellon removes an option, Mellon shall set the attribute to an empty value on each object whose value was the removed option.</description>
+</object>

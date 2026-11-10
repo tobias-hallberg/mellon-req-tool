@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-301">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: compared as text, 10 would come before 9.</attr>
+  <description>When a filter condition compares an integer or real attribute, Mellon shall compare the values as numbers.</description>
+</object>

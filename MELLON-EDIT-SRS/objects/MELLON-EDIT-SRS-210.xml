@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-210">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: cells hold plain text; they aren't objects, deliberately unlike DOORS (MELLON-STORE-SRS-115).</attr>
+  <description>The table editor shall let the user edit the text of each cell.</description>
+</object>

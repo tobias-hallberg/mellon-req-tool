@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-335">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the view is the team's shared column order, and the change shows as an uncommitted change before it is committed (CF-E41). Kept on 2026-11-11 (failure Q14, review Q16).</attr>
+  <description>When the user drags an attribute column to a new place while a view is active, the Document Editor shall save the new column order in the view.</description>
+</object>

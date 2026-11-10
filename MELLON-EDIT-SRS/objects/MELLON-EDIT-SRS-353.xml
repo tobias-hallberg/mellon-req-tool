@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-353">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: another program changed the files, so undoing could overwrite that change. Kept as built on 2026-11-11 (failure Q12, review Q3). Merged with the GUI author's requirement.</attr>
+  <description>When the Document Editor shows the Changed on disk banner, the Document Editor shall clear the undo history.</description>
+</object>

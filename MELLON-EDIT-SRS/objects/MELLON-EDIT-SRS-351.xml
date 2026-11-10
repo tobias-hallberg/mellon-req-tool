@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-351">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: after a reload the files may differ from what the steps recorded. Merged with the GUI author's requirement.</attr>
+  <description>When the user reloads the document from disk, the Document Editor shall clear the undo history.</description>
+</object>

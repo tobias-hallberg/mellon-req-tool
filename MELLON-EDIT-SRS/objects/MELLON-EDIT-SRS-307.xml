@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-307">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "satisfies something in the system requirements". Built as written; MELLON-EDIT-SRS-308 would narrow it.</attr>
+  <description>Mellon shall meet a has-outgoing filter condition with present for an object that has an outgoing link to the filter condition's document, or to any document when the filter condition names none.</description>
+</object>

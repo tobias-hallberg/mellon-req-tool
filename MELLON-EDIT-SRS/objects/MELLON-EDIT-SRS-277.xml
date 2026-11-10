@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-277">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a DOORS-style filter of several filter conditions, saved with the document so the team shares it.</attr>
+  <description>The Document Editor shall have an Advanced filter dialog that creates and edits the document's filters.</description>
+</object>

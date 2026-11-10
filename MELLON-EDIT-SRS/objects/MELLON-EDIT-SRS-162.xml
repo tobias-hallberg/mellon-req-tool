@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-162">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: deleting a heading must not take the section below it unseen. The user moves or deletes the sub-objects first. The test case covers delete_object with force set (CF-E19).</attr>
+  <description>If an object has sub-objects, Mellon shall refuse to delete the object.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-356">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: undoing would overwrite another window's, an agent's or draw.io's change without a word. The test case changes a file in another document, and rewrites a file to the same size within 2 s (failure F9). Merged with the GUI author's requirement.</attr>
+  <description>If a file of an undo step changed after the step was made or undone, the Document Editor shall refuse to undo or redo the step and tell the user why.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-361">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: undo and redo change files. Undo isn't an edit, so read-only mode's definition doesn't cover it by itself (review Q34).</attr>
+  <description>While the Document Editor is in read-only mode, the Document Editor shall disable Undo and Redo.</description>
+</object>

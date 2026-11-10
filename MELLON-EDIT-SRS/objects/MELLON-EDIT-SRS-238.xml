@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-238">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a figure added by mistake, or no longer wanted, is removed without deleting the object.</attr>
+  <description>The Figure menu shall have a Clear action that removes the selected object's figure.</description>
+</object>

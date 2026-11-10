@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-249">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs say the action needs draw.io desktop, but not what the user sees without it. A silent failure looks like a bug in Mellon.</attr>
+  <description>If draw.io desktop isn't found, the Document Editor shall tell the user that the action needs draw.io desktop.</description>
+</object>

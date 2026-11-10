@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-338">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an agent states the whole column list at once, and a repeated column has no meaning.</attr>
+  <description>When the manage_view tool edits a view, the MCP server shall replace the view's columns with the given attributes in the given order, dropping repeats.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-243">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the action attaches a blank figure first and then opens draw.io, so without draw.io the object keeps an unwanted figure and an uncommitted change (review Q11).</attr>
+  <description>If draw.io desktop isn't found, the New draw.io figure action shall attach no figure.</description>
+</object>

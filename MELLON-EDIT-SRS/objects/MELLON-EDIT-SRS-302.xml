@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-302">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a value that doesn't fit can exist through a hand edit or a merge (MELLON-EDIT-SRS-11 is only Proposed), and an ordering of it has no meaning (review Q31).</attr>
+  <description>When an object's value doesn't fit the attribute's kind, Mellon shall meet no lt, le, gt, ge, between, before or after filter condition with the object.</description>
+</object>

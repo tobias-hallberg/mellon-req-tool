@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-196">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a `depth` of 0 or less lists nothing, which an agent would take for an empty document (review Q22).</attr>
+  <description>If an outline call gives a `depth` below 1, the MCP server shall refuse the call.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-145">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a copy is a duplicate to specialise. Its object ID follows MELLON-EDIT-SRS-1.</attr>
+  <description>When Mellon copies an object, Mellon shall give each copy a new object ID and the object's description, attribute values and table.</description>
+</object>

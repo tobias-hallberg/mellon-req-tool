@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-273">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: as for MELLON-EDIT-SRS-269, in the GUI (review Q59).</attr>
+  <description>The filter box should let through an object whose table holds a cell that contains the typed text.</description>
+</object>

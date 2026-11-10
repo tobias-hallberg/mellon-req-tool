@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-165">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E17. The GUI's copies of other documents can be older than the files, while the delete removes the links on disk (D-E13).</attr>
+  <description>When the Document Editor lists the links to an object before deleting the object, the Document Editor shall list each link that the working copy holds when the list is shown.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-290">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: STATUS.md lists filter tools for the MCP server as out of scope for 0.3.0; filters are made in the GUI and read over MCP (MELLON-EDIT-SRS-56).</attr>
+  <description>The MCP server could have a tool that creates, changes and deletes filters.</description>
+</object>

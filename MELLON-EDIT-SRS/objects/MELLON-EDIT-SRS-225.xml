@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-225">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say where the text goes.</attr>
+  <description>When the user splits a merged cell, the Document Editor shall put the merged cell's text in the top-left single cell.</description>
+</object>

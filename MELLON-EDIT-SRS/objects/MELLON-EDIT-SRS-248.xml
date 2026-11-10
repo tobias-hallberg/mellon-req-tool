@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-248">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: falling through to the next place silently would run a different draw.io than the user set up, and failing silently looks like a bug (review Q45).</attr>
+  <description>If MELLON_DRAWIO is set and names no file, Mellon shall report that MELLON_DRAWIO names no file.</description>
+</object>

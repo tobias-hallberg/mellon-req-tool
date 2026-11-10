@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an object created under a parent is appended as the parent's last sub-object, checked in the code by the lead on 2026-11-11 (review Q25).</attr>
+  <description>When the new_object tool creates an object, the MCP server shall place the object last among the given parent object's sub-objects, or last at the top level when no parent object is given.</description>
+</object>

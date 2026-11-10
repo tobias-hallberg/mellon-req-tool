@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-246">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the standard installs are found without setup, and any other install by setting MELLON_DRAWIO. PDF export uses the same search (PDF).</attr>
+  <description>Mellon shall look for draw.io desktop at the path in MELLON_DRAWIO, then in %ProgramFiles%\draw.io and %LOCALAPPDATA%\Programs\draw.io, then on PATH.</description>
+</object>

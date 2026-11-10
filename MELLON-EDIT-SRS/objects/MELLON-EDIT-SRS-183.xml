@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-183">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: both actions need a sibling before the object, and the docs don't say what they do without one (review Q52).</attr>
+  <description>While the selected object has no sibling before the selected object, the Document Editor shall disable Move up and Indent.</description>
+</object>

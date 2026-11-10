@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-334">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a column hidden per user would stay hidden when a view listing it is active, so a reviewer believes the view shows each column it lists (CF-E40). Showing, hiding and moving now all change the view. Answered on 2026-11-11 (failure Q14, review Q16).</attr>
+  <description>While a view is active, the Document Editor shall save into the view each attribute column the user shows or hides in the grid's header.</description>
+</object>

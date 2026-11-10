@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-148">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs say a copy lands as a sibling, but not where among the siblings.</attr>
+  <description>When Mellon copies an object without a given parent object, Mellon shall place the copies directly after the object, in the order made.</description>
+</object>

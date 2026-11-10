@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-237">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E30. An agent, or text that steers it, could copy any SVG on the machine into the repository, and a push takes it off the machine. The GUI's file chooser is unaffected. Answered yes on 2026-11-11 (failure Q6, D-E20; handed over by STORE).</attr>
+  <description>If a file given to the set_figure tool lies outside the repository once each symbolic link is followed, the MCP server shall refuse the call.</description>
+</object>

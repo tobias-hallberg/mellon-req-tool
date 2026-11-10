@@ -46,17 +46,41 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Description | An object's main text. On a heading it's the heading's title, and on a table it's the caption. |
 | Outline | The order and nesting of a document's objects, as a tree. |
 | Sub-object | An object directly below another object in the outline. |
+| Parent object | The object that another object is a sub-object of. Not to be confused with a parent document. |
+| Top level | The place in the outline of the objects that are no object's sub-object. |
+| Sibling | An object with the same parent object as another object. Two objects at the top level are siblings too. |
+| Ancestor object | An object's parent object, that object's parent object, and so on up to the top level. |
+| Descendant object | An object's sub-objects, their sub-objects, and so on down the outline. |
 | Attribute | A named value on an object, defined in the manifest with a kind and, for an enumeration, its options. |
 | Label | The name an attribute is shown by: the label the manifest gives it; when it has none, `Type` for the `type` attribute, and its name for any other. |
 | Kind | What values an attribute takes: enumeration, text, integer, real, boolean or date. |
+| Option | One of the values an enumeration attribute allows, listed in order in the manifest. |
+| Default value | A value given with a new attribute definition for Mellon to set on the document's existing objects. The manifest doesn't keep it. |
 | Required attribute | An attribute that every object must have a value for. |
 | Set, not set | An attribute is set on an object when the object's file gives it a value, even an empty one, and not set when the file doesn't mention it. |
 | Blank | A value is blank when it is empty or holds only whitespace and characters with no width: the characters Unicode gives the White_Space property, and U+200B, U+200C, U+200D, U+2060 and U+FEFF. |
 | Table | Rows and cells kept on one object, with column alignment, header rows and merged cells. |
+| Header row | A table row marked as holding column headings. |
+| Merged cell | A table cell that covers more than one row or column position. |
+| Span | The number of columns (column span) or rows (row span) that a table cell covers. |
 | Figure | A picture kept with one object, as an SVG file. A draw.io figure also carries the diagram that draw.io edits. |
+| draw.io figure | A figure whose file also carries the diagram that draw.io desktop edits, as MELLON-STORE-SRS-132 tells a draw.io figure from another figure. |
 | Field | One part of an object that a comparison looks at: an attribute value, the description, the table, the figure, or the outgoing links, each with its target and link type. |
 | Word | In a description: a run of letters, digits and underscores, or one other character that isn't whitespace. So each punctuation mark is a word of its own, and `stop.` is the two words `stop` and `.`. Whitespace separates words and isn't one. |
 | Invisible character | A character that Unicode gives the property Bidi_Control or Default_Ignorable_Code_Point. This takes in tag characters, zero-width characters and variation selectors. |
+
+## Editing
+
+| Term | Meaning |
+|---|---|
+| Edit | A request, from the user in the GUI or from an agent through an MCP write tool, that Mellon change a document's files. Mellon carries out an edit as one operation. Undo and Redo aren't edits. |
+| Undo step | One operation that a Document Editor made on its document's files, with each file the operation wrote or deleted and that file's content before and after. |
+| Undo history | The undo steps a Document Editor keeps, and the undone steps it can redo. |
+| Filter condition | One test in a filter: an attribute, an operator and, for most operators, a value; or whether an object has outgoing links to, or incoming links from, a document. |
+| Combinator | Whether a filter matches an object that meets each of its filter conditions (`all`) or at least one (`any`). |
+| Active filter | The filter the grid applies at the moment, if any. |
+| Active view | The view whose columns the grid shows at the moment, if any. |
+| Hit | An object that the search_objects tool returns for a search. |
 
 ## Links
 
@@ -131,6 +155,12 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Trace view | The Document Editor dialog that shows the trace of the selected object. |
 | History tab | The Document Editor tab that lists the commits that changed the selected object. |
 | Compare dialog | The GUI window that shows the changes between two versions of one document. |
+| Properties dialog | The Document Editor dialog that edits the document's metadata, parent documents and attribute definitions. |
+| Advanced filter dialog | The Document Editor dialog that creates and edits a filter. |
+| Filter box | The text box above the grid in which the user types text to find objects by. |
+| Table editor | The Document Editor's in-place editor for one object's table, opened from the table shown in the grid. |
+| Table menu, Figure menu, Filters menu, Views menu | The Document Editor toolbar menus that hold the actions on the selected object's table, the actions on its figure, the document's filters and the document's views. |
+| draw.io desktop | The draw.io program for Windows, macOS and Linux (https://www.drawio.com/), which Mellon opens figures in and renders figures with. It isn't part of Mellon. |
 | Read-only mode | A Document Editor state in which no edit can be made. A window opens in it. |
 | `mellon-check` | The command-line program that checks a repository for check problems and reports the result by its exit status. |
 | Validate action | The Document Editor action that validates the open document and shows the result. |

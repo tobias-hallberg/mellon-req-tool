@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a copy is a full duplicate unless the agent says otherwise.</attr>
+  <description>When a copy_object call doesn't give copy_links or copy_figure, the MCP server shall take the missing value as true.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-341">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checked in the code by the lead on 2026-11-11, Properties dialog, table and figure edits included (review Q1). Filter and view saves count when they take the same path; confirm filters and views in the test mapping.</attr>
+  <description>The Document Editor shall record as one undo step each operation that the Document Editor makes on the document's files.</description>
+</object>

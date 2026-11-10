@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-360">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: each window undoes only its own operations, and the MCP server has no undo. An undo in one window can clear another window's history through the banner; accepted (CF-E48).</attr>
+  <description>The Document Editor shall leave an operation that the MCP server or another window made out of the undo history.</description>
+</object>

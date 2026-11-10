@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent restructures the document hierarchy too.</attr>
+  <description>The MCP server shall have a remove_parent_doc tool that removes a parent document from a document's declared parent documents.</description>
+</object>

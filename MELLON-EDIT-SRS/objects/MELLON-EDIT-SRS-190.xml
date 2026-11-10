@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-190">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an outline that drops or repeats an object is a validation error (MELLON-CHECK-SRS-26 to -28), and a dropped object would vanish from the document's reading order.</attr>
+  <description>If a given outline doesn't name each object of the document exactly once, or names an object the document doesn't have, Mellon shall refuse the outline before writing any file.</description>
+</object>

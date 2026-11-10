@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent changing one attribute must not blank the text. An empty description given on purpose does blank it.</attr>
+  <description>When an update_object call gives no description, the MCP server shall leave the object's description unchanged.</description>
+</object>

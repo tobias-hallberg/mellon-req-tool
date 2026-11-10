@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-344">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the user sees what undo is about to undo before doing it.</attr>
+  <description>Each of the Undo and Redo actions shall show the name of the edit that the action acts on.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-161">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E16. A confirmation that doesn't say what it deletes confirms nothing once focus or the selection has changed (D-E12).</attr>
+  <description>When the Document Editor asks the user to confirm a delete, the Document Editor shall name the object ID and show the description of each object to be deleted.</description>
+</object>

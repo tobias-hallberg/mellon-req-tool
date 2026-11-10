@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: renaming today takes defining a new attribute, copying each value and deleting the old one.</attr>
+  <description>Mellon could rename an attribute, renaming the attribute in each object, rule, view and filter of the document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a cut-off requirement can be misread, and a reviewer reads requirements in the grid.</attr>
+  <description>The grid shall show the whole of each description, growing the row to fit.</description>
+</object>

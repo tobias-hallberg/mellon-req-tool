@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-232">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent attaches diagrams too.</attr>
+  <description>The MCP server shall have a set_figure tool that attaches an SVG file as an object's figure, replacing any existing figure.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-10">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an enumeration is a closed list, so a misspelt value would reach the files unnoticed. Letter case is included as in MELLON-CHECK-SRS-16, so that a filter's eq finds each value the edit accepted (CF-E46, review Q47).</attr>
+  <description>If an edit sets an enumeration attribute to a value that is neither empty nor exactly one of the attribute's options, letter case included, Mellon shall refuse the edit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: no tool changes a kind today, so a text attribute that should have been an enumeration has to be deleted, losing each value, and defined again.</attr>
+  <description>Mellon could change an attribute's kind.</description>
+</object>

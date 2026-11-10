@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-299">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E37. An option removed through a pull, a merge or a git client turns eq into nothing and ne into everything; MELLON-EDIT-SRS-88 covers only a removal made in Mellon (D-E26).</attr>
+  <description>If the active filter compares an enumeration attribute with a value that isn't one of the attribute's options, the Document Editor shall report the filter condition instead of applying the filter.</description>
+</object>

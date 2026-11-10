@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-157">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: only the MCP server can set values in bulk today, while a DOORS user does it in the editor. The Document Editor has no multi-select in 0.3.0.</attr>
+  <description>The Document Editor could set one attribute to one value on each selected object.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-31">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a child document is usually created to refine a parent, and its links are allowed only to declared parents.</attr>
+  <description>When Mellon creates a document with parent documents, Mellon shall declare each given document as a parent document.</description>
+</object>

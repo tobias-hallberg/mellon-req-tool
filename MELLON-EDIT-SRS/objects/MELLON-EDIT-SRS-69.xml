@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: adding a status attribute to a large document needs the starting value on each object at once. Built as written; MELLON-EDIT-SRS-70 would replace it.</attr>
+  <description>When Mellon defines an attribute with a default value, Mellon shall set the attribute to the default value on each object of the document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an author drafts an object before each value is known. Validation reports the missing value (MELLON-CHECK-SRS-13, -14), and the GUI commit refuses a validation error (VER).</attr>
+  <description>Mellon shall accept an edit that leaves a required attribute without a value.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-323">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: as for MELLON-EDIT-SRS-322.</attr>
+  <description>When the user changes the active filter, the Document Editor shall keep the shown columns.</description>
+</object>

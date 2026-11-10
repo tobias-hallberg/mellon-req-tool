@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E13. The dialog's copy can be older than the manifest, so an agent's new attribute, an outline change or the next object number could be written over. Where the user's change meets a change made since, MELLON-STORE-SRS-182 refuses (review Q9, D-E10).</attr>
+  <description>When the user applies the Properties dialog, Mellon shall change only the metadata, parent documents and attribute definitions that the user changed in the dialog.</description>
+</object>

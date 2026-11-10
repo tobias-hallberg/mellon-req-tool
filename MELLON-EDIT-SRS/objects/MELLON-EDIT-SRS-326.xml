@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-326">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the reason for a view. A listed attribute the document doesn't define is left out (MELLON-STORE-SRS-138).</attr>
+  <description>While a view is active, the grid shall show the attribute columns that the view lists, in the view's order.</description>
+</object>

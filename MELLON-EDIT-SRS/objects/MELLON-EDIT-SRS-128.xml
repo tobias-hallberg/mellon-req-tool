@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E4. Re-applying the active filter (MELLON-EDIT-SRS-319), a grid reset or a Table menu action can move a row or cell under an open editor. Placed in EDIT on 2026-11-11 (failure Q15, D-E3).</attr>
+  <description>When the Document Editor saves a pending edit, the Document Editor shall write the edit to the object, attribute or table cell that the text was typed in, whichever object is selected then.</description>
+</object>

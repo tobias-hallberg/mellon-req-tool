@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-182">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: Outdent could instead make the later siblings sub-objects of the moved object, as some outliners do; which one is meant has to be stated (review Q24).</attr>
+  <description>When the Outdent action moves an object, the Document Editor shall leave each sibling that followed the object under the object's former parent object.</description>
+</object>

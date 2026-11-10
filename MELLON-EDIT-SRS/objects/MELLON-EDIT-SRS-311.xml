@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-311">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E38. Links from a document that can't be read aren't counted, so absent reads true for them (D-E27). The GUI's cached copies are the GUI area's.</attr>
+  <description>While a document of the repository has a load error and the active filter has a filter condition on links, the Document Editor shall show with the filter's name that the document is left out.</description>
+</object>

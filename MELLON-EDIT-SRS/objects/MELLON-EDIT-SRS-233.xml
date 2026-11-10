@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-233">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a figure is an SVG file whose root is svg (MELLON-STORE-SRS-131). A PNG or a compressed draw.io file can't be shown, exported or compared.</attr>
+  <description>If a file to attach as a figure isn't a well-formed SVG file, Mellon shall refuse to attach the file.</description>
+</object>

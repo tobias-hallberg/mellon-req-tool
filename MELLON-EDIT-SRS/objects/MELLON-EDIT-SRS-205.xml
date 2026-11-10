@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-205">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: such a table can't be shown or exported, and reading it is a load error (MELLON-STORE-SRS-113).</attr>
+  <description>If a table's cells don't cover each row and column position of the table exactly once, Mellon shall refuse to write the table.</description>
+</object>

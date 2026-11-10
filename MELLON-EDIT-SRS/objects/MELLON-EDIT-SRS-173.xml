@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-173">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E18, CF-E43. There is no undo over MCP, and the incoming links sit in documents other authors own; an agent can restore or report them only if it knows them (D-E14).</attr>
+  <description>When the delete_object tool deletes an object, the MCP server should return each link that the call removed, with the link's source object and link type.</description>
+</object>

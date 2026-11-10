@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: otherwise it is unclear whether MELLON-EDIT-SRS-27 applies and the document gets no attribute at all, not even `type` (review Q41). The docs don't say which 0.3.0 does.</attr>
+  <description>When a create_document call gives an empty list of attribute definitions, Mellon shall create the document as when the call gives no attribute definitions.</description>
+</object>

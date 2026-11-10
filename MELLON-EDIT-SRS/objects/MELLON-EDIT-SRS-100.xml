@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-100">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a rule with no rule directive checks nothing. MELLON-EDIT-SRS-101 says what was removed (review Q6, Q57).</attr>
+  <description>When deleting an attribute leaves a rule with no rule directive, Mellon shall remove the rule.</description>
+</object>

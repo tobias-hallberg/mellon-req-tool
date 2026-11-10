@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-251">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a figure edit is a change to the object, which is committed and turns links to the object suspect (MELLON-TRACE-SRS-57).</attr>
+  <description>When draw.io desktop saves a figure and the user returns to the Document Editor, the Document Editor shall mark the figure's object as having an uncommitted change.</description>
+</object>

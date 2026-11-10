@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-309">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "verified by a test case". Links from other documents count, so the question works across documents.</attr>
+  <description>Mellon shall meet a has-incoming filter condition with present for an object that a link from the filter condition's document targets, or from any document when the filter condition names none.</description>
+</object>

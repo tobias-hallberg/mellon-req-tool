@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-257">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a figure that looks different in Mellon than in draw.io can't be reviewed in Mellon. Fixed in 0.3.0, when colours drew black and labels were cut. The light theme matches the white background of MELLON-EDIT-SRS-256 (review Q12).</attr>
+  <description>The Document Editor shall draw each label of a draw.io figure in full, and each colour as draw.io desktop draws the colour in draw.io's light theme.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-280">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a filter matches each object under `all` and none under `any`, and neither reads as intended (review Q42).</attr>
+  <description>If a filter has no filter condition, Mellon shall refuse to save the filter.</description>
+</object>

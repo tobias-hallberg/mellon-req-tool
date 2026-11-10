@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-354">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a commit made in a git client is a checkpoint as much as one made in Mellon. Built as written; MELLON-EDIT-SRS-355 would replace it. Merged with the GUI author's requirement.</attr>
+  <description>When the latest commit changes and the document has no uncommitted change, the Document Editor shall clear the undo history.</description>
+</object>

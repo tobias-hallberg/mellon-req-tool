@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E7. The MCP server has no undo, and the tool's cascade is silent; with the removed values an agent can report or restore them. Made shall on 2026-11-11 (failure Q13).</attr>
+  <description>When the delete_attribute tool removes values, the MCP server shall return the object ID and removed value of each object that had a value.</description>
+</object>

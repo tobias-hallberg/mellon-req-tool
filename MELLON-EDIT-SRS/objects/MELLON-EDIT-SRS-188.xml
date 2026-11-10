@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-188">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say where a moved object goes among its new siblings when the call names none.</attr>
+  <description>When a move_object call gives a parent object and no position, the MCP server shall place the object last among the parent object's sub-objects.</description>
+</object>

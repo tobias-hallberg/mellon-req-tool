@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: as for MELLON-EDIT-SRS-132. What fits is MELLON-CHECK-SRS-19's.</attr>
+  <description>When the user edits a real attribute, the Document Editor shall accept only an empty value or a value that validation counts as fitting the real kind.</description>
+</object>

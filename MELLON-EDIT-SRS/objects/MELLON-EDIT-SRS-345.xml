@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-345">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: undo brings back exactly what the edit changed, so undoing a delete also restores the links the delete removed in other documents. Except the next object number: MELLON-EDIT-SRS-346. Merged with the GUI author's requirement.</attr>
+  <description>When the user undoes an undo step, Mellon shall put each file that the step changed, in whichever document, back to the file's content before the step.</description>
+</object>

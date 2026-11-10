@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-346">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E2. Undo puts the manifest back whole (MELLON-EDIT-SRS-345), next object number included, so undoing New object lets the next create give the undone object's ID again, against MELLON-EDIT-SRS-1 and MELLON-EDIT-SRS-2. Checked in the code by the lead on 2026-11-11; a defect to fix (D-E1, review Q17).</attr>
+  <description>When the user undoes or redoes an undo step, Mellon shall leave the document's next object number no lower than the number before the undo or redo.</description>
+</object>

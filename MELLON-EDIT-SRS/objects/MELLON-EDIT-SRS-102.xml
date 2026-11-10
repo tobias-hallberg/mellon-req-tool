@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a view naming an attribute that doesn't exist is read without that attribute (MELLON-STORE-SRS-138) but stays a dangling reference in a committed file.</attr>
+  <description>When Mellon deletes an attribute that a view of the document lists, Mellon shall remove the attribute from the view.</description>
+</object>

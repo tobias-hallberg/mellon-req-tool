@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-197">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent must tell a leaf from a section whose rows were left out, and knows which section to read next. Built after 0.3.0.</attr>
+  <description>When the outline tool leaves out an object's sub-objects, the MCP server shall return with the object how many objects below the object were left out.</description>
+</object>

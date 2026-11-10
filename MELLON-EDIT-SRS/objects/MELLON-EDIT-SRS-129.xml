@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E5. An agent, an undo or a reload can remove the object while text is typed; writing anyway would bring the object back, and dropping the text loses it (D-E4).</attr>
+  <description>If the object or table cell that a pending edit was typed in no longer exists when the edit is saved, the Document Editor shall keep the text and tell the user.</description>
+</object>

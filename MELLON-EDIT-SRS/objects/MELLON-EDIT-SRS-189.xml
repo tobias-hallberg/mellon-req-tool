@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-189">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent restructures a whole document in one call instead of many moves.</attr>
+  <description>The MCP server shall have a reorder_outline tool that replaces a document's outline with a given outline.</description>
+</object>

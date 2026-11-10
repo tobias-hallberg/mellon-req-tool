@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-156">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a bulk change that silently skips a mistyped object ID would leave that requirement unapproved unnoticed (CF-E50).</attr>
+  <description>If an object listed in a bulk_set_attribute call doesn't exist, the MCP server shall refuse the call before changing any object.</description>
+</object>

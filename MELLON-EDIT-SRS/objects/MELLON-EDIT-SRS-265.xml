@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-265">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an object ID match is the likeliest target of a search. The score decides which hits fit under the maximum (MELLON-EDIT-SRS-266).</attr>
+  <description>The search_objects tool shall score a hit 5 for an object ID match, 2 for each matching attribute value and 1 for a description match.</description>
+</object>

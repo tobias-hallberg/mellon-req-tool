@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: choosing the empty entry on a not-set attribute saves at once (MELLON-EDIT-SRS-135) and writes an empty attr element, which Compare shows as a change and which can turn links to the object suspect after a commit (review Q8).</attr>
+  <description>When an edit sets an attribute that is not set on the object to an empty value, Mellon shall leave the object file unchanged.</description>
+</object>

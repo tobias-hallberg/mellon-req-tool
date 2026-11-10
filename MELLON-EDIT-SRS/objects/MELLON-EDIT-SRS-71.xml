@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E11. Each object file that gets the value is rewritten, so each link to those objects goes suspect at the next commit; the same reason as MELLON-EDIT-SRS-85. Answered on 2026-11-11 (failure Q10, D-E8).</attr>
+  <description>When the user defines an attribute with a default value, the Properties dialog should first show how many objects get the value and ask the user to confirm.</description>
+</object>

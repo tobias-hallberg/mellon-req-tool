@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-19">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent sets up a document in one call.</attr>
+  <description>The MCP server shall have a create_document tool that creates a document from a document ID and, optionally, a title, parent documents and attribute definitions.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-269">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a value stated only in a table cell can't be found (CF-E35). Split per surface (review Q59); the filter box is MELLON-EDIT-SRS-273.</attr>
+  <description>The search_objects tool should search the text of table cells as well as descriptions.</description>
+</object>

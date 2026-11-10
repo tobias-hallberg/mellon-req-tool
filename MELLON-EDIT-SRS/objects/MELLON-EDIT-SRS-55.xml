@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent decides which documents to read further without receiving each document's outline (handed over to EDIT). A document with a load error is returned as MELLON-STORE-SRS-41 says.</attr>
+  <description>When a list_documents or show_document call gives no include, the MCP server shall return for each document only the document ID, folder, object count, link count and current issue.</description>
+</object>

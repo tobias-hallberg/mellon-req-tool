@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-315">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a filtered grid must not be mistaken for the whole document.</attr>
+  <description>While a filter is active, the grid shall show the active filter's name with controls that edit and clear the filter.</description>
+</object>

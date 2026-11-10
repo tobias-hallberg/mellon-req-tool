@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: MELLON-CHECK-SRS-17 to -21 say what fits each kind. The GUI's editors can't produce a misfit, but set_attribute, update_object and bulk_set_attribute take any text. Test it with an oracle written apart from the validator (failure analysis, common causes; review Q28).</attr>
+  <description>If an edit sets an integer, real, boolean or date attribute to a value that validation reports as not fitting the attribute's kind, Mellon shall refuse the edit.</description>
+</object>

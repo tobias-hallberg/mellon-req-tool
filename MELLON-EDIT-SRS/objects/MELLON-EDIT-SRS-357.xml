@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-357">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E26. A refusal clears the history (MELLON-EDIT-SRS-358), so the user must know which file to look at and where an earlier copy is. Answered on 2026-11-11 (failure Q11).</attr>
+  <description>When the Document Editor refuses an undo or redo, the Document Editor shall name the file that changed and say that the file's committed copy is in git.</description>
+</object>

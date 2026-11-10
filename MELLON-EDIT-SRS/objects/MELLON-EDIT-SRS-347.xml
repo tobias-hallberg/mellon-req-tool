@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-347">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: inside a text field, the user expects undo to act on the typing. Merged with the GUI author's requirement; the shortcuts themselves are the GUI area's (review Q4).</attr>
+  <description>While a text field has focus, the Document Editor shall apply the undo and redo shortcuts to the field's own text.</description>
+</object>

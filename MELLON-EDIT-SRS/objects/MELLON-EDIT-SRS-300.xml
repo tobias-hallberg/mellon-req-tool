@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-300">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "between 1 and 5" includes 1 and 5 in plain speech.</attr>
+  <description>When a filter condition uses between, Mellon shall match a value from the lower bound to the upper bound, both bounds included.</description>
+</object>

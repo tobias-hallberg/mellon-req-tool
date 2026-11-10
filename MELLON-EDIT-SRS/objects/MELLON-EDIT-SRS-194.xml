@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-194">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the whole outline of a large document is about 1 MB, too much for an agent, so the agent reads one section at a time. Built after 0.3.0.</attr>
+  <description>When an outline call gives a root object, the MCP server shall list only the objects below the root object.</description>
+</object>

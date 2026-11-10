@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: each heading would stop being a heading, so coverage counts it as needing a test and the structure is lost; the MCP server neither asks nor undoes (review Q7).</attr>
+  <description>If an edit deletes the `type` attribute or removes the Heading option of the `type` attribute, Mellon shall refuse the edit.</description>
+</object>

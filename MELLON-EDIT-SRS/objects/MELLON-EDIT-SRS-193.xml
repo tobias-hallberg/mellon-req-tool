@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-193">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent reads a document's structure without reading each object. The tool returns the level as depth.</attr>
+  <description>The MCP server's outline tool shall list a document's objects in outline order, each object before the object's sub-objects, with each object's level in the outline, 0 at the top level.</description>
+</object>

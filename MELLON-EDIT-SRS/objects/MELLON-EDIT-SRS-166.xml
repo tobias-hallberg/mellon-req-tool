@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-166">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs say the second confirmation offers to remove the links, but not what declining does. Deleting the object and keeping the links would leave them broken.</attr>
+  <description>If the user declines to confirm the removal of the links to an object, the Document Editor shall leave the object and the links unchanged.</description>
+</object>

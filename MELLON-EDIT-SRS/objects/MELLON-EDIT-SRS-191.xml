@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-191">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E23. A full outline from an older read passes MELLON-EDIT-SRS-190 and undoes a move made since. The parameter is optional so that existing agents keep working. Answered yes on 2026-11-11 (failure Q5, D-E17).</attr>
+  <description>When a reorder_outline call gives the outline the call was based on and the document's outline differs from that outline, the MCP server shall refuse the call.</description>
+</object>

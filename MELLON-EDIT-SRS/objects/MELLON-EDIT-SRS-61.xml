@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: attribute names appear in object files, rules, views and filters. Built as written; MELLON-EDIT-SRS-62 would replace it.</attr>
+  <description>If a new attribute name holds a character other than A–Z, a–z, 0–9, hyphen and underscore, Mellon shall refuse to define the attribute.</description>
+</object>

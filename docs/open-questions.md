@@ -235,3 +235,40 @@ Raised by the requirements view of the Compare section and answered the same day
   - -105: does a cancelled or timed-out write finish or roll back? Recommendation: finish it and log it.
   - -99: an `ack_suspects` dry run on the read-only server. The MCP author recommends refusing it; `MELLON-TRACE-SRS-143` (Q11) recommends allowing it. Recommendation: allow it, since a dry run changes nothing and shows the reviewer what an ack would record.
 - **Answer:** open
+
+## Q14: The EDIT specification's questions (2026-11-11)
+
+- **Raised by:** the EDIT author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-EDIT-SRS`, by the IDs below
+- **How they were handled:** as for Q10 to Q13. Where a Proposed requirement would replace a built one, both are in the document and each rationale says which replaces which.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - Undo and redo never lower the next object number (-346). Undo puts the manifest back whole today, so undoing New object gives the undone object's ID again: a defect against -1 and -2, so -346 is Accepted and is being fixed.
+  - A new object number is also above each number of the document that a link in the repository names, which covers Discard, a git reset and 0.3.0 clients. That an older client can still drop the number is accepted, with an upgrade note in the changelog.
+  - A parent-document loop is refused. Move up, Move down, Indent and Outdent are disabled while rows are hidden. `reorder_outline` takes an optional outline it was based on and refuses a stale one.
+  - `set_figure` refuses a file outside the repository; the GUI file chooser is unaffected. A file that isn't a regular file, and an SVG that declares an entity or loads another file or resource, are refused.
+  - A filter condition on an undefined attribute, or an enumeration value that isn't an option, is reported instead of applied.
+  - A default value goes only onto objects with no value for the attribute and whose rules allow it; the Properties dialog shows how many objects get it first (should).
+  - A refused undo step names the file that changed and says git holds the committed copy. The undo history is cleared whenever the latest commit changes.
+  - Values that `delete_attribute` and `remove_attr_option` remove are returned (shall). Showing, hiding and moving a column all save into the active view.
+  - Pending edits land on the object, attribute or cell they were typed in, and a pending edit whose object is gone is kept and reported (EDIT, not GUI).
+  - Deleting the `type` attribute or its Heading option is refused. When an edit hides the selected row, the next shown row is selected.
+  - Tool annotations marking read-only and destructive tools are handed to `MELLON-MCP-SRS`.
+- **Checked in the code that night:**
+  - Every operation a Document Editor makes on its document's files is one undo step.
+  - There is no drag-and-drop move or multi-select delete.
+  - A new object under a parent becomes its last child.
+  - `new_object` refuses bad links before writing any file.
+- **Still open, each with a recommendation:**
+  - -13, -14, -15: editing time limits at 1,000 objects. Recommendation: measure first, then about twice the result.
+  - -144: the most copies one `copy_object` call may make. Recommendation: 100 unless a team needs more.
+  - -119: should a default value also apply to objects created later, as in DOORS? Recommendation: no; the manifest keeps no default.
+  - -25: should the default schema's `type` offer Requirement? Recommendation: yes.
+  - -59, -97, -92: does the Properties dialog write each attribute and parent change at once, or on Apply? Recommendation: at once, each as its own operation; Apply covers metadata only, as built.
+  - -226: may a header row follow a body row? Recommendation: yes (as Q12 recommends).
+  - -249, -248: draw.io failing to start, or saving a file that isn't well-formed SVG. Recommendation: tell the user in both cases.
+  - -271: does the filter box keep each found object's ancestor objects? Recommendation: yes, like a filter.
+  - -305: do eq and ne on text ignore letter case? Recommendation: no.
+  - -150: should `copy_object` copy links by default? Recommendation: keep it, as built.
+  - -349: a size limit on the undo history? Recommendation: not yet; measure memory first.
+  - Implemented requirements the documentation only implies, and Proposed ones that may already be built, are listed in the author's notes for the test mapping to check.
+- **Answer:** open

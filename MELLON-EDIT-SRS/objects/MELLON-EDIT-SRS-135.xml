@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-135">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a choice is complete when made, unlike typed text, which the GUI saves when the field loses focus. Choosing the empty entry on a not-set attribute is MELLON-EDIT-SRS-6.</attr>
+  <description>When the user chooses a value from a list of options, the Document Editor shall save the value at once.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a heading structures the outline and needs no rationale. The rules file's format and checking are STORE's and CHECK's.</attr>
+  <description>When Mellon creates a document without given attribute definitions, Mellon shall write a rules file that forbids `rationale` on objects whose type is Heading.</description>
+</object>

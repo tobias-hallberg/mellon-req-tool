@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E9. MELLON-EDIT-SRS-104 and MELLON-EDIT-SRS-85 show only object counts, and MELLON-EDIT-SRS-103 and MELLON-EDIT-SRS-88 report after the change, when it can't be declined (D-E6; review Q6).</attr>
+  <description>When the user deletes an attribute or removes an option, the Properties dialog shall first name each rule, filter and view of the document that names the attribute or option.</description>
+</object>

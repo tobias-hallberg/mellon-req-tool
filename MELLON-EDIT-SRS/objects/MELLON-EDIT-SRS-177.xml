@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-177">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: such a move would cut the object and its section off from the outline. Placing an object before or after a descendant puts it under the descendant's parent, so the two cases are one check (review Q2).</attr>
+  <description>If a move asks to place an object under the object itself, or under, before or after one of the object's descendant objects, Mellon shall refuse the move.</description>
+</object>

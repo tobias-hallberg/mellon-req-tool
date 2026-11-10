@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-43">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: links may go only to the document itself or a declared parent (MELLON-CHECK-SRS-33), and coverage and the PDF traceability section are worked out against parents.</attr>
+  <description>The Properties dialog shall let the user add a parent document.</description>
+</object>

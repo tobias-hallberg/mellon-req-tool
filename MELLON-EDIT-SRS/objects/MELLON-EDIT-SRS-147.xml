@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: copies usually belong beside the original, and sometimes in another section.</attr>
+  <description>When Mellon copies an object, Mellon shall place each copy as a sibling of the object, or under the given parent object when one is given.</description>
+</object>

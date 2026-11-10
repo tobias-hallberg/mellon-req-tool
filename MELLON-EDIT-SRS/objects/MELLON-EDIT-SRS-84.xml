@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an enumeration must hold at least one option (MELLON-STORE-SRS-76, MELLON-CHECK-SRS-44), so removing the last one leaves a manifest that isn't valid. The docs don't say whether this is refused.</attr>
+  <description>If an option is the enumeration attribute's only option, Mellon shall refuse to remove the option.</description>
+</object>

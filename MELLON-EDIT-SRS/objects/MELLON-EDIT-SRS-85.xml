@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-85">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: removing an option clears a value on each such object (MELLON-EDIT-SRS-83). Undo brings the values back only until the next commit or reload, so the user must see the size of the change first. Rules, filters and views are named by MELLON-EDIT-SRS-105.</attr>
+  <description>When the user removes an option that one or more objects have as a value, the Properties dialog shall first show how many objects have the option and ask the user to confirm.</description>
+</object>

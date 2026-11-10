@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: clicking into a cell and away must not change a document; before 0.2.0 it wrote an empty value. An edit that gives a value it already has leaves the file's bytes unchanged under MELLON-STORE-SRS-208.</attr>
+  <description>When the user leaves an editor in the Document Editor without changing the value, the Document Editor shall write no file.</description>
+</object>

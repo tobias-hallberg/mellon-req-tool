@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-235">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E31. An external image would put a local file into a distributed PDF or fetch from the network. MELLON-STORE-SRS-231 stops reading such references and MELLON-STORE-SRS-233 reports an entity; this stops the file coming in (D-E22).</attr>
+  <description>If an SVG file to attach as a figure declares an entity or refers to another file or a network resource to load when drawn, Mellon shall refuse to attach the file.</description>
+</object>

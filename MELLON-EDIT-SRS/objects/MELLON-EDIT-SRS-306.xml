@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-306">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the filter loads (MELLON-STORE-SRS-149) and the docs say only that the misfit is caught when the filter is applied, not what the user sees. Silently ignoring the filter condition would show the wrong rows (CF-E39).</attr>
+  <description>If a filter's filter condition uses an operator that doesn't fit the attribute's kind, the Document Editor shall report the filter condition instead of applying the filter.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-78">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a repeated option adds nothing and shows twice (MELLON-CHECK-SRS-47). The MCP server reports it as AlreadyExists.</attr>
+  <description>If the enumeration attribute already has the given option, Mellon shall refuse to add the option.</description>
+</object>

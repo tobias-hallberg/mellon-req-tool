@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say where the copies go under a given parent; last matches creating an object under a parent (MELLON-EDIT-SRS-118) (review Q21).</attr>
+  <description>When a copy_object call gives a parent object, the MCP server shall place the copies last among the parent object's sub-objects.</description>
+</object>

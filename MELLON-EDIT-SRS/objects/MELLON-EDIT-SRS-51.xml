@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-51">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the links then fail validation as not allowed (MELLON-CHECK-SRS-33), and the user decides whether to remove them. Removing them silently would lose traceability.</attr>
+  <description>When Mellon removes a parent document, Mellon shall leave the links to the parent document's objects in place.</description>
+</object>

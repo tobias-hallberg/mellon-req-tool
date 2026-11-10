@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-271">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the quickest way to find a requirement in an open document.</attr>
+  <description>The grid shall have a filter box that hides each object whose object ID and description don't contain the typed text.</description>
+</object>

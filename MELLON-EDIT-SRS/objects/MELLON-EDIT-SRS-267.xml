@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-267">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E34. MELLON-EDIT-SRS-266 cuts at 50 by default, and an agent would take the hits it got for all of them (D-E24, review Q13).</attr>
+  <description>When the search_objects tool finds more hits than the tool returns, the MCP server shall return with the hits the number of hits found.</description>
+</object>

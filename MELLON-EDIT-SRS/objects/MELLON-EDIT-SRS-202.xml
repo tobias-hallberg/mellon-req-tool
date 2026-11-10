@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-202">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a table can hold much work, and Undo brings it back only until the next commit or reload. Deleting an object always asks (MELLON-EDIT-SRS-160). Kept as should (failure part 4); the MCP side is the tool annotations handed to MCP.</attr>
+  <description>When the user removes a table, the Document Editor should ask the user to confirm before removing the table.</description>
+</object>

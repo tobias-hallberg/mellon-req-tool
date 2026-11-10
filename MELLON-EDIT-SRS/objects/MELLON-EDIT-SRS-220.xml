@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-220">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say what deleting a row or column does to a merged cell across it, and the result must still satisfy MELLON-EDIT-SRS-205. The text stays even when the top-left position goes (review Q43).</attr>
+  <description>When a deleted row or column holds part of a merged cell, Mellon shall reduce the merged cell's span and keep the merged cell's text.</description>
+</object>

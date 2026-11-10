@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-355">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E47. After a partial commit in a git client the history is kept, and undo then reverts a committed edit in the working copy, unnoticed until the next commit. Answered on 2026-11-11 (failure Q12, review Q3). Replaces MELLON-EDIT-SRS-354.</attr>
+  <description>When the latest commit changes, the Document Editor shall clear the undo history.</description>
+</object>

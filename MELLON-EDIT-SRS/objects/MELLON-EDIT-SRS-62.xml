@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: STORE now limits attribute names so that a rules file can name them, which leaves out an empty name, a leading digit or hyphen, and the reserved rule names (handed over by STORE; review Q29). Replaces MELLON-EDIT-SRS-61.</attr>
+  <description>If a new attribute name breaks MELLON-STORE-SRS-71 or MELLON-STORE-SRS-72, Mellon shall refuse to define the attribute.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-52">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: each such link becomes a validation error (MELLON-EDIT-SRS-51), which the user otherwise finds only on validating.</attr>
+  <description>When the user removes a parent document that objects of the document link to, the Properties dialog should first show how many links go to the parent document and ask the user to confirm.</description>
+</object>

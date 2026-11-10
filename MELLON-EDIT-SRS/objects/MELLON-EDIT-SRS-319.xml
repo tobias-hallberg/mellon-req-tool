@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-319">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the grid always agrees with the filter, so a reviewer never sees a row the filter excludes. Kept as built on 2026-11-11 (review Q19); MELLON-EDIT-SRS-320 says where the selection goes. The test case covers pending text in another row (MELLON-EDIT-SRS-128).</attr>
+  <description>When an edit changes whether an object matches the active filter, the grid shall show or hide the object's row at once.</description>
+</object>

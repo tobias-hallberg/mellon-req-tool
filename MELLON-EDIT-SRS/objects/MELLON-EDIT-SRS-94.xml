@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs say how a label is given when an attribute is defined, but not how it is changed later. No MCP tool changes a label.</attr>
+  <description>The Properties dialog should let the user change an attribute's label.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-242">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an author draws a diagram for a requirement without managing files.</attr>
+  <description>While the selected object has no figure, the Figure menu shall have a New draw.io figure action that attaches a blank draw.io figure and opens the figure in draw.io desktop.</description>
+</object>

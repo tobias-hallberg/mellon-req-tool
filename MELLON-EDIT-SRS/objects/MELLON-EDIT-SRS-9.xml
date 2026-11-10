@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a value for an undefined attribute is a validation error (MELLON-CHECK-SRS-12) the author didn't mean to make, and the GUI shows no column for it.</attr>
+  <description>If an edit names an attribute that the document doesn't define, Mellon shall refuse the edit.</description>
+</object>

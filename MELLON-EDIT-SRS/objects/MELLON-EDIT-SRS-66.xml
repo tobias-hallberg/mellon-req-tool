@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-66">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: options on another kind would be ignored, which misleads whoever reads the schema (MELLON-CHECK-SRS-45).</attr>
+  <description>If a new attribute that isn't an enumeration has options, Mellon shall refuse to define the attribute.</description>
+</object>

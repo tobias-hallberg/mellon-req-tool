@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-320">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the selection would otherwise stay on a hidden row or vanish, and DOORS keeps the row until the filter is applied again. Answered on 2026-11-11 (review Q19).</attr>
+  <description>When an edit hides the selected object's row, the grid shall select the next shown row in outline order.</description>
+</object>

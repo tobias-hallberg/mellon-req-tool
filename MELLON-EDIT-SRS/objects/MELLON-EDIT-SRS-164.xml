@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-164">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: removing links in other documents changes traceability that other authors own, so the user sees each link first.</attr>
+  <description>When the user deletes an object that other objects link to, the Document Editor shall list the links to the object and ask the user to confirm a second time.</description>
+</object>

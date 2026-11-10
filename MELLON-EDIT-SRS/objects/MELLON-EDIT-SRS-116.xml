@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-116">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: with nothing to select, New sibling and New child have no place to start from.</attr>
+  <description>While a document has no objects, the grid should offer an action that creates the document's first object.</description>
+</object>

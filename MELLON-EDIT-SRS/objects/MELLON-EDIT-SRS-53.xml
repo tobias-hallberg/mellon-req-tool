@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the same reason as MELLON-EDIT-SRS-52, for an agent, which can't be asked first.</attr>
+  <description>When the remove_parent_doc tool removes a parent document that objects of the document link to, the MCP server should return how many links go to the removed parent document.</description>
+</object>

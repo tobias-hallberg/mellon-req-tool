@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the tool description lists only the enumeration and text kinds and no label, while define_attribute takes six kinds and a label. An agent would otherwise need a second call for each other attribute.</attr>
+  <description>The MCP server's create_document tool shall accept each attribute definition with the fields and values that the define_attribute tool accepts.</description>
+</object>

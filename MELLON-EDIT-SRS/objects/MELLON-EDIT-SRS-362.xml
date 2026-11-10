@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-362">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say. Redoing a step on top of a later edit would mix two lines of change. Undo and Redo aren't edits, so a second Undo keeps the redo steps (review Q5).</attr>
+  <description>When the user makes an edit after undoing, the Document Editor shall discard the undone steps.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-155">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "approve these 30 requirements" is one call, not 30.</attr>
+  <description>The MCP server shall have a bulk_set_attribute tool that sets one attribute to one value on each listed object.</description>
+</object>

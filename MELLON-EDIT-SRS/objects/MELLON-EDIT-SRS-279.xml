@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-279">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the Filters menu would show two identical entries, and the slugs differ only by a number (MELLON-STORE-SRS-154) (review Q49).</attr>
+  <description>If a filter is saved under the name of another filter of the document, Mellon shall refuse to save the filter.</description>
+</object>

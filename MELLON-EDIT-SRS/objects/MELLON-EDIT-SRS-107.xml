@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent can't be asked to confirm, so the agent needs to see what a deletion removes before making it, as ack_suspects allows. The test case checks that no byte changes and that the list equals what the real call then removes (failure part 4).</attr>
+  <description>When the delete_attribute tool is called with dry_run true, the MCP server shall return each object that has a value for the attribute, and change no file.</description>
+</object>

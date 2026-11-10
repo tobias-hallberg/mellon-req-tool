@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: SCALING.md measured 0.2 s at 5,000 objects. Agents make many such calls in a row, so the time adds up. The repository is stated so that the time can be measured again (review Q37).</attr>
+  <description>On the reference machine, the MCP server shall answer a set_attribute call within TBD s of receiving the call, in a repository holding a 1,000-object reference document and the document's parent.</description>
+</object>

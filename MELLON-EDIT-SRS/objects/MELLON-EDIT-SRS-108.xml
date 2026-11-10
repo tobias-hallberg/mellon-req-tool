@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-108">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E9. A dry run listing only objects hides that a rule stops checking or a filter changes meaning (D-E29).</attr>
+  <description>When the delete_attribute or remove_attr_option tool is called with dry_run true, the MCP server shall also return each rule, filter and view that names the attribute or option.</description>
+</object>

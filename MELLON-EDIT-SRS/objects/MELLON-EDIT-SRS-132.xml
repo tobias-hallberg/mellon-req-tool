@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a misfit would be a validation error the user didn't mean to make. What fits is MELLON-CHECK-SRS-17 and -18's (review Q28).</attr>
+  <description>When the user edits an integer attribute, the Document Editor shall accept only an empty value or a value that validation counts as fitting the integer kind.</description>
+</object>

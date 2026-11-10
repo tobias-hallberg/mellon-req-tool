@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-262">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: "approved requirements that mention braking" is one call.</attr>
+  <description>When a search_objects call gives attribute values, the MCP server shall return only objects whose attributes equal the given values.</description>
+</object>

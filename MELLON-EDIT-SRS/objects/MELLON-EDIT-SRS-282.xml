@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-282">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an operator that doesn't fit, such as lt on an enumeration, has no meaning.</attr>
+  <description>The Advanced filter dialog shall offer for an attribute only the operators that fit the attribute's kind.</description>
+</object>

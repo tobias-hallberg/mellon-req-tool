@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-304">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the docs don't say. "status ne Approved" is usually asked to find what isn't approved yet, which includes objects with no status; not-contains follows the same reasoning (review Q32).</attr>
+  <description>When a filter condition uses ne or not-contains, Mellon shall match an object whose attribute has no value.</description>
+</object>

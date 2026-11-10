@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-27">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the caller chose the schema, so no default rule is assumed.</attr>
+  <description>When Mellon creates a document with given attribute definitions, Mellon shall define exactly the given attributes and write no rules file.</description>
+</object>

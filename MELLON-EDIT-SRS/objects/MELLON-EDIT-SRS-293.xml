@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-293">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the questions asked of free text (review Q14).</attr>
+  <description>When Mellon applies a filter, Mellon shall accept on a text attribute only the operators contains, not-contains, starts-with, eq, ne, is-empty and is-not-empty.</description>
+</object>

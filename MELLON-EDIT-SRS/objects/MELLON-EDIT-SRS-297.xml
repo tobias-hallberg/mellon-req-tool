@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-297">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an attribute can be removed from the schema after a filter names it, and the filter still loads. With is-empty and ne this matches each object (CF-E36). Built as written; MELLON-EDIT-SRS-298 would replace it.</attr>
+  <description>When a filter condition names an attribute that the document doesn't define, Mellon shall treat the attribute as a text attribute.</description>
+</object>

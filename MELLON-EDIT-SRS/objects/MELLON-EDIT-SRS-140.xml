@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-140">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent revises a requirement in one call instead of five to ten. How the call removes and adds links is TRACE's (MELLON-TRACE-SRS-29, -30).</attr>
+  <description>The MCP server shall have an update_object tool that changes an object's description, attribute values and outgoing links in one call.</description>
+</object>

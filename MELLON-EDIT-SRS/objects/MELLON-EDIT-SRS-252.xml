@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-252">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E25. draw.io keeps the file open and writes in place, whatever Mellon or an agent did meanwhile (D-E18).</attr>
+  <description>When draw.io desktop saves a figure that Mellon replaced, cleared or deleted after opening the figure in draw.io, the Document Editor should tell the user that the save overwrote that change.</description>
+</object>

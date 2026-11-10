@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-101">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E8. MELLON-EDIT-SRS-99 and MELLON-EDIT-SRS-100 remove them silently, so a check the gate ran stops without a message (D-E5).</attr>
+  <description>When Mellon removes a rule or a rule directive because an attribute was deleted, Mellon shall report each rule and rule directive removed.</description>
+</object>

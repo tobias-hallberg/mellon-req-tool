@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-264">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: compared as text, X-10 comes before X-9, which reads wrongly and puts hits out of document order (review Q30). Replaces the tie order of MELLON-EDIT-SRS-263.</attr>
+  <description>The search_objects tool shall order hits of equal score by document ID, then by object number, smallest first.</description>
+</object>

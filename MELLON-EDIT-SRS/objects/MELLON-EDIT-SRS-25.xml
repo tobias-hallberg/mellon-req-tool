@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a starting schema for the user to extend. Requirement isn't among the options, so a requirements document adds that option first; whether to add it is an open question (review Q40).</attr>
+  <description>When Mellon creates a document without given attribute definitions, Mellon shall define exactly two attributes: `type`, a required enumeration with the options Heading, Information and Note, and `rationale`, a text attribute.</description>
+</object>

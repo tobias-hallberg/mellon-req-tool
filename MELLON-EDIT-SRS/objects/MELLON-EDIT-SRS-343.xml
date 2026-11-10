@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-343">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an undo made by mistake is reversed. Merged with the GUI author's redo requirement.</attr>
+  <description>The Document Editor shall have a Redo action that redoes undone steps one at a time, the last undone first.</description>
+</object>

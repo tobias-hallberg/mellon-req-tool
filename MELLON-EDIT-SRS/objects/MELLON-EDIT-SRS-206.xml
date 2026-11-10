@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-206">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: these are the alignments the GUI and the PDF can show (MELLON-STORE-SRS-101).</attr>
+  <description>If a table has a column alignment other than left, center and right, Mellon shall refuse to write the table.</description>
+</object>

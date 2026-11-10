@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-339">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a DOORS view can sort, but a Mellon view holds only columns (definitions: View) and the grid follows the outline.</attr>
+  <description>A view could save an order in which the grid sorts the rows by an attribute.</description>
+</object>

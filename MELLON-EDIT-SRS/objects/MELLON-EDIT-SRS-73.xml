@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-73">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a label like Requirement Type reads better than a name like req-type. The definitions say what the label is when the manifest gives none.</attr>
+  <description>The Document Editor shall name each attribute by the attribute's label.</description>
+</object>

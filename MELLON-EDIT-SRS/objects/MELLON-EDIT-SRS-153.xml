@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-153">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: only the MCP server can copy an object today, while a DOORS user copies objects in the editor.</attr>
+  <description>The Document Editor could copy the selected object.</description>
+</object>

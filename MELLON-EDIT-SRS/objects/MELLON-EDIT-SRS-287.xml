@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-287">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: keeping them is the DOORS default. The default of the file format is MELLON-STORE-SRS-143's.</attr>
+  <description>The Advanced filter dialog shall start a new filter with ancestor objects kept.</description>
+</object>

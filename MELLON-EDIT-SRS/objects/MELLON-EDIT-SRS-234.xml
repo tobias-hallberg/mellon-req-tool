@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-234">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E30. A FIFO or device file blocks the read, which stops the MCP server or the GUI (D-E21).</attr>
+  <description>If a file to attach as a figure isn't a regular file, Mellon shall refuse to attach the file without reading from the file.</description>
+</object>

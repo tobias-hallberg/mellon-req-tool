@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: closing the dialog used to discard such edits without asking. Fixed in 0.2.0.</attr>
+  <description>When the user closes the Properties dialog with metadata edits not yet applied, the Properties dialog shall ask before discarding the edits.</description>
+</object>

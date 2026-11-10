@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent can retry a refused call as a whole. Links are checked the same way (MELLON-TRACE-SRS-24). The tools' partial block covers only a file write that fails midway, which MELLON-STORE-SRS-175 settles (checked by the lead on 2026-11-11, review Q15).</attr>
+  <description>If a new_object, update_object or bulk_set_attribute call holds an attribute name or value that Mellon refuses, the MCP server shall refuse the whole call before writing any file.</description>
+</object>

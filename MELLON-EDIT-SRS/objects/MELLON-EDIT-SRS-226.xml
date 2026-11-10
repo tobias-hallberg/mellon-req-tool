@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-226">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: header rows repeat on each page the table spans in the PDF. Whether a header row may follow a body row is STORE's open question (Q12, MELLON-STORE-SRS-100).</attr>
+  <description>The Table menu shall have an action that makes the selected cell's row a header row, or a body row again.</description>
+</object>

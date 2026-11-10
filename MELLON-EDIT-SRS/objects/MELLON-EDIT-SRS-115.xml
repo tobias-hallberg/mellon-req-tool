@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checked in the code by the lead on 2026-11-11 (review Q25). DOORS makes a new child the first one; whether to follow DOORS is a question for later, not a change now.</attr>
+  <description>When the New child action creates an object, the Document Editor shall place the new object last among the selected object's sub-objects.</description>
+</object>

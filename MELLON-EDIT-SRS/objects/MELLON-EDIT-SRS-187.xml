@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-187">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent restructures a document one object at a time. The parameters are parent_id, to_top, before and after (handed over to EDIT as undocumented).</attr>
+  <description>The MCP server shall have a move_object tool that moves an object under a given parent object, to the top level, or directly before or after a given object.</description>
+</object>

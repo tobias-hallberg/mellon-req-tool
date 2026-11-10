@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the document ID names a folder and starts each object ID. Built as written; MELLON-EDIT-SRS-22 would replace it.</attr>
+  <description>If a new document ID holds a character other than A–Z, a–z, 0–9, hyphen and underscore, Mellon shall refuse to create the document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-286">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a matched requirement shown without its headings loses its context, as in DOORS. A filter file that doesn't say keeps them (MELLON-STORE-SRS-143).</attr>
+  <description>When a filter keeps ancestor objects, Mellon shall keep each ancestor object of each object the filter matches.</description>
+</object>

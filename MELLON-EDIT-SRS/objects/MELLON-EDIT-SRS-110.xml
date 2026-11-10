@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a kind change must not lose or invalidate values without the user seeing which ones. Applies only if MELLON-EDIT-SRS-109 is built.</attr>
+  <description>If an object's value doesn't fit an attribute's new kind, Mellon shall refuse to change the kind and name each such object.</description>
+</object>

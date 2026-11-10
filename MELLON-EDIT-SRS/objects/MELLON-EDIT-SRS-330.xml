@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-330">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the Views menu would show an empty or a repeated entry (review Q49).</attr>
+  <description>If a view has no name, or the name of another view of the document, Mellon shall refuse to save the view.</description>
+</object>

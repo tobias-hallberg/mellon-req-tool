@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-151">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a copy of a requirement with a diagram usually needs the diagram to adapt.</attr>
+  <description>When a copy_object call sets copy_figure to true, the MCP server shall give each copy a copy of the object's figure.</description>
+</object>

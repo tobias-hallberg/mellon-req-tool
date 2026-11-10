@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-358">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the steps before the refused one rest on its files and can't be undone in order either. Kept as built on 2026-11-11 (failure Q11). Merged with the GUI author's requirement.</attr>
+  <description>When the Document Editor refuses an undo or redo, the Document Editor shall clear the undo history.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the MCP server has no undo; with the object IDs an agent can report or restore the values, as MELLON-EDIT-SRS-106 allows for attributes. The affected files are already returned (review, author's questions).</attr>
+  <description>When the remove_attr_option tool clears values, the MCP server shall return the object ID of each object whose value was cleared.</description>
+</object>

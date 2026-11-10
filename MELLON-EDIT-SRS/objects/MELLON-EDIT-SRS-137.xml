@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an author edits down a long document, and losing the place after each edit makes that impractical. Built after 0.3.0.</attr>
+  <description>When the user edits a description, attribute value or table, the grid shall keep the grid's scroll position and selection.</description>
+</object>

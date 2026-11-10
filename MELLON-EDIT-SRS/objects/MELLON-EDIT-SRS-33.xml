@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-33">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the document ID starts each object ID, so a rename changes each object ID and each link to the objects, while issued PDFs and history keep the old IDs. Deferred, as recommended (review Q58).</attr>
+  <description>Mellon could rename a document, changing each object ID of the document and each link to the document's objects.</description>
+</object>

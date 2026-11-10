@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-284">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: filter conditions usually narrow the set. A filter file without a combinator holds `all` (MELLON-STORE-SRS-142).</attr>
+  <description>When a filter's combinator is `all`, Mellon shall match an object that meets each of the filter's filter conditions.</description>
+</object>

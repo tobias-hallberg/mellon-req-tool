@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the manifest keeps no default value, so a new object starts with only what the request gives. Whether a default value should also apply to later objects is an open question, recommended no (review Q10).</attr>
+  <description>When Mellon creates an object, Mellon shall set on the new object exactly the attribute values that the request gives.</description>
+</object>

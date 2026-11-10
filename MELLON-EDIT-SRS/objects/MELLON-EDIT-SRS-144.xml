@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-144">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-E44. A typo or a steered agent can flood a document and fill the disk, and a count below 1 has no meaning. The limit is open (failure Q9, D-E28; review Q53).</attr>
+  <description>If a copy_object call asks for fewer than 1 or more than TBD copies, the MCP server shall refuse the call.</description>
+</object>

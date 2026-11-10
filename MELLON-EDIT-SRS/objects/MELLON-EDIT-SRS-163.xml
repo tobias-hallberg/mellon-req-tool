@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-163">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: links from a document that can't be read can't be checked or removed, so a delete could leave them broken.</attr>
+  <description>While a document in the repository has a load error, Mellon shall refuse to delete an object.</description>
+</object>
