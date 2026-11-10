@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-139">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the reviewer needs the link to review. The documents say only that each problem gets a line.</attr>
+  <description>mellon-check shall print in each suspect link's line the link's source object ID and target object ID.</description>
+</object>

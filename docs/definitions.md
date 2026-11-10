@@ -13,6 +13,9 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Metadata | A document's title, author and date. |
 | Parent document | A document that another document declares it derives from. Coverage and the PDF traceability section are worked out against parent documents. |
 | Load error | A document that Mellon can't read, reported with its file, line and reason. A document with a load error is still listed. |
+| On-disk format | The folders, files, elements and XML attributes that Mellon reads and writes in a repository. |
+| Partial clone | A clone that git was told to make without some of the history's files or folders, to fetch them when needed. |
+| Sparse checkout | A working copy that git was told to fill with only some of the latest commit's folders. |
 | Canonical form | A file as Canonical XML 1.1 writes it, with whitespace-only text between elements removed. Line endings, indentation, the order of XML attributes and the quote style don't show in it. |
 
 ## Objects
@@ -33,6 +36,7 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Kind | What values an attribute takes: enumeration, text, integer, real, boolean or date. |
 | Required attribute | An attribute that every object must have a value for. |
 | Set, not set | An attribute is set on an object when the object's file gives it a value, even an empty one, and not set when the file doesn't mention it. |
+| Blank | A value is blank when it is empty or holds only whitespace and characters with no width: the characters Unicode gives the White_Space property, and U+200B, U+200C, U+200D, U+2060 and U+FEFF. |
 | Table | Rows and cells kept on one object, with column alignment, header rows and merged cells. |
 | Figure | A picture kept with one object, as an SVG file. A draw.io figure also carries the diagram that draw.io edits. |
 | Field | One part of an object that a comparison looks at: an attribute value, the description, the table, the figure, or the outgoing links, each with its target and link type. |
@@ -81,8 +85,12 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 
 | Term | Meaning |
 |---|---|
-| Validation error | A problem in a document that loads: a missing required attribute, a value that doesn't fit its kind, a broken outline, or a rule that isn't met. Each kind of problem has a fixed code. |
-| Rule | A condition in a document's rules file: objects that match a set of attribute values must have, or must not have, certain attributes or links. |
+| Validation error | A problem that validation finds in a document that loads: in its manifest, rules file, outline, objects, figures or links. Each kind of problem has a fixed code. |
+| Check problem | A load error, a validation error or a suspect link: the three kinds of problem that `mellon-check` reports and fails on. A broken link is reported as a validation error. |
+| Rules file | The file in a document's folder that holds the document's rules. A document needn't have one. |
+| Rule | A rule condition and its rule directives, in a document's rules file. |
+| Rule condition | The part of a rule that says which objects the rule applies to: attribute values, and whether an object has outgoing links. A rule condition can name nothing. |
+| Rule directive | The part of a rule that says what an object it applies to must have: an attribute required, optional or forbidden, or an outgoing link to a named document required. |
 | View | A saved choice of which attribute columns the grid shows, and in what order. |
 | Filter | A saved set of conditions on attributes and links that decides which objects the grid shows. |
 
@@ -96,6 +104,8 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | History tab | The Document Editor tab that lists the commits that changed the selected object. |
 | Compare dialog | The GUI window that shows the changes between two versions of one document. |
 | Read-only mode | A Document Editor state in which no edit can be made. A window opens in it. |
+| `mellon-check` | The command-line program that checks a repository for check problems and reports the result by its exit status. |
+| Validate action | The Document Editor action that validates the open document and shows the result. |
 | MCP server | The program that offers Mellon's functions to an agent over the Model Context Protocol, on standard input and output. |
 | Read-only server | The MCP server started so that it refuses every tool that would change a file, commit or export. |
 | Agent | A program that uses the MCP server, such as an AI assistant. |

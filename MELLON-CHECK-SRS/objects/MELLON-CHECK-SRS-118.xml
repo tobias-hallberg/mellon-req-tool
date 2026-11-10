@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a sparse checkout leaves document folders out of the working copy, so the gate would pass without checking them; like a shallow clone, it is a job set up wrong (CF-C4). STORE may widen "complete clone" for each surface.</attr>
+  <description>If the working copy of the folder mellon-check is to check is a sparse checkout, mellon-check shall exit with status 2.</description>
+</object>

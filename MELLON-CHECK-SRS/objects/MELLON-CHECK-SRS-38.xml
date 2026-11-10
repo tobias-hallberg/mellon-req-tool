@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: coverage and the PDF traceability section are worked out against parent documents, so a misspelt, renamed or deleted parent gives an empty result that looks real (review Q8, Q26).</attr>
+  <description>If a document declares a parent document that the repository doesn't hold, Mellon shall report the validation error DOC_PARENT_MISSING, counting a document with a load error as held.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-27">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an outline entry without an object leaves a gap that nothing else shows.</attr>
+  <description>If a document's outline names an object ID that no object of the document has, Mellon shall report the validation error OUTLINE_MISSING_OBJECT.</description>
+</object>

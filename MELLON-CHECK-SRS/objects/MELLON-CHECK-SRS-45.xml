@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-45">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an option on a text or number attribute offers a choice the attribute doesn't have. A validation error, so the document still opens (review Q26).</attr>
+  <description>If a manifest gives an option to an attribute whose kind isn't enumeration, Mellon shall report the validation error SCHEMA_OPTIONS_NOT_ENUM.</description>
+</object>

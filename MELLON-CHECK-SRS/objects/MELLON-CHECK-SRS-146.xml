@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-146">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: CI passes a change only when its documents are clean, and only when there was something to check.</attr>
+  <description>When the repository holds at least one document and mellon-check finds no check problem, mellon-check shall exit with status 0.</description>
+</object>

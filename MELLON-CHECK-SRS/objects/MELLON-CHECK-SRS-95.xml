@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent would otherwise parse the message to find the object, which the codes exist to avoid (review Q25).</attr>
+  <description>The MCP server shall return the object ID that Mellon reports with a validation error as a field of the error.</description>
+</object>

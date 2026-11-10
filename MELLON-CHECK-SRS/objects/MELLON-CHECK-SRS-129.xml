@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an uncaught fault would otherwise exit 1, which reads as "documents have problems" and sends the person to search the documents (CF-C30, review Q27). A file that can't be read is a load error, not a fault.</attr>
+  <description>If a fault stops mellon-check before each document is checked, mellon-check shall exit with status 2, whatever check problems were found before the fault.</description>
+</object>

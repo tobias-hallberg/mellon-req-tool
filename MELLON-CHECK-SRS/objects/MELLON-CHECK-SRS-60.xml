@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a blank value means no value, as for ATTR_MISSING_REQUIRED, so a cleared rationale must not meet a required directive or break a forbidden one (review Q12).</attr>
+  <description>When Mellon checks a rule directive against an object, Mellon shall treat an attribute whose value is blank as not set.</description>
+</object>

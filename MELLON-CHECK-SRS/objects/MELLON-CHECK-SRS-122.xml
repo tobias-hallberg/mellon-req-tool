@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a mistyped option must not run a check other than the one meant, and status 2 marks the job as set up wrong (review Q40).</attr>
+  <description>If mellon-check's command line holds an option that mellon-check doesn't have, or an option without its value, mellon-check shall exit with status 2.</description>
+</object>

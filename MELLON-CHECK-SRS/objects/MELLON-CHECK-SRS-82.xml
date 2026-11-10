@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-82">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: validating changes no file, and windows open in read-only mode, so hiding the action there would hide it by default (review Q47, Q48, Q49). The documents don't say.</attr>
+  <description>The Validate action shall be enabled while the Document Editor is in read-only mode.</description>
+</object>

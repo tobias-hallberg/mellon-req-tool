@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-51">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document's rules add its own checks to its attribute definitions, and they hold only if validation checks them.</attr>
+  <description>When Mellon validates a document that has a rules file, Mellon shall check each rule of the rules file against each object of the document.</description>
+</object>

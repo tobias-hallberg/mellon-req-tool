@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-64">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rule can demand traceability, such as each functional requirement tracing to the system requirements. A link of any link type counts (review Q15).</attr>
+  <description>If a rule that applies to an object requires a link to a document, and the object has no outgoing link to that document, Mellon shall report the validation error RULE_LINK_REQUIRED_MISSING.</description>
+</object>

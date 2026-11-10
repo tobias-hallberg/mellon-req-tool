@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a CI job needs a bound, and mellon-check works out link states from scratch on each run. Measured on the reference machine, from scratch, before the value is set (review Q36, CF-C34).</attr>
+  <description>On the reference machine, mellon-check shall check a fresh clone of SCALING.md's benchmark repository at 1,000 objects per document in at most TBD s from start to exit.</description>
+</object>

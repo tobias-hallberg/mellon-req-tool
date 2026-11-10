@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-33">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document traces only to itself and to the documents it derives from. A hand edit or a removed parent can leave such a link, which gets LINK_NOT_ALLOWED alone, whether its target exists or not. Cite TRACE's requirement here once it has an ID (review Q14, Q31, Q54).</attr>
+  <description>If an outgoing link's target is in a document that is neither the link's own document nor a parent document of that document, Mellon shall report the validation error LINK_NOT_ALLOWED.</description>
+</object>

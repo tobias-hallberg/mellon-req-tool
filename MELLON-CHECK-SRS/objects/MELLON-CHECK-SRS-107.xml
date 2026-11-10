@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: shows whether each object justifies itself against its parent. Counts rather than a share, so no unit, rounding or answer for 0 of 0 is needed; which links count is TRACE's coverage rule (review Q17, Q31).</attr>
+  <description>The MCP server's repo_health tool shall return for each pair of document and parent document how many of the document's objects, headings left out, link directly to the parent document, out of how many.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document that fails to load is missing from the other numbers, so they are incomplete without it.</attr>
+  <description>The MCP server's repo_health tool shall return each load error in the repository with its document ID, file, line and reason.</description>
+</object>

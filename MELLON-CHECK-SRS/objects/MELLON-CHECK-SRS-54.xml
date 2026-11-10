@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-54">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rule picks objects by attribute value. Values compare as text, so 1.0 doesn't match 1; whether that is wanted is a question. An attribute that isn't set has no value, so it matches no value (review Q13).</attr>
+  <description>Mellon shall match an object to a name in a rule condition, other than has-outgoing-link and requirement-type, if and only if the object's attribute of that name has exactly the given value.</description>
+</object>

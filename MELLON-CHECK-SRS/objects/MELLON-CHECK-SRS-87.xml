@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent needs one answer to whether the document is clean, and a document that can't be read, or whose validation stopped, isn't (review Q1, CF-C16, CF-C38).</attr>
+  <description>The MCP server's validate_document tool shall return ok as true if and only if the given document loads, its validation finishes and the document has no validation error.</description>
+</object>

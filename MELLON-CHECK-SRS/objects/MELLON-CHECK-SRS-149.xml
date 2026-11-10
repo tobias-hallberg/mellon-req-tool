@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a suspect link is a change upstream that nobody has reviewed against this document, and the suspect-link workflow is Mellon's core quality gate.</attr>
+  <description>If a document has a suspect link, mellon-check shall exit with status 1.</description>
+</object>

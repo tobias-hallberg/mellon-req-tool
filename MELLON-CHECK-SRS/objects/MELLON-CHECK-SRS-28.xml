@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an object outside the outline has no place in the document, so it could drop out of the grid and the PDF unseen.</attr>
+  <description>If an object of a document isn't in the document's outline, Mellon shall report the validation error OBJECT_NOT_IN_OUTLINE.</description>
+</object>

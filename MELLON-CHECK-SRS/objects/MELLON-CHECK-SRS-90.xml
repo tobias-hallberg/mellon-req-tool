@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-90">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document that can't be read can't be validated, and an answer that left it out would read as clean.</attr>
+  <description>The MCP server's validate_repo tool shall return each load error in the repository with its document ID, file, line and reason.</description>
+</object>

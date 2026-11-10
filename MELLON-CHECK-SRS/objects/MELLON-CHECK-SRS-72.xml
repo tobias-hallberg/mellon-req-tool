@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-72">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a forbidden directive on a misspelt name can't fire, and nothing shows it.</attr>
+  <description>If a rule directive names an attribute that the document's manifest doesn't define, Mellon shall report the validation error RULEFILE_UNKNOWN_ATTRIBUTE.</description>
+</object>

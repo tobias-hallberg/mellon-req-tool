@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a condition value that no object can hold matches no object, so the check is off and the gate passes (CF-C22, review Q13).</attr>
+  <description>If a rule condition gives an attribute a value that doesn't fit the attribute's kind, or isn't one of an enumeration's options, Mellon shall report the validation error RULEFILE_BAD_VALUE.</description>
+</object>

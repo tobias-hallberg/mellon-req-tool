@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-144">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a pipe without pipefail, or a step set to continue on error, loses the exit status; the log then still says what it was (CF-C31).</attr>
+  <description>mellon-check shall print its exit status in the last line of its output.</description>
+</object>

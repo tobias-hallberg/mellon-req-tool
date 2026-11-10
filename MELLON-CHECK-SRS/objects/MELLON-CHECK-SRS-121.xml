@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: mellon-check exits 0 today, so a job pointed at the wrong folder, or at documents nested below the root, passes having checked nothing (CF-C2). Status 2 says the job is wrong, not the documents.</attr>
+  <description>If the repository holds no document, mellon-check shall exit with status 2.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: lets a rule check objects by whether they trace to anything.</attr>
+  <description>When a rule condition gives has-outgoing-link the value true, Mellon shall match an object to that name if and only if the object has at least one outgoing link.</description>
+</object>

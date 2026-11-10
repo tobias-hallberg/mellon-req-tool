@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document that Mellon can't read can't be checked, and leaving it out would read as clean. Validation errors are found only in documents that load.</attr>
+  <description>If a document has a load error, Mellon shall report the load error instead of validating the document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the issue each document is at, in one call. Empty when there is none, as list_documents returns, rather than null, so agents keep working (review Q50).</attr>
+  <description>The MCP server's repo_health tool shall return for each document that loads its current issue, or an empty value when the document has none.</description>
+</object>

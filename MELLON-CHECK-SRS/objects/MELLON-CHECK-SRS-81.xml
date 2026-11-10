@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an empty result can't be told apart from a check that didn't run or met a load error (review Q2, Q48, Q49, CF-C49). The documents don't say what the Document Editor shows.</attr>
+  <description>When the Validate action finds that the document loads and has no validation error, the Document Editor shall say that the document has no validation error.</description>
+</object>

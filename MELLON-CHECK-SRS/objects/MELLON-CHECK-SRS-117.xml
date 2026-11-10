@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: link states need the whole history, so a shallow CI checkout would read each link as suspect. Status 2 tells a misconfigured job apart from documents with problems.</attr>
+  <description>If the folder mellon-check is to check isn't the root folder of a complete git clone, mellon-check shall exit with status 2.</description>
+</object>

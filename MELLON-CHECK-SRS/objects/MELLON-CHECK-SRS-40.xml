@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a parent declared twice adds nothing and points to a hand edit or a merge gone wrong. A question for the person (review Q33).</attr>
+  <description>If a document declares one parent document twice, Mellon shall report the validation error DOC_PARENT_DUPLICATE.</description>
+</object>

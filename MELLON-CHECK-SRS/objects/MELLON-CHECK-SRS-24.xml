@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: text is free; only the other kinds have a written form to check.</attr>
+  <description>Mellon shall count each value of a text attribute as fitting the attribute's kind.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-134">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a CI log lists each problem to fix, one per line, so it can be searched and counted. A broken link is a validation error, so it has one line.</attr>
+  <description>mellon-check shall print one line for each check problem found.</description>
+</object>

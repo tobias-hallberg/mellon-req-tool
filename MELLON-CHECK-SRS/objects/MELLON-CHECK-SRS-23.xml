@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a blank value says nothing, so it is reported once, as missing when the attribute is required, and not again as a value of the wrong kind (review Q12).</attr>
+  <description>Mellon shall count a blank value that isn't empty as fitting the kind of its attribute.</description>
+</object>

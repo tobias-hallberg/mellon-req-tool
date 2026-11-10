@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rule can keep an attribute off some objects, such as a rationale on a heading (review Q18).</attr>
+  <description>If a rule that applies to an object forbids an attribute that is set on the object, Mellon shall report the validation error RULE_FORBIDDEN_PRESENT.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: values and file names come from other clones, and text that looks like markup would be shown as formatting, which can hide or fake errors (CF-C48). MELLON-GUI-SRS should say the same for each window.</attr>
+  <description>The Document Editor shall show text taken from the repository in validation results as plain text, without interpreting markup.</description>
+</object>

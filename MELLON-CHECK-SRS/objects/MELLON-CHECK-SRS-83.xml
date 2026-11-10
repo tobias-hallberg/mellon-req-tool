@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: text still being typed isn't in the working copy, so validating without it checks a state the user isn't looking at. A commit already saves it first. A question for the person (review Q4).</attr>
+  <description>When the user chooses the Validate action, Mellon shall first save the Document Editor's pending edits.</description>
+</object>

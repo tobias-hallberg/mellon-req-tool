@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: once validation reads the working copy, a pull can leave conflict markers while the window is open, and showing no validation error would read as clean (review Q2).</attr>
+  <description>If the open document has a load error when the user chooses the Validate action, the Document Editor shall show the load error.</description>
+</object>

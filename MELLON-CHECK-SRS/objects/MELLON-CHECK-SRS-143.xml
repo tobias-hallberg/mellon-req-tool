@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-143">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the number of documents found, those with a load error included, shows in the CI log whether the gate checked what it should (review Q44). The documents say only that a summary follows.</attr>
+  <description>mellon-check shall end its output with the number of documents found and the number of check problems of each kind.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-3">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: agents and CI branch on the kind of problem, and a code doesn't change with the wording of a message.</attr>
+  <description>Mellon shall report each validation error with the fixed code of its kind of problem.</description>
+</object>

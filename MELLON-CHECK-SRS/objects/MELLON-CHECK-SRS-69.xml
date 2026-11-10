@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a misspelt directive, or one from a newer Mellon, is skipped without a sign; the other rules file checks catch only names and values (CF-C9, CF-C35, review Q5).</attr>
+  <description>If a document's rules file holds an element or XML attribute that the on-disk format doesn't define, Mellon shall report the validation error RULEFILE_UNKNOWN_ELEMENT.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a line that starts with text from the repository can be taken for a CI workflow command, and a fixed first word lets a script sort the lines (CF-C32).</attr>
+  <description>mellon-check shall start each check problem's line with LOAD_ERROR, the validation error's code or SUSPECT_LINK.</description>
+</object>

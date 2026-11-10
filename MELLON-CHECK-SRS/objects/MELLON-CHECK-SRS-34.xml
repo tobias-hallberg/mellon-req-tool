@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-34">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a link to an object that doesn't exist is a traceability claim about nothing. Judged by the files validated, not by a link state, so a target created in the same uncommitted change exists (review Q14).</attr>
+  <description>If an outgoing link's target object is in the link's own document and doesn't exist in the working copy, Mellon shall report the validation error LINK_TARGET_MISSING.</description>
+</object>

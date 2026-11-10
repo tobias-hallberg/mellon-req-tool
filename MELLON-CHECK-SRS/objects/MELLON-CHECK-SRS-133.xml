@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a document missing from discovery, or a rules file deleted, renamed or emptied, leaves the gate passing; these lines show both in the log (CF-C3, CF-C10, CF-C23). Deleting a whole document that nothing links to still passes: an accepted risk, since the deletion is the largest change in the diff.</attr>
+  <description>mellon-check shall print for each document checked a line holding the document ID and the number of rules in the document's rules file, or 0 for a document without one.</description>
+</object>

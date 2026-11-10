@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a required attribute is one that each object must have a value for. Rules add checks on top of the attribute definitions, so a rule's optional directive doesn't lift it (review Q32).</attr>
+  <description>If a required attribute is not set on an object, Mellon shall report the validation error ATTR_MISSING_REQUIRED, whatever directive a rule gives for the attribute.</description>
+</object>

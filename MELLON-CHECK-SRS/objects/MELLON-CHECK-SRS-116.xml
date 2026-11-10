@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-116">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the same default as the MCP server.</attr>
+  <description>When mellon-check runs without --repo-root and the CLAUDE_PROJECT_DIR environment variable is unset, mellon-check shall check the current folder.</description>
+</object>

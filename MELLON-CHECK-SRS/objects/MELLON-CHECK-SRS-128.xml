@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: one broken file must not hide the other problems, since each one hidden costs a CI round (CF-C14, review Q19). The documents don't say.</attr>
+  <description>If a document has a load error, mellon-check shall still validate the other documents and report their suspect links.</description>
+</object>

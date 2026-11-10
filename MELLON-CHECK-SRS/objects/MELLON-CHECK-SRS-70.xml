@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a condition matches no object, so a misspelt name turns a check off and the gate still passes (CF-C22). Rules files have no editing tool. requirement-type is checked as the attribute it matches (review Q6).</attr>
+  <description>If a rule condition names an attribute, other than has-outgoing-link, that the document's manifest doesn't define, Mellon shall report RULEFILE_UNKNOWN_ATTRIBUTE, taking requirement-type as the name RequirementType.</description>
+</object>

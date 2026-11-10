@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-63">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a later, narrower rule can override a general one, so the rules file reads top to bottom.</attr>
+  <description>When several rules apply to one object and give directives for the same attribute, Mellon shall use only the directive of the rule that comes last in the rules file.</description>
+</object>

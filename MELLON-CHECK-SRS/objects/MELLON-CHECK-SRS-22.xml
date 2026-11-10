@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-22">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty value means no value, and a missing required value is reported once, as ATTR_MISSING_REQUIRED. Kept, because the kind checks don't say what happens to a value their conditions leave out (review Q11).</attr>
+  <description>Mellon shall count an empty value as fitting the kind of its attribute.</description>
+</object>

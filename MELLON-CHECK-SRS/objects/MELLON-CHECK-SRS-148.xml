@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-148">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a commit from a git client isn't validated, and an MCP commit isn't until VER's requirement on it is built, so CI is where such an error is caught (review Q54).</attr>
+  <description>If a document has a validation error, mellon-check shall exit with status 1.</description>
+</object>

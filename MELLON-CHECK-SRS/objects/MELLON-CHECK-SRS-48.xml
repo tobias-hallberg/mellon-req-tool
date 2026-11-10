@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a merge resolved in a git client, or a hand edit, can lower the next object number, so a new object takes an ID used before (CF-C20, review Q9). A manifest without the attribute isn't checked, so older documents still pass, as MELLON-STORE-SRS-1 intends.</attr>
+  <description>If a manifest holds a next-object-number attribute whose value isn't greater than the object number of each object in the document, Mellon shall report the validation error DOC_NEXT_NUMBER_LOW.</description>
+</object>

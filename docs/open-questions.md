@@ -90,3 +90,39 @@ Raised by the requirements view of the Compare section and answered the same day
   - **Labels:** `type` is shown as `Type` when the manifest gives it no label, as everywhere else in Mellon. The definition of Label changed.
   - **Typed versions:** typing into From or To changes it, before Enter or Compare. So a comparison running when the user types is dropped when it finishes, and Compare is enabled again. Added as the definition "From or To changes"; the dialog was changed to match.
 - **Defects found and fixed:** Moved didn't take the largest same-order set of siblings (MELLON-VER-SRS-23), and re-comparing with a later row selected raised an error (MELLON-VER-SRS-31).
+
+## Q10: The CHECK specification's questions (2026-11-10)
+
+- **Raised by:** the CHECK author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-CHECK-SRS`, by the IDs below
+- **How they were handled:** the person wasn't available that night. Each question was answered with its recommendation, but a requirement that would change built behaviour was created as `Proposed`, so nothing is built until the person accepts it. Built behaviour stays `Implemented` or `Accepted` as written. These answers are for the person to confirm.
+- **Answered with the recommendation (2026-11-10, to confirm):**
+  - A required value that is blank (whitespace or characters with no width) counts as missing.
+  - Integer values: ASCII digits with an optional minus sign. Real values add an optional point and ASCII digits. No plus sign, spaces, underscores, exponent, infinity or NaN.
+  - A link to a document it may not link to, and a broken link, are validation errors; a suspect link isn't. `mellon-check` and `repo_health` report a broken link once.
+  - A declared parent document that isn't in the repository, a cycle of parent documents, an enumeration with no option and an option on another kind are validation errors.
+  - Table layout is checked when the document loads (STORE), so CHECK has no table codes.
+  - The `requirement-type` alias in rule conditions stays as built.
+  - An empty value counts as not set for a rule's required and forbidden directives.
+  - A rules file that can't be read is a load error. A rule that names an undefined attribute or a value that doesn't fit, and an element the rules file format doesn't define, are validation errors.
+  - `mellon-check` on a repository with no documents exits with status 2.
+  - The gate may share the loader and validator with the GUI and MCP server. Link states get two checks by other means (`MELLON-CHECK-SRS` derived requirements) instead.
+  - A pull request that deletes a whole document nothing links to passes the gate: accepted risk, since the deletion is the largest change in the diff and `mellon-check` lists the documents it checked.
+  - Commit checks belong to VER.
+- **Still open, each with a recommendation:**
+  - -115: keep `CLAUDE_PROJECT_DIR` as `mellon-check`'s default root? Recommendation: no; check `--repo-root`, else the current folder.
+  - -36: no `LINK_TARGET_MISSING` (and no link state) for links into a document with a load error? Recommendation: yes; the load error alone fails the gate.
+  - -54: rule condition values compare as text (`1.0` isn't `1`)? Recommendation: yes.
+  - -18: integers limited to -2^63 to 2^63 - 1, with leading zeros and `-0` accepted? Recommendation: yes.
+  - -5: may a validation error code be retired? Recommendation: yes, in the changelog, never reused.
+  - -40: a parent document declared twice is a validation error? Recommendation: yes.
+  - -43: an empty or absent metadata date is valid? Recommendation: yes; the PDF prints no date.
+  - -119: `mellon-check` exits 2 for a partial clone, and accepts a linked worktree's root? Recommendation: yes to both.
+  - -83: the Validate action saves pending edits first? Recommendation: yes.
+  - -66: a rule's link demand can't exempt headings. Recommendation: keep, and say so in USAGE.
+  - -15: each check that tightens validation goes in the changelog's upgrade notes? Recommendation: yes.
+  - -111: a time limit for `validate_repo`? Recommendation: yes, measured first.
+  - -44: the codes drafted for new checks? Recommendation: yes.
+  - -48: the next-object-number check skips a manifest without the attribute? Recommendation: yes.
+  - -146: Mellon's own CI also runs the last released `mellon-check` over the specification? Recommendation: yes, and both must pass.
+- **Answer:** open

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-142">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a Windows runner's pipe uses the ANSI code page, and a character outside it would stop the gate partway with later problems unprinted (CF-C33). UTF-8 holds each character, so nothing is lost, as escaping would lose it (review Q39).</attr>
+  <description>mellon-check shall write its output in UTF-8, whatever the console's code page.</description>
+</object>

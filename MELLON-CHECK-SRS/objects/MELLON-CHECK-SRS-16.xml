@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: filters and rules compare enumeration values for equality, so a near miss would drop out of both without a sign. A blank value is left to the required-attribute checks (review Q11).</attr>
+  <description>If an object's non-blank value for an enumeration attribute isn't exactly one of the attribute's options, letter case included, Mellon shall report the validation error ATTR_BAD_ENUM.</description>
+</object>

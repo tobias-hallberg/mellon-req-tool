@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: file names and values come from a fork's pull request; a line break, an ANSI escape or a CI workflow command in them forges or hides lines in the CI log (CF-C32).</attr>
+  <description>When mellon-check prints text taken from the repository, mellon-check shall print each line break and each other control character in the text as an escape sequence.</description>
+</object>

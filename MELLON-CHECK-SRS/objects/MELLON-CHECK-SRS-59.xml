@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a rule can require an attribute for some objects only, such as a rationale on each approved requirement.</attr>
+  <description>If a rule that applies to an object requires an attribute that is not set on the object, Mellon shall report the validation error RULE_REQUIRED_MISSING.</description>
+</object>

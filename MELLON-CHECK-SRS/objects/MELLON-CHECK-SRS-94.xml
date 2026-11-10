@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a client can cut a long result, and the count lets an agent tell whether the list it received is whole (CF-C39). Built: the tool returns it as total_errors.</attr>
+  <description>The MCP server's validate_repo tool shall return the number of validation errors.</description>
+</object>

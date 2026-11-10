@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: no object the rule applies to can meet both, and nothing points to the rules file (review Q32).</attr>
+  <description>If a rule directive forbids an attribute that the manifest makes required, Mellon shall report the validation error RULEFILE_FORBIDS_REQUIRED.</description>
+</object>

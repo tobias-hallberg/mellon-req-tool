@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a repeated option points to a hand edit or a merge gone wrong, and the choice would be offered twice (review Q35).</attr>
+  <description>If a manifest lists one option twice for an attribute, Mellon shall report the validation error SCHEMA_DUPLICATE_OPTION.</description>
+</object>

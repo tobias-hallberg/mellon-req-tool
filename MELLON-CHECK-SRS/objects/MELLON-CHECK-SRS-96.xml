@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent's first look at a repository shows where the problems are. A broken link is among them, as LINK_TARGET_MISSING (review Q7).</attr>
+  <description>The MCP server's repo_health tool shall return for each document that loads the number of its validation errors.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: validate_repo's ok ignores suspect links, which fail mellon-check, so an agent has no one-call answer to whether CI will pass (review Q22).</attr>
+  <description>The MCP server's repo_health tool could return ok as true if and only if the repository holds at least one document and no check problem.</description>
+</object>

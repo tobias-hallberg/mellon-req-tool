@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an object has one place in a document. A git merge can add a second outline entry without a conflict.</attr>
+  <description>If a document's outline names one object more than once, Mellon shall report the validation error OUTLINE_DUP.</description>
+</object>

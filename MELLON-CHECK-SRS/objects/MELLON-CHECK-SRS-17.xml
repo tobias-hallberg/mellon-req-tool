@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a lenient reader also takes '+7', ' 7', '1_000' and other scripts' digits, which then compare wrongly in filters (CF-C19). Leading zeros and -0 fit. USAGE says only "base-10 signed digits" (review Q23).</attr>
+  <description>If an object's non-blank value for an integer attribute isn't an optional minus sign followed by one or more ASCII digits, Mellon shall report the validation error ATTR_BAD_INTEGER.</description>
+</object>

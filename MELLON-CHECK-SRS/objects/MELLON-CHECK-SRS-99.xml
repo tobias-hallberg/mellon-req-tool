@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: totals of 0 beside a separate list of load errors read as clean (CF-C41).</attr>
+  <description>The MCP server's repo_health tool shall return the total number of load errors in the repository.</description>
+</object>

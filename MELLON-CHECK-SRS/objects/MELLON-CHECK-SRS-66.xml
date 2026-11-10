@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-66">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: link demands from different rules add up; one doesn't replace another (review Q51).</attr>
+  <description>When several rules apply to one object and require links, Mellon shall require an outgoing link to each document named by a link directive of a rule that applies to the object.</description>
+</object>

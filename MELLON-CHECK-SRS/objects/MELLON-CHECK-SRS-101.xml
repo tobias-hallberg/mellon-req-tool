@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-101">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the totals answer at a glance whether the repository is clean (review Q50).</attr>
+  <description>The MCP server's repo_health tool shall return the total number of suspect links in the documents that load.</description>
+</object>

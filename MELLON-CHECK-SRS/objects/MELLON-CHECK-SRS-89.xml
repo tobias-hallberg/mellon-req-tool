@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-89">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent checks the whole repository in one call before committing.</attr>
+  <description>The MCP server's validate_repo tool shall return each validation error of each document that loads, with the document ID, the error's code and a message.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-120">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the person fixing the CI job needs the reason, and it belongs apart from the report (review Q27, failure analysis on SRS-90). The documents say this only for the MCP server.</attr>
+  <description>When mellon-check exits with status 2, mellon-check shall print the reason on standard error.</description>
+</object>

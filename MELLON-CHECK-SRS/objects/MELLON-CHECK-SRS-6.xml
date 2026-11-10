@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a user or agent has to find the object to fix it. These are the codes about one object; the SCHEMA_, DOC_ and RULEFILE_ codes concern the manifest or the rules file (review Q25). The documents don't say whether messages name the object.</attr>
+  <description>Mellon shall report each ATTR_, OUTLINE_, OBJECT_NOT_IN_OUTLINE, LINK_, FIGURE_ and RULE_ validation error with the object ID of the object, outline entry or link source concerned.</description>
+</object>

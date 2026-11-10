@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a delete/modify conflict resolved by keeping the links file, or a hand delete, leaves links whose states nobody scans, or incoming links from an object that doesn't exist (CF-C12, review Q28).</attr>
+  <description>If a document stores outgoing links for an object ID that no object of the document has, Mellon shall report the validation error LINK_SOURCE_MISSING.</description>
+</object>

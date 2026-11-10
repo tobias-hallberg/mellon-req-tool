@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the gate is the check on Mellon's other answers, so a stored answer that could be wrong must not decide it (CF-C26, review Q41). Its time limit is measured with this in force.</attr>
+  <description>mellon-check shall report the same link states whatever results earlier runs of the GUI or the MCP server have stored in the repository.</description>
+</object>

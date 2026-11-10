@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a Document Editor that validates the copy it read earlier passes a document that an agent, a pull or a git client changed since, and the checks across documents need the parent documents as they are now (CF-C47). Open question Q5. What a commit validates is VER's.</attr>
+  <description>When Mellon validates a document, Mellon shall read the files of the document and of its parent documents from the working copy at the time validation starts.</description>
+</object>

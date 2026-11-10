@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-98">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: today a broken link counts both as a validation error and as a broken link, so the totals overstate the problems (review Q7). Build together with the parent-document LINK_TARGET_MISSING check, or broken links into parents drop out of the count.</attr>
+  <description>The MCP server's repo_health tool shall count each broken link once, as a validation error.</description>
+</object>

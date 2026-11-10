@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-73">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a condition can't say whether an object has outgoing links, so the check it was written for doesn't run as meant (review Q54).</attr>
+  <description>If a rule condition gives has-outgoing-link a value other than true or false, Mellon shall report the validation error RULEFILE_BAD_VALUE.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: agents and CI scripts read the codes. A kind that stops being a validation error, such as a table that breaks the table rules and now fails to load, retires its code (review Q24).</attr>
+  <description>When Mellon reports a kind of validation error that the previous release also reported, Mellon shall use the code that the previous release used for that kind.</description>
+</object>

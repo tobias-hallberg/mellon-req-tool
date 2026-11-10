@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: today only the suspect scan reports a missing target in a parent document, so the GUI commit and validate_repo pass such a link (E38, CF-C17, review Q14).</attr>
+  <description>If an outgoing link's target object is in a parent document of the link's document and doesn't exist in the working copy, Mellon shall report the validation error LINK_TARGET_MISSING.</description>
+</object>

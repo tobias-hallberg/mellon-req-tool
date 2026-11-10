@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the GUI and the MCP server keep stored link states while mellon-check works them out afresh, so repo_health could report 0 suspect links while CI fails (review Q21).</attr>
+  <description>Given the same working copy and history, the MCP server's repo_health tool shall return for each document the number of suspect links that mellon-check finds.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty value means no value. Clearing an enumeration in the GUI writes an empty value, which must not pass as a value.</attr>
+  <description>If a required attribute is set to an empty value on an object, Mellon shall report the validation error ATTR_MISSING_REQUIRED.</description>
+</object>

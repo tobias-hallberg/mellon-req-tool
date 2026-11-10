@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: one written form per value, so filters and rules compare booleans correctly.</attr>
+  <description>If an object's non-blank value for a boolean attribute isn't exactly true or false, in lower case, Mellon shall report the validation error ATTR_BAD_BOOLEAN.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-10">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a validator that stops on input it doesn't expect must not read as a clean result on any surface (CF-C16, CF-C49).</attr>
+  <description>If Mellon can't finish validating a document, Mellon shall report that the document wasn't validated instead of a validation result.</description>
+</object>

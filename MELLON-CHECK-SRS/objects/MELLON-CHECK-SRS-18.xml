@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-18">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a rewrite that keeps integers in 64 bits would overflow beyond this range, so two implementations would disagree. The limits themselves fit. A question for the person (review Q23).</attr>
+  <description>If an object's value for an integer attribute is below -2^63 or above 2^63 - 1, Mellon shall report the validation error ATTR_BAD_INTEGER.</description>
+</object>

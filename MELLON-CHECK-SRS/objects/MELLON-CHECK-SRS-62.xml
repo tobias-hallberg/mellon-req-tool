@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: optional lets a later rule lift an earlier rule's demand for some objects. It doesn't lift a requirement of the attribute definitions.</attr>
+  <description>When the rule directive that decides an attribute for an object makes the attribute optional, Mellon shall report neither RULE_REQUIRED_MISSING nor RULE_FORBIDDEN_PRESENT for that attribute.</description>
+</object>

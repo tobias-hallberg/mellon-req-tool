@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the person fixing a broken file needs to find it, often after a merge left conflict markers.</attr>
+  <description>mellon-check shall print for each load error a line holding LOAD_ERROR, the document ID, the file, the line and the reason.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-125">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the gate shares the history walk with the GUI and the MCP server, so a walk error reads OK everywhere; comparing the target at two commits is a second route that doesn't use the walk (CF-C24, CF-C25, CF-C50). A link this finds that the GUI shows OK is a gap in TRACE's rule.</attr>
+  <description>If a link's target object or its figure differs between the link's acknowledged commit and the latest commit, mellon-check shall report the link as a suspect link.</description>
+</object>

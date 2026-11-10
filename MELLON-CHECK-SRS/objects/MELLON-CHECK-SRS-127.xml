@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: CI and people run the gate on files they are about to commit or merge. Reading status can rewrite the git index while a git client stages, losing the staging, so nothing under .git is written either (CF-C29).</attr>
+  <description>While mellon-check runs, mellon-check shall not change a file in the working copy or in the repository's .git folder.</description>
+</object>

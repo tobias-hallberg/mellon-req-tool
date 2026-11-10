@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: validate_repo blocks the server's other tools while it runs, and nothing bounds it (review Q55). Open value, to be measured on the reference machine first.</attr>
+  <description>On the reference machine, the MCP server's validate_repo tool shall return within TBD s for SCALING.md's benchmark repository at 1,000 objects per document.</description>
+</object>

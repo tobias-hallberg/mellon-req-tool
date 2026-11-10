@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-19">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a lenient reader also takes exponents, 'inf' and 'nan', and NaN compares false with everything, so a filter drops it unseen (CF-C19, review Q23, Q43). USAGE says only "parseable float".</attr>
+  <description>If an object's non-blank value for a real attribute isn't an optional minus sign, one or more ASCII digits, and optionally a point and one or more ASCII digits, Mellon shall report ATTR_BAD_REAL.</description>
+</object>

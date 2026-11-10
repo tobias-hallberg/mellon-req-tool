@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-43">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: USAGE makes each metadata field optional, but doesn't say whether an empty date is an error. A question for the person (review Q34).</attr>
+  <description>Mellon shall accept a document whose metadata date is absent or empty.</description>
+</object>

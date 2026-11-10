@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent's first look at a repository, in one call instead of one per document (review Q50).</attr>
+  <description>The MCP server's repo_health tool shall return for each document that loads its number of outgoing links.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document that can't be read can't be checked, and a merge that left conflict markers must not pass.</attr>
+  <description>If a document has a load error, mellon-check shall exit with status 1.</description>
+</object>

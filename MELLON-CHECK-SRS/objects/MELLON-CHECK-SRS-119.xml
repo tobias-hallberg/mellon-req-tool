@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a partial clone isn't shallow, yet lacks history that link states, and the second check of them, need to read (CF-C5, review Q38). A question for the person.</attr>
+  <description>If the repository is a partial clone, mellon-check shall exit with status 2.</description>
+</object>

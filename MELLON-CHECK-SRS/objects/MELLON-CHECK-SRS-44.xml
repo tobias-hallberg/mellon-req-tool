@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-44">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: no value of such an attribute can be valid. A validation error rather than a load error, so the document still opens and the user can fix the definition (review Q26).</attr>
+  <description>If a manifest defines an enumeration attribute with no option, Mellon shall report the validation error SCHEMA_NO_OPTIONS.</description>
+</object>

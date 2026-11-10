@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: rules files are edited by hand and can keep conflict markers; read as absent, each rule of the document is off and the gate passes (CF-C8, review Q5).</attr>
+  <description>If a document's rules file can't be read, Mellon shall report a load error for the document.</description>
+</object>

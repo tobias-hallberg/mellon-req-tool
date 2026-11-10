@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a legacy alias that STATUS keeps as a low item. Kept as built (review Q6); RULEFILE_UNKNOWN_ATTRIBUTE reports a rule that uses it in a document with no attribute named RequirementType.</attr>
+  <description>When a rule condition names requirement-type, Mellon shall match the condition's value against the object's attribute named RequirementType.</description>
+</object>

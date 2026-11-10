@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a script that branches on a retired code would otherwise act on a different problem. Whether a code can be retired is a question for the person (review Q24).</attr>
+  <description>Mellon shall not give a validation error code to a kind of problem other than the one that an earlier release gave the code to.</description>
+</object>

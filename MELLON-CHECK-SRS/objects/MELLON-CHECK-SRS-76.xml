@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an error "for the document" doesn't say which rule to fix, and rules files are edited by hand (review Q45).</attr>
+  <description>Mellon shall report each RULEFILE_ validation error with the line of the rules file that the error concerns.</description>
+</object>

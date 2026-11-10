@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the date prints on the PDF cover and running header. Other ISO 8601 forms don't fit (review Q23).</attr>
+  <description>If a document's non-empty metadata date isn't ten ASCII characters YYYY-MM-DD naming a Gregorian date from 0001-01-01 to 9999-12-31, Mellon shall report the validation error META_BAD_DATE.</description>
+</object>

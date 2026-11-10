@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-138">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the person fixing the error needs the document and the object (review Q25). The documents say only that each problem gets a line.</attr>
+  <description>mellon-check shall print in each validation error's line the document ID, the error's code and the object ID that Mellon reports with the error.</description>
+</object>

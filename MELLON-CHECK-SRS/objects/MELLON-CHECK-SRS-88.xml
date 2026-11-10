@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent that validates one document needs to see why the document wasn't validated; validate_repo and repo_health return load errors already (CF-C38, review Q1).</attr>
+  <description>If the given document has a load error, the MCP server's validate_document tool shall return the load error with its file, line and reason.</description>
+</object>

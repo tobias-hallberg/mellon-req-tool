@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a parent left with conflict markers would otherwise flood its children with LINK_TARGET_MISSING; its load error alone fails the gate. A question for the person, together with TRACE (review Q8).</attr>
+  <description>If an outgoing link's target is in a document with a load error, Mellon shall not report LINK_TARGET_MISSING for the link.</description>
+</object>

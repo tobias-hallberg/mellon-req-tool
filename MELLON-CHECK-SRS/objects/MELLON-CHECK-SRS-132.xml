@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a valid root that isn't the one meant (an agent's worktree, CLAUDE_PROJECT_DIR from another session), or another Mellon release, passes without a sign; the log has to show what was checked, at which commit, by which release (CF-C1, CF-C27, CF-C35).</attr>
+  <description>mellon-check shall print as its first line its own version, the absolute path of the folder being checked and the full hash of the latest commit.</description>
+</object>

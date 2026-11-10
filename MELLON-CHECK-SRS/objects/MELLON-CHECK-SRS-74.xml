@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: each link to such a document is LINK_NOT_ALLOWED, so the directive can never be met, and nothing points to the rules file (review Q16).</attr>
+  <description>If a rule directive requires a link to a document that is neither the rules file's document nor a parent document of that document, Mellon shall report the validation error RULEFILE_LINK_NOT_ALLOWED.</description>
+</object>

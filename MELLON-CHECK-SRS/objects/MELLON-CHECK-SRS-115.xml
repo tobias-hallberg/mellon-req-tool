@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the same default as the MCP server, so mellon-check run from an agent's session checks the project the agent works on. The failure analysis recommends withdrawing it (CF-C1); a question for the person. The first line of the output names the folder either way.</attr>
+  <description>When mellon-check runs without --repo-root and the CLAUDE_PROJECT_DIR environment variable is set, mellon-check shall check the folder that the variable names.</description>
+</object>

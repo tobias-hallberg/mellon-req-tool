@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a misspelt or deleted attribute would hold a value that no view, filter or rule sees.</attr>
+  <description>If an object sets an attribute that the document's manifest doesn't define, Mellon shall report the validation error ATTR_UNKNOWN.</description>
+</object>

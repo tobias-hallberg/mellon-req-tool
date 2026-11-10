@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a link to an object that doesn't exist traces to nothing, yet today it meets the demand and the GUI commit passes (CF-C17, review Q15).</attr>
+  <description>If a rule that applies to an object requires a link to a document, and the object's only outgoing links to that document are broken links, Mellon shall report RULE_LINK_REQUIRED_MISSING.</description>
+</object>

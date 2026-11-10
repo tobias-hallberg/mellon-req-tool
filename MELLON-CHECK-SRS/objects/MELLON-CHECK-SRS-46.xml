@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: two definitions of one name leave the attribute's kind and options in doubt (review Q35).</attr>
+  <description>If a manifest defines two attributes with one name, Mellon shall report the validation error SCHEMA_DUPLICATE_ATTRIBUTE.</description>
+</object>

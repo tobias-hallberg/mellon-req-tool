@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: draw.io writes a figure as one line, so a merge conflict leaves markers in the whole file, and a merge that left markers must not pass (CF-C11).</attr>
+  <description>If an object's figure can't be read, Mellon shall report the validation error FIGURE_UNREADABLE for the object.</description>
+</object>

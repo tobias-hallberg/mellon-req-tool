@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-140">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: today a broken link prints both as LINK_TARGET_MISSING and as a broken link (review Q7). Build together with the parent-document LINK_TARGET_MISSING check, or the gate stops reporting broken links into parent documents.</attr>
+  <description>mellon-check shall report each broken link once, as the validation error LINK_TARGET_MISSING.</description>
+</object>
