@@ -118,6 +118,12 @@ All notable changes to Mellon. The format follows
 
 - `git_ops.dirty_count`: nothing uses it now.
 
+### Upgrade notes
+
+- **Upgrade everyone who creates objects.** Mellon 0.3.0 keeps
+  `next-object-number` but doesn't use or raise it, so an object created with
+  0.3.0 can still take the ID of a deleted one. Documents need no change.
+
 ## 0.3.0 — 2026-10-30
 
 The first public release. It includes everything listed under 0.2.0 below,
