@@ -1353,6 +1353,23 @@ def test_undo_and_redo_a_delete_across_documents(
     assert len(steps) == 1  # undo/redo aren't steps themselves
 
 
+def test_edit_srs_346_undoing_two_creates_never_gives_their_ids_again(
+    svc_cached: DocumentService,
+):
+    """MELLON-EDIT-SRS-346: undo the newest create, then the one before, and
+    create again: the new object gets an ID neither undone object had."""
+    steps = _record(svc_cached)
+    first = svc_cached.create_object("CHILD", description="First.").value
+    second = svc_cached.create_object("CHILD", description="Second.").value
+    svc_cached.undo_changes(steps[1][2])
+    svc_cached.undo_changes(steps[0][2])
+
+    objects = svc_cached.get_document("CHILD").objects
+    assert first not in objects and second not in objects
+    third = svc_cached.create_object("CHILD", description="Third.").value
+    assert third not in {first, second}
+
+
 def test_undo_refuses_after_another_change(svc_cached: DocumentService, mcp_repo: Path):
     steps = _record(svc_cached)
     svc_cached.set_description("CHILD", "CHILD-0", "Mine.")

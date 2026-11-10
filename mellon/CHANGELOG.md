@@ -104,6 +104,12 @@ All notable changes to Mellon. The format follows
   `MELLON-EDIT-SRS-1`, `-2` and `MELLON-VER-SRS-64`, `-65`.
   `loader.parse_manifest_bytes` returns the number as a fifth item, and
   `Document.next_object_number` holds it.
+- **Undo no longer gives out an undone object's ID again.** Undoing New
+  object put the manifest back whole, next object number included, so the
+  next new object took the undone one's ID, and a link made to it meanwhile
+  named the new object. Undo and redo now keep the higher of the number on
+  disk and the number the step had (`MELLON-EDIT-SRS-346`); undoing several
+  creates in a row still works.
 - `git_ops.log_for_path(since_commit=…)` now matches `git log <since>..HEAD`.
   On a merged history it could drop commits from the other side of a merge,
   and when the commit was no longer on HEAD's history (after a rebase) it

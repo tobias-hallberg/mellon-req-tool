@@ -1656,9 +1656,77 @@ def test_journal_reverts_and_reapplies(doc_folder: Path) -> None:
         ["DOC-1.xml", "DOC.xml", f"{new_id}.xml"]
     )
     j.revert()
-    assert _snapshot(doc_folder) == before
+    # Each file is back, except that the manifest keeps the next object
+    # number the create raised (MELLON-EDIT-SRS-346).
+    undone = _snapshot(doc_folder)
+    manifest = doc_folder / "DOC.xml"
+    assert {p: b for p, b in undone.items() if p != manifest} == {
+        p: b for p, b in before.items() if p != manifest
+    }
+    assert _without_next_number(undone[manifest]) == _without_next_number(before[manifest])
     j.reapply()
     assert _snapshot(doc_folder) == after
+
+
+def _without_next_number(manifest: bytes) -> bytes:
+    root = etree.fromstring(manifest)
+    root.attrib.pop("next-object-number", None)
+    return etree.tostring(root)
+
+
+def _next_number(folder: Path) -> str | None:
+    return etree.parse(str(folder / f"{folder.name}.xml")).getroot().get("next-object-number")
+
+
+def test_edit_srs_346_undoing_a_create_keeps_the_next_object_number(doc_folder: Path) -> None:
+    """MELLON-EDIT-SRS-346: undo never lowers the next object number, so the
+    undone object's ID isn't given to the next new object."""
+    from mellon.editor import journal
+
+    with journal(rollback=False) as step:
+        first = create_object(doc_folder, description="First.")
+    raised = _next_number(doc_folder)
+    step.revert()
+
+    assert first not in load_document(doc_folder).objects
+    assert _next_number(doc_folder) == raised
+    assert create_object(doc_folder, description="Second.") != first
+
+
+def test_edit_srs_346_redo_and_undo_again_keep_the_number(doc_folder: Path) -> None:
+    """MELLON-EDIT-SRS-346: the kept number doesn't stop a redo, or a second
+    undo, from finding the files as the step left them."""
+    from mellon.editor import journal
+
+    with journal(rollback=False) as step:
+        first = create_object(doc_folder, description="First.")
+    raised = _next_number(doc_folder)
+    step.revert()
+    step.reapply()
+    assert first in load_document(doc_folder).objects
+    step.revert()
+
+    assert first not in load_document(doc_folder).objects
+    assert _next_number(doc_folder) == raised
+    assert allocate_next_id(load_document(doc_folder)) != first
+
+
+def test_edit_srs_346_undo_keeps_a_number_raised_since_the_step(doc_folder: Path) -> None:
+    """MELLON-EDIT-SRS-346: undoing a step whose manifest holds a lower number
+    than the manifest now keeps the higher one."""
+    from mellon.editor import journal
+
+    with journal(rollback=False) as step:
+        set_description(doc_folder, "DOC-1", "Changed.")
+        create_object(doc_folder, description="First.")
+    with journal(rollback=False) as later:
+        create_object(doc_folder, description="Second.")
+    raised = _next_number(doc_folder)
+    later.revert()
+    step.revert()
+
+    assert _next_number(doc_folder) == raised
+    assert load_document(doc_folder).objects["DOC-1"].description != "Changed."
 
 
 def test_journal_revert_refuses_after_an_outside_change(doc_folder: Path) -> None:

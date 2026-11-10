@@ -180,12 +180,20 @@ class Journal:
         target: dict[Path, bytes | None],
         what: str,
     ) -> None:
-        changed = [p for p, b in expect.items() if _read_or_none(p) != b]
+        disk = {p: _read_or_none(p) for p in expect}
+        # A manifest whose only difference is a next object number that a
+        # later undo kept higher (below) is still the state this step left.
+        changed = [p for p, b in expect.items() if not _same_or_higher_number(disk[p], b)]
         if changed:
             names = ", ".join(p.name for p in changed[:5])
             raise EditorError(
                 f"can't {what}: changed on disk since ({names})"
             )
+        # MELLON-EDIT-SRS-346: a manifest goes back with the higher of its
+        # next object number now and the one it had, or the next new object
+        # would take an ID already given out. The kept bytes become this
+        # side's state, so the next undo or redo finds what it wrote.
+        target.update(_keep_next_numbers(disk, target))
         failed = _put_files(target.items())
         if failed:
             names = ", ".join(p.name for p in failed[:5])
@@ -196,6 +204,65 @@ def _read_or_none(path: Path) -> bytes | None:
     try:
         return path.read_bytes()
     except FileNotFoundError:
+        return None
+
+
+def _keep_next_numbers(
+    now: dict[Path, bytes | None], target: dict[Path, bytes | None]
+) -> dict[Path, bytes]:
+    """The manifests in `target` rewritten to keep the higher next object
+    number of their bytes in `now` (on disk) and in `target`."""
+    kept: dict[Path, bytes] = {}
+    for path, data in target.items():
+        if data is None or path.name != f"{path.parent.name}.xml":
+            continue  # not a manifest, or one the step deletes
+        current = _next_number_of(now.get(path))
+        if current is None or current <= (_next_number_of(data) or 0):
+            continue
+        rewritten = _with_next_number(data, current)
+        if rewritten is not None:
+            kept[path] = rewritten
+    return kept
+
+
+def _same_or_higher_number(disk: bytes | None, expected: bytes | None) -> bool:
+    """True if `disk` is `expected`, or is `expected` with a higher next
+    object number written as `_keep_next_numbers` writes it."""
+    if disk == expected:
+        return True
+    if disk is None or expected is None:
+        return False
+    number = _next_number_of(disk)
+    if number is None or number <= (_next_number_of(expected) or 0):
+        return False
+    return _with_next_number(expected, number) == disk
+
+
+def _with_next_number(data: bytes, number: int) -> bytes | None:
+    """A manifest's bytes with its next object number set to `number`, in the
+    form `_write_tree` writes; None if the bytes don't parse."""
+    root = _parse_bytes(data)
+    if root is None:
+        return None
+    root.set(NEXT_OBJECT_NUMBER_ATTR, str(number))
+    body = etree.tostring(root, encoding="UTF-8")
+    if not body.endswith(b"\n"):
+        body += b"\n"
+    return _XML_HEADER.encode("utf-8") + body
+
+
+def _next_number_of(data: bytes | None) -> int | None:
+    root = _parse_bytes(data) if data is not None else None
+    return None if root is None else whole_number(root.get(NEXT_OBJECT_NUMBER_ATTR))
+
+
+def _parse_bytes(data: bytes) -> etree._Element | None:
+    """The root element of a data file's bytes, or None if they don't parse.
+    Entities aren't expanded and nothing outside the bytes is read."""
+    parser = etree.XMLParser(resolve_entities=False, no_network=True, load_dtd=False)
+    try:
+        return etree.fromstring(data, parser)
+    except etree.XMLSyntaxError:
         return None
 
 
