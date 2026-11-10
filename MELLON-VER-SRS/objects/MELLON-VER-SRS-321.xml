@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-321">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: parents are united. Replaced by MELLON-VER-SRS-322, which lets a one-sided removal win (review Q65).</attr>
+  <description>When both sides of a merge changed a document's parent documents, Mellon shall keep each parent document that either side declares.</description>
+</object>

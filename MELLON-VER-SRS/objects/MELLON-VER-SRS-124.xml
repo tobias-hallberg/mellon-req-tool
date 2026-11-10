@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q4 merged with CF-V13 (D-V8). The files a commit doesn't select come from a latest commit nobody validated or saw, and the dialog's list, warnings and issue prefill were worked out for the old one. Replaces MELLON-VER-SRS-123.</attr>
+  <description>If the latest commit or the current branch changed after Mellon validated the document for a commit, Mellon shall make no commit and say what changed.</description>
+</object>

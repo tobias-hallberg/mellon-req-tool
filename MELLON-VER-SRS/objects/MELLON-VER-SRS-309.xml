@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-309">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md: a three-way merge of each document file both sides changed. git's conflict markers lose a document's structure, and starting from the commits each time lets the user resolve again with other choices. Split from "each merged document file" (review Q10).</attr>
+  <description>When Mellon resolves a merge, Mellon shall compute each file in a document folder that both sides changed from the merge base, ours and theirs, not from the working copy.</description>
+</object>

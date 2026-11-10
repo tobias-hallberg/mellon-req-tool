@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-220">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md: the git log of the selected object's file. A reviewer needs who changed the object, when and why.</attr>
+  <description>The History tab shall show with each commit the commit's hash, author, date and message.</description>
+</object>

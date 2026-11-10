@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V1, CF-V2, ways in (D-V44). A repository received as a folder can name filter drivers, a signing program, core.fsmonitor, sshCommand or a credential helper, which would run with the user's rights. Narrowed to settings, since MELLON-VER-SRS-131 covers hooks. Mellon is assumed to run none of these today; confirm. Answered on 2026-11-11 (Q-V2), to confirm.</attr>
+  <description>Mellon shall not run a program that the repository's git settings name.</description>
+</object>

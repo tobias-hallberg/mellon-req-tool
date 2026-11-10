@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-226">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V31 (D-V19). History follows the file, so after a renumbering the kept ID shows another object's commits. Deferred with MELLON-VER-SRS-76: it needs MELLON-VER-SRS-342. Until then accepted, with a note in USAGE.md (review Q56, handed to Process).</attr>
+  <description>The History tab should list each commit of a renumbered object from before the object's renumbering with the renumbered object, not with the object that kept the object ID.</description>
+</object>

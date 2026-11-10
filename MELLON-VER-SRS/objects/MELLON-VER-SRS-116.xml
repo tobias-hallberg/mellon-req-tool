@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-116">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V4, the failure analysis's change to SRS-103. Mellon can read git's settings differently from git: conditional includes, and the GIT_AUTHOR_* and GIT_COMMITTER_* variables. Replaces MELLON-VER-SRS-115.</attr>
+  <description>When Mellon commits, Mellon shall record as the commit's author and committer the name and email that git gives a commit made in the repository.</description>
+</object>

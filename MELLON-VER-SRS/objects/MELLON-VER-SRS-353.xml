@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-353">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: Also merged in.</attr>
+  <description>The Resolve merge dialog shall list, with each object the user merges by hand, the fields that Mellon took from theirs without a conflict.</description>
+</object>

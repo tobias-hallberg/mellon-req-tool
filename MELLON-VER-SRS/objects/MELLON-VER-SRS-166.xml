@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-166">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q51. A typed date that isn't valid has no stated result; written to the manifest it is a validation error that blocks the next commit. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If the commit dialog's date isn't a valid date, the commit dialog shall refuse the commit.</description>
+</object>

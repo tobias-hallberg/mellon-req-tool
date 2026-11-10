@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-364">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q46. A merged document can fail to load, and the merge commit is made in a git client, which doesn't check (TEAM.md).</attr>
+  <description>When Mellon resolves a merge, Mellon shall report each load error of a merged document.</description>
+</object>

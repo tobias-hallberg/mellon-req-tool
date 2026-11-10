@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: staged files outside the selection stay out of the commit, and they stay staged, so work a person prepared in a git client isn't lost.</attr>
+  <description>When Mellon commits, Mellon shall keep staged each change in the git index outside the selected paths.</description>
+</object>

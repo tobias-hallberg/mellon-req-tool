@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q1, merged with CHECK's requirement (CF-C43, CF-C44, CF-C45, D-C18). With `paths` holding only the manifest, the working copy passes while the commit names objects whose files stay uncommitted. Replaces the draft's "validate the working copy" (open question Q5). MELLON-CHECK-SRS-7 covers the Validate action.</attr>
+  <description>When Mellon validates a document before a commit, Mellon shall validate the document as the commit is to hold the document: the latest commit's files, with the selected paths' working-copy content in place.</description>
+</object>

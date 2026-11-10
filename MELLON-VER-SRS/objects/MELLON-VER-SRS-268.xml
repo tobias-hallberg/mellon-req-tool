@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-268">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an issue holds only committed files, and an agent that forgot to commit would issue the old text while believing the edit is in. Only without a commit, since an older commit can't hold the change (review Q13, CF-V36); shall (review).</attr>
+  <description>When `tag_issue` is given no commit and the document has an uncommitted change, the MCP server shall refuse the issue and name the changed files.</description>
+</object>

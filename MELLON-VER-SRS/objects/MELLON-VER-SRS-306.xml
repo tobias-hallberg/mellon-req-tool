@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-306">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the message tells the user the way out (open question Q4). After Resolve the refusal ends (MELLON-VER-SRS-305), so review Q28's third way, making the merge commit, isn't needed.</attr>
+  <description>When Mellon refuses an operation because a document folder holds a conflicting file, Mellon shall say to resolve the merge or abort the merge.</description>
+</object>

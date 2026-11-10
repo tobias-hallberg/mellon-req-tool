@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-335">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V48, open question Q8, the failure analysis's change to SRS-241. Two fresh templates can be equal and still be two requirements, and git takes the file once. Answered on 2026-11-11 (Q-V14), to confirm.</attr>
+  <description>When both sides of a merge created an object under one object ID with equal files, Mellon shall count the two as different objects, unless the creating commits carry the same change.</description>
+</object>

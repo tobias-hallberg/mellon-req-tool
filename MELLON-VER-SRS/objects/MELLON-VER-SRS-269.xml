@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-269">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V35 (D-V23). Without a commit argument the tool tags whatever the latest commit is, and the agent needs to check that the commit was its own.</attr>
+  <description>When the MCP server's `tag_issue` tool cuts an issue, the MCP server shall return the full hash of the commit that the issue tag names.</description>
+</object>

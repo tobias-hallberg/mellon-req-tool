@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-197">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a discard also throws away changes that an agent or another window made, which the user hasn't necessarily seen. Read from disk, also while the Changed on disk banner shows (failure analysis change to SRS-157).</attr>
+  <description>When the Document Editor asks to confirm a discard, the Document Editor shall list the files that the discard restores or deletes, as found in the working copy at that moment.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the history is the review record of why a requirement changed. The check comes before the trailer, which would make an empty agent message non-empty (review Q33). Answered on 2026-11-11 (the author's question), to confirm.</attr>
+  <description>If a commit message is blank before Mellon adds a trailer, Mellon shall refuse the commit.</description>
+</object>

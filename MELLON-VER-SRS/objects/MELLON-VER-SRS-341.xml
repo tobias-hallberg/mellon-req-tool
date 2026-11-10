@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-341">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the links turn suspect after the merge (USAGE.md), and without the list the user can't tell a retargeted link from a changed target. Raised by the architecture review.</attr>
+  <description>The Resolve merge dialog shall list each link that Mellon retargets to a renumbered object, with the link's source object.</description>
+</object>

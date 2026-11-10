@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-235">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an empty object would read as a requirement that was emptied. The docs don't say what happens.</attr>
+  <description>If an object to show at a commit doesn't exist at that commit, Mellon shall report that the object doesn't exist there.</description>
+</object>

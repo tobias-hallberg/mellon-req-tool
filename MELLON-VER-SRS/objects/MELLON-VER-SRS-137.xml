@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: specification.md says an MCP commit doesn't validate, so an agent can commit what the GUI refuses. When built, update specification.md and the rationale of MELLON-CHECK-SRS-148. A refused `commit_message` commit keeps the write (MELLON-VER-SRS-173). Merged with CHECK's (MELLON-CHECK-SRS-82 in its scratch copy). Answered on 2026-11-11, to confirm.</attr>
+  <description>If a document holding a selected path of an MCP commit has a validation error, the MCP server shall refuse the commit and return the validation errors.</description>
+</object>

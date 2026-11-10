@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-285">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q49, as MELLON-VER-SRS-284.</attr>
+  <description>While a tag name is entered, the commit dialog shall warn, without blocking, of each suspect or broken link in the repository.</description>
+</object>

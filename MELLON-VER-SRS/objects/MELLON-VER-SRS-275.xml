@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-275">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an issue is cut by raising the issue, so that the issue rules apply. Wording from review Q60. Replaced by MELLON-VER-SRS-276.</attr>
+  <description>If an entered tag name has the form `&lt;document ID&gt;-issue-&lt;n&gt;` for a document in the repository, the commit dialog shall refuse the name.</description>
+</object>

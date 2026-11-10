@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-206">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V25, the failure analysis's change to SRS-163. The document's side of the stopped operation is lost, and continuing records the commit without its document change. Answered on 2026-11-11 (Q-V13): the same list as for commits, to confirm.</attr>
+  <description>While a rebase, cherry-pick, revert or `git am` is in progress, Mellon shall refuse to discard.</description>
+</object>

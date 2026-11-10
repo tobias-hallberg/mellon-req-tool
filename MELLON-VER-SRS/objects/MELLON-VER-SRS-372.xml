@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-372">
+  <attr name="type">Heading</attr>
+  <description>Working with git clients</description>
+</object>

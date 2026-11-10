@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-319">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the outline merges by object position, not as lines of text, which would give a duplicate outline entry.</attr>
+  <description>When both sides of a merge changed a document's outline, Mellon shall apply theirs' additions, moves and deletions of objects to ours' outline.</description>
+</object>

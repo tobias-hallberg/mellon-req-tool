@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-381">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V34 (D-V22). One name can be made to read as another; as MELLON-VER-SRS-82 for descriptions in Compare.</attr>
+  <description>When the GUI shows a commit message, author name, branch name or tag name holding a character that changes text direction or has no width, the GUI shall mark the character.</description>
+</object>

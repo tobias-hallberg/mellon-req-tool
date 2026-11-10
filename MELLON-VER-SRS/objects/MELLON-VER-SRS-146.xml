@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-146">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: changes made by the MCP server or by hand are listed too, so the author sees what the commit holds. Editor side files and files git ignores aren't uncommitted changes (amended term, review Q8, Q52); confirm that 0.3.0 leaves both out of the list.</attr>
+  <description>The commit dialog shall list each uncommitted change in the open document's folder, whichever program made the change.</description>
+</object>

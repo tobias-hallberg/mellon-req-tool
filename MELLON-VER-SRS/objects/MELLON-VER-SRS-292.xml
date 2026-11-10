@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-292">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the commit is sound without the tag, and the user can tag again; someone creating the same name meanwhile is one cause. Which tag matters when one commit makes two (MELLON-VER-SRS-288); the failure analysis's change to SRS-216, confirm the report names it.</attr>
+  <description>If tagging fails after Mellon made the commit, Mellon shall keep the commit and report which tag failed and why.</description>
+</object>

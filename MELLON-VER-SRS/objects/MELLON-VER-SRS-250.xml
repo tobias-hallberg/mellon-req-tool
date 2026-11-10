@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-250">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an agent needs the issue to know what a review or a PDF refers to. Split by tool (review Q76).</attr>
+  <description>The MCP server's `list_documents` tool shall return each document's current issue, or an empty value when the document has no issue.</description>
+</object>

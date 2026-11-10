@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the commit dialog shows git's errors in full, and the MCP server returns them.</attr>
+  <description>If a commit fails, Mellon shall report why the commit failed.</description>
+</object>

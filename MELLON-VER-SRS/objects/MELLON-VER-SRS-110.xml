@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q42, Answered on 2026-11-11, to confirm. git mergetool's .orig files and editors' swap files in a document folder are uncommitted changes that a commit takes unseen. MELLON-STORE-SRS-50 makes them validation errors once built.</attr>
+  <description>When a commit holds a file in a document folder whose name the on-disk format doesn't define, Mellon should name the file in the commit's result.</description>
+</object>

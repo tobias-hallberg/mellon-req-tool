@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-305">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: resolving rewrites each file both sides changed from the commits (MELLON-VER-SRS-309), so an edit made after the merge stopped is lost without a warning (open question Q4, F1). Answered on 2026-11-11 (Q4 as recommended, with review Q2's change), to confirm: once no document file conflicts, edits that fix the merge are allowed. Test with the Document Editor kept active and with an MCP write (CF-V57).</attr>
+  <description>While a document folder holds a conflicting file, Mellon shall refuse each operation that changes a file in a document folder, other than resolving the merge.</description>
+</object>

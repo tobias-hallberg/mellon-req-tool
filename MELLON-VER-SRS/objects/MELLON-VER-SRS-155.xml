@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-155">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V13 (D-V9). A checkout in a git client while Mellon is open moves the commit to another branch.</attr>
+  <description>The commit dialog should show the name of the branch that the commit adds to.</description>
+</object>

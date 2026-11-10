@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-283">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the tag marks the other documents as last committed. Replaced by MELLON-VER-SRS-284 to MELLON-VER-SRS-287, which warn about each document, one kind each (review Q49).</attr>
+  <description>While a tag name is entered, the commit dialog shall warn, without blocking, of each uncommitted change, suspect or broken link, validation error and load error in the open document's upstream documents.</description>
+</object>

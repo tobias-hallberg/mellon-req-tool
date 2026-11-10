@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-254">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the commit dialog is the only place the GUI shows the issue, so a user can't see which issue a document is at without starting a commit.</attr>
+  <description>The Project Explorer should show with each document the document's current issue.</description>
+</object>

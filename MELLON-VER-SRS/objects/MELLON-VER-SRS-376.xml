@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-376">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md, as MELLON-VER-SRS-375.</attr>
+  <description>The Document Editor shall show in the status bar the current branch's name and the latest commit's hash.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a commit on a detached HEAD is on no branch, and after the next checkout only git's reflog holds it, so the change looks committed and is lost later (CF-V18, E47). Applies over MCP too. MELLON-STORE-SRS-15 accepts such a root for reading. Answered on 2026-11-11 (the author's question; the review and the analysis agree), to confirm.</attr>
+  <description>While HEAD is detached, Mellon shall refuse to commit.</description>
+</object>

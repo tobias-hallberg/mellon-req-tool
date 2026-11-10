@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the message reads "Edited &lt;document ID&gt;. Affected requirements: ...". Since 0.3.0 a figure-only change counts for its object. Replaced by MELLON-VER-SRS-148.</attr>
+  <description>The commit dialog shall prefill the commit message with the object IDs of the objects whose object file or figure is among the listed files.</description>
+</object>

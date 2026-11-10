@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-207">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V25. As MELLON-VER-SRS-120 for commits: a stash pop can leave a conflict without an operation in progress.</attr>
+  <description>If the git index holds an unresolved conflict, Mellon shall refuse to discard.</description>
+</object>

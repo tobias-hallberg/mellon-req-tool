@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-260">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, issue tags. A person decides when a document is released, so an issue is cut only when asked for (review Q77).</attr>
+  <description>When the user commits after raising the issue, Mellon shall tag the new commit as the entered issue of the document.</description>
+</object>

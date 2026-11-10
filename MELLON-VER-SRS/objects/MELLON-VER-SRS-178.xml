@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-178">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V4 (D-V3). As MELLON-VER-SRS-156, for an agent.</attr>
+  <description>When the MCP server commits, the MCP server shall return the name and email that the commit records as author.</description>
+</object>

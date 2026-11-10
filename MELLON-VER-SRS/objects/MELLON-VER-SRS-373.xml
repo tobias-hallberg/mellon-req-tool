@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-373">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Mellon only commits, and a team syncs with the git client the team already uses (TEAM.md). So Mellon holds no credentials.</attr>
+  <description>Mellon shall not fetch from, pull from or push to a git remote.</description>
+</object>

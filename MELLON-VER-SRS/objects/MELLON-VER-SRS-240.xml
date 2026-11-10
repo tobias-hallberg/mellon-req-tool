@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-240">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V39 (D-V26). A document ID can hold -issue-, so a prefix match reads the tag A-issue-1-issue-2 as an issue of A.</attr>
+  <description>Mellon shall count a tag as an issue of a document only when the tag's name is the document ID, then `-issue-`, then one or more whole numbers separated by dots.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-340">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: one line per renumbered requirement.</attr>
+  <description>The Resolve merge dialog shall list each object that Mellon renumbers, with the object's old and new object IDs.</description>
+</object>

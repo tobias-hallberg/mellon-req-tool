@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-331">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: it isn't a conflict, and the object committed later is the less likely to be referred to already. Which date counts is to confirm in test mapping (review Q9). Replaced by MELLON-VER-SRS-332, MELLON-VER-SRS-333 and MELLON-VER-SRS-334 (Q-V5), which drop commit dates.</attr>
+  <description>When both sides of a merge created different objects under one object ID, Mellon shall renumber, without asking the user, the object whose creating commit is the later one.</description>
+</object>

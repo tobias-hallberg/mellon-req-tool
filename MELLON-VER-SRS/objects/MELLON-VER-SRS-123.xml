@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-123">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: a git program committing at the same moment; otherwise the other program's commit would drop off the branch. Replaced by MELLON-VER-SRS-124, which starts at validation (review Q4).</attr>
+  <description>If the latest commit changes while Mellon records a commit, Mellon shall make no commit and report that the user can commit again.</description>
+</object>

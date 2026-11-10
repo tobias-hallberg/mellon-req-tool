@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: exactly those paths, so an agent commits what it means to.</attr>
+  <description>When `commit_changes` is called with `paths`, the MCP server shall commit the given paths and no other path.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-298">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q53. A user coming back from a git client to a Document Editor never activates the Project Explorer. Answered on 2026-11-11, to confirm.</attr>
+  <description>When a Document Editor finds a merge in progress, the Document Editor shall show the merge banner until the Document Editor finds none.</description>
+</object>

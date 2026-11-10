@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-173">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the result carries `commit_error`, and the write isn't rolled back, so the agent can fix the cause and commit with `commit_changes` instead of making the edit twice. Merged with CHECK's requirement on a refused commit (review Q29 there); a refusal is such a failure.</attr>
+  <description>If the commit for a write tool's `commit_message` fails, the MCP server shall keep the write in the working copy and return the commit's error with the result.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-296">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 0.3.0. The user sees that the repository is in the middle of a merge that a git client started. Wording from review Q53, since the check runs only at MELLON-VER-SRS-297's moments.</attr>
+  <description>When the Project Explorer finds a merge in progress, the Project Explorer shall show the merge banner until the Project Explorer finds none.</description>
+</object>

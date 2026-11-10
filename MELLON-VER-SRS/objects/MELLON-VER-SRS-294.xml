@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-294">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q48. A plain `git push` doesn't push tags, so an issue cut in Mellon can stay on one machine while the team works from the last pushed one (E57). No command is named: TEAM.md says how to push tags (handed to Process). Mellon doesn't push (MELLON-VER-SRS-373).</attr>
+  <description>When Mellon creates a tag, Mellon should report that the tag stays local until the user pushes the tag.</description>
+</object>

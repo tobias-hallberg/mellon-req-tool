@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: split out of MELLON-VER-SRS-128 (review Q76): the message is the fix. Patching an old issue is done on a branch made from the issue tag.</attr>
+  <description>When Mellon refuses a commit because HEAD is detached, Mellon shall say to check out a branch first.</description>
+</object>

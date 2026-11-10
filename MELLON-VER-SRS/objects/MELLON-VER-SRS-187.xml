@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-187">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: hand-off from STORE (failure analysis, common causes). git's status trusts modified time and size, so a change that keeps both is neither listed, counted nor committed. MELLON-STORE-SRS-181 tells a changed file by content for reading.</attr>
+  <description>Mellon shall decide whether a file in a document folder is an uncommitted change by the file's content, whatever the file's modified time and size.</description>
+</object>

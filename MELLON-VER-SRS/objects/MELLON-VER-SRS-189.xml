@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-189">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: TEAM.md: the way to throw away a document's edits at once, objects created since the latest commit included; undo steps back one edit at a time. The MCP server has no discard tool, so an agent can't throw its uncommitted writes away (checked in the code on 2026-11-11, review Q69): nothing to require.</attr>
+  <description>The Document Editor shall have a Discard uncommitted changes to this document… action.</description>
+</object>

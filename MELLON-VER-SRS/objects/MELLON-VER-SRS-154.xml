@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-154">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V16 (D-V11). The window returns to read-only and clears undo, so a file left behind looks committed. A second, independent read of what is uncommitted.</attr>
+  <description>If the open document has an uncommitted change after a commit from the commit dialog succeeds, the Document Editor shall name the changed files.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V6 (D-V5), review Q75. A lock that a crashed git program left never clears, so committing or discarding again never works until the user deletes the file. In a linked worktree the lock is in the repository's git folder, not under &lt;root&gt;/.git (hand-off from STORE, CF-S4). The review's shall over the analysis's should: the user can't find the file otherwise.</attr>
+  <description>When Mellon reports that another program holds git's index lock, Mellon shall name the lock file.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-252">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a lightweight tag doesn't say who cut the issue or when, and `git push --follow-tags` skips the tag. Lightweight issue tags that exist still count as issues. Answered on 2026-11-11 (the author's question; the review and the analysis agree), to confirm.</attr>
+  <description>When Mellon creates an issue tag, Mellon should create an annotated tag that records the tagger, the date and the issue.</description>
+</object>

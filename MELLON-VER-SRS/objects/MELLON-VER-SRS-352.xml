@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-352">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: Traces to, so the user judges the merge against what the requirement traces to.</attr>
+  <description>The Resolve merge dialog shall show, with each object the user merges by hand, the objects that the object links to, with their merged descriptions.</description>
+</object>

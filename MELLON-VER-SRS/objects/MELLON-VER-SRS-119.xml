@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q32. A mailbox apply leaves a half-applied series, as a rebase does. Bisect needs nothing: HEAD is detached during it (MELLON-VER-SRS-128). Answered on 2026-11-11 (Q-V13), to confirm.</attr>
+  <description>While a `git am` is in progress, Mellon shall refuse to commit.</description>
+</object>

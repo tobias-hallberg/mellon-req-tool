@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-162">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q51. An author of spaces passes MELLON-VER-SRS-161 and prints as no author on the PDF cover. Replaces MELLON-VER-SRS-161.</attr>
+  <description>If the commit dialog's author is blank, the commit dialog shall refuse the commit.</description>
+</object>

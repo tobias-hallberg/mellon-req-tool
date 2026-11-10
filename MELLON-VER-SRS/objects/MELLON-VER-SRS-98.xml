@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-98">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V8 (D-V6). Mellon commits working-copy bytes without running the filter, which bypasses LFS and similar conventions. Answered on 2026-11-11 (Q-V12), to confirm; the USAGE.md note that LFS isn't supported in document folders is handed to Process.</attr>
+  <description>If git applies a filter other than line-ending conversion to a selected path, Mellon shall refuse the commit and name the path and the filter.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-301">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q63. Those are left for the git client (MELLON-VER-SRS-325), so the user needs to know that Resolve won't clear them.</attr>
+  <description>While a merge is in progress, the merge banner shall show separately the number of conflicting files outside document folders.</description>
+</object>

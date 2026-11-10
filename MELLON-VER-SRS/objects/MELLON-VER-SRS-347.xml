@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-347">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. Use mine and Use theirs fill it in one step. The prefill is replaced by MELLON-VER-SRS-355 (Q-V7).</attr>
+  <description>When both sides of a merge changed a description or metadata text, the Resolve merge dialog shall offer an editable merged text, prefilled with ours.</description>
+</object>

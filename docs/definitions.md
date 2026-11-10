@@ -109,8 +109,15 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Latest commit | The commit at git's `HEAD`. |
 | Working copy | The files on disk, including changes that aren't committed yet. |
 | Pending edit | Text typed in a Document Editor that Mellon hasn't written to the working copy yet. |
-| Uncommitted change | A file in a document folder that differs from the latest commit. |
+| Uncommitted change | A file in a document folder, other than an editor side file or a file git ignores, that differs from the latest commit, or that the latest commit holds and the working copy lacks. |
+| Editor side file | A file whose name starts with `.$` or `~$`, for example the backup that draw.io leaves beside a figure it saves. It isn't part of a document. |
+| Selected path | A file that Mellon is asked to commit: by the commit dialog, by `commit_changes`, or by a write tool's `commit_message`. A folder given as a path selects each file under the folder, in the working copy and at the latest commit. |
+| Discard | To put a document's folder back as the latest commit holds the folder, throwing away the document's uncommitted changes. |
+| Detached HEAD | git's HEAD naming a commit directly instead of a branch. |
 | Issue | A numbered release of one document, recorded as the tag `<document ID>-issue-<n>` on a commit. Its number is one or more whole numbers separated by dots. |
+| Issue tag | The tag `<document ID>-issue-<n>` that records an issue. |
+| Raise the issue | To enter in the commit dialog an issue other than the prefilled one. |
+| Upstream document | A document that holds the target of a link from one of the document's objects, or from an object of another upstream document. |
 | Issue order | Issues are ordered by their numbers part by part, as whole numbers, so 2.9 comes before 2.10. When one issue's parts begin the other's, the shorter comes first, so 2 comes before 2.0. |
 | Current issue | The highest issue of a document, in issue order, whose commit is the latest commit or an ancestor of it. |
 | Issue before | For a given issue, the highest issue of the same document that comes before it in issue order and whose commit is the latest commit or an ancestor of it. |
@@ -124,8 +131,17 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Unset | A From or To that names no version: nothing chosen, and nothing typed but whitespace. |
 | From or To changes | A version is picked in it, or the text typed in it changes, whether or not Enter or Compare has been pressed since. |
 | Added, Deleted, Modified, Moved, Link reviewed | The changes an object can have between From and To. **Added**: it exists at To and not at From. **Deleted**: it exists at From and not at To. **Modified**: it exists at both and a field differs. A difference only in a file's line endings, indentation or order of XML attributes is no change. **Moved**: it exists at both, and its parent changed, or it isn't in the largest set of its siblings at both versions whose order is the same at From and at To. Inserting or deleting a sibling moves nothing. When two such sets are equally large, the sibling that comes later at From is the one Moved. **Link reviewed**: its only change is to the acknowledged commits of its outgoing links. Moved can go with Modified or with Link reviewed. |
-| Merge in progress | A git merge that stopped because files conflict, and that hasn't been committed or aborted. |
+| Merge in progress | A git merge that has stopped before its merge commit, with or without conflicting files, and that hasn't been committed or aborted. |
 | Git operation in progress | A merge, rebase, cherry-pick or revert that git stopped and that hasn't been finished or aborted. |
+| Merge commit | A commit with more than one parent. |
+| Ours | In a merge in progress, the side at the latest commit: the branch being merged into. |
+| Theirs | In a merge in progress, the side at the commit being merged in. |
+| Merge base | A common ancestor of ours and theirs that isn't an ancestor of another common ancestor. After merges both ways two sides can have more than one; which one Mellon merges from is in MELLON-VER-SRS. |
+| Conflicting file | A file that the git index holds as unmerged, after a merge, rebase, cherry-pick, revert, `git am` or stash stopped on the file, until the file is marked resolved. |
+| Resolve | To write the merged document files of a merge in progress and mark them resolved in the git index. |
+| Creating commit | For an object new on one side of a merge, the commit between the merge base and that side that first added the object's file. |
+| Carry the same change | Two commits carry the same change when each makes the same changes to the same files relative to its own parent, as a commit and its cherry-pick do. |
+| Renumber | To give an object a new object ID while resolving a merge, because both sides created different objects under one object ID. |
 
 ## Checks
 
@@ -155,6 +171,10 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Trace view | The Document Editor dialog that shows the trace of the selected object. |
 | History tab | The Document Editor tab that lists the commits that changed the selected object. |
 | Compare dialog | The GUI window that shows the changes between two versions of one document. |
+| Commit dialog | The dialog, opened from a Document Editor, that commits the open document's folder, with the commit message, the issue, the document's author and date, and an optional tag name. |
+| Resolve merge dialog | The GUI window in which the user resolves a merge in progress. |
+| Merge banner | The banner that says a merge is in progress. |
+| Changed on disk banner | The Document Editor banner shown when the document or one of its parent documents changed on disk outside the window. |
 | Properties dialog | The Document Editor dialog that edits the document's metadata, parent documents and attribute definitions. |
 | Advanced filter dialog | The Document Editor dialog that creates and edits a filter. |
 | Filter box | The text box above the grid in which the user types text to find objects by. |

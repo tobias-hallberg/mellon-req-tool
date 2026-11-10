@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: informational. A suspect link doesn't block a commit (MELLON-CHECK-SRS-32); a broken link blocks only where validation reports it (MELLON-CHECK-SRS-34, -35), so "without blocking" was dropped. Also the GUI's warning before an issue (Q-V9).</attr>
+  <description>The commit dialog shall list the open document's suspect and broken outgoing links.</description>
+</object>

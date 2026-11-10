@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-278">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q61 and the failure analysis's change to SRS-208. Both names clash as a branch's does (MELLON-VER-SRS-69).</attr>
+  <description>If an entered tag name is `HEAD` or the name that Compare reads as the working copy, the commit dialog shall refuse the name.</description>
+</object>

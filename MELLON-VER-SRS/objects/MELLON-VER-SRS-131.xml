@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-131">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Mellon's commits don't run git hooks (CF-V1; decided on 2026-11-11, Q-V2). A hook that rewrites files breaks MELLON-VER-SRS-101, the installer has no shell to run hook scripts, a slow hook blocks the MCP server, and a repository received as a folder could run code. mellon-check in CI stays the gate. The review's "run pre-commit and commit-msg" (Q24) is rejected for these reasons.</attr>
+  <description>When Mellon commits, Mellon shall run no git hook.</description>
+</object>

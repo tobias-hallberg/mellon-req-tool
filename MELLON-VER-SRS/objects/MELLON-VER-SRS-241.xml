@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-241">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V40 (D-V27). A pulled tag can name a tree or a file, which would stop issues being listed for the document.</attr>
+  <description>If an issue tag doesn't lead to a commit, Mellon shall report the tag and count no issue for the tag.</description>
+</object>

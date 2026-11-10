@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-281">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V13 (D-V8), which merges the draft's tag-only guard. The user tags the state that the dialog's warnings were found for; a commit or checkout in between would be tagged unseen. MELLON-VER-SRS-124 covers a commit.</attr>
+  <description>If the latest commit or the current branch changed after the commit dialog opened, Mellon shall refuse to tag without a new commit and say what changed.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-234">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: as for Compare's versions (MELLON-VER-SRS-60 and -68), git picks one of two clashing names without a warning. Review Q59: shall, as for those two.</attr>
+  <description>If `commit_ref` resolves to no commit or to more than one, the MCP server's `show_object_at` tool shall return an error naming `commit_ref`.</description>
+</object>

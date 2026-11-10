@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-223">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V30. One rule for both surfaces (Q-V15). Replaces MELLON-VER-SRS-222.</attr>
+  <description>The MCP server's `git_history` tool shall return the commits that the History tab lists for the object, in the same order, up to `max_entries`.</description>
+</object>

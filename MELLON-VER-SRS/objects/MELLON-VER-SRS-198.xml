@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-198">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V24 (D-V16). An agent's edit or a draw.io save made after the list would be thrown away unseen. MELLON-STORE-SRS-182 is the general rule for operations; this one starts at the list the user confirmed.</attr>
+  <description>If a file in the document's folder changes after the discard confirmation listed the files, Mellon shall refuse the discard and name the file.</description>
+</object>

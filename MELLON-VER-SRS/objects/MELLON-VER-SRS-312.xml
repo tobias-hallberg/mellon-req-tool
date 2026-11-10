@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-312">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V52 (D-V35). With no base each object counts as created on both sides, which renumbers everything.</attr>
+  <description>If ours and theirs have no merge base, the Resolve merge dialog shall refuse to resolve and say why.</description>
+</object>

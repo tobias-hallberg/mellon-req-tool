@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-142">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Ctrl+S is where a user looks for saving, and saving a change in Mellon means committing it. Kept as one requirement: one action's fixed set of keys (review Q76 noted it).</attr>
+  <description>The Document Editor's Commit action shall have the shortcuts Ctrl+S and Ctrl+K.</description>
+</object>

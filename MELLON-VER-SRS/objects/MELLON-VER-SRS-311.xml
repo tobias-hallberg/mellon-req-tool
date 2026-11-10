@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-311">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V51, review Q31. git's merge works the base out over each common ancestor, so its recorded base doesn't make a change on both sides read as one-sided. Chosen by the team lead over the analysis's D-V34. Open question. Replaces MELLON-VER-SRS-310.</attr>
+  <description>When ours and theirs have more than one merge base, Mellon shall merge each conflicting file from the base content that git recorded in the index for the file.</description>
+</object>

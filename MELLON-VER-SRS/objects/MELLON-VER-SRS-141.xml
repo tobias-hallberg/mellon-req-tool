@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: each edit is already on disk, so committing is the step that records a change.</attr>
+  <description>The Document Editor shall have a Commit action that opens the commit dialog for the open document.</description>
+</object>

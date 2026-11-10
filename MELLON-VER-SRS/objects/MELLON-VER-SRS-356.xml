@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-356">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V60. Answered on 2026-11-11 (Q-V7), to confirm.</attr>
+  <description>While the user hasn't made a choice that the Resolve merge dialog offers, the Resolve merge dialog shall keep Resolve disabled.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the history is the record of who changed a requirement. Replaced by MELLON-VER-SRS-116 once built (CF-V4).</attr>
+  <description>When Mellon commits, Mellon shall record git's `user.name` and `user.email` as the commit's author and committer.</description>
+</object>

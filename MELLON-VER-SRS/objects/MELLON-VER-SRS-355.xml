@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-355">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V60, E64, review Q27. A preset drops theirs' change unread. Answered on 2026-11-11 (Q-V7), to confirm. For a text, the merged text starts empty until the user writes it or picks a side. Keep or delete for a deleted object isn't a choice between ours and theirs, so MELLON-VER-SRS-350's preset stays. Replaces the presets of MELLON-VER-SRS-347, MELLON-VER-SRS-348, MELLON-VER-SRS-349 and MELLON-VER-SRS-354.</attr>
+  <description>The Resolve merge dialog shall preset no choice between ours and theirs.</description>
+</object>

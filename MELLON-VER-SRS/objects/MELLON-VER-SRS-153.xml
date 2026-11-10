@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-153">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: TEAM.md: windows return to read-only after each commit, so the next edit is a deliberate one. A tag made with nothing to commit (MELLON-VER-SRS-280) does the same (the lead checked the code on 2026-11-11; the docs don't say it, so confirm in test mapping).</attr>
+  <description>When a commit or a tag from the commit dialog succeeds, the Document Editor shall return to read-only mode.</description>
+</object>

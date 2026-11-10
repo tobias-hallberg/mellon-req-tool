@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-368">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V47, CF-V49 (D-V30). git merges changes that don't touch adjacent lines by itself, so a description can combine edits nobody wrote and Mellon's resolver never runs. Answered on 2026-11-11 (Q-V1), to confirm: document files are marked -merge; TEAM.md and mellon-check are handed to Process and CHECK.</attr>
+  <description>If the repository's git attributes let git merge a file in a document folder as text, the Project Explorer shall warn and show the `.gitattributes` line that stops git merging the file as text.</description>
+</object>

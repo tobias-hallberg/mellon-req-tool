@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-322">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q65. Answered on 2026-11-11, to confirm: parent documents merge like links (MELLON-VER-SRS-316), so a parent one side removed doesn't come back when both sides changed the list. Replaces MELLON-VER-SRS-321 for that case.</attr>
+  <description>When one side of a merge removed a parent document and the other side left the parent document declared, Mellon shall remove the parent document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-251">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: as MELLON-VER-SRS-250, for one document.</attr>
+  <description>The MCP server's `show_document` tool shall return the document's current issue, or an empty value when the document has no issue.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-324">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q6. The delete stripped incoming links in other documents, a one-sided removal that MELLON-VER-SRS-316 applies, so the kept object loses its incoming links without a warning.</attr>
+  <description>When the user keeps an object that one side of a merge deleted, Mellon shall keep each link to the object that the deletion removed.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-374">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checkouts, merges and rebases are made in a git client, so Mellon doesn't move the user to another version unasked. Widened from HEAD to each reference (review Q74).</attr>
+  <description>Mellon shall change no git reference other than the current branch, by adding a commit, and the tags Mellon creates.</description>
+</object>

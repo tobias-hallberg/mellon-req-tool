@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-168">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 0.2.0 fixed a failed commit leaving the dialog's edit in the manifest. Its test must cover a failure after the latest commit moved, where architecture.md says the manifest isn't put back (CF-V14); the write's safety is MELLON-STORE-SRS-167's. Replaced by MELLON-VER-SRS-169.</attr>
+  <description>If a commit from the commit dialog fails, Mellon shall restore the manifest's author and date to the values the manifest had before the commit dialog's edit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-158">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V17 (D-V12). Crash leftovers and stray files are listed among document files and committed unnoticed (E7). MELLON-STORE-SRS-50 makes them validation errors once built; MELLON-VER-SRS-110 names them after an MCP commit.</attr>
+  <description>The commit dialog should mark each listed file whose name the on-disk format doesn't define.</description>
+</object>

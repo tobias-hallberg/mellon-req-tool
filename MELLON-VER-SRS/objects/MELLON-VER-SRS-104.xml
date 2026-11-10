@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V19 (D-V14). The agent can tell the person what stays uncommitted. Only with MELLON-VER-SRS-103. Answered on 2026-11-11 (Q-V3), to confirm.</attr>
+  <description>When `commit_changes` leaves out an uncommitted change in a document folder, the MCP server should name the file in the result.</description>
+</object>

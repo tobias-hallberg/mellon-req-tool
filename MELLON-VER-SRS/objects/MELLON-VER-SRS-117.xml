@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the merge commit is made in a git client (TEAM.md), and a commit on top of a half-done merge would record one parent and drop the other side. The term now covers a merge stopped without a conflict, `git merge --no-commit` (review Q14). The message was dropped (review Q76); MELLON-VER-SRS-303 says where to finish. Test in a linked worktree too, once MELLON-STORE-SRS-16 is accepted (CF-V7).</attr>
+  <description>While a merge is in progress, Mellon shall refuse to commit.</description>
+</object>

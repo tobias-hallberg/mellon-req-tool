@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-239">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the issue lives in git, not in the manifest (MELLON-STORE-SRS-65), so cutting an issue changes no file and two branches can't conflict over the issue.</attr>
+  <description>Mellon shall record an issue of a document as a git tag named `&lt;document ID&gt;-issue-&lt;n&gt;` on the issue's commit.</description>
+</object>

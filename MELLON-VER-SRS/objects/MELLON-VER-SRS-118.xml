@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md refuses a commit during "a merge, rebase, or similar operation"; confirm each named operation in test mapping (review Q32). Test in a linked worktree too (CF-V7).</attr>
+  <description>While a rebase, cherry-pick or revert is in progress, Mellon shall refuse to commit.</description>
+</object>

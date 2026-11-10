@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q11 merged with CF-V21 (D-V15). Without it an agent commits source code or other non-document files, perhaps on instructions planted in a description, which validation can't check. Covers a path outside the repository, inside .git, or naming nothing.</attr>
+  <description>If a path given to `commit_changes` lies in no document folder of the working copy or the latest commit, or names nothing in either, the MCP server shall refuse the commit and name the path.</description>
+</object>

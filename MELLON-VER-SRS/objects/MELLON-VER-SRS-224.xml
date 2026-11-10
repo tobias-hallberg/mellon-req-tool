@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-224">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q58. Zero or a negative number has no stated result, and an empty answer would read as no history.</attr>
+  <description>If `max_entries` is less than 1, the MCP server's `git_history` tool shall return an error naming `max_entries`.</description>
+</object>

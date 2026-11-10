@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-342">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: CF-V56. Answered on 2026-11-11 (Q-V6), to confirm: a record in the object's own file survives any git client, unlike the merge message. The format change goes through STORE (handed over). It unblocks MELLON-VER-SRS-76 and MELLON-VER-SRS-226.</attr>
+  <description>When Mellon renumbers an object in a merge, Mellon shall record in the renumbered object's file the object's earlier object ID and the merge's parent commits.</description>
+</object>

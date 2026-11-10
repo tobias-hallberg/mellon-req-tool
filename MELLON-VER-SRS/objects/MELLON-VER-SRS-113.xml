@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-113">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the error gives the `git config` commands (INSTALL.md). Split out of MELLON-VER-SRS-112, since the message is what lets a new user fix it (review Q76).</attr>
+  <description>When Mellon refuses a commit for a missing `user.name` or `user.email`, Mellon shall name the git settings to set.</description>
+</object>

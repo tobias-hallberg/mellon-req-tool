@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-263">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the tag goes on whatever HEAD is when the tag is made, so a commit by another program in between gets the issue instead (E56). Raised by the architecture review.</attr>
+  <description>When Mellon tags the commit that the commit dialog made, Mellon shall put the tag on that commit, even if HEAD has moved since.</description>
+</object>

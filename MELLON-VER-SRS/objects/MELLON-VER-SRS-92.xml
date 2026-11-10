@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-92">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: `commit_changes` commits document folders deleted or renamed since the latest commit, and the commit dialog commits the files of objects deleted from the document. A deleted folder selects each file the latest commit holds under it (review Q7).</attr>
+  <description>When Mellon commits, Mellon shall leave out of the new commit each selected path that the latest commit holds and the working copy doesn't.</description>
+</object>

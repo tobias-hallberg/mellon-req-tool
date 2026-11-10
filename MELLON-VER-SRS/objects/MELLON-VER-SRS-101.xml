@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-101">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q3 and the failure analysis's change to this requirement (CF-V11, CF-V12). An agent's outline change made after validation would otherwise ride into the commit with the dialog's author edit, unseen and unvalidated. Covers a listed file deleted since. Applies to MCP commits too.</attr>
+  <description>If a file the commit takes from the working copy differs from what Mellon validated, other than by the commit dialog's author and date edit, Mellon shall refuse the commit and name the file.</description>
+</object>

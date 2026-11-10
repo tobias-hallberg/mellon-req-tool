@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-310">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the resolver takes the one common ancestor that git's library picks, not a virtual base (checked in the code on 2026-11-11, review Q31). In a criss-cross history a change on both sides can then read as one-sided (CF-V51). Replaced by MELLON-VER-SRS-311.</attr>
+  <description>When ours and theirs have more than one merge base, Mellon shall merge from the one that `git merge-base` reports.</description>
+</object>

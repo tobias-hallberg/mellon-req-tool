@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-351">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q17. Otherwise the object has no parent in the merged outline. Keep is chosen, as MELLON-VER-SRS-350.</attr>
+  <description>When one side of a merge puts an object under an object that the other side deleted, the Resolve merge dialog shall offer to keep or delete the deleted object, with keep chosen.</description>
+</object>

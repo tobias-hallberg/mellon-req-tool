@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-151">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q36. One dialog used two sets of documents, declared parents here and linked documents for a tag, so a document linked to but not declared a parent was in only one. Answered on 2026-11-11: upstream documents. Replaces MELLON-VER-SRS-150.</attr>
+  <description>The commit dialog shall warn of each upstream document that has an uncommitted change, without blocking the commit.</description>
+</object>

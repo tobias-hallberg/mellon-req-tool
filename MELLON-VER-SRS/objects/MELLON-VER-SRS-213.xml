@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-213">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V27 (D-V18), review Q20. Text still being typed is otherwise written after the reload, an uncommitted change straight after a discard.</attr>
+  <description>When a discard completes, the Document Editor shall drop the Document Editor's pending edits to the document.</description>
+</object>

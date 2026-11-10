@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: nothing was committed, so committing again is safe.</attr>
+  <description>If another program holds git's index lock, Mellon shall make no commit and report that the user can commit again.</description>
+</object>

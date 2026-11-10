@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-91">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, "What gets committed": the latest commit plus the selected paths with their working-copy content, so what another program staged doesn't change what Mellon commits. A folder given as a path selects each file under it (term Selected path, review Q7). Leaving side files out was fixed in 0.3.0; merged here from its own requirement (review Q7).</attr>
+  <description>When Mellon commits, Mellon shall make the new commit hold the latest commit's files, with each selected path other than an editor side file as the working copy holds the file.</description>
+</object>

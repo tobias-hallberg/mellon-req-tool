@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-369">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V47, CF-V59 (D-V31). Such an object exists on neither side, whether git or Mellon combined it, so nobody has reviewed it as a whole.</attr>
+  <description>When the latest commit is a merge commit, the Project Explorer should list each object whose files at the merge commit differ from the object's files at each parent.</description>
+</object>

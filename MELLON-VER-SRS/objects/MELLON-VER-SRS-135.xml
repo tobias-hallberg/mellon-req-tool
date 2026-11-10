@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-135">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a commit records the document for the team, so it must not record a document that fails validation, and the author has to see what to fix. USAGE.md: any validation error blocks the commit. Merges VER's own requirement with CHECK's two (MELLON-CHECK-SRS-80 and -81 in CHECK's scratch copy, review Q30 there).</attr>
+  <description>If the open document has a validation error when the user commits from the Document Editor, the Document Editor shall refuse the commit and show the validation errors.</description>
+</object>

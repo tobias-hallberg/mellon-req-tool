@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-230">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the parsed object at the commit (tool descriptions).</attr>
+  <description>When Mellon shows an object at a commit, Mellon shall show the object's attribute values and description from the object's file at that commit.</description>
+</object>

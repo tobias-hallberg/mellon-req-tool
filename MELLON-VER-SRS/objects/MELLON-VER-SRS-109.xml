@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q44. A tool that fails after writing some files, such as `delete_object` stripping links in several documents, would otherwise commit half an operation; MELLON-STORE-SRS-175 proposes putting the files back. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If a write tool called with `commit_message` fails, the MCP server shall make no commit.</description>
+</object>

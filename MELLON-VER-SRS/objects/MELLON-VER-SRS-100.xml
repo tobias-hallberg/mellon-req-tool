@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-100">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a file that an agent changes or adds after the dialog opened would otherwise go into a commit whose author never saw the file (CF-V12, E46). Answered on 2026-11-11 (the author's question; the review and the failure analysis agree), to confirm.</attr>
+  <description>When the user commits from the commit dialog, Mellon shall commit only the listed files, and the manifest when the dialog changed the author or date.</description>
+</object>

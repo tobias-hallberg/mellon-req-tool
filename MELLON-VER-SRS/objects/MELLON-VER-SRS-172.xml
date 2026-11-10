@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-172">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: commits stay explicit, through `commit_changes`, unless the agent asks for one.</attr>
+  <description>When a write tool is called without `commit_message`, the MCP server shall make no commit.</description>
+</object>

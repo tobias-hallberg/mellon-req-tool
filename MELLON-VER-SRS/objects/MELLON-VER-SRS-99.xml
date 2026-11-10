@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: one document is committed at a time, so that each document's history and issues stay its own (STATUS.md, by design). Changes in other documents, such as links stripped by a delete, get their own commit.</attr>
+  <description>When the user commits from the commit dialog, Mellon shall commit no path outside the open document's folder.</description>
+</object>

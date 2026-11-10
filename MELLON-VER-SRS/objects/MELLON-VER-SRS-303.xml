@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-303">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Mellon refuses to commit during a merge (MELLON-VER-SRS-117), so the git client finishes the merge.</attr>
+  <description>While a merge is in progress with no conflicting file, the merge banner shall say to make the merge commit in a git client.</description>
+</object>

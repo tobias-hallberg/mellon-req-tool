@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V3 (D-V1), review Q23. Mellon can't sign, and a server that requires signatures refuses the push later, far from its cause; re-signing by rebase rewrites the commits that acknowledged commits name. Covers commit.gpgsign and tag.gpgSign. Answered on 2026-11-11 (Q-V2), to confirm.</attr>
+  <description>If git's settings ask to sign a commit or tag that Mellon is about to make, Mellon shall refuse to make the commit or tag and say that Mellon can't sign.</description>
+</object>

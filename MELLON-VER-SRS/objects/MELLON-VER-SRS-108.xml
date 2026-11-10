@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-108">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q21 with the failure analysis's widening (CF-V20). A person's edit committed under the agent's message and trailer is a wrong record that looks right, so shall, not should. Answered on 2026-11-11 (the author's question), to confirm.</attr>
+  <description>If a file that a write tool changes differed from the latest commit before the call, or changed again before the commit, the MCP server shall make no `commit_message` commit and name the file.</description>
+</object>

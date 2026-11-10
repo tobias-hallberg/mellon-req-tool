@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-194">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a discard is about one document. Links in other documents to objects the discard deletes become broken (MELLON-VER-SRS-199).</attr>
+  <description>When the user discards, Mellon shall leave each file outside the document's folder unchanged.</description>
+</object>

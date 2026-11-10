@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-202">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. Read-only mode is for looking, and a discard throws work away (review Q77).</attr>
+  <description>While the Document Editor is in read-only mode, the Discard action shall be disabled.</description>
+</object>

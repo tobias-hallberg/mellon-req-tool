@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-377">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md: a tooltip on the status bar. Replaced by MELLON-VER-SRS-378 and MELLON-VER-SRS-379 (review Q34).</attr>
+  <description>While HEAD is detached, the Document Editor's status bar shall show that HEAD is detached.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-225">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: `git_history` stops at `max_entries` and `inspect_object` at `history_max`, so a history that looks complete can be cut short (CF-V33). `review_suspect_link` already reports this (MELLON-TRACE-SRS-118).</attr>
+  <description>When Mellon lists an object's history and leaves out older commits, Mellon shall report that older commits exist.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-244">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q70, the failure analysis's change to SRS-186. 01 and 1 are equal in issue order but are different tags.</attr>
+  <description>If a part of a new issue has more than one digit and starts with 0, Mellon shall refuse the issue.</description>
+</object>

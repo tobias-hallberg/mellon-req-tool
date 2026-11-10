@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-299">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q53, as MELLON-VER-SRS-297 for the Project Explorer.</attr>
+  <description>A Document Editor shall check for a merge in progress when the Document Editor opens, on F5, and when the Document Editor is activated.</description>
+</object>

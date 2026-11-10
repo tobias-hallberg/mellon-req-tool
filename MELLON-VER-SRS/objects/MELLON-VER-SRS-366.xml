@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-366">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V64 (D-V42), as MELLON-VER-SRS-211 for Discard. Built: Resolve starts from the commits each time (USAGE.md), and the resolution isn't journaled (MELLON-STORE-SRS-174).</attr>
+  <description>If resolving a merge fails partway, Mellon shall complete the resolution when the user resolves again.</description>
+</object>

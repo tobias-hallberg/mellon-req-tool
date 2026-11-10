@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-380">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V34 (D-V21). Anyone who can push writes this text, and markup could make it show as something else: fake rows, hidden words. MELLON-CHECK-SRS-84 says the same for validation results; the rule for each window is handed to GUI.</attr>
+  <description>The GUI shall show commit messages, author names, branch names and tag names read from the repository as plain text.</description>
+</object>

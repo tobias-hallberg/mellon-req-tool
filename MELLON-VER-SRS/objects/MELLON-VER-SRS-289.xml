@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-289">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q30. A tag would go on the commit before the merge, while the working copy and the dialog's warnings show the half-merged state.</attr>
+  <description>While a merge is in progress, Mellon shall refuse to create a tag.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V1 (D-V43). A team's local gate is otherwise skipped without a word. Answered on 2026-11-11 (Q-V2), to confirm.</attr>
+  <description>When the repository has a `pre-commit` or `commit-msg` git hook, the commit dialog should say that Mellon's commits don't run git hooks.</description>
+</object>

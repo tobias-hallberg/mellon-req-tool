@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-176">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the result carries `short_hash` and `commit_message`. 7 digits is git's usual short form, as in MELLON-VER-SRS-67. Kept as one requirement: the fields of one result (review Q76).</attr>
+  <description>When the MCP server commits, the MCP server shall return at least the first 7 digits of the new commit's hash, and the commit message.</description>
+</object>

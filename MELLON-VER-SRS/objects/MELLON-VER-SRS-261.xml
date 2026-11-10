@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-261">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: a raised issue alone is not a change, and the Tag button can't cut an issue either. Replaced by MELLON-VER-SRS-262 (review Q26).</attr>
+  <description>If the user raises the issue and the commit holds no other change, the commit dialog shall refuse the commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-284">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q49. A tag marks the whole repository (definitions: Tag), so documents beside or below the open one go into the milestone too. Answered on 2026-11-11, to confirm. Replaces part of MELLON-VER-SRS-283.</attr>
+  <description>While a tag name is entered, the commit dialog shall warn, without blocking, of each uncommitted change in the repository.</description>
+</object>

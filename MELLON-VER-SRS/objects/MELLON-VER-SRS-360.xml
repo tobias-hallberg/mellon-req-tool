@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-360">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the git client then sees the conflicts as resolved and can make the merge commit. Covers a conflicting file whose merged result equals ours, which needn't be rewritten (review Q15); confirm.</attr>
+  <description>When the user resolves a merge, Mellon shall mark each conflicting file in a document folder as resolved in the git index.</description>
+</object>

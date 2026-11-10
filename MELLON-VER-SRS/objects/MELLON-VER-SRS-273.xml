@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-273">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. git can't make the tag, and the dialog says so while the user types instead of after the commit (review Q77).</attr>
+  <description>If a tag name breaks git's rules for reference names, the commit dialog shall refuse the name.</description>
+</object>

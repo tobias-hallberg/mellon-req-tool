@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-218">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V30, review Q25 and Q73. Answered on 2026-11-11 (Q-V15), to confirm: a merge commit counts when the object's files differ from each parent's, git's own rule and TRACE's for Last change, cited rather than restated. So the newest commit listed is the one an acknowledgement records, which merges review Q73's requirement here. Order by ancestry, since clocks scramble dates. Replaces MELLON-VER-SRS-217.</attr>
+  <description>The History tab shall list the commits on the latest commit's history that change the selected object as MELLON-TRACE-SRS-57 to -63 count a change, each before its parents.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-209">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: Mellon doesn't restore these, and deleting a nested repository would lose its history. A symbolic link made since the latest commit is MELLON-STORE-SRS-228's (review Q12).</attr>
+  <description>If the document's folder holds a nested git repository, or the latest commit holds a symbolic link or submodule in the folder, Mellon shall refuse to discard.</description>
+</object>

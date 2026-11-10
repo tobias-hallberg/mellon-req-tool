@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-245">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the commit dialog and `tag_issue` apply the same rule, so issues only go up along one line of history.</attr>
+  <description>If a new issue doesn't come after the document's current issue in issue order, Mellon shall refuse the issue.</description>
+</object>

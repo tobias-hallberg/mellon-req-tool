@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: TEAM.md asks the user to check a git client for leftovers, because deleting an object strips links in other documents and the commit leaves those changes behind unseen.</attr>
+  <description>The commit dialog should warn of each document, other than the open document and its upstream documents, that has an uncommitted change.</description>
+</object>

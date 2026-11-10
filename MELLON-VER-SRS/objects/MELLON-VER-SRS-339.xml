@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-339">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: each link to an object ID new on one side was made on that side, so the retargeting is exact (STATUS.md). The test must include a link in another document that git merged by itself, which may be unmet (CF-V54).</attr>
+  <description>When Mellon renumbers an object in a merge, Mellon shall retarget to the new object ID each link that the object's side made to the object, in each document.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-112">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 0.2.0 removed the silent `mellon@localhost` fallback, because a commit has to say who made the change.</attr>
+  <description>If git's `user.name` or `user.email` isn't set, Mellon shall refuse to commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-346">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. The user writes the merged text from both, so both have to be in view (review Q77).</attr>
+  <description>When both sides of a merge changed a description or metadata text, the Resolve merge dialog shall show ours and theirs.</description>
+</object>

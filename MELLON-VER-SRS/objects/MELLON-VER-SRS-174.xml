@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-174">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the trailer shows in the history which commits an agent made. Replaced by MELLON-VER-SRS-175 (review Q72, CF-V23).</attr>
+  <description>The MCP server shall end the message of each commit the MCP server makes with the trailer `Via: mellon-mcp`, unless `commit_changes` is called with `include_trailer` false.</description>
+</object>

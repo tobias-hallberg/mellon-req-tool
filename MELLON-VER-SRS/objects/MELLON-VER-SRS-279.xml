@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-279">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: at a milestone everything is committed, and the dialog is where a tag is made.</attr>
+  <description>While the Document Editor isn't in read-only mode and the open document has no uncommitted change, the Commit action shall open the commit dialog.</description>
+</object>

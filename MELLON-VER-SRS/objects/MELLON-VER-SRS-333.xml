@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-333">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: Q-V5's second step, to confirm: a pushed object is already referred to by others. Mellon doesn't fetch, so remote-tracking branches can be old; accepted, with "fetch before merging" in TEAM.md (review Q57, handed to Process). Replaces MELLON-VER-SRS-331.</attr>
+  <description>When issue tags reach both or neither of two creating commits of one object ID, and remote-tracking branches reach exactly one, Mellon shall renumber the other object.</description>
+</object>

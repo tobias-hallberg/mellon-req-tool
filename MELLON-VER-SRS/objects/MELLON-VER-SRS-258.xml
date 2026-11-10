@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-258">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: since 0.2.0 issues are opt-in. When the dialog prefilled the next issue, each commit cut an issue.</attr>
+  <description>When the user commits with the issue as prefilled, Mellon shall create no issue tag.</description>
+</object>

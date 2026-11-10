@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-314">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: like git merging separate lines, a status from one side and a description from the other merge by themselves.</attr>
+  <description>When both sides of a merge changed different fields of one object, Mellon shall take each field from the side that changed the field.</description>
+</object>

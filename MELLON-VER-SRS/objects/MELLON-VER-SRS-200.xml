@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-200">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V26 (D-V17). A delete strips incoming links in other documents; a discard brings the object back but not the links, and committing those documents later makes the loss permanent.</attr>
+  <description>When the Document Editor asks to confirm a discard, the Document Editor should list each other document whose uncommitted changes remove links to objects that the discard restores.</description>
+</object>

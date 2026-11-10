@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-363">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q29 gives the reference points a test can compare. Edits from a git client or a text editor during the merge, or between two resolutions, are otherwise overwritten without a warning; MELLON-VER-SRS-305 covers only Mellon's own operations.</attr>
+  <description>If a document file that Resolve overwrites differs from what git left there and from what Mellon last wrote there, the Resolve merge dialog shall name the file and ask to confirm.</description>
+</object>

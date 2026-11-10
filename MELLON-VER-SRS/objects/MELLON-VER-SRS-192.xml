@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-192">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q8 settles the author's question: an ignored file isn't an uncommitted change (amended term) and isn't part of the document, so deleting it loses something nobody asked to discard. Replaces MELLON-VER-SRS-191 for ignored files.</attr>
+  <description>When the user discards, Mellon shall keep each file in the document's folder that git ignores.</description>
+</object>

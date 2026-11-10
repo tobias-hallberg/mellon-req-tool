@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-316">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: link files merge as sets against the merge base (STATUS.md), so a removal on one side is a one-sided change.</attr>
+  <description>When one side of a merge removed a link and the other side left the link unchanged, Mellon shall remove the link.</description>
+</object>

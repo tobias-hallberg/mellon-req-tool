@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-338">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: its place in the outline follows it.</attr>
+  <description>When Mellon renumbers an object in a merge, Mellon shall keep the object at the object's place in the outline, under the new object ID.</description>
+</object>

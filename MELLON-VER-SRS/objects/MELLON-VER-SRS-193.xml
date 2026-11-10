@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-193">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. A discard puts the folder back to the latest commit, and a staged change left in the index would bring the discarded content back at the next commit (review Q77).</attr>
+  <description>When the user discards, Mellon shall unstage each staged change in the document's folder.</description>
+</object>

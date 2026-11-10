@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V5 (D-V4). Paths a refused or failed commit leaves staged go into the next commit made in a git client, under another message.</attr>
+  <description>If Mellon makes no commit, Mellon shall leave the git index as the index was before Mellon started the commit.</description>
+</object>

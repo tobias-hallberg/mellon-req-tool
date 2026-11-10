@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-103">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V19 (D-V13), review Q22. MELLON-VER-SRS-102 commits a person's unfinished GUI edits under the agent's message and trailer; an agent asked to commit them passes paths (MELLON-VER-SRS-105). Replaces MELLON-VER-SRS-102. Answered on 2026-11-11 (Q-V3), to confirm.</attr>
+  <description>When `commit_changes` is called without `paths`, the MCP server shall commit only the files that the server's write tools changed and that still hold what the server wrote.</description>
+</object>

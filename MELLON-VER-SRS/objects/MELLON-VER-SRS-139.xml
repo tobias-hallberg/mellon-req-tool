@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-139">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-C16, D-C11. A fault in validation must not let a commit through after a check that didn't run; MELLON-CHECK-SRS-10 says the same for results. Merges CHECK's GUI and MCP versions.</attr>
+  <description>If validation before a commit doesn't finish, Mellon shall refuse the commit and report that validation didn't finish.</description>
+</object>

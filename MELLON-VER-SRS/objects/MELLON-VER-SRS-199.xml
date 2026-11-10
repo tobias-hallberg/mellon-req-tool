@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-199">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: USAGE.md: those links become broken, and the user finds out only from the other document. Raised by the architecture review.</attr>
+  <description>When the Document Editor asks to confirm a discard, the Document Editor shall list each link in another document whose target object the discard deletes.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-282">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q62. Tagging without a commit skips MELLON-VER-SRS-135, so a milestone can mark a latest commit that a git client or an MCP commit left invalid.</attr>
+  <description>If the open document has a validation error, the commit dialog should warn before tagging the latest commit without a new commit.</description>
+</object>

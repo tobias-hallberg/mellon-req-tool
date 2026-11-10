@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-354">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: every choice has a default, so Resolve works straight away. Replaced by MELLON-VER-SRS-355, MELLON-VER-SRS-356 and MELLON-VER-SRS-357, and then Withdrawn (Q-V7; review Q27 merged there).</attr>
+  <description>The Resolve merge dialog shall preset each choice, so that Resolve needs no input from the user.</description>
+</object>

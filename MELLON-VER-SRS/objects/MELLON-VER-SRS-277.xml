@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-277">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a name that names both a tag and a branch resolves to one of the two without a warning (MELLON-VER-SRS-68), so a later Compare of the tag could compare the branch.</attr>
+  <description>If an entered tag name is the name of a local or remote-tracking branch, the commit dialog shall refuse the name.</description>
+</object>

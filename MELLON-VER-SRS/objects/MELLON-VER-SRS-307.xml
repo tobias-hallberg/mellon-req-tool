@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-307">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q2. Answered on 2026-11-11, to confirm: the merge commit made in a git client then holds the fixes made after Resolve, instead of leaving them as uncommitted changes.</attr>
+  <description>While a merge is in progress with no conflicting file in a document folder, Mellon shall stage in the git index each document file that an operation writes.</description>
+</object>

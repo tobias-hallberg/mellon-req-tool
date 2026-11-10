@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-320">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. Two places can't be merged, ours is the branch being merged into, and the user can move the object afterwards (review Q77).</attr>
+  <description>When both sides of a merge moved one object, Mellon shall keep the object where ours has the object.</description>
+</object>

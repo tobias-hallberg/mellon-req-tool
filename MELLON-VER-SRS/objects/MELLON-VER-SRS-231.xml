@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-231">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V32 (D-V20). With today's definitions an attribute removed or relabelled since would be dropped, or shown under another name.</attr>
+  <description>When Mellon shows an object at a commit, Mellon shall label and read the object's attribute values by the document's attribute definitions at that commit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-229">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the same for an agent.</attr>
+  <description>The MCP server shall have a `show_object_at` tool that returns an object at the commit that `commit_ref` names.</description>
+</object>

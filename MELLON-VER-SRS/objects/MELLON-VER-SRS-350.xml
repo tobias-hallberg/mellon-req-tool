@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-350">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. Keeping loses nothing, and the user can delete the object after the merge, so this preset stays (Q-V7).</attr>
+  <description>When one side of a merge deleted an object that the other side changed, the Resolve merge dialog shall offer to keep or delete the object, with keep chosen.</description>
+</object>

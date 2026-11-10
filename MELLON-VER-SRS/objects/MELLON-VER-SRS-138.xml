@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-138">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a document that can't be read can't be validated. The window's copy can still load when the files don't, after a pull while the window stayed active (CF-C45, D-C19), and `commit_changes` can commit a file with conflict markers. Merges CHECK's two (MELLON-CHECK-SRS-83 and its Document Editor one; review Q3, Q29 there).</attr>
+  <description>If a document holding a selected path of a commit has a load error, Mellon shall refuse the commit and report the load error.</description>
+</object>

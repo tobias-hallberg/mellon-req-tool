@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-379">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q34, as MELLON-VER-SRS-378. Replaces MELLON-VER-SRS-377.</attr>
+  <description>While HEAD is detached, the Document Editor shall show in the status bar text that says HEAD is detached.</description>
+</object>

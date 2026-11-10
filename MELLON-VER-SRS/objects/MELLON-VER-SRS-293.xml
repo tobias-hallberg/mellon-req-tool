@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-293">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the failure shows only in the status bar, briefly, so the user believes the issue or tag was made (E55). Raised by the architecture review.</attr>
+  <description>If tagging fails after the commit dialog made the commit, the Document Editor shall show the failure until the user dismisses the failure.</description>
+</object>

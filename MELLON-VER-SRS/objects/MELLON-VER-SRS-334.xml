@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-334">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: Q-V5's last step, to confirm. Without dates nothing else tells the two apart, and the person merging knows which one others use. Replaces MELLON-VER-SRS-331.</attr>
+  <description>When issue tags and remote-tracking branches don't decide which of two objects created under one object ID to renumber, the Resolve merge dialog shall ask the user, with neither chosen.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q16. A person can stage part of a file with `git add -p` while Mellon commits the whole working-copy file; an index that kept the partial stage would show a staged change that undoes part of the commit. The docs don't say what the index holds afterwards.</attr>
+  <description>When Mellon commits, Mellon shall leave the git index entry of each committed file equal to the file in the new commit.</description>
+</object>

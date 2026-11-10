@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-248">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V38, the failure analysis's change to SRS-188. The exact name misses 02 when 2 exists. Replaces MELLON-VER-SRS-247.</attr>
+  <description>If a tag of the document holds an issue equal in issue order to a new issue, Mellon shall refuse the new issue.</description>
+</object>

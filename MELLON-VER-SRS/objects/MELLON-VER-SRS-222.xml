@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-222">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the same commits as the History tab, for an agent; CHANGELOG 0.3.0 names figure-only commits for git_history too. Replaced by MELLON-VER-SRS-223.</attr>
+  <description>The MCP server's `git_history` tool shall return, newest first, up to `max_entries` commits on the latest commit's history that changed the object's file or figure.</description>
+</object>

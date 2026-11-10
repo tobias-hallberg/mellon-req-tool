@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-179">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q22. Without the list an agent can't tell what it committed, and it can't tell a person.</attr>
+  <description>When `commit_changes` commits, the MCP server shall return each path that the commit changed.</description>
+</object>

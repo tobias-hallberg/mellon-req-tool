@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-336">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q55. A hotfix made from an issue tag and cherry-picked to develop would otherwise exist twice, once renumbered. The created content is the object's merge base. Answered on 2026-11-11, to confirm.</attr>
+  <description>When both sides of a merge created an object under one object ID in creating commits that carry the same change, Mellon shall merge the two as one object.</description>
+</object>

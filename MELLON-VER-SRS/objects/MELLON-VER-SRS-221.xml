@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-221">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: SCALING.md measured 4.8 s to select a rarely changed object with the History tab visible, before the History tab loaded only while visible.</attr>
+  <description>While the History tab lists the selected object's commits, the Document Editor should respond to input.</description>
+</object>

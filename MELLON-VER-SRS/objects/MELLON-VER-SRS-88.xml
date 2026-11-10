@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: while the Changed on disk banner is up, the Document Editor refuses to save, so MELLON-VER-SRS-73 can't be met, and a result without the typed text would look complete. Found by the Compare code view on 2026-11-10 (V4).</attr>
+  <description>If the Document Editor can't save its pending edits when the Compare dialog compares with the working copy, the Compare dialog shall show that the pending edits aren't in the comparison.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-214">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q20. Loaded objects that survive a discard would be written back by the next save. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>When a discard completes, the Document Editor shall show the document as the working copy then holds the document.</description>
+</object>

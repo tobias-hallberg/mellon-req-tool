@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-358">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V63 (D-V41). In a pull, ours is the local branch, the reverse of what users expect.</attr>
+  <description>The Resolve merge dialog should name ours and theirs each by a branch that names the side's commit, or by the commit, and show the commit's author.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-242">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V38 (D-V25). Compare's D8, handed to VER: 2 and 02 can come from two branches, and then two commits are both issue 2.</attr>
+  <description>If two issue tags of one document have equal numbers in issue order, Mellon shall report both tags instead of choosing one as the current issue or the issue before.</description>
+</object>

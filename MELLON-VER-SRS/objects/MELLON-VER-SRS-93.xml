@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-93">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an unborn HEAD is taken as having no parent, so Mellon can make the first commit (checked in the code on 2026-11-11; confirm in test mapping). MELLON-STORE-SRS-14 accepts such a root. Review Q54, failure analysis change to SRS-90.</attr>
+  <description>While the repository has no commit, Mellon shall make the new commit hold only the selected paths' content in the working copy.</description>
+</object>

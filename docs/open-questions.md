@@ -272,3 +272,36 @@ Raised by the requirements view of the Compare section and answered the same day
   - -349: a size limit on the undo history? Recommendation: not yet; measure memory first.
   - Implemented requirements the documentation only implies, and Proposed ones that may already be built, are listed in the author's notes for the test mapping to check.
 - **Answer:** open
+
+## Q15: The VER specification's questions beyond Compare (2026-11-11)
+
+- **Raised by:** the VER author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-VER-SRS`: commits, uncommitted changes, history, issues and tags, merging, and working with git clients
+- **How they were handled:** as for Q10 to Q14.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - **Hooks and signing.** Mellon runs no git hook and no program that a repository's git settings name, as built. A commit that asks for signing is refused (Proposed). `mellon-check` in CI stays the gate.
+  - **The `-merge` line.** `.gitattributes` marks document files `-merge`, so each file both sides changed goes through Mellon's resolver. A warning shows when the line is missing, and `mellon-check` fails without it (`MELLON-CHECK-SRS`).
+  - **Commits over MCP.** `commit_changes` without paths commits only the server's own writes, and returns the paths it committed. An agent can't drop the trailer per call; a server start option that the person sets turns it off.
+  - **Which object keeps its ID.** When both sides of a merge created an object under one ID, the object an issue tag reaches keeps the ID, then one that a remote-tracking branch reaches; otherwise the dialog asks. Commit dates don't decide. A renumbering is recorded in the renumbered object's own file, a format change for `MELLON-STORE-SRS`.
+  - **Choices in the merge dialog.** A field both sides changed has no preset choice. Resolve stays disabled until each such field has one, with an explicit "Use ours for the rest". A link type both sides changed is asked about too.
+  - **Links and issues.** Suspect or broken links don't block cutting an issue; the GUI warns, and `tag_issue` returns them.
+  - **Tags across clones.** Two clones cutting the same issue, and fetches that prune unpushed tags, are an accepted risk. TEAM.md says to pull before cutting an issue and to push the tag at once.
+  - **Commits during git operations.** Commits are refused during a merge, rebase, cherry-pick, revert or `git am`. Edits made after Resolve are staged, so the merge commit holds them. Filtered (LFS) files in document folders are refused for commit and discard.
+  - **Duplicate IDs after a merge.** A merge that gave two objects one ID is detected in the Project Explorer, and `mellon-check` fails on it.
+  - **Merge commits.** A merge commit changes an object when the object's files differ from each parent's, as the Last change definition of `MELLON-TRACE-SRS` says.
+  - **Warnings and merge details.**
+    - Warnings before a tag cover every document, with one requirement per kind of warning.
+    - The merge banner shows in Document Editors too.
+    - Objects whose creating commits carry the same change count as one object.
+    - Parent documents merge like links: a one-sided removal wins.
+  - **Worktrees.** Linked worktrees and submodule work trees stay accepted as roots, as `MELLON-STORE-SRS-16` decided.
+- **Checked in the code that night:**
+  - The resolver takes the one merge base that git's library picks.
+  - The commit code can make a repository's first commit.
+  - The MCP server has no discard tool.
+  - The commit dialog's tag with nothing to commit is the free tag, not an issue.
+- **Still open, each with a recommendation:**
+  - -311: which merge base for a criss-cross history? Recommendation: the base content git recorded in the index for each conflicting file.
+  - -175: the name of the start option that turns the trailer off. Recommendation: `--no-trailer`.
+  - Compare requirements -60 and -68 to shall, and -59 to refer to the MCP compare tool (review Q59). Decide this with the person, since it changes committed Compare requirements and their test cases' links.
+- **Answer:** open

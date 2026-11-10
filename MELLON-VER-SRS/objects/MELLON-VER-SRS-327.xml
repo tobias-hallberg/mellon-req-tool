@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-327">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the merged object exists on neither side, so nobody has reviewed it as a whole (E63). Shall, not should, per the failure analysis's change to SRS-239 (CF-V59). It covers only merges that Mellon resolves; MELLON-VER-SRS-369 covers git's.</attr>
+  <description>The Resolve merge dialog shall list each object that Mellon merged field by field without asking the user.</description>
+</object>

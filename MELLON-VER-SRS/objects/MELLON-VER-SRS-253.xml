@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-253">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V41 (D-V28). Anyone with push rights can cut an issue with a lightweight tag, and the current issue then changes without a record.</attr>
+  <description>When Mellon shows an issue, Mellon should show who created the issue tag and when, or that the issue tag records neither.</description>
+</object>

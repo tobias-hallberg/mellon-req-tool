@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-329">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V62 (D-V40). The merge's paths come from another clone, and a crafted one, with .., a backslash, a drive or .git, could place a git hook. MELLON-STORE-SRS-228 and -230 cover other writes and reads.</attr>
+  <description>When Mellon resolves a merge, Mellon shall write only files inside a document folder, with names that the on-disk format defines.</description>
+</object>

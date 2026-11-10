@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-362">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q5 merged with CF-V58 (D-V37). A merge aborted, committed or restarted in the git client while the dialog is open would otherwise receive the old plan, marked resolved.</attr>
+  <description>If no merge is in progress, or the latest commit or theirs changed after the Resolve merge dialog worked out the merge, Mellon shall refuse to resolve and say why.</description>
+</object>

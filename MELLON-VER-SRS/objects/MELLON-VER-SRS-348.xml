@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-348">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. A value can't be merged as text, so the user picks one (review Q77). The preset is replaced by MELLON-VER-SRS-355.</attr>
+  <description>When both sides of a merge changed an attribute value, the Resolve merge dialog shall offer a choice of ours and theirs, with ours chosen.</description>
+</object>

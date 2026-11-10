@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-219">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V30. A listed merge commit is a change nobody made on a branch, a conflict resolution or a combination (MELLON-VER-SRS-369). Answered on 2026-11-11 (Q-V15), to confirm.</attr>
+  <description>The History tab should mark each merge commit that the History tab lists.</description>
+</object>

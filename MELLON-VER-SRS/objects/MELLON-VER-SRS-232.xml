@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-232">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q45. A table and a figure are part of a requirement's content, so without them an older version reads as complete when it isn't: shall, not should. The docs don't say which are shown.</attr>
+  <description>When Mellon shows an object at a commit, Mellon shall show the object's table and figure at that commit.</description>
+</object>

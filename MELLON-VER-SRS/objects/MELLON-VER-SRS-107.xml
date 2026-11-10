@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: since 0.2.0 write tools report each file they touch, so `delete_attribute` commits the object files it rewrote and `delete_object` the links it stripped in other documents.</attr>
+  <description>When a write tool is called with `commit_message`, the MCP server shall commit the files that the call changed, in whichever document, and no other path.</description>
+</object>

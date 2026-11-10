@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-272">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: 0.3.0. A tag marks the whole repository at a milestone, and an annotated tag records who tagged, when and why.</attr>
+  <description>When the user enters a tag name in the commit dialog and commits, Mellon shall tag the new commit with an annotated tag of that name.</description>
+</object>

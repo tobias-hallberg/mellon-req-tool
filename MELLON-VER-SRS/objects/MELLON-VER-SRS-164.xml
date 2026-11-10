@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-164">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: setting the date to today at each commit would make each commit change the same line, so two branches would always conflict on it (USAGE.md).</attr>
+  <description>Mellon shall change a document's metadata date at a commit only when the user changes the commit dialog's date.</description>
+</object>

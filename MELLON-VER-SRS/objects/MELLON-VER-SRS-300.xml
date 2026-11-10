@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-300">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md. The size of the work left; the count takes each conflicting file, in document folders or not (confirm, review Q63).</attr>
+  <description>While a merge is in progress with conflicting files, the merge banner shall show the number of conflicting files.</description>
+</object>

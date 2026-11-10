@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-270">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q41. The GUI shows them before an issue (MELLON-VER-SRS-149), and an agent should see the same open points. Answered on 2026-11-11 (Q-V9), to confirm. Validation errors aren't returned: MELLON-VER-SRS-249 refuses the issue.</attr>
+  <description>When the MCP server's `tag_issue` tool cuts an issue, the MCP server should return the document's suspect and broken outgoing links.</description>
+</object>

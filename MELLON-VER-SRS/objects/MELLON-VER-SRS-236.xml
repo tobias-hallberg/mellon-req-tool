@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-236">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: reading an unreadable file as an empty object gives a silent wrong answer, as MELLON-VER-SRS-27 decided for Compare.</attr>
+  <description>If an object's file can't be read at the commit Mellon shows the object at, Mellon shall report the object as unreadable at that commit.</description>
+</object>

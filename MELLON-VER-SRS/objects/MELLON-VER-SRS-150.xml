@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: informational. A parent's change is usually committed first, so that links to it can be acknowledged against a commit. Replaced by MELLON-VER-SRS-151 (review Q36).</attr>
+  <description>The commit dialog shall warn of each parent document that has an uncommitted change, without blocking the commit.</description>
+</object>

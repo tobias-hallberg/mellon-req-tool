@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-156">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V4 (D-V2). Mellon can read git's settings differently from the user's git client, and the history is the record of who changed a requirement.</attr>
+  <description>The commit dialog shall show the name and email that the commit records as author and committer.</description>
+</object>

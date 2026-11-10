@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-255">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: before a release a user needs to know which documents need an issue. A document with no issue is marked too (review Q71).</attr>
+  <description>The Project Explorer should mark each document that has no issue or has changed since the document's current issue.</description>
+</object>

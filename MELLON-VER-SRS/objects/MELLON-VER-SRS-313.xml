@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-313">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: changed on one branch only, taken and not shown. The other side left the object as it was, so nothing conflicts, as in git. Deleting counts (review Q64, Q77).</attr>
+  <description>When only one side of a merge changed or deleted an object, Mellon shall take that side's version of the object.</description>
+</object>

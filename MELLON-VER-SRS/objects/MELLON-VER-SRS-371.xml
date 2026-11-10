@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-371">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V50 (D-V33). Rebase, cherry-pick, revert and stash conflicts get no banner and are resolved in the client, where ours and theirs are swapped in a rebase. Needs the widened term Conflicting file.</attr>
+  <description>While the git index holds a conflicting file in a document folder and no merge is in progress, the Project Explorer shall say that Mellon resolves merges only.</description>
+</object>

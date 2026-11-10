@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-365">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the merge commit is made in a git client, which doesn't validate. A link one side made to an object the other side deleted is broken without a conflict, and a broken link is a validation error (MELLON-CHECK-SRS-34, -35; review Q46).</attr>
+  <description>When Mellon resolves a merge, Mellon shall report each validation error of a merged document.</description>
+</object>

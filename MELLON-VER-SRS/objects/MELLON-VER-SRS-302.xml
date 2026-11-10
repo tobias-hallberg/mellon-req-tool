@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-302">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: TEAM.md: leave the merge as it is and resolve it in Mellon. The MCP server has no merge tools (STATUS.md), so an agent can't resolve a merge: nothing to require.</attr>
+  <description>While a merge is in progress with conflicting files, the merge banner shall have a Resolve merge… action that opens the Resolve merge dialog.</description>
+</object>

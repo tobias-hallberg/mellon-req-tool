@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-177">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent's review record names the commit, and a 7-digit prefix can become ambiguous as a repository grows, the reason for MELLON-VER-SRS-87.</attr>
+  <description>When the MCP server commits, the MCP server should return the new commit's full hash.</description>
+</object>

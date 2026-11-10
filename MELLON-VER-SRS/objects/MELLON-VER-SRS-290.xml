@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-290">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a tag records an issue or a milestone that others already hold, so a name that exists is refused rather than moved.</attr>
+  <description>Mellon shall not move, replace or delete a tag that exists.</description>
+</object>

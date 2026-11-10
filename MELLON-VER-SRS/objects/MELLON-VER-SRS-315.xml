@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-315">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: link files merge as sets, so neither side's new traceability is lost.</attr>
+  <description>When both sides of a merge changed an object's outgoing links, Mellon shall keep each link that either side added.</description>
+</object>

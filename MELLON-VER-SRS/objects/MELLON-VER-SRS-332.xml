@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-332">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q9 and Q18, CF-V53. Answered on 2026-11-11 (Q-V5), to confirm: an issued object is named in an issued PDF, so it keeps its ID. Commit dates are dropped: clocks, rebases and crafted dates decide them (Compare code review C2-16). Replaces MELLON-VER-SRS-331.</attr>
+  <description>When exactly one of two objects created under one object ID has a creating commit that an issue tag reaches, Mellon shall renumber the other object.</description>
+</object>

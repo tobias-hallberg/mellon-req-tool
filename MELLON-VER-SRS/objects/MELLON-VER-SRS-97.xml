@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-97">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: hand-off from STORE, decided on 2026-11-10 (STORE review Q42): an interrupted write can leave a temporary file, named with a leading dot (MELLON-STORE-SRS-171), which isn't part of a document.</attr>
+  <description>When Mellon commits, Mellon shall leave out of the commit each temporary file that Mellon writes in a document folder.</description>
+</object>

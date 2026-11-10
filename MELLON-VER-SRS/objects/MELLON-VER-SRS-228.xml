@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-228">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a reviewer reads what a requirement said at an older commit, for example when reviewing a suspect link.</attr>
+  <description>The History tab shall have a View at this commit… action that shows the selected object at the selected commit.</description>
+</object>

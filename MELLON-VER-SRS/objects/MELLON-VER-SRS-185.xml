@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-185">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: hand-off from STORE, decided on 2026-11-10 (MELLON-STORE-SRS-171): a temporary file isn't part of a document, as MELLON-VER-SRS-97.</attr>
+  <description>Mellon shall leave each temporary file that Mellon writes in a document folder out of the count of uncommitted changes.</description>
+</object>

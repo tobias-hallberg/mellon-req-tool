@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-304">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q10. git can merge a manifest cleanly and still wrongly, an object twice in the outline for example, and the merge commit is made where nothing validates.</attr>
+  <description>While a merge is in progress with no conflicting file, the merge banner should show the validation errors of each document that both sides changed.</description>
+</object>

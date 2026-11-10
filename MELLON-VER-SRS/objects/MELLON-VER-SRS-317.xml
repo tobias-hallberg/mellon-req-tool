@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-317">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: a link changed on both sides keeps yours. A link is the one its link key names (review Q67). For the acknowledged commit ours is safe: an older acknowledgement only makes the link read suspect. Replaced for link types by MELLON-VER-SRS-318 (Q-V8).</attr>
+  <description>When both sides of a merge changed the link type or acknowledged commit of one link to different values, Mellon shall keep the link as ours has the link.</description>
+</object>

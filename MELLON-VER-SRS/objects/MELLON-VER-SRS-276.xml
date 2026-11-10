@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-276">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V46, the failure analysis's change to SRS-207, chosen over the review's narrower Q60 wording: a tag in issue form for a document not yet created becomes that document's issue once the document is added. Replaces MELLON-VER-SRS-275.</attr>
+  <description>If an entered tag name has the form of an issue tag, whether or not the repository holds the document, the commit dialog shall refuse the name.</description>
+</object>

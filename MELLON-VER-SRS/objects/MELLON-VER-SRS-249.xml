@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-249">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V45 (D-V29). `tag_issue` can issue a commit made by a git client or an unvalidated MCP commit. Answered on 2026-11-11 (Q-V9), to confirm: suspect and broken links don't block an issue; they are warned about (MELLON-VER-SRS-149, MELLON-VER-SRS-270). A broken link is a validation error (MELLON-CHECK-SRS-34, -35), so it is excepted here to follow Q-V9.</attr>
+  <description>If the document at the commit for a new issue has a load error, or a validation error other than a broken link, Mellon shall refuse the issue and report the errors.</description>
+</object>

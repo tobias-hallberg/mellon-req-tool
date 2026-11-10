@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-267">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q13. Issues are ordered along the latest commit's history (MELLON-VER-SRS-245), so an issue on another branch's commit would escape the rule.</attr>
+  <description>If the commit given to `tag_issue` isn't the latest commit or an ancestor of the latest commit, the MCP server shall refuse the issue.</description>
+</object>

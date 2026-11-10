@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-266">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent commits and then tags, and a commit by someone else in between would get the issue. The agent passes the hash its commit returned. Answered on 2026-11-11 (the author's question), to confirm.</attr>
+  <description>The MCP server's `tag_issue` tool should accept the commit to tag, and tag the latest commit when given no commit.</description>
+</object>

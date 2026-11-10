@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-157">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V15 (D-V10). An ignored object file or figure is loaded and exported but never committed, so other clones lack it.</attr>
+  <description>When the commit dialog opens, the commit dialog shall warn of each file in the open document's folder that git ignores, other than an editor side file.</description>
+</object>

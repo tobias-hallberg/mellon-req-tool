@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-262">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q26. Commit, review, then issue is the usual flow, and today it needs a fake change or an agent. Answered on 2026-11-11: should, to confirm. MELLON-VER-SRS-281 guards against a latest commit that moved, and MELLON-VER-SRS-249 against an invalid document. Replaces MELLON-VER-SRS-261.</attr>
+  <description>While the open document has no uncommitted change, the commit dialog should let the user raise the issue and tag the latest commit as that issue without a new commit.</description>
+</object>

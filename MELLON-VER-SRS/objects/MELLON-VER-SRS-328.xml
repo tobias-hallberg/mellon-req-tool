@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-328">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V59 (D-V38). MELLON-VER-SRS-327's list disappears with the dialog, so nothing lasting marks the object, as MELLON-VER-SRS-343 does for a renumbering.</attr>
+  <description>When Mellon merges an object field by field without asking the user, Mellon should add the object ID to git's prepared merge commit message.</description>
+</object>

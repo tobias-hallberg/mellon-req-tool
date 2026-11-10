@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-280">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: the button turns into Tag.</attr>
+  <description>When the user tags from the commit dialog with nothing to commit, Mellon shall tag the latest commit and make no new commit.</description>
+</object>

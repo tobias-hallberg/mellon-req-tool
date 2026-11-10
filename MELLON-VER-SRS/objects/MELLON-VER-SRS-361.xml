@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-361">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q15. A renumbering removes the old paths (MELLON-VER-SRS-337); left unrecorded they block the merge commit. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>When the user resolves a merge, Mellon shall record in the git index the removal of each document file that Mellon removes.</description>
+</object>

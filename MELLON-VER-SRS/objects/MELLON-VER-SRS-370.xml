@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-370">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V48 (D-V32). An object ID created on both sides counts twice, so a merge that kept one object, by git or a client, falls short, whoever finished the merge. Answered on 2026-11-11 (Q-V14, open question Q8), to confirm; the mellon-check part is handed to CHECK.</attr>
+  <description>If the latest commit is a merge commit holding fewer objects absent from its merge base than its parents hold, counting per parent, Mellon shall report the merge commit.</description>
+</object>

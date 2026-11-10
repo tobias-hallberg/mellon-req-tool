@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-114">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q50. A name of spaces counts as set, so the commit records an empty author.</attr>
+  <description>If git's `user.name` or `user.email` is blank, Mellon shall refuse to commit.</description>
+</object>

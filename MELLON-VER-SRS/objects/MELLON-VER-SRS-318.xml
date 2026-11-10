@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-318">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: CF-V61 (D-V39). A link type is a traceability claim, and MELLON-VER-SRS-317 drops theirs silently. Answered on 2026-11-11 (Q-V8), to confirm. Replaces MELLON-VER-SRS-317 for link types.</attr>
+  <description>When both sides of a merge changed one link's link type to different link types, the Resolve merge dialog shall ask the user for the link type.</description>
+</object>

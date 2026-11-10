@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, "What gets committed"; source code stays out of an agent's commit. Replaced by MELLON-VER-SRS-103 once built (Q-V3, review Q22): this sweeps in a person's unfinished GUI edits.</attr>
+  <description>When `commit_changes` is called without `paths`, the MCP server shall commit the uncommitted changes in document folders, and in document folders deleted since the latest commit, and no other path.</description>
+</object>

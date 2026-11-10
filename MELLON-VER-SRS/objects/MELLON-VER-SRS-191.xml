@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-SRS-191">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md: objects, links, figures, views and filters added since the latest commit are deleted. Whether 0.3.0 also deletes files git ignores is to confirm; MELLON-VER-SRS-192 keeps them.</attr>
+  <description>When the user discards, Mellon shall delete each file in the document's folder that the latest commit doesn't hold.</description>
+</object>
