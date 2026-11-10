@@ -58,6 +58,7 @@ from tests.test_suspects import (
     PARENT_MANIFEST,
     PARENT_OBJ_V1,
     _commit_all,
+    guard_paths_outside,
 )
 
 
@@ -200,6 +201,23 @@ def test_add_link_sets_ack_from_git(tmp_path: Path) -> None:
     assert link.target_doc == "PARENT"
     assert link.type == "satisfies"
     assert link.ack == c1
+
+
+@pytest.mark.parametrize("target_id", ["../../../OUT-1", "PARENT-42/../../../../OUT-1"])
+def test_trace_srs_79_add_link_reads_nothing_outside_the_repository(
+    tmp_path: Path, monkeypatch, target_id: str
+) -> None:
+    """MELLON-TRACE-SRS-79: working out a new link's acknowledged commit opens
+    nothing outside the repository, whatever the target ID says."""
+    root, _parent, doc, _c1 = _two_doc_repo(tmp_path)
+    _inside, outside = guard_paths_outside(monkeypatch, root)
+
+    try:
+        add_link(doc, "DOC-1", "PARENT", target_id, "satisfies")
+    except EditorError:
+        pass  # refusing the link is fine too; reaching outside isn't
+
+    assert outside == []
 
 
 def test_add_link_without_git(doc_folder: Path) -> None:
@@ -1443,6 +1461,23 @@ def test_child_path_refuses_names_outside_folder(doc_folder: Path, name: str) ->
 
     with pytest.raises(EditorError, match="invalid file name"):
         _child_path(doc_folder / "links", name)
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["\\\\mellon-test-host\\share", "//mellon-test-host/share", "C:x.xml", "x.xml:stream", ""],
+)
+def test_child_path_refuses_a_share_or_drive_without_looking_it_up(
+    tmp_path: Path, doc_folder: Path, monkeypatch, name: str
+) -> None:
+    """MELLON-STORE-SRS-223: a document ID such as //host/share is refused from
+    its text alone; looking it up would reach the share."""
+    from mellon.editor import _child_path
+
+    _inside, outside = guard_paths_outside(monkeypatch, tmp_path)
+    with pytest.raises(EditorError, match="invalid file name"):
+        _child_path(doc_folder / "links", name)
+    assert outside == []
 
 
 @pytest.mark.parametrize(

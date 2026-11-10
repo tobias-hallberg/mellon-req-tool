@@ -40,7 +40,7 @@ from ..export import TectonicError, pdf as export_pdf
 from ..git_ops import GitError, discover_repo
 from .. import __version__, git_ops
 from ..repo import DocLoadError, discover_documents
-from ..schema import Table, TableCell, TableColumn, TableRow
+from ..schema import Table, TableCell, TableColumn, TableRow, is_object_id
 from ..service import DocumentService, ErrorCode, ServiceError
 from .serialize import (
     coverage_report_to_dict,
@@ -2295,6 +2295,30 @@ def review_suspect_link(
     state = status.state.value if status is not None else "unknown"
     reason = status.reason if status is not None else ""
     current_commit = status.current_hash if status is not None else None
+
+    if not is_object_id(target_doc, target_id):
+        # MELLON-TRACE-SRS-77, -79: the target names no object, and could name
+        # a path outside the repository, so there is nothing to read.
+        return {
+            "source_doc": source_doc,
+            "source_id": source_id,
+            "target_doc": target_doc,
+            "target_id": target_id,
+            "link_type": link.type,
+            "state": state,
+            "reason": reason,
+            "parent_text_at_ack": None,
+            "parent_text_now": None,
+            "parent_attrs_at_ack": None,
+            "parent_attrs_now": None,
+            "parent_uncommitted": False,
+            "changed_fields": None,
+            "ack_found": False,
+            "acked_at_commit": link.ack,
+            "current_commit": None,
+            "commits_between": [],
+            "commits_between_truncated": False,
+        }
 
     repo, root = discover_repo(folder)
     target_rel = f"{target_doc}/objects/{target_id}.xml"

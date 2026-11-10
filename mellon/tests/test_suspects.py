@@ -6,6 +6,7 @@ Each test builds a real pygit2 repo in tmp_path containing two documents
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pygit2
@@ -557,3 +558,89 @@ def test_add_link_to_target_with_newer_figure_is_ok(repo_tree):
     assert ack == c_fig
     statuses = scan_document(load_document(doc), doc)
     assert statuses[0].state is LinkState.OK
+
+
+# --- MELLON-TRACE-SRS-77 / -79: a link target never reaches outside the repository ---
+
+
+def guard_paths_outside(monkeypatch, root: Path) -> tuple[list[str], list[str]]:
+    """Record each path that the file system is asked about, split into those
+    inside `root` and those outside it. A path outside is answered as missing
+    without being looked up, so a test never reaches another folder or share."""
+    inside: list[str] = []
+    outside: list[str] = []
+    top = os.path.normcase(os.path.abspath(root))
+
+    def is_outside(path) -> bool:
+        s = os.path.normcase(os.path.abspath(os.fspath(path)))
+        if s.startswith(("\\\\", "//")):
+            return True
+        try:
+            return os.path.commonpath([s, top]) != top
+        except ValueError:  # another drive
+            return True
+
+    def guard(real):
+        def call(self_or_path, *args, **kwargs):
+            if isinstance(self_or_path, (str, os.PathLike)):
+                if is_outside(self_or_path):
+                    outside.append(os.fspath(self_or_path))
+                    raise FileNotFoundError(os.fspath(self_or_path))
+                inside.append(os.fspath(self_or_path))
+            return real(self_or_path, *args, **kwargs)
+        return call
+
+    monkeypatch.setattr(os, "stat", guard(os.stat))
+    monkeypatch.setattr(os, "scandir", guard(os.scandir))
+    monkeypatch.setattr(os.path, "realpath", guard(os.path.realpath))
+    for name in ("is_file", "is_dir", "exists", "stat", "open", "read_text", "read_bytes"):
+        monkeypatch.setattr(Path, name, guard(getattr(Path, name)))
+    return inside, outside
+
+
+def _links_to(doc: Path, target_doc: str, target_id: str) -> None:
+    (doc / "links" / "DOC-1.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<links source="DOC-1">\n'
+        f'  <link target-doc="{target_doc}" target-id="{target_id}" type="satisfies"/>\n'
+        '</links>\n',
+        encoding="utf-8",
+    )
+
+
+@pytest.mark.parametrize(
+    ("target_doc", "target_id"),
+    [
+        ("../OUT", "OUT-1"),  # a document folder outside the repository
+        ("PARENT", "../../../OUT-1"),  # an object file outside the repository
+        ("\\\\mellon-test-host\\share", "share-1"),  # a Windows share
+        ("PARENT", "PARENT-42/../../../../OUT-1"),
+    ],
+)
+def test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access(
+    repo_tree, monkeypatch, target_doc, target_id
+):
+    """MELLON-TRACE-SRS-77 and -79: a link whose target isn't an object ID is
+    broken, and working out its state opens nothing outside the repository."""
+    root, doc, _c1 = repo_tree
+    _links_to(doc, target_doc, target_id)
+    loaded = load_document(doc)
+    inside, outside = guard_paths_outside(monkeypatch, root)
+
+    statuses = scan_document(loaded, doc)
+
+    assert outside == []
+    assert [s.state for s in statuses] == [LinkState.BROKEN]
+    assert statuses[0].current_hash is None
+    assert inside, "the guard saw no file system access at all"
+
+
+def test_trace_srs_77_an_object_id_of_another_document_is_broken(repo_tree):
+    """MELLON-TRACE-SRS-77: an ID that names an object of another document
+    isn't an object ID of the target document."""
+    _root, doc, _c1 = repo_tree
+    _links_to(doc, "PARENT", "DOC-1")
+
+    statuses = scan_document(load_document(doc), doc)
+
+    assert [s.state for s in statuses] == [LinkState.BROKEN]

@@ -320,6 +320,39 @@ def object_number(obj_id: str, doc_id: str) -> int | None:
     return whole_number(obj_id[len(prefix):])
 
 
+_DOCUMENT_ID_RE = re.compile(r"[A-Za-z0-9_-]+")
+# Names Windows gives to devices in any folder, whatever the letter case.
+_DEVICE_NAMES = frozenset(
+    {"CON", "PRN", "AUX", "NUL"}
+    | {f"COM{i}" for i in range(1, 10)}
+    | {f"LPT{i}" for i in range(1, 10)}
+)
+
+
+def is_document_id(text: object) -> bool:
+    """Whether `text` is a document ID, as docs/definitions.md defines one.
+
+    Text only: nothing on disk is looked at, so it is safe to call on IDs from
+    other clones or from agents before they are used in a path.
+    """
+    return (
+        isinstance(text, str)
+        and _DOCUMENT_ID_RE.fullmatch(text) is not None
+        and text.upper() not in _DEVICE_NAMES
+    )
+
+
+def is_object_id(doc_id: object, obj_id: object) -> bool:
+    """Whether `obj_id` is an object ID `<doc_id>-<n>` of document `doc_id`.
+
+    Text only, like `is_document_id`.
+    """
+    if not is_document_id(doc_id) or not isinstance(obj_id, str):
+        return False
+    prefix = f"{doc_id}-"
+    return obj_id.startswith(prefix) and _WHOLE_NUMBER_RE.fullmatch(obj_id[len(prefix):]) is not None
+
+
 @dataclass(frozen=True, slots=True)
 class Metadata:
     """Edit metadata embedded in a manifest's `<metadata>` block.

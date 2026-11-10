@@ -22,7 +22,7 @@ from lxml import etree
 
 from .git_ops import discover_repo
 from .link_index import current_hashes
-from .schema import Document, Link
+from .schema import Document, Link, is_object_id
 
 
 class LinkState(str, Enum):
@@ -54,6 +54,11 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
     existing: dict[str, set[str]] = {}
     for link_list in doc.links.values():
         for link in link_list:
+            # MELLON-TRACE-SRS-77, -79: a target from another clone can name a
+            # path outside the repository or a share; one that isn't an object
+            # ID names no object, so it is broken without a look at the disk.
+            if not is_object_id(link.target_doc, link.target_id):
+                continue
             if link.target_doc not in listed:
                 listed[link.target_doc] = _object_files(repo_root, link.target_doc)
             if (
@@ -68,6 +73,11 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
 
     for source_id, link_list in doc.links.items():
         for link in link_list:
+            if not is_object_id(link.target_doc, link.target_id):
+                results.append(
+                    LinkStatus(source_id, link, LinkState.BROKEN, None, "target is not an object ID")
+                )
+                continue
             if link.target_id not in existing.get(link.target_doc, ()):
                 results.append(
                     LinkStatus(source_id, link, LinkState.BROKEN, None, "target file missing")

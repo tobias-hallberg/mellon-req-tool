@@ -114,6 +114,20 @@ All notable changes to Mellon. The format follows
 - `DocumentService.ack_all` raises `ServiceError` for a links file that became
   malformed after the scan, instead of a raw XML error.
 
+### Security
+
+- **A link's target can no longer make Mellon look outside the repository.**
+  A links file from another clone could set `target-doc` or `target-id` to a
+  path such as `../x` or, on Windows, a share such as `\\host\share`. Working
+  out the link's state, creating the link, or reviewing it with
+  `review_suspect_link` then looked that path up. For a share, that means
+  Windows offers the user's credentials to the other host. Now a target that
+  isn't an object ID (`<document ID>-<n>`) is a broken link, worked out from
+  the text alone. A document or file name given to the MCP server or the GUI
+  with a path separator or a drive is refused the same way, before it is
+  looked up. Specified in `MELLON-TRACE-SRS-77` and `-79`; new
+  `schema.is_document_id` and `schema.is_object_id`.
+
 ### Removed
 
 - `git_ops.dirty_count`: nothing uses it now.

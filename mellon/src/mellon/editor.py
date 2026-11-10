@@ -42,6 +42,7 @@ from .schema import (
     Document,
     FilterRule,
     Table,
+    is_object_id,
     object_number,
     table_geometry_errors,
     whole_number,
@@ -299,6 +300,11 @@ def _sanitize_text(value: str, what: str) -> str:
 
 def _child_path(folder: Path, name: str) -> Path:
     """Return `folder / name`, refusing a name that would resolve outside `folder`."""
+    # MELLON-STORE-SRS-223, -226: refuse a name with a path separator or a
+    # drive from its text alone, before `resolve` looks it up: on Windows that
+    # would reach the share that a name like //host/share names.
+    if not name or name in {".", ".."} or any(c in name for c in "/\\:"):
+        raise EditorError(f"invalid file name {name!r}: must stay inside {folder.name}/")
     path = folder / name
     # Resolve only the parent: a symlinked file inside `folder` is fine, a
     # name that steps into another directory ("../x", "sub/x", "..") is not.
@@ -1858,6 +1864,10 @@ def _find_ref(parent: etree._Element, ref_id: str) -> etree._Element | None:
 
 
 def _compute_ack(folder: Path, target_doc: str, target_id: str) -> str | None:
+    # MELLON-TRACE-SRS-79: a target that isn't an object ID could name a path
+    # outside the repository; it has no commit to record, so look no further.
+    if not is_object_id(target_doc, target_id):
+        return None
     try:
         repo, repo_root = discover_repo(folder)
     except GitError:
