@@ -252,6 +252,8 @@ class DocumentEditorWindow(QMainWindow):
         self.grid_pane.clear_filters_requested.connect(self._clear_all_filters)
         self.grid_pane.filter_edit_requested.connect(self._open_filter_dialog)
         self.grid_pane.table_editor_changed.connect(self._on_table_editor_changed)
+        # MELLON-VER-SRS-4: From is the History tab's selected commit, To the
+        # latest commit.
         self.right_pane.history.compare_requested.connect(
             lambda ref: self.open_compare(ref, LATEST)
         )
@@ -430,7 +432,9 @@ class DocumentEditorWindow(QMainWindow):
         # Export action lives on the toolbar too; reuse it here so the
         # shortcut + enabled state stay in sync.
         menu.addAction(self._export_act)
-        # Comparing only reads, so it stays enabled in read-only mode.
+        # MELLON-VER-SRS-2: the menu's Compare… action for this document.
+        # MELLON-VER-SRS-3: comparing only reads, so the action is never
+        # disabled, read-only mode included.
         self._compare_act = QAction("C&ompare…", self)
         self._compare_act.setToolTip(
             "Show what changed in this document between two versions: "
@@ -1233,6 +1237,8 @@ class DocumentEditorWindow(QMainWindow):
         document's default versions; with refs, it compares those."""
         dlg = self._compare_dialog
         if dlg is None:
+            # MELLON-VER-SRS-5: a child of this window, so it is closed and
+            # deleted with the window.
             dlg = CompareDialog(self.controller, self._doc_id, self)
             dlg.destroyed.connect(self._forget_compare_dialog)
             dlg.save_pending_edits.connect(

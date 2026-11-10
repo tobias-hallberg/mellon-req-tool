@@ -138,6 +138,8 @@ def words_html(text_a: str, text_b: str, side: str, tokens: dict[str, str]) -> s
     deleted = _mix(tokens["bg_2"], tokens["err"], 0.3)
     inserted = _mix(tokens["bg_2"], tokens["ok"], 0.3)
     out: list[str] = []
+    # MELLON-VER-SRS-47: words deleted at From struck through, words inserted
+    # at To underlined; equal segments unmarked.
     for op, text in word_diff(text_a, text_b):
         if op == "equal":
             out.append(_text_html(text))
@@ -190,6 +192,8 @@ def link_text(link: Link | object) -> str:
 
 
 def attr_value_html(value: str | None) -> str:
+    # MELLON-VER-SRS-49: an attribute not set at a version reads "(not set)",
+    # unlike an empty value.
     if value is None:
         return "<i>(not set)</i>"
     if value == "":
@@ -219,6 +223,7 @@ class _Html:
             f"<h3>{html.escape(change.obj_id)} — {html.escape(kinds)}</h3>",
         ]
         err_a, err_b = change.errors
+        # MELLON-VER-SRS-27: say at which version the object can't be read.
         for side, err in (("From", err_a), ("To", err_b)):
             if err:
                 parts.append(
@@ -233,6 +238,8 @@ class _Html:
 
     def _whole(self, change: ObjectChange) -> str:
         """An added or deleted object: all its fields where it exists."""
+        # MELLON-VER-SRS-50: each field of the object at the version where it
+        # exists.
         added = change.before is None
         state: ObjectState = change.after if added else change.before  # type: ignore[assignment]
         side, short = ("To", self.diff.short_b) if added else ("From", self.diff.short_a)
@@ -269,7 +276,9 @@ class _Html:
         assert change.before is not None and change.after is not None
         rows: list[tuple[str, str, str]] = []
         delta = change.delta
+        # MELLON-VER-SRS-44: each changed field at From and at To.
         if delta is not None:
+            # MELLON-VER-SRS-45: attributes named by their label.
             for a in delta.attrs:
                 rows.append((
                     self.diff.label(a.name),
@@ -283,6 +292,8 @@ class _Html:
                     words_html(d.text_a, d.text_b, "a", self.tokens),
                     words_html(d.text_a, d.text_b, "b", self.tokens),
                 ))
+            # MELLON-VER-SRS-51: the table or figure at From and at To, or
+            # "(no table)" / "(no figure)" where there is none.
             if delta.table is not None:
                 rows.append((
                     "Table",
@@ -295,6 +306,7 @@ class _Html:
                     self.figure("fig-a", delta.figure.svg_a),
                     self.figure("fig-b", delta.figure.svg_b),
                 ))
+        # MELLON-VER-SRS-52: a moved object's parent and position at both.
         if Change.MOVED in change.kinds:
             rows.append((
                 "Outline position",
@@ -316,6 +328,8 @@ class _Html:
             parts.append(
                 f'<table width="100%" cellspacing="0" cellpadding="4">{head}{body}</table>'
             )
+        # MELLON-VER-SRS-46: each link added and removed; MELLON-VER-SRS-53:
+        # each reviewed link with its acknowledged commit at From and To.
         if delta is not None and not delta.links.is_empty:
             items = [
                 f"<li>Added: {html.escape(link_text(l))}</li>" for l in delta.links.added
@@ -355,6 +369,7 @@ def figure_image(svg: bytes) -> QImage | None:
 def changes_text(diff: DocumentDiff, changes: list[ObjectChange], header: str) -> str:
     """Plain text for the clipboard: a header line, the counts, then one
     tab-separated line per change (id, change, text)."""
+    # MELLON-VER-SRS-61: the shown rows as plain text.
     lines = [header, counts_text(diff)]
     for c in changes:
         lines.append(f"{c.obj_id}\t{change_label(c)}\t{c.text}")
@@ -362,6 +377,8 @@ def changes_text(diff: DocumentDiff, changes: list[ObjectChange], header: str) -
 
 
 def counts_text(diff: DocumentDiff) -> str:
+    # MELLON-VER-SRS-33: the number of objects with each change, hidden rows
+    # included; Moved and Link reviewed only when there are some.
     counts = diff.counts()
     parts = [
         f"{counts[Change.ADDED]} added",
@@ -400,6 +417,7 @@ def version_text(label: str, short: str, commit: str | None) -> str:
 def change_label(change: ObjectChange) -> str:
     text = ", ".join(str(k) for k in change.kinds)
     err_a, err_b = change.errors
+    # MELLON-VER-SRS-27: the row says at which version the object is unreadable.
     unreadable = [side for side, err in (("From", err_a), ("To", err_b)) if err]
     if unreadable:
         text += f" (unreadable at {' and '.join(unreadable)})"
@@ -448,6 +466,7 @@ class CompareDialog(QDialog):
         self.from_combo = self._version_combo()
         self.from_combo.lineEdit().setPlaceholderText("Choose a version")
         self.to_combo = self._version_combo()
+        # MELLON-VER-SRS-17: a control that swaps From and To.
         self.swap_button = QPushButton("Swap")
         self.swap_button.setToolTip("Swap From and To")
         self.swap_button.clicked.connect(self.swap)
@@ -471,6 +490,7 @@ class CompareDialog(QDialog):
         self.summary_label = QLabel()
         self.summary_label.setWordWrap(True)
         self.summary_label.setStyleSheet("font-weight: 600;")
+        # MELLON-VER-SRS-37: one Show box per change, to hide rows by change.
         self.filter_boxes: dict[Change, QCheckBox] = {}
         filters = QHBoxLayout()
         filters.addWidget(QLabel("Show:"))
@@ -567,6 +587,8 @@ class CompareDialog(QDialog):
         are the document's defaults (`diff.default_versions`); with no From
         to compare from, the dialog prompts for one."""
         svc = self._controller.require_service()
+        # MELLON-VER-SRS-7, -8: the versions offered; MELLON-VER-SRS-12 to
+        # -15: From and To as `diff.default_versions` chooses them.
         try:
             self._versions = svc.compare_versions(self._doc_id)
             default_from, default_to = svc.default_compare_versions(self._doc_id)
@@ -574,6 +596,7 @@ class CompareDialog(QDialog):
             self._versions = [Version(WORKING_COPY, "Working copy (uncommitted edits)", "working-copy")]
             default_from, default_to = None, WORKING_COPY
             self._show_message(f"Can't read this document's history: {e}")
+        # MELLON-VER-SRS-7, -8: the same choices for From and for To.
         for combo in (self.from_combo, self.to_combo):
             blocked = combo.blockSignals(True)
             combo.clear()
@@ -596,9 +619,12 @@ class CompareDialog(QDialog):
         index = combo.findText(text, Qt.MatchFlag.MatchExactly)
         if index >= 0:
             return combo.itemData(index)
+        # MELLON-VER-SRS-9: typed text that isn't an entry's label is passed
+        # on as typed, for git's revision syntax to resolve.
         return text
 
     def swap(self) -> None:
+        # MELLON-VER-SRS-17: From and To trade places, then compare.
         a = self._combo_state(self.from_combo)
         b = self._combo_state(self.to_combo)
         self._restore_combo_state(self.from_combo, b)
@@ -609,6 +635,8 @@ class CompareDialog(QDialog):
         """Compare the chosen versions, in the background. Without a From
         version, prompt for one instead."""
         ref_a, ref_b = self.ref(self.from_combo), self.ref(self.to_combo)
+        # MELLON-VER-SRS-16: with From or To unset, ask for a version instead
+        # of comparing.
         if ref_a is None or ref_b is None:
             if self.diff is None:
                 self.empty_label.setText(self.PROMPT)
@@ -621,6 +649,8 @@ class CompareDialog(QDialog):
         # the job reads the files. Comparing two commits saves nothing.
         if WORKING_COPY in (ref_a, ref_b):
             self.save_pending_edits.emit()
+        # MELLON-VER-SRS-40: each comparison gets a new request number; only
+        # the latest one's result is shown (`_on_finished`).
         self._request += 1
         self._busy = True
         # Shown with the result; a failure keeps the previous result's labels.
@@ -633,6 +663,8 @@ class CompareDialog(QDialog):
         self.setCursor(Qt.CursorShape.BusyCursor)
         svc = self._controller.require_service()
         doc_id = self._doc_id
+        # MELLON-VER-SRS-58: compared on the thread pool, so the windows keep
+        # responding meanwhile.
         QThreadPool.globalInstance().start(
             _CompareJob(
                 self._signals,
@@ -650,6 +682,7 @@ class CompareDialog(QDialog):
         return out
 
     def copy_to_clipboard(self) -> str:
+        # MELLON-VER-SRS-61: copy the rows shown, as plain text.
         if self.diff is None:
             return ""
         text = changes_text(self.diff, self.visible_changes(), self._header())
@@ -659,6 +692,7 @@ class CompareDialog(QDialog):
     # --- results -------------------------------------------------------------
 
     def _on_finished(self, request: int, diff: DocumentDiff) -> None:
+        # MELLON-VER-SRS-40: a result for versions no longer chosen is dropped.
         if request != self._request:
             return  # a newer comparison is running
         self._end_busy()
@@ -671,6 +705,8 @@ class CompareDialog(QDialog):
             version_text(label_b, diff.short_b, diff.commit_b),
         )
         self._populate()
+        # MELLON-VER-SRS-29: say which manifest can't be read, and that no
+        # object is shown Moved.
         problems = [
             f"Can't read the outline at {side}: {err}. Moved objects aren't shown."
             for side, err in (("From", diff.outline_error_a), ("To", diff.outline_error_b))
@@ -683,7 +719,9 @@ class CompareDialog(QDialog):
         if request != self._request:
             return
         self._end_busy()
-        # Keep the previous result; say what went wrong above it.
+        # MELLON-VER-SRS-11: keep the previous result, labelled with the
+        # versions it was found for; MELLON-VER-SRS-10: the message names the
+        # version that didn't resolve.
         self._show_message(f"Couldn't compare: {message}")
         if self.diff is not None:
             self.summary_label.setText(self._summary())
@@ -704,12 +742,15 @@ class CompareDialog(QDialog):
         diff = self.diff
         assert diff is not None
         tokens = ThemeManager.instance().current_tokens()
-        # MELLON-VER-SRS-31: clearing moves the current row through the old
-        # rows, whose indexes belong to the old result, not `self.diff`.
+        # MELLON-VER-SRS-44, -50: the details shown are the selected row's.
+        # Clearing moves the current row through the old rows, whose indexes
+        # belong to the old result, not `self.diff`.
         blocker = QSignalBlocker(self.list)
         self.list.clear()
         blocker.unblock()
         self.details.clear()
+        # MELLON-VER-SRS-31, -32: one row per changed object, in the result's
+        # order: its ID, its changes and the first line of its description.
         for index, change in enumerate(diff.changes):
             item = QTreeWidgetItem([change.obj_id, change_label(change), change.text])
             item.setData(0, _CHANGE_ROLE, index)
@@ -733,6 +774,7 @@ class CompareDialog(QDialog):
             self._stack.setCurrentIndex(0)
 
     def _header(self) -> str:
+        # MELLON-VER-SRS-41: the From and To the shown result was found for.
         return f"{self._doc_id}: {self._labels[0]} → {self._labels[1]}"
 
     def _summary(self) -> str:
@@ -744,6 +786,7 @@ class CompareDialog(QDialog):
         first_visible = None
         for i in range(self.list.topLevelItemCount()):
             item = self.list.topLevelItem(i)
+            # MELLON-VER-SRS-37: hidden only when each of its changes is.
             hidden = not shown.intersection(self._change_of(item).kinds)
             item.setHidden(hidden)
             if not hidden and first_visible is None:
@@ -779,6 +822,8 @@ class CompareDialog(QDialog):
         self.details.setDocument(doc)
 
     def _on_double_clicked(self, item: QTreeWidgetItem, *_args) -> None:
+        # MELLON-VER-SRS-54: select the object in the Document Editor when the
+        # open document has it.
         obj_id = self._change_of(item).obj_id
         try:
             exists = obj_id in self._controller.document(self._doc_id).objects

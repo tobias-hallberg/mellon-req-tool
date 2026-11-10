@@ -280,6 +280,8 @@ def object_change_to_dict(change, labels) -> dict:
         "text": change.text,
     }
     err_a, err_b = change.errors
+    # MELLON-VER-SRS-50: an added or deleted object whole, at the version
+    # where it exists.
     if change.before is None or change.after is None:
         state = change.after if change.before is None else change.before
         out["object"] = _state_to_dict(state)
@@ -287,6 +289,8 @@ def object_change_to_dict(change, labels) -> dict:
     if err_a or err_b:
         out["unreadable"] = {"from": err_a, "to": err_b}
     delta = change.delta
+    # MELLON-VER-SRS-59: each changed field with its value at From and To
+    # (a figure only as whether it is there).
     if delta is not None:
         if delta.attrs:
             out["attrs"] = [
@@ -326,6 +330,7 @@ def object_change_to_dict(change, labels) -> dict:
                 "from": delta.figure.svg_a is not None,
                 "to": delta.figure.svg_b is not None,
             }
+    # MELLON-VER-SRS-52: a moved object's parent and position at both.
     if "Moved" in out["changes"]:
         out["moved"] = {
             "from": _position_to_dict(change.before.position),

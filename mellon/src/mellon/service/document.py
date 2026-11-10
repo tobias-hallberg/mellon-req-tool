@@ -680,6 +680,8 @@ class DocumentService:
         try:
             return _compare_document(root, doc_id, ref_a, ref_b)
         except GitError as e:
+            # MELLON-VER-SRS-10, -26, -60: the library's message names the
+            # version, or the document and both versions; it is passed on.
             raise ServiceError(ErrorCode.GIT, str(e)) from e
 
     def compare_versions(self, doc_id: str, *, max_commits: int = 200) -> list[Version]:

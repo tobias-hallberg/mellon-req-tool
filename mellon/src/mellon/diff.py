@@ -264,6 +264,8 @@ class ObjectChange:
     @property
     def text(self) -> str:
         """The first line of the object's text: at B, or at A when deleted."""
+        # MELLON-VER-SRS-32: the description at To, or at From for a deleted
+        # object (also used when the object can't be read at To).
         for state in (self.after, self.before):
             if state is not None and state.obj is not None:
                 lines = state.obj.description.strip().splitlines()
@@ -330,6 +332,7 @@ class DocumentDiff:
     def counts(self) -> dict[Change, int]:
         """How many objects have each kind of change (an object that was
         modified and moved counts in both)."""
+        # MELLON-VER-SRS-33: counted over every change, whatever a view hides.
         out = {kind: 0 for kind in Change}
         for change in self.changes:
             for kind in change.kinds:
@@ -364,6 +367,8 @@ def word_diff(a: str, b: str) -> tuple[tuple[str, str], ...]:
         else:
             out.append((op, text))
 
+    # MELLON-VER-SRS-47: equal segments are the same tokens at both, so every
+    # word that differs lands in a delete (From) or insert (To) segment.
     matcher = difflib.SequenceMatcher(None, ta, tb, autojunk=False)
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag == "equal":
@@ -400,9 +405,12 @@ def document_versions(
     Raises ``GitError`` when `repo_root` isn't in a git repo.
     """
     repo, _ = discover_repo(repo_root)
+    # MELLON-VER-SRS-8: the working copy is offered, with or without commits.
     out = [Version(WORKING_COPY, "Working copy (uncommitted edits)", "working-copy")]
     if repo.head_is_unborn:
         return out
+    # MELLON-VER-SRS-7: the latest commit, each issue of the document, and
+    # each local and remote-tracking branch.
     head = repo.head.peel(pygit2.Commit)
     out.append(Version(LATEST, f"Latest commit ({_short_oid(head.id)})", "latest"))
     for issue, tag, oid in issue_tags(repo, doc_id):
@@ -413,6 +421,9 @@ def document_versions(
         if name.endswith("/HEAD"):
             continue
         out.append(Version(name, f"Branch {name}", "branch"))
+    # MELLON-VER-SRS-7, -62: the commits on HEAD's history whose document
+    # folder differs from each parent's, and no others; only the newest
+    # `max_commits` of them.
     for entry in log_for_path(repo, doc_id, max_entries=max_commits):
         message = entry["message"]
         if len(message) > 60:
@@ -435,15 +446,24 @@ def default_versions(repo_root: str | Path, doc_id: str) -> tuple[str | None, st
     Raises ``GitError`` when `repo_root` isn't in a git repo.
     """
     repo, _ = discover_repo(repo_root)
+    # MELLON-VER-SRS-15: no commit yet: From unset, To the working copy.
     if repo.head_is_unborn:
         return None, WORKING_COPY
+    # Highest issue first, only those whose commit is HEAD or an ancestor:
+    # issues[0] is the current issue, issues[1] the issue before it.
     issues = issue_tags(repo, doc_id, reachable_only=True)
+    # MELLON-VER-SRS-14: no issue: From unset, To the latest commit.
     if not issues:
         return None, LATEST
+    # The document is unchanged since an issue when its folder's tree is the
+    # same at the issue's commit and at HEAD.
     head_tree = _doc_tree_id(repo.head.peel(pygit2.Commit), doc_id)
     _issue, tag, oid = issues[0]
     if _doc_tree_id(repo[oid].peel(pygit2.Commit), doc_id) == head_tree:
+        # MELLON-VER-SRS-13: unchanged since the current issue: From is the
+        # issue before; MELLON-VER-SRS-14: unset when there is none.
         return (issues[1][1] if len(issues) > 1 else None), LATEST
+    # MELLON-VER-SRS-12: changed since the current issue: From is that issue.
     return tag, LATEST
 
 
@@ -501,8 +521,11 @@ def _resolve_commit(repo: pygit2.Repository, ref: str) -> pygit2.Commit:
     other than a commit (a tree or a file)."""
     spec = "HEAD" + ref[1:] if _LONE_AT.match(ref) else ref
     try:
+        # MELLON-VER-SRS-9: git's revision syntax, peeled to the commit it names.
         return repo.revparse_single(spec).peel(pygit2.Commit)
     except (pygit2.GitError, KeyError, ValueError) as e:
+        # MELLON-VER-SRS-10, -60: a version that resolves to no commit is an
+        # error naming the version as given.
         raise GitError(f"cannot resolve {ref!r}: {e}") from e
 
 
@@ -510,6 +533,7 @@ class _GitSide(_Side):
     def __init__(self, repo: pygit2.Repository, doc_id: str, ref: str) -> None:
         commit = _resolve_commit(repo, ref)
         self._repo = repo
+        # MELLON-VER-SRS-67, -87: the commit this version resolved to.
         self.commit = str(commit.id)
         self.short = _short_oid(commit.id)
         self.objects, self.links, self.figures = {}, {}, {}
@@ -601,6 +625,7 @@ class _DiskSide(_Side):
 def _open_side(
     repo: pygit2.Repository, root: Path, doc_id: str, ref: str
 ) -> _Side:
+    # MELLON-VER-SRS-8: the working copy is the files on disk.
     if ref == WORKING_COPY:
         return _DiskSide(root / doc_id, doc_id)
     return _GitSide(repo, doc_id, ref)
@@ -619,6 +644,8 @@ class _Reader:
         hit = self._objects.get(obj_id)
         if hit is None:
             path = self.side.path(self.doc_id, "objects", obj_id)
+            # MELLON-VER-SRS-28: a file that can't be read is this object's
+            # error, kept with its state; the other objects are compared on.
             try:
                 hit = (parse_object_bytes(self.side.read("objects", obj_id), path), None)
             except LoaderError as e:
@@ -711,6 +738,8 @@ def _read_manifest(
     if not side.present:
         return None, {}, None
     path = f"{doc_id}/{doc_id}.xml"
+    # MELLON-VER-SRS-29: a manifest that is missing or doesn't parse is
+    # reported, and leaves no outline to find moves in.
     if side.manifest is None:
         return None, {}, f"{path} is missing"
     try:
@@ -728,6 +757,9 @@ def _moved(common: set[str], a: _Outline, b: _Outline) -> set[str]:
     the siblings they kept changed. Added and deleted siblings don't count:
     inserting an object before others doesn't move them."""
     moved: set[str] = set()
+    # MELLON-VER-SRS-23: Moved when the parent changed (or the object is in
+    # only one of the outlines), or when it isn't among the largest set of
+    # same-parent siblings kept in order (`_in_place`).
     for obj_id in common:
         if (obj_id in a.parent) != (obj_id in b.parent):
             moved.add(obj_id)
@@ -805,11 +837,13 @@ def _display_order(
     """Changed ids in the outline order at B, each deleted object placed
     after the object that preceded it at A. Objects neither outline places
     come last, by id."""
+    # MELLON-VER-SRS-35: rows follow the outline at To, each object before
+    # its sub-objects (pre-order).
     order: list[str] = list(outline_b.preorder) if outline_b is not None else []
     placed = set(order)
     if outline_a is not None:
-        # Insert deleted objects (in A order) after their nearest preceding
-        # object at A that is already placed.
+        # MELLON-VER-SRS-36: insert deleted objects (in A order) after their
+        # nearest preceding object at A that is already placed, or first.
         after: dict[str | None, list[str]] = {}
         anchor: str | None = None
         for obj_id in outline_a.preorder:
@@ -846,22 +880,31 @@ def compare_document(
     Raises ``GitError`` if either ref can't be resolved, or if the document
     folder is absent at both refs.
     """
+    # MELLON-VER-SRS-56: only reads: git objects by id and files on disk;
+    # nothing in the working copy, the index or a reference is written.
     repo, root = discover_repo(repo_root)
     side_a = _open_side(repo, root, doc_id, ref_a)
     side_b = _open_side(repo, root, doc_id, ref_b)
+    # MELLON-VER-SRS-26: absent at both versions is an error naming the
+    # document and both versions, not an empty result.
     if not side_a.present and not side_b.present:
         raise GitError(f"document {doc_id!r} not present at {ref_a} or {ref_b}")
 
     read_a, read_b = _Reader(side_a, doc_id), _Reader(side_b, doc_id)
     outline_a, labels_a, outline_error_a = _read_manifest(side_a, doc_id)
     outline_b, labels_b, outline_error_b = _read_manifest(side_b, doc_id)
+    # MELLON-VER-SRS-45: each attribute's label at To, or at From when only
+    # From defines it.
     labels = {**labels_a, **labels_b}
 
     def pos(outline: _Outline | None, obj_id: str) -> Position | None:
         return outline.position(obj_id) if outline is not None else None
 
+    # MELLON-VER-SRS-19, -20: an object exists at a version when its object
+    # file does: Added at To only, Deleted at From only.
     ids_a, ids_b = set(side_a.objects), set(side_b.objects)
     added, deleted, common = ids_b - ids_a, ids_a - ids_b, ids_a & ids_b
+    # MELLON-VER-SRS-29: without both outlines no object is Moved.
     moved = (
         _moved(common, outline_a, outline_b)
         if outline_a is not None and outline_b is not None
@@ -879,6 +922,8 @@ def compare_document(
             obj_id, (Change.DELETED,), read_a.state(obj_id, pos(outline_a, obj_id)), None
         )
     for obj_id in common:
+        # MELLON-VER-SRS-57: files with the same content key (blob id) are
+        # skipped unparsed; only objects whose files differ are read.
         same_files = (
             side_a.objects[obj_id] == side_b.objects[obj_id]
             and side_a.links.get(obj_id) == side_b.links.get(obj_id)
@@ -891,19 +936,25 @@ def compare_document(
         kinds: list[Change] = []
         delta = None
         if not same_files:
-            # The files differ, so an object that can't be read on one side
-            # is reported as modified rather than silently passed over.
+            # MELLON-VER-SRS-27: the files differ, so an object that can't be
+            # read on one side is reported (Modified, with the reason at that
+            # version) rather than silently passed over.
             if before.problem or after.problem:
                 kinds.append(Change.MODIFIED)
+            # MELLON-VER-SRS-21, -22: Modified only when a parsed field
+            # differs, so a difference gone in the canonical form is none.
             delta = _delta(obj_id, before, after)
             if delta.is_empty:
                 delta = None
             else:
                 modified.append(delta)
                 if Change.MODIFIED not in kinds:
+                    # MELLON-VER-SRS-24: only acknowledged commits changed:
+                    # Link reviewed, not Modified.
                     kinds.append(
                         Change.LINK_REVIEWED if delta.only_link_reviews else Change.MODIFIED
                     )
+        # MELLON-VER-SRS-23: Moved together with the object's other changes.
         if obj_id in moved:
             kinds.append(Change.MOVED)
         if kinds:
@@ -973,6 +1024,8 @@ def _delta(obj_id: str, before: ObjectState, after: ObjectState) -> ObjectDelta:
     attrs: tuple[AttributeChange, ...] = ()
     description = None
     table = None
+    # MELLON-VER-SRS-21: each field: attribute values, description, table,
+    # figure and outgoing links.
     if before.obj is not None and after.obj is not None:
         attrs = _diff_attrs(before.obj.attrs, after.obj.attrs)
         if before.obj.description != after.obj.description:
@@ -1031,12 +1084,16 @@ def _diff_links(
     added: list[LinkChange] = []
     removed: list[LinkChange] = []
     ack_changed: list[LinkAckChange] = []
+    # MELLON-VER-SRS-46: each link added and each removed, by target and
+    # link type.
     for key in sorted(by_key_b.keys() - by_key_a.keys()):
         link = by_key_b[key]
         added.append(LinkChange(*key, ack=link.ack))
     for key in sorted(by_key_a.keys() - by_key_b.keys()):
         link = by_key_a[key]
         removed.append(LinkChange(*key, ack=link.ack))
+    # MELLON-VER-SRS-24, -53: the same link with another acknowledged commit,
+    # kept apart from added and removed links, with the commit at both.
     for key in sorted(by_key_a.keys() & by_key_b.keys()):
         la, lb = by_key_a[key], by_key_b[key]
         if la.ack != lb.ack:

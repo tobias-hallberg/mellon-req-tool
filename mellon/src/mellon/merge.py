@@ -1007,6 +1007,8 @@ def resolve(
     results = _compute(st, edits or {}, delete).results
     for doc in {p.partition("/")[0] for p in results}:
         _reconcile_outline(root, doc, results)
+        # MELLON-VER-SRS-64: each document the merge writes gets its next
+        # object number.
         _record_next_number(st, root, doc, results)
 
     index = st.repo.index

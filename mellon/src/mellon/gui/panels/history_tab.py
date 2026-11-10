@@ -218,6 +218,8 @@ class HistoryTab(QWidget):
         self._compare_button.setEnabled(selected)
 
     def _compare_with_latest(self) -> None:
+        # MELLON-VER-SRS-4: Compare with latest… asks for the selected commit
+        # as From; the window sets To to the latest commit.
         short_hash = self._selected_hash()
         if short_hash is not None:
             self.compare_requested.emit(short_hash)

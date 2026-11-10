@@ -2211,6 +2211,8 @@ def compare_document(
     (`truncated`); `counts` and `total_changes` cover all of it.
     """
     log.info("compare_document %s %s..%s", doc_id, from_ref, to_ref)
+    # MELLON-VER-SRS-59: the changes Compare reports, with each changed field
+    # at both versions (`document_diff_to_dict`).
     svc = _svc()
     try:
         ref_a, ref_b = from_ref, to_ref
@@ -2225,6 +2227,8 @@ def compare_document(
             )
         diff = svc.compare_document(doc_id, ref_a, ref_b)
     except ServiceError as e:
+        # MELLON-VER-SRS-60: a version that resolves to no commit is an error
+        # naming it, not an empty result.
         raise ValueError(str(e)) from e
     return document_diff_to_dict(diff, max_changes=max(0, max_changes))
 
