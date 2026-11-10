@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-14">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_typed_version
+tests/test_gui_compare.py::test_srs9_typed_name_resolves
+tests/test_gui_compare.py::test_srs9_typed_remote_tracking_branch_resolves
+tests/test_gui_compare.py::test_srs9_three_hex_prefix_is_refused
+tests/test_gui_compare.py::test_9_typed_from_compares_the_commit_it_names
+tests/test_gui_compare.py::test_9_typed_to_compares_the_commit_it_names
+tests/test_gui_compare.py::test_9_text_naming_no_commit_is_reported_by_name
+tests/test_gui_compare.py::test_9_text_naming_no_commit_is_not_compared</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Type as From, with To = latest commit, each of these names for the same older commit: a 7-digit prefix of its hash, its full hash, a unique 4-digit prefix, a tag on it, a local branch on it, a remote-tracking branch on it, and expressions that count back from the latest commit, such as HEAD~2 and @~2. Expected: each compares that commit with the latest commit and lists the same rows as choosing the commit from the list. Boundary: a 3-digit prefix of the same hash isn't accepted, and the error of MELLON-VER-SRS-10 names it.</description>
+</object>

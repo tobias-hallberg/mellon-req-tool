@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-26">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_working_copy_line_endings_alone_are_no_change
+tests/test_diff.py::test_ver22_reindented_object_files_are_no_change
+tests/test_diff.py::test_ver22_reordered_link_attributes_are_no_change
+tests/test_diff.py::test_ver22_reindented_manifest_with_reordered_attributes_is_no_change
+tests/test_diff.py::test_ver22_crlf_line_endings_are_no_change
+tests/test_diff.py::test_22_canonical_only_rewrite_of_document_files_is_no_change
+tests/test_diff.py::test_22_canonical_only_rewrite_of_figure_is_no_change
+tests/test_diff.py::test_22_real_change_in_rewritten_files_is_still_reported
+tests/test_diff.py::test_22_real_figure_change_in_rewritten_figure_is_still_reported
+tests/test_gui_compare.py::test_22_compare_dialog_lists_no_row_for_canonical_only_rewrite
+tests/test_mcp_git.py::test_22_mcp_compare_reports_no_change_for_canonical_only_rewrite</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Rewrite an object file, a links file and the manifest with CRLF line endings, with different indentation, and with their XML attributes in another order, without changing any text inside an element. Rewrite a figure with a comment, an internal entity and other whitespace between its elements. Compare the latest commit with the working copy; then commit and compare the two commits. Expected: no object changed, and none is Moved. Changing the whitespace inside a figure's text, or re-indenting a figure that isn't well-formed, is still a change.</description>
+</object>

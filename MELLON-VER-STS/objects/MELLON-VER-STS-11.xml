@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-11">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_srs5_dialog_closes_when_editor_closes
+tests/test_gui_compare.py::test_srs5_dialog_closes_when_editor_closes_mid_comparison</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Open the Compare dialog from a Document Editor and wait for its result, then close the Document Editor. Expected: the Compare dialog closes. Repeat, closing the Document Editor while the comparison is still running. Expected: the Compare dialog closes, and nothing appears and no error is reported when the comparison finishes.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_object_removed
+tests/test_diff.py::test_changes_follow_the_outline_with_deleted_objects_in_place
+tests/test_diff.py::test_doc_removed_wholesale
+tests/test_diff.py::test_a_to_b_symmetry</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare versions between which an object was deleted, and a version with the document with one where its folder was removed. Expected: exactly the removed objects are Deleted; every object of a document that doesn't exist at To is Deleted; swapping From and To reports them as Added.</description>
+</object>

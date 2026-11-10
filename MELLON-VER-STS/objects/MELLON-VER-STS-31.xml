@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_missing_manifest_is_reported_not_silent
+tests/test_diff.py::test_unparseable_manifest_is_reported
+tests/test_gui_compare.py::test_unreadable_outline_is_reported
+tests/test_diff.py::test_ver29_manifest_broken_at_from_is_reported
+tests/test_diff.py::test_ver29_manifest_broken_at_from_reports_no_object_moved
+tests/test_diff.py::test_ver29_manifest_broken_at_from_other_changes_still_reported
+tests/test_diff.py::test_ver29_manifest_broken_at_to_is_reported
+tests/test_diff.py::test_ver29_manifest_broken_at_to_object_is_modified_only
+tests/test_diff.py::test_ver29_manifest_missing_with_folder_present_is_reported
+tests/test_diff.py::test_ver29_manifest_missing_objects_are_not_deleted</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Remove the manifest, and then replace it with one that isn't well-formed XML, in the working copy and in a commit, and compare with the version before. Expected: the comparison reports that the outline can't be read at To and reports no object as Moved; the Compare dialog says it can't read the outline at To, and that no object changed. Repeat with the broken manifest at From and an object moved between the versions: still no object is Moved.</description>
+</object>

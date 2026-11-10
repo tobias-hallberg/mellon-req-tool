@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-19">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_without_an_issue_prompts_for_from
+tests/test_diff.py::test_default_versions_without_an_issue
+tests/test_diff.py::test_default_versions_at_the_only_issue_has_no_from
+tests/test_service.py::test_compare_versions_and_defaults
+tests/test_diff.py::test_ver14_only_issue_on_unchanged_document_leaves_from_unset
+tests/test_diff.py::test_srs14_only_issue_off_the_line_of_history_defaults
+tests/test_gui_compare.py::test_srs14_only_issue_is_latest_commit
+tests/test_gui_compare.py::test_srs14_only_issue_off_the_line_of_history_dialog</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Open Compare… on a document with no issue; on a document whose only issue is on the latest commit and that hasn't changed since; and on a document whose only issue is on a commit of another branch. Expected: each time From is empty and To = latest commit.</description>
+</object>

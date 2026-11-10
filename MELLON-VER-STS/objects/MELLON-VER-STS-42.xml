@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_word_diff
+tests/test_gui_compare.py::test_words_html_marks_only_changed_words
+tests/test_gui_compare.py::test_description_change_highlights_words
+tests/test_diff.py::test_ver47_generated_from_is_unmarked_and_deleted_words
+tests/test_diff.py::test_ver47_generated_to_is_unmarked_and_inserted_words
+tests/test_diff.py::test_ver47_generated_without_punctuation_unmarked_words_are_common
+tests/test_diff.py::test_ver47_edge_cases_marked_words
+tests/test_diff.py::test_ver47_only_the_changed_word_is_marked
+tests/test_diff.py::test_ver47_compared_description_words_cover_both_texts
+tests/test_gui_compare.py::test_ver47_dialog_shows_lt_and_amp_literally</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Change one word of a description and select the object. Expected: at From the deleted word is struck through, at To the inserted word is underlined, and no other word is marked. For generated pairs of descriptions, the unmarked words at From and at To are the same sequence, From reads as its unmarked and deleted words in order, and To as its unmarked and inserted words in order. Punctuation that stands alone is a word of its own: changing “stop.” to “stop!” marks only the punctuation. Characters such as &lt; and &amp; show as typed.</description>
+</object>

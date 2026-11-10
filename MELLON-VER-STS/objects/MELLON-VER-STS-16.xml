@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-16">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_unresolvable_version_is_named_and_the_result_kept
+tests/test_gui_compare.py::test_srs11_failed_comparison_keeps_previous_result</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Show the comparison of Issue 1 with the latest commit. Then compare with a From that resolves to no commit, and then with versions at which the document doesn't exist. Expected: each time the rows, the counts, and the From and To shown with them stay as they were before the failed comparison.</description>
+</object>

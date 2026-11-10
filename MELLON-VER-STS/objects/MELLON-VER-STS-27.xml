@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_object_moved_to_another_parent
+tests/test_diff.py::test_reordering_marks_only_the_object_that_moved
+tests/test_diff.py::test_inserting_an_object_moves_nothing
+tests/test_diff.py::test_changes_follow_the_outline_with_deleted_objects_in_place
+tests/test_diff.py::test_modified_and_moved_has_both
+tests/test_diff.py::test_ver23_swapped_siblings_only_the_later_at_from_is_moved
+tests/test_diff.py::test_ver23_tie_between_pairs_moves_the_later_pair
+tests/test_diff.py::test_ver23_largest_same_order_set_is_kept
+tests/test_diff.py::test_ver23_heading_moved_with_sub_objects_moves_only_the_heading
+tests/test_diff.py::test_ver23_moved_together_with_link_reviewed
+tests/test_diff.py::test_ver23_generated_moved_count_is_common_minus_lcs
+tests/test_diff.py::test_ver23_generated_unmoved_siblings_keep_their_order
+tests/test_diff.py::test_ver23_generated_insertions_and_deletions_move_nothing</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Starting from a heading with three sub-objects and a top-level object: move a sub-object under the top-level object; move the last sub-object to first; insert a new first sub-object; delete a sub-object; edit and move one object; swap two adjacent siblings; move the heading with its sub-objects under another object; and move an object whose only other change is a link review. Expected: Moved for the object that changed parent, the one moved to first, the later (at From) of the two swapped siblings, and the moved heading, but not for its sub-objects or for the siblings of an inserted or deleted object. The edited and moved object is Modified and Moved; the moved, reviewed object is Moved and Link reviewed.</description>
+</object>

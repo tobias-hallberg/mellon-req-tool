@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_object_moved_to_another_parent
+tests/test_gui_compare.py::test_srs52_moved_to_another_parent
+tests/test_gui_compare.py::test_srs52_moved_to_top_level</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Move an object to another parent and select its Moved row. Expected: the details show its parent and position at From and at To.</description>
+</object>

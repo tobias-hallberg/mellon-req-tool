@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-21">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_without_an_issue_prompts_for_from
+tests/test_gui_compare.py::test_srs16_from_unset_compare_asks_for_version
+tests/test_gui_compare.py::test_srs16_to_cleared_compare_asks_for_version</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Open the Compare dialog with From empty (on a document with no issue). Expected: the dialog asks the user to choose a version, and shows no rows and no 'no object changed' message. Press Compare: still nothing is compared. With From chosen, clear To and press Compare: the same. Choose a version for each: the dialog compares.</description>
+</object>

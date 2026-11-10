@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-15">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_unresolvable_version_is_named_and_the_result_kept
+tests/test_diff.py::test_unresolvable_ref_is_named
+tests/test_service.py::test_compare_errors
+tests/test_diff.py::test_srs10_ambiguous_prefix_refused_below_dialog
+tests/test_gui_compare.py::test_srs10_ambiguous_prefix_error_names_it
+tests/test_gui_compare.py::test_srs10_unknown_name_error_names_it
+tests/test_mcp_git.py::test_srs10_ambiguous_prefix_refused_by_mcp</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Type as From a name that resolves to no commit; then a 4-digit hash prefix that two objects in the repository share; then type a name that resolves to no commit as To. Expected: each time the Compare dialog shows an error message containing the typed name, and compares nothing for it. A later comparison of valid versions clears the message.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_only_the_latest_comparison_is_shown
+tests/test_gui_compare.py::test_srs40_earlier_result_never_shown_after_from_is_picked
+tests/test_gui_compare.py::test_srs40_typed_from_while_comparing_never_shows_earlier_result
+tests/test_gui_compare.py::test_srs40_quick_succession_shows_only_last</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Start a comparison, then change From and start another before the first finishes, holding the first so that it finishes last. Expected: the rows, counts and versions shown are those of the second comparison, and the first's result is never shown. Start several comparisons in quick succession: only the last one's result is shown. Start a comparison and type in From without pressing Enter or Compare: the result of the comparison running isn't shown.</description>
+</object>

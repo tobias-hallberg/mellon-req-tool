@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-32">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_rows_in_outline_order_with_change_and_text
+tests/test_gui_compare.py::test_moved_and_link_reviewed_rows
+tests/test_diff.py::test_changes_follow_the_outline_with_deleted_objects_in_place
+tests/test_gui_compare.py::test_srs31_modified_and_moved_is_one_row
+tests/test_gui_compare.py::test_srs31_recompare_with_later_row_selected_raises_nothing
+tests/test_gui_compare.py::test_srs32_row_text_is_first_line</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare Issue 1 with the latest commit, between which one object was reworded, one was given an attribute, one was deleted and one was added. Expected: four rows, one per changed object, each showing the object ID, its change, and the first line of its description at To, or at From for the deleted object. Compare two versions between which one object moved and another had only a link reviewed: one row each, Moved and Link reviewed. An object that is Modified and Moved is one row showing both; an object with a three-line description shows only its first line.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_copy_list_to_clipboard
+tests/test_gui_compare.py::test_srs61_copy_button_puts_rows_on_clipboard
+tests/test_gui_compare.py::test_srs61_copy_leaves_out_hidden_rows</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Hide the Modified rows and press Copy list. Expected: the clipboard holds plain text with only the shown rows, one per line, each with the object ID, its change and its text separated by tabs, under a line naming the document and the versions and a line with the counts.</description>
+</object>

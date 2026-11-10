@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_only_an_ack_change_is_a_link_review
+tests/test_diff.py::test_link_ack_changed_not_added_or_removed
+tests/test_gui_compare.py::test_moved_and_link_reviewed_rows
+tests/test_diff.py::test_ver24_first_acknowledgement_is_link_reviewed
+tests/test_diff.py::test_ver24_ack_and_description_changed_together_is_modified
+tests/test_diff.py::test_ver24_two_links_reacknowledged_is_one_link_reviewed_change</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Change only the acknowledged commit of an object's outgoing link and commit. Expected: the object is Link reviewed, not Modified, and no link is reported added or removed; the Compare dialog's row says Link reviewed and the counts say 1 link reviewed. Acknowledging a link that had no acknowledged commit is also Link reviewed. Changing an acknowledged commit and the description together is Modified, not Link reviewed.</description>
+</object>

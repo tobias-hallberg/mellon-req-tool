@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_link_ack_changed_not_added_or_removed
+tests/test_gui_compare.py::test_srs53_link_reviewed_shows_ack_at_from_and_to</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Change only the acknowledged commit of an object's link, and select its Link reviewed row. Expected: the details show the link's target and type, with the acknowledged commit at From and at To.</description>
+</object>

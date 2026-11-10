@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-18">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_opens_with_the_issue_before_when_the_latest_commit_is_an_issue
+tests/test_diff.py::test_default_versions_at_an_issue_compare_it_with_the_one_before
+tests/test_diff.py::test_ver13_unchanged_since_current_issue_from_is_issue_before
+tests/test_diff.py::test_ver13_issue_before_ignores_issue_off_the_history
+tests/test_diff.py::test_ver13_change_then_byte_for_byte_restore_is_unchanged
+tests/test_diff.py::test_ver13_commit_to_another_document_leaves_spec_unchanged</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Tag issue 1, change the document, then tag issue 2 on the latest commit. Open Compare…. Expected: From = Issue 1, To = latest commit. Commit a change to another document only: the same. With issues 2.9 and 2.10, and 2.10 on the latest commit: From = Issue 2.9, also when issue 2.9.1 is tagged on a commit of another branch. When a commit after the current issue changed the document and a later commit restored it exactly: From is the issue before.</description>
+</object>

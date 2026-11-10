@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-53">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_compare_document_names_a_bad_version
+tests/test_mcp_git.py::test_ver60_mcp_unknown_to_version_error_names_it
+tests/test_mcp_git.py::test_ver60_mcp_three_hex_prefix_error_names_it
+tests/test_mcp_git.py::test_ver60_mcp_four_hex_prefix_is_the_same_version</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Through the MCP server, compare with a From that resolves to no commit, and then with such a To. Expected: each time, an error naming the version.</description>
+</object>

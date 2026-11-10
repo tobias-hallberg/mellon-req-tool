@@ -766,7 +766,8 @@ class CompareDialog(QDialog):
             self._apply_filters()
         else:
             # MELLON-VER-SRS-34: "no object changed", not "no differences":
-            # changes to the manifest aren't compared yet (MELLON-VER-SRS-25).
+            # changes to the manifest aren't compared yet (a Proposed
+            # requirement, not built).
             self.empty_label.setText(
                 f"No object changed: {self._doc_id}'s objects are the same at "
                 f"{self._labels[0]} and {self._labels[1]}."

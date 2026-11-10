@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">analysis: Manual, because timings on shared CI runners are too noisy to gate on. Each run is recorded with the scale measurements; on 2026-11-07 the reference machine took 1.0 s.</attr>
+  <description>On the reference machine, build a repository with a 1,000-object document and commit it; change every object's description and one attribute value, and commit again. Time the comparison of the two commits, from its start until the changes are found, without the dialog filling its list. Run it several times, and record each time with the machine and the Mellon version. Expected: every run takes at most 2 s.</description>
+</object>

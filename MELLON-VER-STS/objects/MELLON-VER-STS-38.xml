@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-38">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_summary_counts
+tests/test_gui_compare.py::test_unresolvable_version_is_named_and_the_result_kept
+tests/test_diff.py::test_issue_tag_as_ref
+tests/test_diff.py::test_identical_refs_yields_empty_diff
+tests/test_gui_compare.py::test_srs41_result_names_its_versions
+tests/test_gui_compare.py::test_srs41_copied_list_names_its_versions</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare Issue 1 with the latest commit. Expected: the result is shown with Issue 1 and the latest commit named, and still names them after a failed comparison. Compare a typed hash prefix with the working copy: the result names the typed version and the working copy.</description>
+</object>

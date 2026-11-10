@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_filters_hide_rows_by_change
+tests/test_gui_compare.py::test_srs37_row_hidden_only_when_each_change_hidden</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Untick Modified under the change filter: the Modified rows hide and the others stay. Untick Added and Deleted too: no row shows and the details are empty. Tick them all again: every row is back. An object that is Modified and Moved stays shown while either Modified or Moved is ticked, and hides only when both are unticked. Moved and Link reviewed hide their rows the same way.</description>
+</object>

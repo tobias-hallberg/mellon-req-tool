@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_swap
+tests/test_gui_compare.py::test_srs17_swap_exchanges_from_and_to
+tests/test_gui_compare.py::test_srs17_swapped_versions_compare_reversed</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Show the comparison of Issue 1 with the latest commit, then press the swap control. Expected: From = latest commit, To = Issue 1, and the rows show the reverse comparison: the added object is Deleted and the deleted one is Added.</description>
+</object>

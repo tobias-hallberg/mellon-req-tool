@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_double_click_selects_the_object_in_the_editor
+tests/test_gui_compare.py::test_srs54_double_click_selects_in_editor</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Double-click the row of an object that exists in the open document. Expected: the Document Editor selects the object and the Compare dialog stays open. Double-click a deleted object's row: the selection doesn't change, and the dialog says that the object isn't in the open document.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_no_differences_says_so
+tests/test_gui_compare.py::test_unreadable_outline_is_reported
+tests/test_diff.py::test_identical_refs_yields_empty_diff</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare a version with itself, and two versions between which no object changed. Expected: the Compare dialog says that no object changed, naming the document, instead of showing an empty list, and Copy list is unavailable.</description>
+</object>

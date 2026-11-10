@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_rows_in_outline_order_with_change_and_text
+tests/test_diff.py::test_changes_follow_the_outline_with_deleted_objects_in_place
+tests/test_gui_compare.py::test_srs35_rows_follow_outline_at_to
+tests/test_gui_compare.py::test_srs36_deleted_first_object_comes_first
+tests/test_gui_compare.py::test_srs36_adjacent_deleted_keep_from_order
+tests/test_gui_compare.py::test_srs36_deleted_after_unchanged_object</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Arrange an outline whose order differs from the objects' ID order, with nested sub-objects. Change objects at several levels, and delete objects: the first one at From, two adjacent ones, and one that follows an unchanged object. Expected: the rows of objects that exist at To follow the outline at To, each object before its sub-objects; each deleted object comes directly after the nearest earlier object at From that exists at To, or first when there is none; adjacent deleted objects keep their order at From.</description>
+</object>

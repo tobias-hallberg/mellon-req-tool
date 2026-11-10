@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-12">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_versions_offered
+tests/test_diff.py::test_document_versions
+tests/test_diff.py::test_issue_tag_as_ref
+tests/test_gui_compare.py::test_srs7_offers_each_remote_tracking_branch
+tests/test_gui_compare.py::test_srs7_offers_each_issue_including_off_branch</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Build a document with an issue, two commits that change the document, a later commit that changes only another document, a second local branch and a remote-tracking branch. Open the Compare dialog. Expected: From and To each offer the same choices: the latest commit, the document's issue, each local and remote-tracking branch, and each commit that changed the document, but not the commit that changed only the other document. With several issues, each is offered. Choosing an issue compares at the issue's commit.</description>
+</object>

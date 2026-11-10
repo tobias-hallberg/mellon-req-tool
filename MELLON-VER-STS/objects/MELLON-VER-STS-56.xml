@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_working_copy_compare_saves_pending_inspector_text
+tests/test_gui_compare.py::test_comparing_two_commits_leaves_pending_text_unsaved
+tests/test_gui_compare.py::test_73_pending_edit_is_part_of_working_copy_comparison
+tests/test_gui_compare.py::test_73_row_shows_the_typed_text
+tests/test_gui_compare.py::test_73_file_holds_the_typed_text
+tests/test_gui_compare.py::test_73_two_commit_comparison_leaves_out_pending_text
+tests/test_gui_compare.py::test_73_two_commit_comparison_keeps_pending_text</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Type a description in the Document Editor's grid, and separately in its Inspector, without leaving the field; then compare the latest commit with the working copy. Expected: the typed text is saved first and listed as the To value. Repeat comparing two commits: nothing is saved, and the typed text stays in its field.</description>
+</object>

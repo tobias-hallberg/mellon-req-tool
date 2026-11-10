@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-60">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_65_renumbered_at_or_above_both_numbers
+tests/test_merge.py::test_ver_srs_65_plan_skips_numbers_one_side_used_and_deleted
+tests/test_merge.py::test_ver_srs_65_resolved_object_skips_numbers_one_side_used_and_deleted</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Resolve a merge in which both sides created an object under one ID, with and without one side having used and deleted higher numbers. Expected: the renumbered object gets a number no lower than either side's next object number, in the merge plan shown and in the files written.</description>
+</object>

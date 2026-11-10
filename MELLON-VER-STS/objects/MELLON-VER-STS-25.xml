@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_attribute_value_changed
+tests/test_diff.py::test_attribute_added_and_removed
+tests/test_diff.py::test_description_changed
+tests/test_diff.py::test_link_added
+tests/test_diff.py::test_link_removed
+tests/test_diff.py::test_combined_changes_in_one_object
+tests/test_diff.py::test_table_change
+tests/test_diff.py::test_figure_change
+tests/test_diff.py::test_working_copy_includes_uncommitted_edits
+tests/test_diff.py::test_ver21_attribute_value_changed
+tests/test_diff.py::test_ver21_attribute_unset_at_to
+tests/test_diff.py::test_ver21_link_added
+tests/test_diff.py::test_ver21_link_removed
+tests/test_diff.py::test_ver21_link_type_changed_same_target
+tests/test_diff.py::test_ver21_table_cell_changed
+tests/test_diff.py::test_ver21_table_removed
+tests/test_diff.py::test_ver21_figure_replaced
+tests/test_diff.py::test_ver21_figure_removed
+tests/test_diff.py::test_ver21_figure_not_well_formed_at_to_is_still_reported</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Between two commits, change one field at a time: an attribute value; an attribute set and another unset; the description; a link added; a link removed; a link's type; a table added, changed and removed; a figure added, replaced and removed; then several fields at once. Also compare an uncommitted edit with the latest commit. Expected: each changed object is reported as Modified, and not as Link reviewed, with the field that changed.</description>
+</object>

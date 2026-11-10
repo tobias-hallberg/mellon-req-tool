@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_labels_come_from_the_manifest
+tests/test_gui_compare.py::test_srs45_attribute_shown_by_label
+tests/test_gui_compare.py::test_srs45_unlabelled_attribute_shown_by_name
+tests/test_gui_compare.py::test_srs45_label_at_to_wins
+tests/test_gui_compare.py::test_srs45_label_at_from_when_only_from_defines
+tests/test_gui_compare.py::test_srs45_unlabelled_type_attribute_shown_by_built_in_label</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Give an attribute a label different from its name, change its value on an object, and select the object in the Compare dialog. Expected: the details name the attribute by its label and not by its name. An attribute with no label is named by its name, except the type attribute, named Type.</description>
+</object>

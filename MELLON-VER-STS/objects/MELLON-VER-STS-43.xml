@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_modified_object_shows_each_field_at_from_and_to
+tests/test_diff.py::test_attribute_added_and_removed
+tests/test_gui_compare.py::test_srs49_unset_at_to_shows_not_set
+tests/test_gui_compare.py::test_srs49_empty_value_is_not_shown_as_not_set</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Give one object an attribute value it didn't have, and remove another object's attribute value. Expected: the details show '(not set)' under the version without the value, and the value under the other version.</description>
+</object>

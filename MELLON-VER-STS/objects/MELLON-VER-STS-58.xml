@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_compare_document_returns_each_commit_in_full
+tests/test_mcp_git.py::test_87_mcp_result_reports_full_hash_of_each_version</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Call the MCP server's compare tool with From an issue and To the latest commit, then with a typed expression, then with the working copy. Expected: each version in the result gives the full hash of the commit it resolved to, beside its first 7 digits; the working copy gives none.</description>
+</object>

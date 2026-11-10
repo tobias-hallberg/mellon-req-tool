@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_link_added
+tests/test_diff.py::test_link_removed
+tests/test_diff.py::test_combined_changes_in_one_object
+tests/test_gui_compare.py::test_srs46_links_added_and_removed_shown
+tests/test_mcp_git.py::test_srs46_links_added_and_removed_through_mcp</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Between two commits, add a link to an object and remove another of its links, and select the object in the Compare dialog. Expected: the details show the added link and the removed link, each with its target and link type.</description>
+</object>

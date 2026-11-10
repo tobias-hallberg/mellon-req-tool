@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_modified_object_shows_each_field_at_from_and_to
+tests/test_gui_compare.py::test_description_change_highlights_words
+tests/test_diff.py::test_attribute_value_changed
+tests/test_diff.py::test_combined_changes_in_one_object
+tests/test_gui_compare.py::test_srs44_attribute_values_under_their_versions
+tests/test_gui_compare.py::test_srs44_descriptions_under_their_versions
+tests/test_gui_compare.py::test_srs44_added_link_shown</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Select a Modified object that was given an attribute; one whose description changed; and one whose attribute value, description and links all changed. Expected: the details show each changed field, with its value at From under From and its value at To under To.</description>
+</object>

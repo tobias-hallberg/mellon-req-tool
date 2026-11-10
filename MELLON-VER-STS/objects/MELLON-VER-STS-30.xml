@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_unreadable_object_is_marked_and_the_rest_still_compared
+tests/test_diff.py::test_unreadable_links_file_is_not_read_as_no_links
+tests/test_gui_compare.py::test_unreadable_object_is_marked
+tests/test_diff.py::test_ver27_object_file_broken_at_from_is_unreadable_at_from
+tests/test_diff.py::test_ver27_object_broken_at_from_has_its_fields_at_to
+tests/test_diff.py::test_ver27_object_file_broken_differently_at_both_is_unreadable_at_both
+tests/test_diff.py::test_ver27_object_file_broken_identically_at_both_isnt_listed
+tests/test_diff.py::test_ver27_links_file_broken_at_to_is_unreadable_at_to
+tests/test_diff.py::test_ver27_conflict_markers_in_working_copy_are_unreadable_at_to
+tests/test_diff.py::test_ver28_other_objects_still_reported_when_one_is_unreadable
+tests/test_diff.py::test_ver28_merge_in_progress_other_objects_still_reported</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>In one commit, replace an object file with one that isn't well-formed XML, and change another object. Separately, commit a links file that isn't well-formed. Compare each with the commit before. Expected: the broken object is reported as unreadable at To, with its fields at From still shown; the object with the broken links file is unreadable at To and its links aren't reported as removed; the other object's change is still reported. In the Compare dialog, the row says the object is unreadable at To and its details say it can't be read at To. Repeat with the broken file at From, and during a merge in progress with a conflicted object file in the working copy. Expected also: an object whose file is broken in the same way at From and at To isn't listed.</description>
+</object>

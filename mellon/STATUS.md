@@ -691,8 +691,8 @@ CHECK, TRACE, VER, PDF, MCP, GUI). `../docs/specification.md` says how they
 are written and checked; `../docs/definitions.md` holds the terms.
 
 - The area documents exist, with their attributes and rules files, and are
-  being filled area by area. Compare comes first, moving from the pre-split
-  `MELLON-SRS` / `MELLON-STS` into `MELLON-VER-SRS` / `MELLON-VER-STS`.
+  being filled area by area. Compare, in `MELLON-VER-SRS` / `MELLON-VER-STS`,
+  was the first; the pre-split `MELLON-SRS` / `MELLON-STS` are gone.
 - Requirements are implementation-free, say exactly one of shall, should or
   could, and are all `level: High`.
 - The documents are edited with a released Mellon build.

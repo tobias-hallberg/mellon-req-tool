@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-9">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_compare_is_available_in_read_only_mode
+tests/test_service.py::test_compare_document_reads_history_and_the_working_copy</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Open a document in the Document Editor, which opens in read-only mode. Expected: Compare… is enabled, and stays enabled after leaving read-only mode and entering it again; choosing it opens the Compare dialog and shows a comparison. A comparison made while edits are refused gives the same changes as one made while they are allowed.</description>
+</object>

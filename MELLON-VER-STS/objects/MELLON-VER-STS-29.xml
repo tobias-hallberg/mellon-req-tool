@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-29">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_doc_absent_both_sides_raises
+tests/test_service.py::test_compare_errors
+tests/test_diff.py::test_ver26_error_names_document_and_both_hashes
+tests/test_diff.py::test_ver26_error_names_document_and_both_names
+tests/test_mcp_git.py::test_ver26_mcp_error_names_document_and_both_hashes
+tests/test_mcp_git.py::test_ver26_mcp_error_names_document_and_both_names</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare a document between two versions at which its folder doesn't exist. Expected: an error that contains the document ID and both versions' names, and no result.</description>
+</object>

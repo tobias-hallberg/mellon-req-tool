@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-51">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_comparison_runs_in_the_background
+tests/test_gui_compare.py::test_srs58_editor_and_dialog_respond_while_comparing</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Start a comparison from the Compare dialog. Expected: control returns before the result is in; the dialog shows that it is comparing and disables Compare until the result arrives. While a long comparison runs, make an edit in the Document Editor and change a filter in the Compare dialog: both take effect before the comparison finishes.</description>
+</object>

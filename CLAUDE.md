@@ -22,7 +22,6 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── MELLON-<AREA>-SRS/          Mellon's own requirements, one document per area (STORE, EDIT, CHECK, TRACE,
 │                               VER, PDF, MCP, GUI); checked by mellon-check in CI
 ├── MELLON-<AREA>-STS/          Mellon's own test cases; each verifies its area's SRS
-├── MELLON-SRS/, MELLON-STS/    the first, pre-split spec (Compare), being moved into MELLON-VER-SRS/STS
 ├── mellon/                     the actual Python package
 │   ├── README.md               short entry point
 │   ├── INSTALL.md              installer, MCP client config, dev env setup (uv, Python 3.12)

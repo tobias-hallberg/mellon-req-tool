@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-17">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_opens_with_latest_issue_to_latest_commit
+tests/test_diff.py::test_default_versions_compare_the_latest_issue_with_the_latest_commit
+tests/test_diff.py::test_ver12_from_is_current_issue_in_issue_order
+tests/test_diff.py::test_ver12_issue_off_the_latest_commits_history_is_ignored
+tests/test_diff.py::test_ver12_another_documents_issue_is_ignored
+tests/test_diff.py::test_ver12_shorter_issue_number_comes_first
+tests/test_gui_compare.py::test_v12_rows_from_issue1_to_latest
+tests/test_gui_compare.py::test_v12_counts
+tests/test_gui_compare.py::test_v12_details_spot_check</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Tag issues 1, 2.9 and 2.10 of the document on successive commits that each change it, then change the document and commit. Tag issue 3 on a commit of another branch, and another document's issue on the latest commit. Open Compare…. Expected: From = Issue 2.10 (the current issue, by issue order), To = latest commit. With only issues 2 and 2.0, From = Issue 2.0.</description>
+</object>

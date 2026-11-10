@@ -44,10 +44,7 @@ KEYWORD = re.compile(r"\b(shall|should|could)\b", re.IGNORECASE)
 
 
 def _docs(suffix: str) -> list[Document]:
-    """The spec documents whose ID starts with `MELLON-` and ends in `suffix`.
-
-    The pre-split `MELLON-SRS` and `MELLON-STS` count too while they exist.
-    """
+    """The spec documents whose ID starts with `MELLON-` and ends in `suffix`."""
     return [
         load_document(folder)
         for folder in sorted(REPO.iterdir())

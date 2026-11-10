@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_table_and_figure_changes_shown_at_both_versions
+tests/test_diff.py::test_table_change
+tests/test_diff.py::test_figure_change
+tests/test_gui_compare.py::test_srs51_table_cell_change_under_each_version
+tests/test_gui_compare.py::test_srs51_replaced_figure_at_both_versions
+tests/test_gui_compare.py::test_srs51_removed_figure_says_none_at_to</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Give an object a table and a figure, commit, and compare with the commit before. Expected: the details show the table at To and '(no table)' at From, and the figure at To and '(no figure)' at From. Change a table cell and replace the figure: both versions of each are shown. Remove the figure: the figure at From and '(no figure)' at To.</description>
+</object>

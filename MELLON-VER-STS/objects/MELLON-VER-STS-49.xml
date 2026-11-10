@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_comparing_changes_nothing
+tests/test_diff.py::test_ver56_comparing_changes_no_file_index_or_reference
+tests/test_gui_compare.py::test_56_compare_dialog_changes_only_what_a_pending_edit_saves
+tests/test_mcp_git.py::test_ver56_mcp_compare_changes_no_file_index_or_reference
+tests/test_mcp_git.py::test_56_mcp_compare_changes_nothing</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Make an uncommitted change, with no pending edits. Record the working-copy files (untracked ones too), the git index, every reference and the latest commit, and compare the latest commit with the working copy both ways. Expected: nothing recorded has changed. Repeat for two commits, an issue, a typed version, a failing comparison, a comparison from the Compare dialog, and one from the MCP server.</description>
+</object>

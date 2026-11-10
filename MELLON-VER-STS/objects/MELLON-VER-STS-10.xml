@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-10">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_history_tab_compares_a_commit_with_the_latest
+tests/test_gui_compare.py::test_srs4_history_compare_with_latest_sets_from_and_to
+tests/test_gui_compare.py::test_srs4_history_compare_with_latest_shows_changes_since_commit
+tests/test_gui_compare.py::test_srs4_history_compare_latest_commit_says_no_object_changed
+tests/test_gui_compare.py::test_srs4_history_button_text</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Select an object that three commits changed, open the History tab, and select each listed commit in turn, including the newest. Expected: Compare with latest… is unavailable until a commit is selected; pressing it opens the Compare dialog with From set to the selected commit and To set to the latest commit, and lists the changes between them (for the newest commit, that no object changed).</description>
+</object>

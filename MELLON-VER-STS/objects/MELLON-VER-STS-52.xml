@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_compare_document_matches_the_dialog_engine
+tests/test_mcp_git.py::test_compare_document_working_copy
+tests/test_mcp_git.py::test_ver59_mcp_reports_each_changed_object_with_its_changes
+tests/test_mcp_git.py::test_ver59_mcp_description_at_both
+tests/test_mcp_git.py::test_ver59_mcp_attribute_at_both_with_label
+tests/test_mcp_git.py::test_ver59_mcp_deleted_object_fields_at_from
+tests/test_mcp_git.py::test_ver59_mcp_added_object_fields_at_to
+tests/test_mcp_git.py::test_ver59_mcp_moved_parent_and_position_at_both
+tests/test_mcp_git.py::test_ver59_mcp_link_reviewed_ack_at_both
+tests/test_mcp_git.py::test_ver59_mcp_link_added_and_removed</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Through the MCP server, compare a document between Issue 1 and the latest commit, and between the latest commit and a working copy with an uncommitted edit and a new object. Expected: the same objects, with the same changes in the same order, as the Compare dialog finds; the edited object is Modified, with its description at both versions; the new object is Added, with its fields. Each change carries each changed field at From and at To.</description>
+</object>

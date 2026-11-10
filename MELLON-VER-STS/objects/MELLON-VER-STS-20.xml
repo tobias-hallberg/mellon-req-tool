@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_default_versions_before_the_first_commit
+tests/test_gui_compare.py::test_srs15_no_commit_opens_with_working_copy_as_to
+tests/test_gui_compare.py::test_srs15_no_commit_working_copy_against_itself</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>In a repository with no commit, create a document and open Compare… on it from the Document Editor. Expected: From is empty, To is the working copy, and the dialog asks the user to choose a version.</description>
+</object>

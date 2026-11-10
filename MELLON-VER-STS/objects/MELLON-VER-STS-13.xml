@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-13">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_versions_offered
+tests/test_gui_compare.py::test_working_copy_as_to
+tests/test_diff.py::test_working_copy_includes_uncommitted_edits
+tests/test_gui_compare.py::test_srs8_working_copy_offered
+tests/test_gui_compare.py::test_srs8_working_copy_to_latest_rows
+tests/test_gui_compare.py::test_srs8_working_copy_text_is_the_from_value</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Edit an object's description and create an object, without committing. Expected: From and To both offer the working copy. With From = latest commit and To = working copy, the edited object is Modified with its uncommitted text at To, and the new object is Added. With From = working copy and To = latest commit, the edited object is Modified with its uncommitted text at From, and the new object is Deleted.</description>
+</object>

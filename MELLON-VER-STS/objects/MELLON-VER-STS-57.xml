@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-57">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_result_names_the_commit_compared_not_the_one_listed
+tests/test_gui_compare.py::test_version_text_adds_the_hash_only_once
+tests/test_diff.py::test_each_version_reports_the_full_hash_of_its_commit
+tests/test_gui_compare.py::test_67_dialog_shows_hash_of_typed_version
+tests/test_gui_compare.py::test_67_dialog_shows_hash_of_default_versions
+tests/test_gui_compare.py::test_67_dialog_shows_hash_of_from_when_to_is_working_copy
+tests/test_gui_compare.py::test_67_dialog_says_to_was_the_working_copy
+tests/test_mcp_git.py::test_67_mcp_result_reports_hash_of_each_version
+tests/test_mcp_git.py::test_67_mcp_result_says_to_was_the_working_copy</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Compare with From and To picked from the list, typed as an expression, typed as a hash prefix, as an issue, and as the working copy. Then make a commit and compare again without choosing again. Expected: each result names the commit each version resolved to by at least the first 7 digits of its hash, once; after the new commit, the hash of the commit compared, not the one listed before. The working copy is named as the working copy, with no hash.</description>
+</object>
