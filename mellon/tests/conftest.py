@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
 import pygit2
 import pytest
+
+from tests.compare_support import _build_canon_repo, _build_rev_repo
 
 
 def _ensure_req_test_fixture() -> None:
@@ -357,3 +360,40 @@ def mcp_repo(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(_server._State, "repo_root", tmp_path.resolve())
     monkeypatch.setattr(_server._State, "read_only", False)
     return tmp_path
+
+
+# --- Compare: fixtures shared by more than one test module -------------------
+#
+# Written blind from MELLON-VER-SRS (round 2) and used by the Compare tests in
+# test_diff.py, test_gui_compare.py and test_mcp_git.py. The helpers that
+# build their repositories are in compare_support.py.
+
+
+# ---------------------------------------------------------------------------
+# Repositories
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def rev_template(tmp_path_factory):
+    root = tmp_path_factory.mktemp("rev") / "repo"
+    return root, _build_rev_repo(root)
+
+
+# ---------------------------------------------------------------------------
+# MELLON-VER-SRS-22: differences gone in the canonical form are no change
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def canon_template(tmp_path_factory):
+    root = tmp_path_factory.mktemp("canon") / "repo"
+    return root, _build_canon_repo(root)
+
+
+@pytest.fixture
+def canon_repo(canon_template, tmp_path):
+    src, info = canon_template
+    dst = tmp_path / "repo"
+    shutil.copytree(src, dst)
+    return dst, info

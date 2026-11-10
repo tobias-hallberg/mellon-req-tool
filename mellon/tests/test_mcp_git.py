@@ -7,14 +7,42 @@ independent — copies of req-test/ are cheap.
 
 from __future__ import annotations
 
+import asyncio
+import json
+import os
+import re
 import shutil
+import sys
 from pathlib import Path
 
 import pygit2
 import pytest
 from lxml import etree
 
+import mellon.mcp.server as mcp_server
+from mellon import diff, editor, git_ops
+from mellon.diff import LATEST
 from mellon.mcp import server
+from tests.compare_support import (
+    DOC,
+    PARTS,
+    GitRepo,
+    _ambiguous_prefix,
+    _build,
+    _build_dirty_repo,
+    _changed,
+    _everything,
+    _r2_commit,
+    _relinked_repo,
+    _rewrite,
+    _shows_hash_of,
+    _snapshot,
+    build_other_only,
+    build_snapshot_repo,
+    links_xml,
+    snapshot,
+    snapshot_difference,
+)
 
 
 @pytest.fixture
@@ -495,3 +523,514 @@ def test_compare_document_works_read_only(
 ) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
     assert server.compare_document("VCU3-SRS")["total_changes"] > 0
+
+
+# --- written blind from MELLON-VER-SRS (round 1) -----------------------------
+#
+# The compare tool, in process and over stdio. Written from MELLON-VER-SRS, the
+# definitions and the public signatures alone, without reading the code under
+# test or the existing tests. Every expected value is worked out by hand from a
+# requirement or a definition; the docstring of each test names the
+# requirement it checks. Each test builds its own git repository under tmp_path
+# with fixed commit times, so a run repeats exactly.
+
+
+# --------------------------------------------------------------------------
+# The MCP server over stdio: MELLON-VER-SRS-26, -56, -59, -60
+# --------------------------------------------------------------------------
+
+
+def _mcp_command() -> str:
+    exe = shutil.which("mellon-mcp")
+    if exe is None:
+        name = "mellon-mcp.exe" if os.name == "nt" else "mellon-mcp"
+        candidate = Path(sys.executable).parent / name
+        exe = str(candidate) if candidate.exists() else None
+    if exe is None:
+        pytest.fail("mellon-mcp isn't installed in this environment")
+    return exe
+
+
+def mcp_session(root: Path, calls: list[dict], log: Path, on_ready=None, on_done=None) -> list[tuple[bool, str]]:
+    """Start the MCP server over stdio on `root`, call compare_document with each
+    argument dict in `calls`, and return (is error, text) for each."""
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
+    env = {k: v for k, v in os.environ.items() if k != "CLAUDE_PROJECT_DIR"}
+    params = StdioServerParameters(command=_mcp_command(), args=["--repo-root", str(root)], env=env)
+
+    async def run() -> list[tuple[bool, str]]:
+        results = []
+        with open(log, "w", encoding="utf-8") as errlog:
+            async with stdio_client(params, errlog=errlog) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    if on_ready:
+                        on_ready()
+                    for args in calls:
+                        res = await session.call_tool("compare_document", args)
+                        text = "".join(getattr(c, "text", "") or "" for c in res.content)
+                        results.append((bool(res.isError), text))
+                    if on_done:
+                        on_done()
+        return results
+
+    return asyncio.run(asyncio.wait_for(run(), timeout=120))
+
+
+def _is_error(result: tuple[bool, str]) -> bool:
+    is_error, text = result
+    if is_error:
+        return True
+    try:
+        payload = json.loads(text)
+    except ValueError:
+        return False
+    return isinstance(payload, dict) and "error" in payload
+
+
+def build_mcp_spec(tmp: Path) -> tuple[GitRepo, dict[str, str]]:
+    """SPEC with Issue 1 on "seed" and the latest commit "edits":
+
+    seed:  SPEC-0 Heading "Introduction"
+             SPEC-1 "The VCU shall stop."   SPEC-2 "Requirement 2."   SPEC-3 "Requirement 3."
+           SPEC-4 Heading "Interfaces"
+             SPEC-5 "Requirement 5." -satisfies-> SPEC-1 (ack c0)
+             SPEC-6 "Requirement 6." -refines-> SPEC-2 (ack c0)
+             SPEC-7 "Requirement 7."
+    edits: SPEC-1 -> "The VCU must stop."; SPEC-2 rationale (label "Rationale") set to
+           "Because."; SPEC-3 deleted; SPEC-8 "Requirement 8." added under SPEC-0;
+           SPEC-7 moved to the top level after SPEC-4; SPEC-5's link re-acknowledged
+           (ack seed); SPEC-6's link to SPEC-2 removed and a link -satisfies-> SPEC-1 added.
+    """
+    r = GitRepo(tmp / "repo")
+    f = editor.create_document(r.root, "SPEC", title="Spec")
+    manifest = r.read("SPEC/SPEC.xml")
+    plain = b'<attribute name="rationale" kind="text" required="false"/>'
+    assert plain in manifest, "setup: rationale declaration not found"
+    r.write("SPEC/SPEC.xml", manifest.replace(plain, plain[:-2] + b' label="Rationale"/>'))
+    editor.add_attr_option(f, "type", "Requirement")
+    texts = {"SPEC-1": "The VCU shall stop.", "SPEC-2": "Requirement 2.", "SPEC-3": "Requirement 3.",
+             "SPEC-5": "Requirement 5.", "SPEC-6": "Requirement 6.", "SPEC-7": "Requirement 7."}
+    ids = [editor.create_object(f, None, "Introduction")]
+    ids += [editor.create_object(f, "SPEC-0", texts[i]) for i in ("SPEC-1", "SPEC-2", "SPEC-3")]
+    ids.append(editor.create_object(f, None, "Interfaces"))
+    ids += [editor.create_object(f, "SPEC-4", texts[i]) for i in ("SPEC-5", "SPEC-6", "SPEC-7")]
+    assert ids == [f"SPEC-{i}" for i in range(8)], f"setup: unexpected ids {ids}"
+    for obj_id in ids:
+        editor.set_attribute(f, obj_id, "type", "Heading" if obj_id in ("SPEC-0", "SPEC-4") else "Requirement")
+    c0 = r.commit("objects")
+    r.write("SPEC/links/SPEC-5.xml", links_xml("SPEC-5", [("SPEC", "SPEC-1", "satisfies", c0[:7])]))
+    r.write("SPEC/links/SPEC-6.xml", links_xml("SPEC-6", [("SPEC", "SPEC-2", "refines", c0[:7])]))
+    seed = r.commit("seed")
+    r.tag_issue("SPEC", "1", seed)
+
+    editor.set_description(f, "SPEC-1", "The VCU must stop.")
+    editor.set_attribute(f, "SPEC-2", "rationale", "Because.")
+    assert editor.delete_object(f, "SPEC-3", force=True).performed, "setup: SPEC-3 not deleted"
+    added = editor.create_object(f, "SPEC-0", "Requirement 8.")
+    assert added == "SPEC-8", f"setup: added object got id {added}"
+    editor.set_attribute(f, "SPEC-8", "type", "Requirement")
+    editor.move_object(f, "SPEC-7", to_top=True, after="SPEC-4")
+    r.write("SPEC/links/SPEC-5.xml", links_xml("SPEC-5", [("SPEC", "SPEC-1", "satisfies", seed[:7])]))
+    r.write("SPEC/links/SPEC-6.xml", links_xml("SPEC-6", [("SPEC", "SPEC-1", "satisfies", seed[:7])]))
+    latest = r.commit("edits")
+    return r, {"c0": c0, "seed": seed, "latest": latest}
+
+
+def _unique_prefix(repo: pygit2.Repository, hex_id: str, length: int) -> bool:
+    prefix = hex_id[:length]
+    return sum(1 for oid in repo.odb if str(oid).startswith(prefix)) == 1
+
+
+@pytest.fixture(scope="module")
+def mcp_spec(tmp_path_factory):
+    """One MCP server session over stdio on the SPEC repository of `build_mcp_spec`.
+    Returns (commits, results by call name)."""
+    tmp = tmp_path_factory.mktemp("mcp_spec")
+    r, commits = build_mcp_spec(tmp)
+    seed = commits["seed"]
+    assert _unique_prefix(r.repo, seed, 4), "setup: the 4-hex prefix of seed isn't unique"
+    calls = {
+        "issue-to-latest": {"doc_id": "SPEC", "from_ref": "SPEC-issue-1", "to_ref": diff.LATEST},
+        "bad-to": {"doc_id": "SPEC", "from_ref": "SPEC-issue-1", "to_ref": "no-such-version"},
+        "3-hex-from": {"doc_id": "SPEC", "from_ref": seed[:3], "to_ref": diff.LATEST},
+        "4-hex-from": {"doc_id": "SPEC", "from_ref": seed[:4], "to_ref": diff.LATEST},
+    }
+    results = mcp_session(r.root, list(calls.values()), tmp / "mcp.log")
+    return commits, dict(zip(calls, results))
+
+
+def _payload(result: tuple[bool, str]) -> dict:
+    is_error, text = result
+    assert not is_error, f"the compare tool failed: {text[:500]}"
+    return json.loads(text)
+
+
+def _entry(payload: dict, obj_id: str) -> dict:
+    found = [c for c in payload["changes"] if c["obj_id"] == obj_id]
+    assert len(found) == 1, f"{obj_id} is listed {len(found)} times in the MCP result"
+    return found[0]
+
+
+def test_ver59_mcp_reports_each_changed_object_with_its_changes(mcp_spec):
+    """MELLON-VER-SRS-59: Issue 1 -> latest commit lists exactly SPEC-1, -2, -6 Modified,
+    SPEC-3 Deleted, SPEC-8 Added, SPEC-7 Moved and SPEC-5 Link reviewed."""
+    _, results = mcp_spec
+    payload = _payload(results["issue-to-latest"])
+    got = {c["obj_id"]: sorted(c["changes"]) for c in payload["changes"]}
+    expected = {"SPEC-1": ["Modified"], "SPEC-2": ["Modified"], "SPEC-3": ["Deleted"], "SPEC-5": ["Link reviewed"],
+                "SPEC-6": ["Modified"], "SPEC-7": ["Moved"], "SPEC-8": ["Added"]}
+    assert got == expected, f"MCP changes {got}"
+
+
+def test_ver59_mcp_description_at_both(mcp_spec):
+    """MELLON-VER-SRS-59: SPEC-1's description from 'The VCU shall stop.' to 'The VCU must stop.'."""
+    _, results = mcp_spec
+    entry = _entry(_payload(results["issue-to-latest"]), "SPEC-1")
+    assert entry.get("description") == {"from": "The VCU shall stop.", "to": "The VCU must stop."}, (
+        f"SPEC-1 description reported as {entry.get('description')}"
+    )
+
+
+def test_ver59_mcp_attribute_at_both_with_label(mcp_spec):
+    """MELLON-VER-SRS-59 (with -45, -49): SPEC-2's rationale from not set to 'Because.',
+    named by its label at To, 'Rationale'."""
+    _, results = mcp_spec
+    entry = _entry(_payload(results["issue-to-latest"]), "SPEC-2")
+    attrs = [a for a in entry.get("attrs", []) if a.get("name") == "rationale"]
+    got = [(a.get("label"), a.get("from"), a.get("to")) for a in attrs]
+    assert got == [("Rationale", None, "Because.")], f"SPEC-2 rationale reported as {attrs}"
+
+
+def test_ver59_mcp_deleted_object_fields_at_from(mcp_spec):
+    """MELLON-VER-SRS-59 (with -50): SPEC-3, Deleted, comes with its fields at From:
+    description 'Requirement 3.', type Requirement, under SPEC-0."""
+    _, results = mcp_spec
+    obj = _entry(_payload(results["issue-to-latest"]), "SPEC-3").get("object") or {}
+    got = (obj.get("description"), (obj.get("attrs") or {}).get("type"), (obj.get("position") or {}).get("parent"))
+    assert got == ("Requirement 3.", "Requirement", "SPEC-0"), f"SPEC-3 fields at From: {obj}"
+
+
+def test_ver59_mcp_added_object_fields_at_to(mcp_spec):
+    """MELLON-VER-SRS-59 (with -50): SPEC-8, Added, comes with its fields at To:
+    description 'Requirement 8.', type Requirement, under SPEC-0."""
+    _, results = mcp_spec
+    obj = _entry(_payload(results["issue-to-latest"]), "SPEC-8").get("object") or {}
+    got = (obj.get("description"), (obj.get("attrs") or {}).get("type"), (obj.get("position") or {}).get("parent"))
+    assert got == ("Requirement 8.", "Requirement", "SPEC-0"), f"SPEC-8 fields at To: {obj}"
+
+
+def test_ver59_mcp_moved_parent_and_position_at_both(mcp_spec):
+    """MELLON-VER-SRS-59 (with -52): SPEC-7 under SPEC-4 after SPEC-6 at From, at the top
+    level after SPEC-4 at To."""
+    _, results = mcp_spec
+    moved = _entry(_payload(results["issue-to-latest"]), "SPEC-7").get("moved") or {}
+    got = {side: ((moved.get(side) or {}).get("parent"), (moved.get(side) or {}).get("after"))
+           for side in ("from", "to")}
+    assert got == {"from": ("SPEC-4", "SPEC-6"), "to": (None, "SPEC-4")}, f"SPEC-7 positions: {moved}"
+
+
+def test_ver59_mcp_link_reviewed_ack_at_both(mcp_spec):
+    """MELLON-VER-SRS-59 (with -53): SPEC-5's link to SPEC-1 with its acknowledged commit
+    at From (c0) and at To (seed)."""
+    commits, results = mcp_spec
+    entry = _entry(_payload(results["issue-to-latest"]), "SPEC-5")
+    records = [rec for group in (entry.get("links") or {}).values() for rec in group
+               if isinstance(rec, dict) and rec.get("target_id") == "SPEC-1"]
+    values = [set(map(str, rec.values())) for rec in records]
+    ok = [v for v in values if {commits["c0"][:7], commits["seed"][:7]} <= v]
+    assert len(ok) == 1, f"SPEC-5's reviewed link with acks {commits['c0'][:7]} -> {commits['seed'][:7]} not found in {entry}"
+
+
+def test_ver59_mcp_link_added_and_removed(mcp_spec):
+    """MELLON-VER-SRS-59 (with -46): SPEC-6's link -refines-> SPEC-2 removed and its link
+    -satisfies-> SPEC-1 added."""
+    _, results = mcp_spec
+    links = _entry(_payload(results["issue-to-latest"]), "SPEC-6").get("links") or {}
+    got = {kind: sorted((rec.get("target_id"), rec.get("type")) for rec in links.get(kind, []))
+           for kind in ("added", "removed")}
+    assert got == {"added": [("SPEC-1", "satisfies")], "removed": [("SPEC-2", "refines")]}, f"SPEC-6 links: {links}"
+
+
+def test_ver60_mcp_unknown_to_version_error_names_it(mcp_spec):
+    """MELLON-VER-SRS-60: to_ref 'no-such-version' gives an error naming 'no-such-version'."""
+    _, results = mcp_spec
+    result = results["bad-to"]
+    assert _is_error(result) and "no-such-version" in result[1], f"expected an error naming it, got {result}"
+
+
+def test_ver60_mcp_three_hex_prefix_error_names_it(mcp_spec):
+    """MELLON-VER-SRS-60 (with -9: 4 hex digits is the shortest prefix git accepts): the
+    first 3 hex digits of a real commit as from_ref resolve to no commit: an error naming
+    the prefix."""
+    commits, results = mcp_spec
+    prefix = commits["seed"][:3]
+    is_error, text = results["3-hex-from"]
+    named = re.search(rf"(?<![0-9a-f]){prefix}(?![0-9a-f])", text) is not None
+    assert _is_error(results["3-hex-from"]) and named, f"expected an error naming {prefix!r}, got {(is_error, text)}"
+
+
+def test_ver60_mcp_four_hex_prefix_is_the_same_version(mcp_spec):
+    """MELLON-VER-SRS-60 boundary (just on the limit): a unique 4-hex prefix of the Issue 1
+    commit resolves to that commit, so the result is the same as from 'SPEC-issue-1'.
+    Assumption: the MCP tool accepts the names SRS-9 lists for the dialog, since -59 says
+    agents 'must get the same answer as a person'."""
+    _, results = mcp_spec
+    assert not _is_error(results["4-hex-from"]), f"a unique 4-hex prefix was refused: {results['4-hex-from']}"
+    by_prefix = {c["obj_id"]: c["changes"] for c in _payload(results["4-hex-from"])["changes"]}
+    by_issue = {c["obj_id"]: c["changes"] for c in _payload(results["issue-to-latest"])["changes"]}
+    assert by_prefix == by_issue, f"from the prefix {by_prefix}, from the issue {by_issue}"
+
+
+@pytest.fixture(scope="module")
+def mcp_other_only(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("mcp_other")
+    r, c1, c2 = build_other_only(tmp)
+    repo = r.repo
+    git_ops.create_tag(repo, "rel-a", pygit2.Oid(hex=c1), "release a")
+    repo.branches.local.create("next", repo[pygit2.Oid(hex=c2)])
+    calls = [{"doc_id": "SPEC", "from_ref": c1[:7], "to_ref": c2[:7]},
+             {"doc_id": "SPEC", "from_ref": "rel-a", "to_ref": "next"}]
+    return (c1, c2), mcp_session(r.root, calls, tmp / "mcp.log")
+
+
+def test_ver26_mcp_error_names_document_and_both_hashes(mcp_other_only):
+    """MELLON-VER-SRS-26 over MCP: SPEC between two 7-hex hashes in a repository holding
+    only OTHER: an error naming SPEC and both hashes."""
+    (c1, c2), results = mcp_other_only
+    result = results[0]
+    missing = [w for w in ("SPEC", c1[:7], c2[:7]) if w not in result[1]]
+    assert _is_error(result) and not missing, f"expected an error naming SPEC and both, missing {missing}: {result}"
+
+
+def test_ver26_mcp_error_names_document_and_both_names(mcp_other_only):
+    """MELLON-VER-SRS-26 over MCP: SPEC between 'rel-a' and 'next' in a repository holding
+    only OTHER: an error naming SPEC, 'rel-a' and 'next'."""
+    _, results = mcp_other_only
+    result = results[1]
+    missing = [w for w in ("SPEC", "rel-a", "next") if w not in result[1]]
+    assert _is_error(result) and not missing, f"expected an error naming SPEC and both, missing {missing}: {result}"
+
+
+def test_ver56_mcp_compare_changes_no_file_index_or_reference(tmp_path):
+    """MELLON-VER-SRS-56 over MCP: compare calls (latest -> working copy, Issue 1 -> latest,
+    and a failing one) leave the working copy, the index, HEAD and every reference as
+    they were once the server was up."""
+    r, _ = build_snapshot_repo(tmp_path)
+    snaps = []
+    calls = [{"doc_id": "SPEC", "from_ref": diff.LATEST, "to_ref": diff.WORKING_COPY},
+             {"doc_id": "SPEC", "from_ref": "SPEC-issue-1", "to_ref": diff.LATEST},
+             {"doc_id": "SPEC", "from_ref": "no-such-version", "to_ref": diff.LATEST}]
+    log = tmp_path / "mcp.log"
+    results = mcp_session(r.root, calls, log,
+                          on_ready=lambda: snaps.append(snapshot(r.root)),
+                          on_done=lambda: snaps.append(snapshot(r.root)))
+    assert [_is_error(x) for x in results] == [False, False, True], f"setup: unexpected results {results}"
+    changed = snapshot_difference(snaps[0], snaps[1])
+    assert not changed, f"comparing over MCP changed: {changed[:10]}"
+
+
+# ==========================================================================
+# MELLON-VER-SRS-9 / -10: typed versions
+# ==========================================================================
+
+
+@pytest.mark.usefixtures("served")
+def test_srs10_ambiguous_prefix_refused_by_mcp(tmp_path):
+    """MELLON-VER-SRS-10 (with -60): the MCP compare tool refuses an ambiguous prefix with an
+    error naming it, and returns no comparison."""
+    root = tmp_path / "r"
+    _build(root)
+    prefix = _ambiguous_prefix(root, "commit")
+    assert mcp_server.main(["--repo-root", str(root)]) == 0, "setup: MCP server didn't start"
+    try:
+        out = mcp_server.compare_document("SPEC", from_ref=prefix, to_ref=LATEST)
+    except Exception as exc:  # an error raised by the tool is how FastMCP reports one
+        message, compared = str(exc), False
+    else:
+        message, compared = json.dumps(out, default=str), "changes" in out
+    assert not compared, f"the MCP tool compared the ambiguous prefix {prefix}: {message[:300]}"
+    assert prefix in message, f"the MCP error should name {prefix!r}: {message[:300]}"
+
+
+# ==========================================================================
+# MELLON-VER-SRS-46: links added and removed
+# ==========================================================================
+
+
+@pytest.mark.usefixtures("served")
+def test_srs46_links_added_and_removed_through_mcp(tmp_path):
+    """MELLON-VER-SRS-46 (with -59): the MCP compare tool gives the same added and removed links."""
+    root = tmp_path / "r"
+    before, after = _relinked_repo(root)
+    assert mcp_server.main(["--repo-root", str(root)]) == 0, "setup: MCP server didn't start"
+    out = mcp_server.compare_document("SPEC", from_ref=before, to_ref=after)
+    (change,) = [c for c in out["changes"] if c["obj_id"] == "SPEC-1"]
+    added = {(l["target_id"], l["type"]) for l in change["links"]["added"]}
+    removed = {(l["target_id"], l["type"]) for l in change["links"]["removed"]}
+    assert added == {("SPEC-2", "refines")}, f"added links: {change['links']}"
+    assert removed == {("SPEC-4", "refines")}, f"removed links: {change['links']}"
+
+
+# --- written blind from MELLON-VER-SRS (round 2) -----------------------------
+#
+# MELLON-VER-SRS-22, -56, -67 and -87 through the MCP server over stdio.
+# Written from the requirements, docs/definitions.md and the public signatures
+# alone, without the code under test or the bodies of other tests; every
+# expected value comes from a requirement or a definition. Repositories are
+# built in tmp_path with fixed commit signatures; no real clock, no network.
+
+
+WORKING_COPY = diff.WORKING_COPY
+
+
+# ---------------------------------------------------------------------------
+# MELLON-VER-SRS-22: differences gone in the canonical form are no change
+# ---------------------------------------------------------------------------
+
+
+def test_22_mcp_compare_reports_no_change_for_canonical_only_rewrite(canon_repo, tmp_path):
+    """MELLON-VER-SRS-22 through the MCP server's compare tool, over stdio: the same
+    rewrite as the dialog test; the tool returns no change."""
+    root, info = canon_repo
+    _rewrite(root, "**/*.xml", _everything)
+    c2 = _r2_commit(root, "rewrite everything")
+    [result] = mcp_session(root, [{"doc_id": DOC, "from_ref": info["c1"], "to_ref": c2}], tmp_path / "mcp.log")
+    assert not _is_error(result), f"precondition: the compare tool failed: {result[1][:300]}"
+    payload = _payload(result)
+    assert payload["changes"] == [], f"a canonical-only rewrite is no change, the tool returns {payload['changes']}"
+
+
+# ---------------------------------------------------------------------------
+# MELLON-VER-SRS-56: comparing changes nothing but by saving pending edits
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def mcp_dirty(tmp_path_factory):
+    """One MCP server session over stdio on the dirty repository, comparing two
+    commits (named and typed), HEAD with the working copy and the working copy
+    with a branch. Snapshots taken once the server is up and before it stops."""
+    base = tmp_path_factory.mktemp("mcp56")
+    root = base / "repo"
+    info = _build_dirty_repo(root)
+    snaps: dict[str, dict] = {}
+    calls = [
+        {"doc_id": DOC, "from_ref": info["c1"], "to_ref": info["c2"]},
+        {"doc_id": DOC, "from_ref": "side", "to_ref": "HEAD"},
+        {"doc_id": DOC, "from_ref": "HEAD~1", "to_ref": "v1"},
+        {"doc_id": DOC, "from_ref": "HEAD", "to_ref": WORKING_COPY},
+        {"doc_id": DOC, "from_ref": WORKING_COPY, "to_ref": "side"},
+    ]
+    results = mcp_session(
+        root, calls, base / "mcp.log",
+        on_ready=lambda: snaps.setdefault("before", _snapshot(root)),
+        on_done=lambda: snaps.setdefault("after", _snapshot(root)),
+    )
+    return results, snaps
+
+
+@pytest.mark.parametrize("part", PARTS)
+def test_56_mcp_compare_changes_nothing(mcp_dirty, part):
+    """MELLON-VER-SRS-56 through the MCP server's compare tool: five comparisons,
+    two of them with the working copy, change nothing in `part`."""
+    results, snaps = mcp_dirty
+    failed = [r[1][:200] for r in results if _is_error(r)]
+    assert not failed, f"precondition: comparisons failed: {failed}"
+    changed = _changed(snaps["before"], snaps["after"], part)
+    assert not changed, f"the MCP compare tool changed {sorted(changed)} in the {part}"
+
+
+# ---------------------------------------------------------------------------
+# MELLON-VER-SRS-67: each result reports the commit each version resolved to,
+# "by at least the first 7 digits of its hash" (settled with the person on
+# 2026-11-07). The tests accept any run of 7 to 40 hex digits that begins the
+# right commit's hash. They don't tie a hash to its side, but each side's
+# commit differs, so the other side's hash can't stand in for it.
+#
+# MELLON-VER-SRS-87: the MCP server's compare tool returns the full hash.
+# ---------------------------------------------------------------------------
+
+
+def _strings(value) -> list[str]:
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        return [s for k, v in value.items() for s in _strings(k) + _strings(v)]
+    if isinstance(value, (list, tuple)):
+        return [s for v in value for s in _strings(v)]
+    return []
+
+
+MCP_67_CALLS = {
+    "branch to HEAD~1": ({"from_ref": "feature", "to_ref": "HEAD~1"}, 2, 4),
+    "defaults": ({}, 1, 5),
+    "annotated tag to remote-tracking branch": ({"from_ref": "v1", "to_ref": "origin/review"}, 1, 3),
+    "HEAD~1 to working copy": ({"from_ref": "HEAD~1", "to_ref": WORKING_COPY}, 4, None),
+}
+
+
+@pytest.fixture(scope="module")
+def mcp_rev(rev_template, tmp_path_factory):
+    """One MCP server session over stdio on a copy of the revisions repository."""
+    src, info = rev_template
+    base = tmp_path_factory.mktemp("mcp67")
+    root = base / "repo"
+    shutil.copytree(src, root)
+    names = list(MCP_67_CALLS)
+    calls = [{"doc_id": DOC, **MCP_67_CALLS[n][0]} for n in names]
+    results = mcp_session(root, calls, base / "mcp.log")
+    return info, dict(zip(names, results))
+
+
+MCP_67_HASH_CASES = [
+    (name, side) for name, (_, ka, kb) in MCP_67_CALLS.items() for side, k in (("From", ka), ("To", kb)) if k is not None
+]
+
+
+@pytest.mark.parametrize("name, side", MCP_67_HASH_CASES, ids=[f"{n}-{s}" for n, s in MCP_67_HASH_CASES])
+def test_67_mcp_result_reports_hash_of_each_version(mcp_rev, name, side):
+    """MELLON-VER-SRS-67 through the MCP server's compare tool: the result holds at
+    least the first 7 digits of the hash of the commit each version resolved to,
+    for typed names, an annotated tag (its commit, not the tag object) and the
+    tool's defaults (latest issue, latest commit)."""
+    info, results = mcp_rev
+    result = results[name]
+    assert not _is_error(result), f"precondition: the compare tool failed: {result[1][:300]}"
+    _, ka, kb = MCP_67_CALLS[name]
+    full = info["commits"][ka if side == "From" else kb]
+    strings = _strings(_payload(result))
+    assert any(_shows_hash_of(s, full) for s in strings), (
+        f"{name}: {side} resolved to {full}; the result doesn't hold 7 or more of its first digits. "
+        f"Top-level values: { {k: v for k, v in _payload(result).items() if k != 'changes'} }"
+    )
+
+
+@pytest.mark.parametrize("name, side", MCP_67_HASH_CASES, ids=[f"{n}-{s}" for n, s in MCP_67_HASH_CASES])
+def test_87_mcp_result_reports_full_hash_of_each_version(mcp_rev, name, side):
+    """MELLON-VER-SRS-87: the MCP server's compare tool returns the full 40-digit
+    hash of the commit each version resolved to, for typed names, an annotated
+    tag (its commit, not the tag object) and the tool's defaults (latest issue,
+    latest commit). With To the working copy, only From has a commit."""
+    info, results = mcp_rev
+    result = results[name]
+    assert not _is_error(result), f"precondition: the compare tool failed: {result[1][:300]}"
+    _, ka, kb = MCP_67_CALLS[name]
+    full = info["commits"][ka if side == "From" else kb]
+    strings = _strings(_payload(result))
+    assert any(full in s.lower() for s in strings), (
+        f"{name}: {side} resolved to {full}; the result doesn't hold that full hash. "
+        f"Top-level values: { {k: v for k, v in _payload(result).items() if k != 'changes'} }"
+    )
+
+
+def test_67_mcp_result_says_to_was_the_working_copy(mcp_rev):
+    """MELLON-VER-SRS-67 through the MCP server: with To the working copy, the
+    result says so. Weak: echoing the version's name is enough to pass."""
+    info, results = mcp_rev
+    result = results["HEAD~1 to working copy"]
+    assert not _is_error(result), f"precondition: the compare tool failed: {result[1][:300]}"
+    strings = _strings(_payload(result))
+    assert any("working copy" in s.lower() for s in strings), "the result doesn't say To was the working copy"
