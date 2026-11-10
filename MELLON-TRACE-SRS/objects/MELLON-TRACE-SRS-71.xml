@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: whether the target exists, or changed, can't be read.</attr>
+  <description>If a link's target document has a load error, Mellon shall report the link's state as unknown.</description>
+</object>

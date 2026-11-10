@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a long list would crowd the agent's answer, and a cut list must not look whole. In history rather than by date, which rebases and wrong clocks scramble (requirements review Q19). Built after 0.3.0.</attr>
+  <description>If more than 20 commits fit MELLON-TRACE-SRS-117, the MCP server's review_suspect_link tool shall return the 20 nearest the latest commit in history and report that more exist.</description>
+</object>

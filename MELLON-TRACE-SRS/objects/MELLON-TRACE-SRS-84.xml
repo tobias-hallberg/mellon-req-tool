@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer sees in the grid which requirements link to an object that is gone.</attr>
+  <description>The state gutter shall mark each object that has a broken outgoing link.</description>
+</object>

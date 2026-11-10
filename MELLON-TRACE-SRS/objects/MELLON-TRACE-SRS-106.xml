@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent must not take a link nobody could check for a clean one. Split from the built requirements after requirements review Q12.</attr>
+  <description>The MCP server's suspects tool shall return each link whose state is unknown wherever the tool returns suspect links.</description>
+</object>

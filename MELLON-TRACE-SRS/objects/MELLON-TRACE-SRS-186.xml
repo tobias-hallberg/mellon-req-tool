@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-186">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a document can link to another for several reasons, and only some of them cover.</attr>
+  <description>When Mellon works out direct coverage for a link type, Mellon shall count only links of that link type toward coverage.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: replaces MELLON-TRACE-SRS-22 one release after it, once agents give the commit they read (CF-T40). Answered on 2026-11-10.</attr>
+  <description>If an MCP call gives a link to create without a commit of the target, the MCP server shall refuse to create the link.</description>
+</object>

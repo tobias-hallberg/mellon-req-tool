@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: when working out link states fails, the GUI shows the links as OK and exports without the suspect warning. A wrong OK is the one failure a review can't catch (E28, F5, CF-T11).</attr>
+  <description>If Mellon can't work out a link's state, Mellon shall report the link's state as unknown.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent finds the links to review without reading each object.</attr>
+  <description>The MCP server shall have a suspects tool that returns, for a given document, each outgoing link of the document's objects that is suspect or broken, with the link's state.</description>
+</object>

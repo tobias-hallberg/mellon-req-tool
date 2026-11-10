@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-67">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: MELLON-TRACE-SRS-65 moves the last change back past formatting-only commits, so a link acknowledged at such a commit would turn suspect with nothing to review. MELLON-TRACE-SRS-43 and MELLON-TRACE-SRS-47 then read the acknowledged commit as the last change. Requirements review Q13.</attr>
+  <description>Mellon shall count a link's acknowledged commit as the target's last change when the acknowledged commit descends from the last change and the target's files have the same canonical forms at both.</description>
+</object>

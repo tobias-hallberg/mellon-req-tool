@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-153">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: Ack selected over a whole selection acknowledges a whole document in one action, which MELLON-TRACE-SRS-154 forbids (CF-T33; requirements review Q9). Answered on 2026-11-10.</attr>
+  <description>While more than one object is selected, the Document Editor shall disable the suspect banner's Ack selected action.</description>
+</object>

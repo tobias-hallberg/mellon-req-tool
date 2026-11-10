@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the refusal means the state on screen is old. Requirements review Q23.</attr>
+  <description>When the Document Editor refuses an acknowledgement under MELLON-TRACE-SRS-150, the Document Editor shall show the link's current state.</description>
+</object>

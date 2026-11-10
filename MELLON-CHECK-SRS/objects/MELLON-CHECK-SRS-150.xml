@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: from TRACE's failure analysis (D-T3, CF-T3) and its requirements view: two links to one target count twice in incoming links and coverage, and acknowledging one leaves the other suspect, so the pair reads as reviewed when half of it isn't. The code name is proposed (MELLON-CHECK-SRS question on new codes).</attr>
+  <description>If an object has two outgoing links to one target object, Mellon shall report the validation error LINK_DUPLICATE naming the source and the target.</description>
+</object>

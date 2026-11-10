@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-154">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an acknowledgement records a review, and a review is of single links. A real prohibition.</attr>
+  <description>The Document Editor shall not offer an action that acknowledges the suspect links of the whole document at once.</description>
+</object>

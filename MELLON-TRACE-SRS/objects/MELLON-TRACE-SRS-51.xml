@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-51">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a link records its acknowledged commit by the first 7 digits of the hash, and an empty or 1-digit hash would begin any hash (CF-T17). Reading a longer hash too is what lets MELLON-TRACE-SRS-55 follow one release later. Answered on 2026-11-10.</attr>
+  <description>Mellon shall take a link's recorded hash to name a commit only when the recorded hash has at least 7 hexadecimal digits and begins the commit's hash.</description>
+</object>

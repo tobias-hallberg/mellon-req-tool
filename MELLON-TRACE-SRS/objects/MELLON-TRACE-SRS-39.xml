@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the GUI keeps documents it doesn't watch until F5, so a link made or removed by an agent or a pull is missing from what a requirement's owner sees (CF-T9). Measure the cost at 5,000 objects.</attr>
+  <description>When a Document Editor shows an object's incoming links or a trace, the Document Editor shall work out the links shown from the working copy at that moment.</description>
+</object>

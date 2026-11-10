@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-3">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: whoever makes a link reads the target while making it, so a new link starts OK. MELLON-TRACE-SRS-18 and MELLON-TRACE-SRS-21 make sure that the last change is what the creator read. Copies and links made again keep an earlier review instead.</attr>
+  <description>When Mellon creates a link, other than under MELLON-TRACE-SRS-9, MELLON-TRACE-SRS-30 or MELLON-TRACE-SRS-11, Mellon shall record the target's last change as the link's acknowledged commit.</description>
+</object>

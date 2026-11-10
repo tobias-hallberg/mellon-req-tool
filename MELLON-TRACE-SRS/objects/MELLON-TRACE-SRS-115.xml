@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent reviews a suspect link in one call instead of reading history.</attr>
+  <description>The MCP server shall have a review_suspect_link tool that, given a link, returns the target's description at the link's acknowledged commit and in the working copy.</description>
+</object>

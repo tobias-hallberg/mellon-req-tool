@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a link type of spaces names no relation, and coverage by link type can't select it (CF-T5; requirements review Q17).</attr>
+  <description>If a new link's link type has no character other than whitespace, Mellon shall refuse to create the link.</description>
+</object>

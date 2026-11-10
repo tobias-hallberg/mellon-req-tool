@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a link records what a requirement derives from or verifies, which is in its own document or a declared parent. Requirements that several components share go in a common parent document. Links that a removed parent declaration leaves behind are reported by validation (handed to MELLON-CHECK-SRS).</attr>
+  <description>If a new link's target object is in neither the source object's document nor a parent document of that document, Mellon shall refuse to create the link.</description>
+</object>

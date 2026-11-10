@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-146">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: acknowledging records the target's last change at that moment, so a change made between reading and acknowledging is accepted unseen (E33, F7, CF-T31). Open question Q6. Answered on 2026-11-10.</attr>
+  <description>The MCP server's ack_suspects tool shall accept with each link key the full hash of the target's commit that the reviewer reviewed.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the link types of a V-model, as IBM DOORS projects name them. Other link types are made over MCP (MELLON-TRACE-SRS-14).</attr>
+  <description>The link picker shall offer exactly the link types satisfies, verifies, refines and implements.</description>
+</object>

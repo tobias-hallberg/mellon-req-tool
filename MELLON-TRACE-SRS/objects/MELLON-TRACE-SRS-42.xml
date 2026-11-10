@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: without an order, a link with a missing target and no acknowledged commit is both broken and suspect, and the gutter, the suspects tool and the refusals would disagree. Requirements review Q1. Answered on 2026-11-10.</attr>
+  <description>Mellon shall report each link in exactly one state, the first that applies of unknown, broken, suspect and OK.</description>
+</object>

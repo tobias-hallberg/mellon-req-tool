@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-10">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a copied link can target a deleted object, or a document that isn't a parent of the copy's document, and refusing the whole copy would block template-style authoring. Requirements review Q16.</attr>
+  <description>If Mellon refuses one of a copied object's links, Mellon shall copy the object without that link and report the link left out.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a commit can't record its own hash, so revising a target and acknowledging its links takes two commits. This is intended: the second commit records the review.</attr>
+  <description>When one commit changes a target object and the acknowledged commit of a link to that target, Mellon shall report the link as suspect after that commit.</description>
+</object>

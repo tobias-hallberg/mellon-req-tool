@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent checks what an acknowledgement covers before making it.</attr>
+  <description>When an ack_suspects call asks for a dry run, the MCP server shall return the links that the call acknowledges when made without a dry run.</description>
+</object>

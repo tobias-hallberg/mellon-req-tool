@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: one mark per object, in the order of MELLON-TRACE-SRS-42. Requirements review Q34.</attr>
+  <description>When an object's outgoing links are in more than one state other than OK, the state gutter shall show the mark of the first of unknown, broken and suspect.</description>
+</object>

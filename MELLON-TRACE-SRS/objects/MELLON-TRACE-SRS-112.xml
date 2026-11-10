@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-112">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the first time in a clone takes seconds. Requirements review Q35 asked for a bound.</attr>
+  <description>While Mellon works out link states, the Document Editor windows should handle each input within TBD ms.</description>
+</object>

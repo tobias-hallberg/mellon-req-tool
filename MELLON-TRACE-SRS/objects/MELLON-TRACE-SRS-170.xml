@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-170">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the trace tool's description counts depth this way, 2 being the direct neighbours and one more level, so a max_depth of 0 returns the object alone. Answered on 2026-11-10. inspect_object's description, which counts differently, is handed to MELLON-MCP-SRS (CF-T49).</attr>
+  <description>When a trace call gives a max_depth of n, the MCP server shall return the objects at a depth of n or less.</description>
+</object>

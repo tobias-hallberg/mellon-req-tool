@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-200">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the first question in a V-model review is which requirements have a test case, by any kind of link.</attr>
+  <description>When a coverage_report call doesn't say otherwise, the MCP server shall work out incoming, direct coverage by links of each link type, without headings.</description>
+</object>

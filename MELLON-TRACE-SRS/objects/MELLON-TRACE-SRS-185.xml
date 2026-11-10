@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-185">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: links can form a cycle (MELLON-TRACE-SRS-160), and transitive coverage follows chains as a trace does; an unbounded search hangs the GUI or the MCP server (CF-T55).</attr>
+  <description>Mellon shall end each chain of links that transitive coverage follows at the first object that the chain reaches a second time.</description>
+</object>

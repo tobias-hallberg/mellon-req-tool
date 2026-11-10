@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a file mode says nothing about a requirement, and git clients on different systems change it.</attr>
+  <description>If a commit changes only the mode of the target's files, Mellon shall count the commit as no change to the target.</description>
+</object>

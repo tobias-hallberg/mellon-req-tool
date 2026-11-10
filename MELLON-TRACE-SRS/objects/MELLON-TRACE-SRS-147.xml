@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the target changed after the review, so the review doesn't cover it. The full hash, so that a prefix naming two commits can't pass (requirements review Q20). Open question Q6. Answered on 2026-11-10.</attr>
+  <description>If the commit given with a link key isn't the full hash of the target's last change, the MCP server's ack_suspects tool shall refuse to acknowledge that link.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-72">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: names a cause that a test can set up, such as a partial clone without trees (CF-T29). MELLON-TRACE-SRS-70 stays the catch-all. Requirements review Q45.</attr>
+  <description>If Mellon can't read the target's history, Mellon shall report the link's state as unknown.</description>
+</object>

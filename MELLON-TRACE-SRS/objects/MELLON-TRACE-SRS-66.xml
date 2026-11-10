@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-66">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: only with MELLON-TRACE-SRS-65. A file missing in a partial clone, or one that doesn't parse, must not count as unchanged (CF-T28).</attr>
+  <description>If Mellon can't read the target's files at a commit to compare their canonical forms, Mellon shall count the commit as a change to the target.</description>
+</object>

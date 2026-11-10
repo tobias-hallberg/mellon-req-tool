@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a branch's commits keep their hashes through a merge, so links acknowledged on the branch stay OK, while a conflict resolution that makes new text makes them suspect. Taken together, so that a merge combining a file change and a figure change counts (CF-T26). Changed in 0.2.0.</attr>
+  <description>Mellon shall count a merge commit as a change to the target only when the target object's file and figure, taken together, differ between the merge commit and each of its parents.</description>
+</object>

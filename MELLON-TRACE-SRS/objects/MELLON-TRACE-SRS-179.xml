@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-179">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a person reviewing a chain wants it whole, and MELLON-TRACE-SRS-162 bounds the trace by the number of objects (CF-T47). Answered on 2026-11-10.</attr>
+  <description>The trace view shall show the trace without a depth limit.</description>
+</object>

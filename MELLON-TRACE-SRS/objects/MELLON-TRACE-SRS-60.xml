@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: otherwise the newest change by date can be on the side whose text the merge dropped; dates play no part (CF-T25). USAGE.md says the last change is the commit that git log -1 reports for the two files, which follows such a parent.</attr>
+  <description>When a merge commit doesn't count as a change to the target, Mellon shall take the target's last change from the history of a parent whose target object file and figure equal the merge commit's.</description>
+</object>

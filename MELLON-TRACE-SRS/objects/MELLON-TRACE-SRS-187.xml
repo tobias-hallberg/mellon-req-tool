@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-187">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a V-model chain mixes refines and verifies, and the question asked is whether a test case verifies (CF-T56; requirements review Q6). Answered on 2026-11-10.</attr>
+  <description>When Mellon works out transitive coverage for a link type, Mellon shall count a chain only when the chain's link with an end in the covering document has that link type.</description>
+</object>

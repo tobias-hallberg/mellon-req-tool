@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a target has no committed text to review. USAGE.md called a link to a target never committed suspect in one place and broken in another; answered suspect on 2026-11-10. Also covers a target deleted at the latest commit and restored on disk (CF-T16).</attr>
+  <description>If a link's target object exists in the working copy and not at the latest commit, Mellon shall report the link as suspect.</description>
+</object>

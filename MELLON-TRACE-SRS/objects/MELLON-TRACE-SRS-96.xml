@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a commit made in another window, by the MCP server or in a git client changes link states. Fixed in 0.2.0, when states stayed stale after a commit.</attr>
+  <description>When a Document Editor is activated after the latest commit has moved, the Document Editor shall show the link states at the new latest commit.</description>
+</object>

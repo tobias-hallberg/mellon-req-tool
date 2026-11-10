@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-178">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a reviewer sees what the object derives from and what derives from it together.</attr>
+  <description>The trace view shall show the selected object's trace up and its trace down.</description>
+</object>

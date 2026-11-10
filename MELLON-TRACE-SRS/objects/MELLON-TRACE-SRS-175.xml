@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-175">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent gets an object in its context in one call. Check what the released tool returns for trace_depth 0 before relying on the depth (handed to MELLON-MCP-SRS).</attr>
+  <description>When an inspect_object call sets neither trace_depth nor include_trace, the MCP server shall return the object's trace up and down to a depth of 2.</description>
+</object>

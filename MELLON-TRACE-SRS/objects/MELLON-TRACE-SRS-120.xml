@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-120">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty list of changed fields means that only the file's formatting changed, so having nothing to compare with must look different. Built after 0.3.0.</attr>
+  <description>If the reviewed link has no acknowledged commit, the commit can't be found, or the target didn't exist there, the MCP server's review_suspect_link tool shall return the changed fields as unknown.</description>
+</object>

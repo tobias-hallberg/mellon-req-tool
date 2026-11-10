@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-161">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: dropping the object from one path would hide a derivation. STATUS.md lists trace diamonds as left as they are without saying what a trace shows. Answered on 2026-11-10.</attr>
+  <description>When a trace reaches one object by several paths, Mellon shall report the object on each of those paths.</description>
+</object>

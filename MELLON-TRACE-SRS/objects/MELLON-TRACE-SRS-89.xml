@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-89">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MELLON-TRACE-SRS-112 lets states arrive after the window shows, and a gutter without a mark reads as OK (CF-T12).</attr>
+  <description>While a Document Editor hasn't worked out a link's state at the latest commit, the Document Editor shall show the link's state as unknown.</description>
+</object>

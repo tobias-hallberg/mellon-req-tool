@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: after a rebase or a cherry-picked acknowledgement the history isn't a line, and the commits listed can't be read as everything that changed (CF-T43).</attr>
+  <description>The MCP server's review_suspect_link tool shall return whether the link's acknowledged commit is the latest commit or one of the latest commit's ancestors.</description>
+</object>

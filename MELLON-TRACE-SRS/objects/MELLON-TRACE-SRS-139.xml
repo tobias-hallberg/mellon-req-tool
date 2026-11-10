@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-139">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent acknowledges exactly the links it reviewed. Its test uses object IDs that share a prefix and differ in letter case (CF-T34).</attr>
+  <description>When an ack_suspects call gives link_keys, the MCP server shall acknowledge only the suspect links that the link keys name.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-158">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: tracing up shows what a requirement derives from, to the top of the V-model, across documents.</attr>
+  <description>Mellon shall trace an object up by following its outgoing links to their targets, and the targets' outgoing links in turn.</description>
+</object>

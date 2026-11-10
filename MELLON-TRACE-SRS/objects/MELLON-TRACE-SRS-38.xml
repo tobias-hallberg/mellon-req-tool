@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-38">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent judging a change needs to see which links to the object already wait for a review, as the Inspector shows (MELLON-TRACE-SRS-35). Requirements review Q48.</attr>
+  <description>The MCP server's incoming_links tool should return the state of each incoming link.</description>
+</object>

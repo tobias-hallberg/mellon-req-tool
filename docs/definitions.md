@@ -49,12 +49,17 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Link | A directed connection from one object, the source, to another object, the target, in the same document or another one. It has a link type, such as `verifies`. |
 | Outgoing link | A link seen from its source. Only outgoing links are stored, with the source's document. |
 | Incoming link | A link seen from its target, found by reading the whole repository. |
-| Acknowledged commit | The commit of the target that a link was last reviewed against. |
-| Suspect link | A link whose target object, or its figure, was changed by a commit after the link's acknowledged commit. |
-| Broken link | A link whose target object doesn't exist. |
-| Acknowledge | To record the target's latest commit as the link's acknowledged commit, after reviewing the change. |
-| Trace | The chain of links from an object up through its targets, or down through its sources. |
-| Coverage | The share of objects in one document that have a link to or from objects in another document. |
+| Link key | The source object ID and target object ID that name one link. |
+| Acknowledged commit | The commit of the target that a link records as reviewed, set when the link is created or acknowledged. |
+| Last change | The commit, found by going back from the latest commit, that last changed an object's file or figure in a way that counts as a change to the object. At a merge commit whose object file and figure equal one parent's, the search goes on through that parent only. An object whose file isn't at the latest commit has no last change. |
+| Link state | One of unknown, broken, suspect and OK. Each link has exactly one: the first of the four that applies. A link's state is unknown when Mellon can't work it out, or hasn't yet. |
+| Suspect link | A link whose target object exists in the working copy, and that has no acknowledged commit or one that isn't the target's last change. |
+| Broken link | A link whose target object doesn't exist in the working copy. |
+| OK link | A link whose target object exists in the working copy and at the latest commit, and whose acknowledged commit is the target's last change. |
+| Acknowledge | To record the target's last change as a link's acknowledged commit, after reviewing the target as it is at that commit. |
+| Trace | The objects reached from one object by following links up, source to target, or down, target to source, as a tree with that object at its root. |
+| Depth | In a trace, the number of links between the traced object and another object, on the path by which the trace reaches it. The traced object's own targets and sources are at depth 1. |
+| Coverage | The share of the counted objects of one document, the reported document, that links join to a second document, the covering document: incoming or outgoing by link direction, and direct through one link or transitive through a chain. |
 
 ## Versions
 
@@ -101,6 +106,12 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Mellon | The whole application: the GUI, the MCP server and `mellon-check`. |
 | Project Explorer | The GUI's main window, which lists the documents in a repository. |
 | Document Editor | The GUI window for one document. |
+| Grid | The Document Editor pane that lists the document's objects, one row each, with a column for each attribute shown. |
+| State gutter | The grid column that shows a mark for the states of each object's outgoing links. |
+| Inspector | The Document Editor tab that shows the selected object's attributes, description, outgoing links and incoming links. |
+| Suspect banner | The bar above the grid that holds the Suspects only and Ack selected controls. |
+| Link picker | The Document Editor dialog in which the user chooses a target object and a link type to add an outgoing link. |
+| Trace view | The Document Editor dialog that shows the trace of the selected object. |
 | History tab | The Document Editor tab that lists the commits that changed the selected object. |
 | Compare dialog | The GUI window that shows the changes between two versions of one document. |
 | Read-only mode | A Document Editor state in which no edit can be made. A window opens in it. |

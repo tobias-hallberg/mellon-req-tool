@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-107">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: after one parent document changes, a whole-repository answer can hold thousands of links, the crowding that MELLON-TRACE-SRS-118 caps for commits. Requirements review Q49.</attr>
+  <description>If a suspects call finds more than TBD links, the MCP server shall return TBD links and report how many were found.</description>
+</object>

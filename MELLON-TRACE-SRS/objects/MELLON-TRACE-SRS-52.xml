@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-52">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: as a repository grows, a 7-digit hash can come to begin a second commit, and that commit can be the target's last change, which would read as OK (CF-T18, CF-T19).</attr>
+  <description>If a link's recorded hash begins the hashes of two or more commits in the repository, whether or not a branch or tag reaches those commits, Mellon shall report the link as suspect.</description>
+</object>

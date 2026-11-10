@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-177">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: checking a requirement's place in the V-model is a frequent step in review.</attr>
+  <description>The Document Editor shall have an action, with the shortcut Ctrl+T, that opens the trace view for the selected object.</description>
+</object>

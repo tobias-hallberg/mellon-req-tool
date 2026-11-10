@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the tool's current values read the working copy, while an acknowledgement accepts the last change, so with uncommitted target changes an agent reads one and accepts the other (CF-T46; requirements review Q8). The working-copy values stay, and MELLON-TRACE-SRS-123 flags the difference.</attr>
+  <description>The MCP server's review_suspect_link tool shall return the target's description and attribute values at the target's last change.</description>
+</object>

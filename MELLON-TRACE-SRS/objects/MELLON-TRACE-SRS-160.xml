@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-160">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: links can form a cycle, and a trace must still end.</attr>
+  <description>Mellon shall end each path of a trace at the first object that the path reaches a second time.</description>
+</object>

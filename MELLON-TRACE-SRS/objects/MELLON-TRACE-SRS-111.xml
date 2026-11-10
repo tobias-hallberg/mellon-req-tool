@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: timed from the suspects call to its answer. A commit is followed by a new look at link states in each open window, so this is the wait a user meets after each commit.</attr>
+  <description>On the reference machine, after a commit that changes one target object, the MCP server shall answer a suspects call for the document of MELLON-TRACE-SRS-110 within TBD s.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-97">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: kept states follow the latest commit only, while acknowledged commits and targets come from the working copy, which another program can change without a commit (CF-T14; requirements review Q23).</attr>
+  <description>When a Document Editor is activated, the Document Editor shall show the link states of the working copy and the latest commit at that moment.</description>
+</object>

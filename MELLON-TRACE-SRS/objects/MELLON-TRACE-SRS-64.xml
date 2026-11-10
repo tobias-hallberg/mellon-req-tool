@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-64">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a review runs down the trace, and whoever changes a source has just written it against its targets. IBM DOORS can also flag a change at the source; Mellon doesn't.</attr>
+  <description>Mellon shall work out a link's state without regard to changes to the link's source object.</description>
+</object>

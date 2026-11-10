@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-172">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent can follow a V-model chain from end to end.</attr>
+  <description>When a trace call sets max_depth to null, the MCP server shall return the trace without a depth limit.</description>
+</object>

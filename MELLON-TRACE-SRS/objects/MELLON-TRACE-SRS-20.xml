@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent reads a target in one call and links to it in another, so the commit it read is what the new link has to record (CF-T40). Open question Q6 extended to creating links. Answered on 2026-11-10.</attr>
+  <description>The MCP server's add_link, new_object and update_object tools shall accept with each link to create the full hash of the target's commit that the agent read.</description>
+</object>

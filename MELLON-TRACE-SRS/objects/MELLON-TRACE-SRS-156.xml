@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-156">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: specification.md says to acknowledge exactly the links reviewed, never a whole document at once, but the tool's default acknowledges each suspect link of the document (E32, CF-T32). Made binding after requirements review Q28. Answered on 2026-11-10. Replaces MELLON-TRACE-SRS-155 when accepted.</attr>
+  <description>If an ack_suspects call gives no link_keys, the MCP server shall acknowledge no link and return the suspect links of the document.</description>
+</object>

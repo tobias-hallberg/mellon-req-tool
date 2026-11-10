@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the review covers the target as last committed. Accepted risk, answered on 2026-11-10: an acknowledgement is a claim that anyone with write access to the link file can make; git history, with its author, and Compare's Link reviewed are the record (CF-T41).</attr>
+  <description>When Mellon acknowledges a link, Mellon shall record the target's last change as the link's acknowledged commit.</description>
+</object>

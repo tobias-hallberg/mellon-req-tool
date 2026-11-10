@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-199">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: otherwise those objects would land in the uncovered list, or in neither. Requirements review Q29.</attr>
+  <description>When a coverage_report call sets include_lists, the MCP server shall return the object IDs that MELLON-TRACE-SRS-192 counts as a separate list.</description>
+</object>

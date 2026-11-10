@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the target changed after the agent read it, so the agent's reading doesn't cover the change (CF-T40). Answered on 2026-11-10.</attr>
+  <description>If a commit given with a link to create isn't the full hash of the target's last change, the MCP server shall refuse to create the link.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: linking follows the writing of each requirement, so it has a shortcut.</attr>
+  <description>The Document Editor shall have an action, with the shortcut Ctrl+L, that opens the link picker for the selected object.</description>
+</object>

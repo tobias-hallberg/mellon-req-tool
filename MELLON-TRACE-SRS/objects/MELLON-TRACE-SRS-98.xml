@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-98">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MELLON-TRACE-SRS-96 works states out again only on activation, so a commit an agent makes while the user watches the window leaves OK on screen for links that turned suspect (CF-T58). Answered on 2026-11-10. The value waits for MELLON-TRACE-SRS-111 to be measured.</attr>
+  <description>When the latest commit moves while a Document Editor is active, the Document Editor shall show the link states at the new latest commit within TBD s.</description>
+</object>

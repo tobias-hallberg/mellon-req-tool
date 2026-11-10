@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an unknown state must not look like OK (CF-T11). Split after requirements review Q34.</attr>
+  <description>The state gutter shall mark each object that has an outgoing link whose state is unknown.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the target changed after the link was last reviewed. A rebase, squash or cherry-pick gives the target new commits, so its links are reviewed again; TEAM.md tells teams to use merge commits for that reason.</attr>
+  <description>If a link's acknowledged commit isn't the target's last change, Mellon shall report the link as suspect.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a git client changing line endings, or the first edit of a hand-written file re-indenting it, turns links suspect with nothing to review. Same canonical form as Compare's MELLON-VER-SRS-22. Answered on 2026-11-10. Kept as should, because link states then depend on how files are parsed (CF-T28).</attr>
+  <description>If a commit changes the target's files only in ways that the files' canonical forms don't show, Mellon should count the commit as no change to the target.</description>
+</object>

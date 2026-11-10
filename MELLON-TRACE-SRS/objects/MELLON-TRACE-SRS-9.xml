@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: recording the target's last change instead would make a copy of a suspect link OK with nothing reviewed (CF-T39). Answered on 2026-11-10.</attr>
+  <description>When Mellon copies an object with its outgoing links, Mellon shall give each new link the acknowledged commit of the link that the new link copies.</description>
+</object>

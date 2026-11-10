@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-173">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a depth has no meaning, and guessing one returns a trace the agent didn't ask for. Requirements review Q21.</attr>
+  <description>If a trace call's max_depth is negative or not a whole number, the MCP server shall refuse the call.</description>
+</object>

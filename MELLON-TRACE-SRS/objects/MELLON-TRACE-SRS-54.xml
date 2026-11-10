@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-54">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: without it, a link that MELLON-TRACE-SRS-52 makes suspect is acknowledged with the same 7 digits again and can't become OK. Requirements review Q2. Holds until MELLON-TRACE-SRS-55 replaces it. Answered on 2026-11-10.</attr>
+  <description>When Mellon records an acknowledged commit, Mellon shall record the shortest leading part of the commit's hash, at least 7 hexadecimal digits long, that begins no other commit's hash.</description>
+</object>

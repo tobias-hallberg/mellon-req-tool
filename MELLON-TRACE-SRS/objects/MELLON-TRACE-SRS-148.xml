@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-148">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: agents built against 0.3.0 give no commit, so such a key is accepted with a warning for one release; MELLON-TRACE-SRS-149 then replaces this requirement (CF-T31). Answered on 2026-11-10.</attr>
+  <description>If an ack_suspects link key gives no commit, the MCP server shall acknowledge the link and warn that the key gives no reviewed commit.</description>
+</object>

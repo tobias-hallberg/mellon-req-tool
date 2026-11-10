@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-198">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent that finds a gap needs to know which objects to work on. Off by default to keep answers short.</attr>
+  <description>When a coverage_report call sets include_lists, the MCP server shall return the object IDs counted as covered and as uncovered.</description>
+</object>

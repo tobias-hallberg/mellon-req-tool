@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: from TRACE's failure analysis (D-T29, CF-T62): a link state Mellon can't work out must never pass as OK, and the gate is where that matters most. Reporting it as a check problem makes the exit status non-zero.</attr>
+  <description>If a link's state is unknown, mellon-check shall report the link as a check problem.</description>
+</object>

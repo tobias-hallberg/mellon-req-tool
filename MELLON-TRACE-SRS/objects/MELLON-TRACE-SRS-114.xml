@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-114">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: in the GUI a reviewer finds the change by hand in the target's History tab, while the MCP server already says what changed. Fields named, so that outgoing links aren't counted (MELLON-TRACE-SRS-62; requirements review Q18).</attr>
+  <description>When the user selects a suspect outgoing link in the Inspector, the Document Editor should show which of the target's description, attributes, table and figure differ between the acknowledged commit and the last change.</description>
+</object>

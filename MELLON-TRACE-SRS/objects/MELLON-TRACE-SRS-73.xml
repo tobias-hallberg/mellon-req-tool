@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-73">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the user has to know whether to fix a file, repair the clone or try again.</attr>
+  <description>When Mellon reports a link's state as unknown, Mellon should report the reason with the state.</description>
+</object>

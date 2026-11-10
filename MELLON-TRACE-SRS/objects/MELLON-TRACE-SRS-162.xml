@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-162">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: following an object again on each path that reaches it grows exponentially with shared objects, and a crafted repository stops the GUI or the MCP server (CF-T47). A shortest path, so that the depth limit cuts no object a shorter path reaches (requirements review Q14). Answered on 2026-11-10.</attr>
+  <description>When a trace reaches one object by several paths, Mellon shall follow the object's links on a shortest of those paths only, and mark the object as shown already on the others.</description>
+</object>

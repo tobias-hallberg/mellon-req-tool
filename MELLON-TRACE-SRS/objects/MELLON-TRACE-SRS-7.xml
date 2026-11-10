@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a link is found, removed and merged by its source and target, so two links between one pair of objects couldn't be told apart. Two such links made outside Mellon are reported by validation (handed to MELLON-CHECK-SRS).</attr>
+  <description>If a new link's source object already has a link to the target object, Mellon shall refuse to create the new link, whatever its link type.</description>
+</object>

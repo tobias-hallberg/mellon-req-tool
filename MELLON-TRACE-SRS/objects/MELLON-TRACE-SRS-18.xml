@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-18">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the picker can show a target that a commit made elsewhere has overtaken, and recording the newer last change accepts text the creator didn't see; as MELLON-TRACE-SRS-150 (CF-T40). Answered on 2026-11-10.</attr>
+  <description>If the target's last change differs from its last change when the link picker showed the target, the Document Editor shall refuse to create the link.</description>
+</object>

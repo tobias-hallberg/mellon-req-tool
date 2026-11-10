@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such a link shows no change on review, so without the reason a reviewer searches for one. Requirements review Q44.</attr>
+  <description>When Mellon reports a link as suspect because its recorded hash begins more than one commit's hash, Mellon should report that reason with the state.</description>
+</object>

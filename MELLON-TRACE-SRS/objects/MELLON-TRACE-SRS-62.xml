@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: acknowledging a link changes its source's outgoing links, so counting them would turn the links below each acknowledged link suspect.</attr>
+  <description>Mellon shall count a change to the target object's outgoing links as no change to the target.</description>
+</object>

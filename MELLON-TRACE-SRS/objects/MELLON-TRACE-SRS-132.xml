@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: what the acknowledgement would accept can't be worked out.</attr>
+  <description>If a link's state is unknown, Mellon shall refuse to acknowledge the link.</description>
+</object>

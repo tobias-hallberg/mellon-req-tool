@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-134">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an acknowledgement written from a copy loaded earlier would undo a link change that another writer made since (CF-T36).</attr>
+  <description>When Mellon acknowledges a link, Mellon shall change only the link's acknowledged commit, keeping the source object's other outgoing links as in the working copy at that moment.</description>
+</object>

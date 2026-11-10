@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-123">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an acknowledgement doesn't cover uncommitted changes, and the link turns suspect again once they are committed. Built after 0.3.0.</attr>
+  <description>The MCP server's review_suspect_link tool shall return whether the target object in the working copy differs from the latest commit.</description>
+</object>

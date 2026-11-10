@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an unknown state isn't one a review can clear, nor one a new target fixes. Requirements review Q34.</attr>
+  <description>The state gutter shall mark an unknown state differently from a suspect and a broken one.</description>
+</object>

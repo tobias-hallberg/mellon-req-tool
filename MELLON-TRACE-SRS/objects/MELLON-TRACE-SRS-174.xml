@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-174">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a large trace can be cut by the client, and the count lets an agent tell (CF-T50).</attr>
+  <description>The MCP server's trace tool shall return with each trace the number of objects in the trace.</description>
+</object>

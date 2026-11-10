@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-163">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a trace cut at its limit looks the same as one that ended, so a reader can take a cut chain for the whole (E44, F10, CF-T48).</attr>
+  <description>When a trace stops at its depth limit, Mellon shall mark each object at that depth that has a link the trace didn't follow.</description>
+</object>

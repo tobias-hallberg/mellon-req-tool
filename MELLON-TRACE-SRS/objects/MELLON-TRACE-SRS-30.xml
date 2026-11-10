@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: changing a link's type by removing and adding it records the target's last change, which turns a suspect link OK with nothing reviewed (CF-T39; requirements review Q36). Answered on 2026-11-10.</attr>
+  <description>When one update_object call or one change of link type in the Inspector removes a link and adds one between the same objects, Mellon shall give the added link the removed link's acknowledged commit.</description>
+</object>

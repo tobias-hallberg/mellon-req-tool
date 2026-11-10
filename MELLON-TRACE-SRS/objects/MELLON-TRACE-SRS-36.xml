@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: as with an outgoing link, a reviewer goes from the link to the object at its other end.</attr>
+  <description>When the user double-clicks an incoming link in the Inspector, Mellon should show the link's source object selected in its document's Document Editor.</description>
+</object>

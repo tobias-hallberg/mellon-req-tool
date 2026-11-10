@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-184">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a system requirement counts as verified when a software requirement derived from it has a test case, across the documents between.</attr>
+  <description>When Mellon works out transitive coverage, Mellon shall count an object of the reported document as covered when a chain of links, each in the report's direction, joins the object to the covering document.</description>
+</object>

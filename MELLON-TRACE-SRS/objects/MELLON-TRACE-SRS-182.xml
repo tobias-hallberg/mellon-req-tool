@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-182">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the V-model question "which requirements have a test case?".</attr>
+  <description>When Mellon works out incoming coverage, Mellon shall count an object of the reported document as covered when an object of the covering document has a link to the object.</description>
+</object>

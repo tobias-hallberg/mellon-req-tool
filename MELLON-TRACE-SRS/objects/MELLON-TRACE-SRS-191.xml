@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-191">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a suspect link means the covering object may no longer fit what it covers, so a release gate that trusts coverage would pass out-of-date test cases (E43, F11, CF-T52). A broken link covers nothing either. Answered on 2026-11-10.</attr>
+  <description>Mellon shall count only OK links toward coverage, each link of a transitive chain included.</description>
+</object>

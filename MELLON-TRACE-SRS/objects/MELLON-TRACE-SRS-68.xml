@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an acknowledgement records a commit, so it can only cover committed text. The link turns suspect when the changes are committed. Whether the link is broken still comes from the working copy (MELLON-TRACE-SRS-44).</attr>
+  <description>Mellon shall work out whether a link is suspect from the target's commits, without regard to the target's uncommitted changes.</description>
+</object>

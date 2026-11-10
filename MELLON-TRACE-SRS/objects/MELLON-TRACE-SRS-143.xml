@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-143">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a dry run changes no file, so a read-only server has no reason to refuse it. Requirements review Q26.</attr>
+  <description>While the MCP server is a read-only server, the MCP server should accept an ack_suspects call that asks for a dry run.</description>
+</object>

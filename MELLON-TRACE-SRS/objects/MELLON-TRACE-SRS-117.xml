@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the commit messages say why the target changed. Bounded by ancestry rather than by date, so that a rebased or cherry-picked history isn't misread (CF-T43); built after 0.3.0 by matching git log &lt;ack&gt;..HEAD.</attr>
+  <description>The MCP server's review_suspect_link tool shall return the commits that are the latest commit or its ancestors, aren't the acknowledged commit or its ancestors, and changed the target object's file or figure.</description>
+</object>

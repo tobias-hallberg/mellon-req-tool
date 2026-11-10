@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the review would compare against a commit that perhaps wasn't the one reviewed, or read a missing file as empty text (CF-T44, CF-T45; requirements review Q46).</attr>
+  <description>If the acknowledged commit's recorded hash begins more than one commit's hash, or the target's files can't be read at that commit, the MCP server's review_suspect_link tool shall return the changed fields as unknown.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-43">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: reviews and release gates trust OK, so OK needs a positive match, not merely the absence of a finding. MELLON-TRACE-SRS-48 and MELLON-TRACE-SRS-81 add conditions.</attr>
+  <description>Mellon shall report a link as OK only when the target object exists in the working copy and the link's acknowledged commit is the target's last change.</description>
+</object>

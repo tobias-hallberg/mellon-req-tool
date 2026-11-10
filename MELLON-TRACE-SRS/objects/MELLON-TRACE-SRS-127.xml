@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: changed fields come from the same model as the rest of Mellon, so content it doesn't carry reads as only formatting changed, and an agent acknowledges a real change (CF-T42).</attr>
+  <description>If the target's object file differs in canonical form between the acknowledged commit and the last change while no field differs, the MCP server's review_suspect_link tool shall report that the file differs.</description>
+</object>

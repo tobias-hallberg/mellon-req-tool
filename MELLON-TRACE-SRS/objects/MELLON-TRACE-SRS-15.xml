@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: whether Verifies and verifies are one link type decides what coverage by link type counts (CF-T5; requirements review Q17).</attr>
+  <description>Mellon shall keep and compare a link type exactly as written, letter case and spaces included.</description>
+</object>

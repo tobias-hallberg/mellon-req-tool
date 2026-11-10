@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-194">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a share of 0 out of 0 reads as 0 % or 100 %, and either looks like a real answer (CF-T57). Made binding after requirements review Q7.</attr>
+  <description>If a coverage report counts no object, Mellon shall report the share covered as not applicable.</description>
+</object>

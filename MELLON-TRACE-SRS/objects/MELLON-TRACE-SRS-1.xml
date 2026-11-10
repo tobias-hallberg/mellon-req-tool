@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-1">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a new link shows at its target, in traces and in coverage as soon as it is made, and an acknowledgement takes effect before the link file is committed.</attr>
+  <description>Mellon shall work out incoming links, link states, traces and coverage from the links and acknowledged commits in the working copy.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-192">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: without it, coverage would drop after each change to a parent with no explanation, and a reviewer couldn't tell a review backlog from a missing test case. Answered on 2026-11-10.</attr>
+  <description>Mellon shall report as a separate count the objects that are uncovered by OK links and covered once suspect links and links of unknown state are counted.</description>
+</object>

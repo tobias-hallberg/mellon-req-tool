@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-45">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a link that was never reviewed against a commit of its target needs a review. Its test includes a target with no last change, so that no acknowledged commit doesn't match no last change (CF-T15).</attr>
+  <description>If a link has no acknowledged commit, Mellon shall report the link as suspect.</description>
+</object>

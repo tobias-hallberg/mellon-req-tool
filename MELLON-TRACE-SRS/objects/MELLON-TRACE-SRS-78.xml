@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-78">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: Windows finds files without regard to letter case and git doesn't, so existence and history would disagree, and Windows and Linux CI would give different states (CF-T7).</attr>
+  <description>Mellon shall count a link's target as existing only when an object's ID equals the target, letter case included.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the document's links can't be read, so an empty answer would read as clean. Requirements review Q25.</attr>
+  <description>If a suspects call names a document with a load error, the MCP server shall refuse the call, naming the load error.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a reviewer who has checked one object against each of its targets acknowledges them together.</attr>
+  <description>The suspect banner shall have an Ack selected action that acknowledges each suspect outgoing link of the selected object.</description>
+</object>

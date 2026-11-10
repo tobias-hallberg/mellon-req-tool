@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: removes are processed before adds, so an agent can change a link's type in one call.</attr>
+  <description>When one update_object call removes and adds a link to the same target object, the MCP server shall keep the added link.</description>
+</object>

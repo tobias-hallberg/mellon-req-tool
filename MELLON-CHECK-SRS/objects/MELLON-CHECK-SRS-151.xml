@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-SRS-151">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: from TRACE's requirements view, on the author's question about self-links: a link from an object to itself traces nothing and covers nothing, so it is a mistake. The code name is proposed.</attr>
+  <description>If a link's target object is the link's source object, Mellon shall report the validation error LINK_TO_SELF naming the link.</description>
+</object>

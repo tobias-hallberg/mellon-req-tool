@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the creator can read text that the new link's acknowledged commit doesn't hold, and if the changes are discarded the link stays OK against text nobody read. Requirements review Q15.</attr>
+  <description>When Mellon creates a link whose target object has uncommitted changes, Mellon shall report that the link's acknowledged commit doesn't include those changes.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-159">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: tracing down shows what a change affects, through to the test cases, across documents.</attr>
+  <description>Mellon shall trace an object down by following its incoming links to their sources, and the sources' incoming links in turn.</description>
+</object>

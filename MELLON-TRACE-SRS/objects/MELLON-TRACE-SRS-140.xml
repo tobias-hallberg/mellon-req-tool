@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-140">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent must see that a link it meant to acknowledge was left as it was, including a key with a typo (CF-T35; requirements review Q22).</attr>
+  <description>When an ack_suspects call names a link that doesn't exist or isn't suspect, the MCP server shall report the link as skipped, with the reason.</description>
+</object>

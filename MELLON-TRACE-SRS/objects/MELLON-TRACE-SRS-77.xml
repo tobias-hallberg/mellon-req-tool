@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-77">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a target from another clone can name a path outside the repository, or a UNC share that makes Windows offer the user's credentials; a target that isn't an object ID names no object (CF-T1).</attr>
+  <description>If a link's target isn't an object ID, Mellon shall report the link as broken without opening a file or folder for the target.</description>
+</object>

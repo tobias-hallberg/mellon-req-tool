@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Suspects only narrows the grid to the objects with links to review.</attr>
+  <description>While Suspects only is on, the grid shall hide each object that has no outgoing link in a state other than OK.</description>
+</object>

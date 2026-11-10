@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a target that was never committed has no commit to record. The link is reviewed once the target is committed.</attr>
+  <description>If a new link's target object has no last change, Mellon shall create the link with no acknowledged commit.</description>
+</object>

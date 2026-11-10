@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a 7-digit prefix can be matched on purpose in minutes, and MELLON-TRACE-SRS-52 catches it only while the original commit stays in the clone (CF-T19). It changes the on-disk format, so it comes one release after a release that reads both forms (MELLON-TRACE-SRS-51), and then replaces MELLON-TRACE-SRS-54. Answered on 2026-11-10.</attr>
+  <description>When Mellon records a link's acknowledged commit, Mellon shall record the commit's full hash.</description>
+</object>

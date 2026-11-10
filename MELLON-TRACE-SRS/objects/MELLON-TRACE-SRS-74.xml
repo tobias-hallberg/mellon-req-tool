@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an empty answer must mean that each document was checked and found clean. Built after 0.3.0.</attr>
+  <description>If a document has a load error, the MCP server's suspects tool shall refuse a call that names no document, naming each document with a load error.</description>
+</object>

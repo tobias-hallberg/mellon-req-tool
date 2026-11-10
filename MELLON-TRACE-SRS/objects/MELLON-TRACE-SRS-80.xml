@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: kept last changes outlive resets, branch switches, linked work trees and rule changes between releases, and one from another line of history makes a changed target read OK (CF-T21, CF-T22, CF-T23).</attr>
+  <description>Mellon shall report for each link the state worked out from the latest commit and the working copy alone, whatever link states were kept from earlier work.</description>
+</object>

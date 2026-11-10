@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-44">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a missing target can't be reviewed; the link needs a new target or removing.</attr>
+  <description>If a link's target object doesn't exist in the working copy, Mellon shall report the link as broken.</description>
+</object>

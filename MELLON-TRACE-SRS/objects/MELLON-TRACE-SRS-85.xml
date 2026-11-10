@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-85">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: a broken link needs a new target and a suspect one a review.</attr>
+  <description>The state gutter should mark a broken outgoing link differently from a suspect one.</description>
+</object>

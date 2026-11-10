@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-125">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the agent hands this hash back when acknowledging (MELLON-TRACE-SRS-146), so that a change made in between isn't accepted unseen (E33, F7, CF-T31). Open question Q6. Answered on 2026-11-10.</attr>
+  <description>The MCP server's review_suspect_link tool shall return the full hash of the target's last change.</description>
+</object>

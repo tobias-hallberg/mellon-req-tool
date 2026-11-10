@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-195">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: links held in a document that can't be read are left out, so objects read as uncovered, or covered, wrongly (E10, F6, CF-T8).</attr>
+  <description>If a document that a coverage report reads has a load error, Mellon shall name the document with the coverage report.</description>
+</object>

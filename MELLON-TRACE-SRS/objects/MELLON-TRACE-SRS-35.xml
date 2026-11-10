@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: the owner of a changed requirement wants to see which links to it are still to be reviewed.</attr>
+  <description>The Inspector should show the state of each incoming link of the selected object.</description>
+</object>

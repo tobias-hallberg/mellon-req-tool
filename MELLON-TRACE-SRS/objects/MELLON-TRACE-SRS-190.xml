@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-190">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: any object of the covering document covers, so a withdrawn test case or a note keeps a requirement covered (CF-T53). Mellon's own coverage would filter for test cases that are Accepted or Implemented. Answered on 2026-11-10.</attr>
+  <description>When a coverage report names a filter of the covering document, Mellon shall count only links from or to the objects that the filter shows.</description>
+</object>

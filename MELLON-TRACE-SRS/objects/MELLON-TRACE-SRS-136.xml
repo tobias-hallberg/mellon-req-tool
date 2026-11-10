@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the reviewer read the working copy, while the acknowledgement accepts the committed text, which the reviewer may not have read; if the changes are discarded the link stays OK against text nobody read (CF-T38; requirements review Q15).</attr>
+  <description>When the user acknowledges a link whose target object has uncommitted changes, the Document Editor shall ask the user to confirm before acknowledging.</description>
+</object>

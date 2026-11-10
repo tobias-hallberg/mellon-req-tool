@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a commit made elsewhere while the window stays active changes the target unseen (E33, F7, CF-T31). Open question Q6. Answered on 2026-11-10.</attr>
+  <description>If the target's last change differs from the one the Document Editor worked out the link's state from, the Document Editor shall refuse to acknowledge the link.</description>
+</object>

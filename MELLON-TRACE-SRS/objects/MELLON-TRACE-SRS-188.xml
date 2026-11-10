@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-188">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: headings structure the outline and need no link. MELLON-TRACE-SRS-189 handles the covering document's headings.</attr>
+  <description>Mellon shall leave the reported document's headings out of the objects that a coverage report counts, unless the report asks to include headings.</description>
+</object>

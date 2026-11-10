@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: links are checked before any file is written, so a refused link leaves no half-made object or link file behind. Kept here until MELLON-MCP-SRS says that a refused call changes no file (handed over).</attr>
+  <description>If a new_object or update_object call gives a link that Mellon refuses, the MCP server shall change no file.</description>
+</object>

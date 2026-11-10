@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-189">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: headings structure a document and verify nothing; a heading linked to a requirement makes the requirement read covered (CF-T53).</attr>
+  <description>Mellon shall count no link from or to a heading of the covering document toward coverage.</description>
+</object>

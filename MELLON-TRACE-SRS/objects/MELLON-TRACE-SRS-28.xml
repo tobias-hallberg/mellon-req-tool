@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">stakeholder: an agent must not take a removal that found nothing for a done one.</attr>
+  <description>If no link joins the given source object and target object, the MCP server's remove_link tool shall report a failure.</description>
+</object>

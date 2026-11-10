@@ -126,3 +126,34 @@ Raised by the requirements view of the Compare section and answered the same day
   - -48: the next-object-number check skips a manifest without the attribute? Recommendation: yes.
   - -146: Mellon's own CI also runs the last released `mellon-check` over the specification? Recommendation: yes, and both must pass.
 - **Answer:** open
+
+## Q11: The TRACE specification's questions (2026-11-10)
+
+- **Raised by:** the TRACE author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-TRACE-SRS`, by the IDs below
+- **How they were handled:** as for Q10: answered with the recommendation that night, with anything that would change built behaviour created as `Proposed`, for the person to confirm. Where a Proposed requirement would replace a built one, both are in the document, and each rationale says which replaces which.
+- **Answered with the recommendation (2026-11-10, to confirm):**
+  - Each link has exactly one state, the first that applies of unknown, broken, suspect and OK. A link whose state can't be worked out is never shown as OK.
+  - A link to a target that exists but was never committed is suspect, and acknowledging it is refused until the target is committed.
+  - Acknowledgements record the full commit hash, after one release that reads both forms. Until then each recorded digit is compared, and an ambiguous prefix makes the link suspect.
+  - A change only to how a target's file is written (its canonical form is the same), moving the target in the outline, and changes to the target document's manifest or headings don't make links suspect.
+  - Open question Q6 is adopted: an acknowledgement records the commit the reviewer saw, and is refused if the target changed since. The same goes for creating a link. A link key without a commit is accepted for one release, with a warning.
+  - `ack_suspects` without `link_keys` stops acknowledging the whole document; in the GUI, Ack selected works on one object at a time, and a read-only window can't acknowledge.
+  - An acknowledgement is a claim anyone with write access can make; git history is the record. Accepted risk.
+  - Removing a link and adding it back keeps its review. A copied link keeps the acknowledged commit of the link it copies. Retyping a link keeps its review.
+  - Coverage counts only OK links and reports separately the objects covered only through suspect or unknown links; it can be limited to some objects of the covering document; in transitive coverage with a link type, only the link into the covering document must have that type; 100 % only when every counted object is covered.
+  - Trace depth is counted as the `trace` tool describes it. A trace follows an object's links once, on a shortest path, and marks the object on the other paths. The trace view has no depth limit.
+  - A link from an object to itself, and two links from one object to one target, are validation errors (`MELLON-CHECK-SRS`). `mellon-check` fails on a link whose state is unknown.
+  - Link states are worked out again when the latest commit moves while a window stays active (time limit TBD).
+- **Still open, each with a recommendation:**
+  - -10: a copied object's link that can't be kept: copy without it and report it.
+  - -15: link types compared exactly as written: yes.
+  - -58: attributes whose changes don't make links suspect, as DOORS allows: not now (a format change).
+  - -184: a transitive coverage chain may pass through the reported document: yes.
+  - -162: of several shortest paths, the trace follows the one whose objects come first in object ID order.
+  - -117: with no acknowledged commit, `review_suspect_link` lists each commit that changed the target, capped.
+  - -143: a read-only server accepts an `ack_suspects` dry run: yes.
+  - -107: `suspects` results capped by a `max_results` argument, default 500.
+  - -110, -111, -112, -98: the time limits, measured on the reference machine first.
+  - -35, -36, -38, -85, -102, -165, -166, -180, -108: Proposed requirements that may already be built; the test mapping checks them. Does the state gutter mark incoming link states?
+- **Answer:** open

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: there is no target to review, and empty text would read as a deleted description. Requirements review Q25.</attr>
+  <description>If a review_suspect_link call names a broken link, the MCP server shall report a failure naming the missing target.</description>
+</object>
