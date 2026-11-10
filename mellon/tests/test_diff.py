@@ -357,6 +357,42 @@ def test_issue_tag_as_ref(tmp_git: Path) -> None:
     assert diff.short_b == c2
 
 
+@pytest.mark.parametrize(
+    "ref, back", [("@", 0), ("@~1", 1), ("@^", 1), ("@^{commit}", 0), ("@~1^{/seed}", 1)]
+)
+def test_lone_at_is_head(tmp_git: Path, ref: str, back: int) -> None:
+    # MELLON-VER-SRS-9: git reads @ on its own as HEAD, also before ~, ^ and :.
+    _write_object(tmp_git, "DOC", "DOC-1", {"type": "Requirement"}, "x")
+    commit(tmp_git, "seed")
+    _write_object(tmp_git, "DOC", "DOC-2", {"type": "Requirement"}, "y")
+    commit(tmp_git, "add DOC-2")
+    repo = pygit2.Repository(str(tmp_git))
+    expected = repo.revparse_single(f"HEAD~{back}").peel(pygit2.Commit).id
+    assert compare_document(tmp_git, "DOC", ref, "HEAD").commit_a == str(expected)
+
+
+def test_lone_at_past_the_first_commit_names_the_typed_text(tmp_git: Path) -> None:
+    _write_object(tmp_git, "DOC", "DOC-1", {"type": "Requirement"}, "x")
+    commit(tmp_git, "seed")
+    with pytest.raises(GitError, match="cannot resolve '@~3'"):
+        compare_document(tmp_git, "DOC", "@~3", "HEAD")
+
+
+def test_each_version_reports_the_full_hash_of_its_commit(tmp_git: Path) -> None:
+    # MELLON-VER-SRS-67, -87: an annotated tag resolves to its commit, whose
+    # hash is reported, not the tag object's; the working copy has none.
+    _write_object(tmp_git, "DOC", "DOC-1", {"type": "Requirement"}, "x")
+    commit(tmp_git, "seed")
+    repo = pygit2.Repository(str(tmp_git))
+    head = repo.head.peel(pygit2.Commit).id
+    create_issue_tag(repo, "DOC", "1", head)
+    diff = compare_document(tmp_git, "DOC", "DOC-issue-1", WORKING_COPY)
+    assert diff.commit_a == str(head)
+    assert diff.short_a == str(head)[:7]
+    assert diff.commit_b is None
+    assert diff.short_b == WORKING_COPY
+
+
 # --- combined change record -------------------------------------------------
 
 
@@ -514,6 +550,56 @@ def test_figure_change(tmp_git: Path, spec: Path, tmp_path_factory) -> None:
     assert isinstance(figure, FigureChange)
     assert figure.svg_a is None
     assert figure.svg_b == (spec / "figures" / "SPEC-1.svg").read_bytes()
+
+
+def _figure_kinds(tmp_git: Path, spec: Path, a: bytes, b: bytes) -> dict:
+    """Commit SPEC-1's figure as `a`, then as `b` (by hand, as a git client
+    could), and compare the two commits."""
+    path = spec / "figures" / "SPEC-1.svg"
+    path.parent.mkdir(exist_ok=True)
+    path.write_bytes(a)
+    commit(tmp_git, "figure a")
+    path.write_bytes(b)
+    commit(tmp_git, "figure b")
+    return _kinds(compare_document(tmp_git, "SPEC", "HEAD~1", "HEAD"))
+
+
+def test_figure_comments_and_entities_are_no_change(tmp_git: Path, spec: Path) -> None:
+    # MELLON-VER-SRS-22: Canonical XML 1.1 (without comments) expands
+    # internal entities and drops comments, the DOCTYPE and the declaration.
+    plain = b'<svg xmlns="http://www.w3.org/2000/svg"><text>Speed</text></svg>'
+    other = (
+        b'<?xml version="1.0"?>\n<!DOCTYPE svg [<!ENTITY s "Speed">]>\n'
+        b'<svg xmlns="http://www.w3.org/2000/svg"><!-- drawn --><text>&s;</text></svg>\n'
+    )
+    assert _figure_kinds(tmp_git, spec, plain, other) == {}
+
+
+@pytest.mark.parametrize(
+    "a, b",
+    [
+        (b"<text>a b</text>", b"<text>a  b</text>"),
+        # Whitespace-only text with no element beside it isn't between elements.
+        (b"<text> </text>", b"<text></text>"),
+    ],
+)
+def test_figure_whitespace_in_text_is_a_change(
+    tmp_git: Path, spec: Path, a: bytes, b: bytes
+) -> None:
+    def svg(body: bytes) -> bytes:
+        return b'<svg xmlns="http://www.w3.org/2000/svg">' + body + b"</svg>"
+
+    assert _figure_kinds(tmp_git, spec, svg(a), svg(b)) == {"SPEC-1": ("Modified",)}
+
+
+def test_figure_that_cant_be_parsed_is_compared_by_its_bytes(
+    tmp_git: Path, spec: Path
+) -> None:
+    # Re-indenting a figure that isn't well-formed is still a change.
+    broken = b'<svg xmlns="http://www.w3.org/2000/svg">\n  <rect\n'
+    assert _figure_kinds(tmp_git, spec, broken, broken.replace(b"  ", b"\t")) == {
+        "SPEC-1": ("Modified",)
+    }
 
 
 def test_only_an_ack_change_is_a_link_review(tmp_git: Path, spec: Path) -> None:

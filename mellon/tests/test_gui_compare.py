@@ -203,6 +203,59 @@ def test_working_copy_as_to(qtbot, dialog, repo) -> None:
     assert _rows(dialog) == [("SPEC-4", "Modified", "Requirement 4, not committed.")]
 
 
+def test_working_copy_compare_saves_pending_inspector_text(qtbot, window, repo) -> None:
+    # MELLON-VER-SRS-73: the Inspector's pending text too, not only the grid's.
+    window._set_read_only(False)
+    window.controller.select_object("SPEC", "SPEC-2")
+    window.inspector._description.setPlainText("Typed in the Inspector.")
+    dlg = window.open_compare(LATEST, WORKING_COPY)
+    _wait(qtbot, dlg)
+    assert _rows(dlg) == [("SPEC-2", "Modified", "Typed in the Inspector.")]
+    obj = repo / "SPEC" / "objects" / "SPEC-2.xml"
+    assert "Typed in the Inspector." in obj.read_text(encoding="utf-8")
+
+
+def test_comparing_two_commits_leaves_pending_text_unsaved(qtbot, window, repo) -> None:
+    # MELLON-VER-SRS-73 applies only to the working copy; -56 asks that
+    # nothing else is written.
+    window._set_read_only(False)
+    window.controller.select_object("SPEC", "SPEC-2")
+    obj = repo / "SPEC" / "objects" / "SPEC-2.xml"
+    before = obj.read_bytes()
+    window.inspector._description.setPlainText("Typed in the Inspector.")
+    dlg = window.open_compare("SPEC-issue-1", LATEST)
+    _wait(qtbot, dlg)
+    assert obj.read_bytes() == before
+    assert window.inspector._description.toPlainText() == "Typed in the Inspector."
+
+
+def test_result_names_the_commit_compared_not_the_one_listed(qtbot, dialog, repo) -> None:
+    # MELLON-VER-SRS-67: "Latest commit (…)" holds the hash HEAD had when the
+    # list was made; after a new commit, the result names the one compared.
+    listed = str(pygit2.Repository(str(repo)).head.target)[:7]
+    editor.set_description(repo / "SPEC", "SPEC-1", "The VCU must halt.")
+    latest = commit(repo, "later")
+    dialog.compare()
+    _wait(qtbot, dialog)
+    text = dialog.summary_label.text()
+    assert f"Latest commit ({latest[:7]})" in text
+    assert listed not in text
+
+
+def test_version_text_adds_the_hash_only_once() -> None:
+    from mellon.gui.dialogs.compare_dialog import version_text
+
+    full = "0123456789abcdef0123456789abcdef01234567"
+    short = full[:7]
+    assert version_text("HEAD~1", short, full) == f"HEAD~1 ({short})"
+    assert version_text("Issue 1 (fedcba9)", short, full) == f"Issue 1 ({short})"
+    assert version_text(f"{short}  seed", short, full) == f"{short}  seed"
+    assert version_text(full, short, full) == full
+    assert version_text("Working copy (uncommitted edits)", WORKING_COPY, None) == (
+        "Working copy (uncommitted edits)"
+    )
+
+
 def test_opens_with_latest_issue_to_latest_commit(dialog) -> None:
     assert dialog.ref(dialog.from_combo) == "SPEC-issue-1"
     assert dialog.ref(dialog.to_combo) == LATEST

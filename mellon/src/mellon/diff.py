@@ -19,7 +19,10 @@ Classic's Module Comparison Wizard, which creates a link module.
 Files are compared by content first (git blob ids, or the same hash of the
 bytes on disk), so only objects whose files differ are parsed. A file that
 can't be parsed doesn't stop the comparison: the object is reported with an
-``error`` at that version instead of being read as empty.
+``error`` at that version instead of being read as empty. Files whose bytes
+differ but whose canonical forms are the same are no change: object, links
+and manifest files are compared by what they parse to, figures by their
+canonical XML (`_figure_key`).
 """
 
 from __future__ import annotations
@@ -33,6 +36,7 @@ from enum import StrEnum
 from pathlib import Path
 
 import pygit2
+from lxml import etree
 
 from .git_ops import (
     SHORT_HASH_LEN,
@@ -286,6 +290,10 @@ class DocumentDiff:
     the older id-sorted views: ``modified_objects`` holds every object at
     both versions with field changes, link reviews included.
 
+    ``commit_a`` / ``commit_b`` is the full hash of the commit each version
+    resolved to, None for the working copy; ``short_a`` / ``short_b`` its
+    first 7 digits, or ``WORKING_COPY``.
+
     ``labels`` maps attribute names to the labels declared at B (or A).
     ``present_a`` / ``present_b`` say whether the document exists at each
     version. ``outline_error_a`` / ``outline_error_b`` say why a version's
@@ -307,6 +315,8 @@ class DocumentDiff:
     present_b: bool = True
     outline_error_a: str | None = None
     outline_error_b: str | None = None
+    commit_a: str | None = None
+    commit_b: str | None = None
 
     @property
     def is_empty(self) -> bool:
@@ -459,6 +469,8 @@ class _Side:
 
     present: bool
     short: str
+    # The full hash of the commit the version resolved to; None on disk.
+    commit: str | None
     # stem -> content key (a blob id), for objects/*.xml, links/*.xml, figures/*.svg
     objects: dict[str, object]
     links: dict[str, object]
@@ -477,13 +489,28 @@ class _Side:
 _SUBFOLDERS = (("objects", ".xml"), ("links", ".xml"), ("figures", ".svg"))
 
 
+# MELLON-VER-SRS-9: git reads an @ that stands alone as HEAD, as in @~2,
+# @^{commit} or @@{1}. libgit2 knows only @ by itself and @{...}. A ref can't
+# be named @, so nothing else is meant.
+_LONE_AT = re.compile(r"@(?=[~^:]|@\{)")
+
+
+def _resolve_commit(repo: pygit2.Repository, ref: str) -> pygit2.Commit:
+    """The commit git's revision syntax resolves `ref` to. Raises
+    ``GitError`` naming `ref` when it resolves to nothing, or to something
+    other than a commit (a tree or a file)."""
+    spec = "HEAD" + ref[1:] if _LONE_AT.match(ref) else ref
+    try:
+        return repo.revparse_single(spec).peel(pygit2.Commit)
+    except (pygit2.GitError, KeyError, ValueError) as e:
+        raise GitError(f"cannot resolve {ref!r}: {e}") from e
+
+
 class _GitSide(_Side):
     def __init__(self, repo: pygit2.Repository, doc_id: str, ref: str) -> None:
-        try:
-            commit = repo.revparse_single(ref).peel(pygit2.Commit)
-        except (pygit2.GitError, KeyError, ValueError) as e:
-            raise GitError(f"cannot resolve {ref!r}: {e}") from e
+        commit = _resolve_commit(repo, ref)
         self._repo = repo
+        self.commit = str(commit.id)
         self.short = _short_oid(commit.id)
         self.objects, self.links, self.figures = {}, {}, {}
         self.names = {}
@@ -529,6 +556,7 @@ class _DiskSide(_Side):
 
     def __init__(self, folder: Path, doc_id: str) -> None:
         self.short = WORKING_COPY
+        self.commit = None
         self.objects, self.links, self.figures = {}, {}, {}
         self.names = {}
         self.manifest = None
@@ -897,10 +925,46 @@ def compare_document(
         present_b=side_b.present,
         outline_error_a=outline_error_a,
         outline_error_b=outline_error_b,
+        commit_a=side_a.commit,
+        commit_b=side_b.commit,
     )
 
 
 # --- internals ------------------------------------------------------------
+
+
+def _figure_key(svg: bytes | None) -> object:
+    """What two figures are compared by.
+
+    MELLON-VER-SRS-22: a figure is an SVG file, so XML, and differences gone
+    in its canonical form are no change: the figure as Canonical XML writes
+    it, with whitespace-only text between elements removed. (For a whole
+    document, Canonical XML 1.0, which lxml writes, and 1.1 write the same.
+    Comments are left out, as in the 1.1 method without comments, and as
+    parsing leaves them out of the other files.) A figure that can't be
+    parsed is compared by its bytes, as before.
+    """
+    if svg is None:
+        return None
+    # Never fetch the DTD a draw.io file names; internal entities are part
+    # of the content, so they are expanded.
+    parser = etree.XMLParser(resolve_entities="internal", no_network=True, load_dtd=False)
+    try:
+        root = etree.fromstring(svg, parser)
+        for node in root.iter():
+            if isinstance(node.tag, str) and len(node) and _blank(node.text):
+                node.text = None
+            if _blank(node.tail):
+                node.tail = None
+        canonical = etree.tostring(root.getroottree(), method="c14n", with_comments=False)
+        return ("canonical", canonical)
+    except (etree.LxmlError, ValueError):
+        return ("bytes", svg)
+
+
+def _blank(text: str | None) -> bool:
+    """Whitespace-only text, by XML's whitespace characters."""
+    return text is not None and not text.strip(" \t\r\n")
 
 
 def _delta(obj_id: str, before: ObjectState, after: ObjectState) -> ObjectDelta:
@@ -918,6 +982,7 @@ def _delta(obj_id: str, before: ObjectState, after: ObjectState) -> ObjectDelta:
     figure = (
         FigureChange(before.figure, after.figure)
         if before.figure != after.figure
+        and _figure_key(before.figure) != _figure_key(after.figure)
         else None
     )
     # A links file that can't be read isn't "no links": comparing it would

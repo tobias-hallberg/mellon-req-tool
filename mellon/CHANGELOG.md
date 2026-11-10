@@ -15,10 +15,14 @@ All notable changes to Mellon. The format follows
   order (an ack-only change is **Link reviewed**), and shows each changed
   field at both versions with changed words highlighted. Filters, swap,
   copy to clipboard, double-click to jump; works in read-only mode and
-  compares in the background. The History tab has **Compare with latest…**.
+  compares in the background. Any version git's revision syntax names can
+  be typed (`HEAD~2`, `@~2`, a tag, a hash prefix), and each result names the
+  commit each version resolved to. Comparing with the working copy first
+  saves text still being typed. The History tab has **Compare with latest…**.
   Specified first, in `MELLON-VER-SRS`, Mellon's own requirements, kept in
   this repo next to its test cases in `MELLON-VER-STS`.
-- **MCP `compare_document`** returns the same changes (46 tools).
+- **MCP `compare_document`** returns the same changes, and the full hash of
+  the commit each version resolved to as `commit` (46 tools).
 - `tests/test_mellon_spec.py`: fails when a test case in Mellon's own
   specification lists a pytest node id that names no test, so the test
   specification can't drift from the suite. It also checks that each
@@ -31,7 +35,9 @@ All notable changes to Mellon. The format follows
   `docs/definitions.md` holds the terms, and `docs/architecture.md` describes
   the design.
 - `diff.compare_document` covers outline moves, tables, figures and the
-  working copy (`WORKING_COPY`); new `document_versions`, `default_versions`,
+  working copy (`WORKING_COPY`), counts a figure rewritten only in how its
+  XML is written as no change, and gives each version's commit in full
+  (`commit_a`, `commit_b`); new `document_versions`, `default_versions`,
   `word_diff`. Also `loader.parse_object_bytes` / `parse_links_bytes` /
   `parse_manifest_bytes` and `git_ops.issue_tags`.
 - **`mellon-check`.** A pass/fail gate for CI: exit 0 when clean, 1 for any

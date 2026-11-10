@@ -458,6 +458,17 @@ def test_compare_document_working_copy(req_test_copy: Path) -> None:
     assert added[0]["object"]["figure"] is False
 
 
+def test_compare_document_returns_each_commit_in_full(req_test_copy: Path) -> None:
+    # MELLON-VER-SRS-87, beside the 7-digit `short` other clients read; and
+    # -9: git reads @ as HEAD, here too.
+    repo = pygit2.Repository(str(req_test_copy))
+    issue = repo.revparse_single("VCU3-SRS-issue-1").peel(pygit2.Commit).id
+    out = server.compare_document("VCU3-SRS", to_ref="@~0")
+    assert out["from"]["commit"] == str(issue)
+    assert out["to"]["commit"] == str(repo.head.target)
+    assert out["from"]["short"] == str(issue)[:7]
+
+
 def test_compare_document_caps_the_list(req_test_copy: Path) -> None:
     out = server.compare_document("VCU3-SRS", max_changes=2)
     assert len(out["changes"]) == 2

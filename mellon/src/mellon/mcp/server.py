@@ -2197,6 +2197,10 @@ def compare_document(
     commit. `from_ref` defaults to the latest issue, or the issue before it
     when the document hasn't changed since; with no issue, pass it.
 
+    `from` and `to` name each version as given (`ref`) and the commit it
+    resolved to: `commit`, the full hash, and `short`, its first 7 digits.
+    The working copy has no commit: its `short` is `"working copy"`.
+
     `changes` come in outline order. Each has `changes` (Added, Deleted,
     Modified, Moved, Link reviewed) and the first line of the object's
     `text`. A modified object carries its changed fields with `from` and `to`

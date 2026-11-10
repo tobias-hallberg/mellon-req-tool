@@ -343,8 +343,14 @@ def _link_change(link) -> dict:
     }
 
 
-def _version_to_dict(ref: str, short: str, present: bool, outline_error: str | None) -> dict:
+def _version_to_dict(
+    ref: str, short: str, commit: str | None, present: bool, outline_error: str | None
+) -> dict:
     out: dict = {"ref": ref, "short": short, "present": present}
+    # MELLON-VER-SRS-87: the full hash of the commit the version resolved to
+    # (`short` is its first 7 digits, or "working copy", which has none).
+    if commit is not None:
+        out["commit"] = commit
     if outline_error:
         out["outline_error"] = outline_error
     return out
@@ -360,8 +366,12 @@ def document_diff_to_dict(diff, *, max_changes: int | None = None) -> dict:
     shown = changes if max_changes is None else changes[:max_changes]
     return {
         "doc_id": diff.doc_id,
-        "from": _version_to_dict(diff.ref_a, diff.short_a, diff.present_a, diff.outline_error_a),
-        "to": _version_to_dict(diff.ref_b, diff.short_b, diff.present_b, diff.outline_error_b),
+        "from": _version_to_dict(
+            diff.ref_a, diff.short_a, diff.commit_a, diff.present_a, diff.outline_error_a
+        ),
+        "to": _version_to_dict(
+            diff.ref_b, diff.short_b, diff.commit_b, diff.present_b, diff.outline_error_b
+        ),
         "counts": {str(kind): n for kind, n in diff.counts().items()},
         "total_changes": len(changes),
         "changes": [object_change_to_dict(c, diff.label) for c in shown],

@@ -7,8 +7,10 @@ shows the selected object's changed fields at From and at To.
 
 The comparison itself is `DocumentService.compare_document`, run on the
 thread pool so the editor stays responsive. It only reads, so the dialog is
-available in read-only mode too. Non-modal: double-clicking a row selects
-the object in the Document Editor and leaves the dialog open.
+available in read-only mode too; before comparing with the working copy, it
+asks the Document Editor to save its pending edits (`save_pending_edits`).
+Non-modal: double-clicking a row selects the object in the Document Editor
+and leaves the dialog open.
 
 Specified in MELLON-VER-SRS, under "Compare".
 """
@@ -16,6 +18,7 @@ Specified in MELLON-VER-SRS, under "Compare".
 from __future__ import annotations
 
 import html
+import re
 from typing import Callable
 
 from PySide6.QtCore import QByteArray, QObject, QRunnable, QSignalBlocker, Qt, QThreadPool, QUrl, Signal
@@ -372,6 +375,28 @@ def counts_text(diff: DocumentDiff) -> str:
     return ", ".join(parts)
 
 
+# A picked version's label can end in the hash its commit had when the list
+# was made, as in "Issue 1 (aa0a762)"; a result gives the hash it compared.
+_HASH_SUFFIX = re.compile(r" \([0-9a-f]{7,40}\)$")
+
+
+def version_text(label: str, short: str, commit: str | None) -> str:
+    """A version as a result names it: `label`, as From or To read, and the
+    commit it resolved to (`short`, its first 7 digits).
+
+    MELLON-VER-SRS-67: every version, typed or picked, with the hash of the
+    commit it resolved to, unless its label starts with that hash already
+    (a commit, or a typed hash). The working copy (`commit` None) has no
+    commit, and its label says it is the working copy.
+    """
+    if commit is None:
+        return label
+    label = _HASH_SUFFIX.sub("", label)
+    if label.startswith(short):
+        return label
+    return f"{label} ({short})"
+
+
 def change_label(change: ObjectChange) -> str:
     text = ", ".join(str(k) for k in change.kinds)
     err_a, err_b = change.errors
@@ -388,6 +413,11 @@ class CompareDialog(QDialog):
     """Compare one document between two versions. Open it with `start`."""
 
     PROMPT = "Choose a version to compare from."
+
+    # Emitted before comparing with the working copy, for the Document
+    # Editor to save its pending edits. Connect it directly, so they are
+    # saved before the comparison starts.
+    save_pending_edits = Signal()
 
     def __init__(
         self,
@@ -586,6 +616,11 @@ class CompareDialog(QDialog):
             else:
                 self._show_message(self.PROMPT)
             return
+        # MELLON-VER-SRS-73: the working copy is the files on disk, so text
+        # still being typed is saved first: here, on the GUI thread, before
+        # the job reads the files. Comparing two commits saves nothing.
+        if WORKING_COPY in (ref_a, ref_b):
+            self.save_pending_edits.emit()
         self._request += 1
         self._busy = True
         # Shown with the result; a failure keeps the previous result's labels.
@@ -629,7 +664,12 @@ class CompareDialog(QDialog):
         self._end_busy()
         self.message_label.setVisible(False)
         self.diff = diff
-        self._labels = self._pending_labels
+        # MELLON-VER-SRS-67: with the commit each version resolved to.
+        label_a, label_b = self._pending_labels
+        self._labels = (
+            version_text(label_a, diff.short_a, diff.commit_a),
+            version_text(label_b, diff.short_b, diff.commit_b),
+        )
         self._populate()
         problems = [
             f"Can't read the outline at {side}: {err}. Moved objects aren't shown."

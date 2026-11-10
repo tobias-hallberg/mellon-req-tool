@@ -1235,6 +1235,9 @@ class DocumentEditorWindow(QMainWindow):
         if dlg is None:
             dlg = CompareDialog(self.controller, self._doc_id, self)
             dlg.destroyed.connect(self._forget_compare_dialog)
+            dlg.save_pending_edits.connect(
+                self._save_pending_edits_for_compare, Qt.ConnectionType.DirectConnection
+            )
             self._compare_dialog = dlg
             dlg.start(from_ref, to_ref)
         elif from_ref is not None or to_ref is not None:
@@ -1246,6 +1249,15 @@ class DocumentEditorWindow(QMainWindow):
 
     def _forget_compare_dialog(self, *_args) -> None:
         self._compare_dialog = None
+
+    def _save_pending_edits_for_compare(self) -> None:
+        # MELLON-VER-SRS-73: save the pending edits before comparing with the
+        # working copy. Each writes only what it writes on focus-out
+        # (MELLON-VER-SRS-56). Not while the "Changed on disk" banner is up:
+        # the save would be refused and the typed text dropped (as in
+        # `_prepare_edit`), so it stays in its editor.
+        if not self._read_only and not self.grid_pane.is_stale():
+            self.flush_pending_edits()
 
     # --- figures --------------------------------------------------------
 
