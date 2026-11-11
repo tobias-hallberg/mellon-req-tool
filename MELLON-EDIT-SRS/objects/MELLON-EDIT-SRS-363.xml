@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-SRS-363">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the blind tests found that the grid's editors save 314 for 3.14 typed into an integer, 1.23 for 1.2.3 typed into a real, and the current year for 0001-01-01 typed into a date. Each saved value fits its kind, so validation can't catch it, but the user never typed it. Should, because the user sees the saved value in the grid.</attr>
+  <description>When the user leaves an integer, real or date attribute's editor, the Document Editor should either save the typed value unchanged or refuse the typed value.</description>
+</object>

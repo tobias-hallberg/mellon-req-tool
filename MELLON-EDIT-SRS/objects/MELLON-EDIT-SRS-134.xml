@@ -5,5 +5,5 @@
   <attr name="status">Implemented</attr>
   <attr name="level">High</attr>
   <attr name="rationale">stakeholder: as for MELLON-EDIT-SRS-132. The same phrase as MELLON-EDIT-SRS-37 and MELLON-CHECK-SRS-21 (review Q18).</attr>
-  <description>When the user edits a date attribute, the Document Editor shall accept only an empty value or a date naming a day from 0001-01-01 to 9999-12-31.</description>
+  <description>When the user edits a date attribute, the Document Editor shall accept an empty value and each date naming a day from 0001-01-01 to 9999-12-31, and no other value.</description>
 </object>
