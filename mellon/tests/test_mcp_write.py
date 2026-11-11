@@ -9,13 +9,28 @@ original.
 from __future__ import annotations
 
 import asyncio
+import os
 import shutil
 from pathlib import Path
 
 import pytest
+from lxml import etree
 from mcp.server.fastmcp.exceptions import ToolError
 
 from mellon.mcp import server
+from mellon.service import DocumentService
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    _BAD_SLUGS,
+    _EXE,
+    changed,
+    git,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    mcp_at,  # noqa: F401, F811 -- fixture
+    read_only_repo,  # noqa: F401, F811 -- fixture
+    slug_doc,  # noqa: F401, F811 -- fixture
+    snapshot,
+)
 
 
 # --- helper ---------------------------------------------------------------
@@ -1687,3 +1702,92 @@ def test_export_document_real_compile(mcp_repo: Path) -> None:
     assert result["ok"] is True
     blob = Path(result["out_path"]).read_bytes()
     assert blob.startswith(b"%PDF")
+
+
+# MELLON-STORE-SRS blind tests
+
+
+def test_store_srs_65_mcp_issue_tag_keeps_issue_out_of_manifest(tmp_path, git_env, mcp_at):
+    """MELLON-STORE-SRS-65: through the MCP commit and issue tools, a new issue
+    is the tag DOC-issue-2 on the commit, and the manifest there holds no issue
+    element."""
+    root = git_init(git_env, tmp_path / "iss")
+    svc = DocumentService(root)
+    svc.create_document("DOC", title="Issued")
+    svc.create_object("DOC", description="First")
+    svc.commit_document("DOC", "Issue 1", new_issue="1")
+    mcp_at(root)
+    assert server.edit_description("DOC", "DOC-0", "Second")["ok"]
+    assert server.commit_changes("Second")["ok"]
+    assert server.tag_issue("DOC", "2")["ok"]
+    head = git(git_env, root, "rev-parse", "HEAD")
+    assert git(git_env, root, "rev-parse", "DOC-issue-2^{commit}") == head
+    manifest = git(git_env, root, "show", "HEAD:DOC/DOC.xml")
+    assert etree.fromstring(manifest.encode()).findall(".//issue") == [], manifest
+
+
+@pytest.mark.parametrize("slug", _BAD_SLUGS, ids=repr)
+@pytest.mark.parametrize("action", ["delete", "rename", "edit"])
+def test_store_srs_155_bad_slug_refused_by_manage_view(slug_doc, mcp_at, action, slug):
+    """MELLON-STORE-SRS-155: the MCP server's manage_view refuses each bad slug
+    for delete, rename and edit, and no file changes."""
+    root = slug_doc.parent
+    mcp_at(root)
+    before = snapshot(root)
+    kwargs = {"slug": slug}
+    if action == "rename":
+        kwargs["name"] = "Renamed"
+    if action == "edit":
+        kwargs["visible_attrs"] = ["rationale"]
+    try:
+        result = server.manage_view("DOC", action, **kwargs)
+    except Exception:  # a raised tool error is a refusal too
+        result = {"ok": False}
+    assert not result.get("ok"), result
+    assert changed(before, snapshot(root)) == []
+
+
+@pytest.mark.parametrize("action", ["delete", "rename", "edit"])
+def test_store_srs_155_good_slug_accepted_by_manage_view(slug_doc, mcp_at, action):
+    """MELLON-STORE-SRS-155 (other side of the boundary): the slug main matches
+    the pattern, so manage_view carries out the same delete, rename and edit
+    requests; this also shows the refusals above aren't caused by the call."""
+    root = slug_doc.parent
+    mcp_at(root)
+    kwargs = {"slug": "main"}
+    if action == "rename":
+        kwargs["name"] = "Renamed"
+    if action == "edit":
+        kwargs["visible_attrs"] = ["rationale"]
+    before = snapshot(root)
+    result = server.manage_view("DOC", action, **kwargs)
+    assert result.get("ok"), result
+    assert changed(before, snapshot(root)) != []
+
+
+def _tectonic() -> str | None:
+    if os.environ.get("MELLON_TECTONIC"):
+        return os.environ["MELLON_TECTONIC"]
+    found = shutil.which("tectonic")
+    if found:
+        return found
+    built = Path(__file__).resolve().parents[1] / "build" / "dist" / "Mellon" / "tools" / f"tectonic{_EXE}"
+    return str(built) if built.exists() else None
+
+
+def test_store_srs_210_export_changes_no_file(read_only_repo, tmp_path, mcp_at, monkeypatch):
+    """MELLON-STORE-SRS-210: when Mellon exports a document, it leaves each data
+    file and figure file unchanged. Exporting PARENT, which has a figure, to a
+    PDF outside the repository changes no file of the repository."""
+    root, _ = read_only_repo
+    tectonic = _tectonic()
+    if tectonic is None:
+        pytest.skip("tectonic isn't available, so a PDF can't be exported here")
+    monkeypatch.setenv("MELLON_TECTONIC", tectonic)
+    mcp_at(root)
+    before = snapshot(root, include_git=False)
+    out = tmp_path / "out" / "parent.pdf"
+    out.parent.mkdir()
+    result = server.export_document("PARENT", str(out))
+    assert result.get("ok") and out.is_file(), result
+    assert changed(before, snapshot(root, include_git=False)) == []

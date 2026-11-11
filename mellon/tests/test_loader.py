@@ -6,10 +6,23 @@ import time
 from pathlib import Path
 
 import pytest
+from lxml import etree
 
 from mellon import load_document, loader
 from mellon.loader import LoaderError
+from mellon.schema import table_geometry_errors
 from tests.test_editor import new_document, populate, write_next
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    DECL,
+    DEFAULT_ATTRS,
+    _read_text,
+    links_xml,
+    load_with_errors,
+    make_doc,
+    manifest_xml,
+    object_xml,
+    write,
+)
 
 
 def test_load_minimal_document(doc_folder: Path) -> None:
@@ -735,3 +748,201 @@ def test_store_srs_1_manifest_without_number_still_loads(tmp_path):
     assert set(doc.objects) == set(ids), (
         f"a manifest without next-object-number loaded objects {sorted(doc.objects)}, expected {sorted(ids)}"
     )
+
+
+# MELLON-STORE-SRS blind tests
+
+
+def _full_doc(root: Path) -> Path:
+    """DOC with every kind of data file: manifest, objects, links, view, filter, rules."""
+    folder = make_doc(root, "DOC", n=2)
+    write(folder / "links" / "DOC-2.xml", links_xml("DOC-2", [("DOC", "DOC-1", "refines")]))
+    write(folder / "views" / "dev.xml",
+          DECL + '<view name="Dev">\n  <attribute name="status"/>\n  <attribute name="rationale"/>\n</view>\n')
+    write(folder / "filters" / "drafts.xml",
+          DECL + '<filter name="Drafts" combinator="all" keep-ancestors="true">\n'
+          '  <rule kind="attr" op="eq" attr="status" value="Draft"/>\n</filter>\n')
+    write(folder / "DOC.rules.xml",
+          DECL + '<rules>\n  <rule>\n    <when type="Heading"/>\n'
+          '    <then>\n      <attr name="rationale" status="forbidden"/>\n    </then>\n'
+          "  </rule>\n</rules>\n")
+    return folder
+
+
+_KIND_FILES = {
+    "manifest": ("DOC.xml", "metadata"),
+    "object": ("objects/DOC-1.xml", "attr"),
+    "links": ("links/DOC-2.xml", "link"),
+    "view": ("views/dev.xml", "attribute"),
+    "filter": ("filters/drafts.xml", "rule"),
+    "rules": ("DOC.rules.xml", "rule"),
+}
+
+
+@pytest.mark.parametrize("kind", list(_KIND_FILES))
+def test_store_srs_46_undefined_elements_and_attributes_are_ignored(tmp_path, kind):
+    """MELLON-STORE-SRS-46: when Mellon reads a data file, it shall read the file
+    as if each element and XML attribute the format doesn't define were absent.
+    Adding <extra>x</extra> under the root, extra="1" on the root and on one
+    child gives no load error and the same document as without them."""
+    root = tmp_path / "r"
+    folder = _full_doc(root)
+    baseline = load_document(folder)
+    rel, child_tag = _KIND_FILES[kind]
+    path = folder / rel
+    tree = etree.parse(str(path))
+    el = tree.getroot()
+    el.set("extra", "1")
+    el.find(child_tag).set("extra", "1")
+    extra = etree.Element("extra")
+    extra.text = "x"
+    extra.tail = "\n  "
+    el.insert(0, extra)
+    tree.write(str(path), xml_declaration=True, encoding="UTF-8")
+    assert b"<extra>x</extra>" in path.read_bytes(), "precondition"
+    docs, errors = load_with_errors(root)
+    assert errors == {}, errors
+    assert docs["DOC"].document == baseline
+
+
+def test_store_srs_61_hand_written_metadata_is_read(tmp_path):
+    """MELLON-STORE-SRS-61: the manifest holds title, author and date as title,
+    author and date elements inside metadata; a hand-written one reads as
+    title T, author A, date 2026-04-21."""
+    folder = make_doc(tmp_path, metadata="<title>T</title><author>A</author><date>2026-04-21</date>")
+    meta = load_document(folder).metadata
+    assert (meta.title, meta.author, meta.date) == ("T", "A", "2026-04-21")
+
+
+def test_store_srs_62_empty_metadata_element(tmp_path):
+    """MELLON-STORE-SRS-62: Mellon shall read a manifest whose metadata element
+    is empty (<metadata/>): no load error; title, author and date are empty."""
+    root = tmp_path / "r"
+    make_doc(root, metadata="")
+    assert b"<metadata/>" in (root / "DOC" / "DOC.xml").read_bytes(), "precondition"
+    docs, errors = load_with_errors(root)
+    assert errors == {}, errors
+    meta = docs["DOC"].document.metadata
+    assert (meta.title, meta.author, meta.date) == ("", "", "")
+
+
+def test_store_srs_75_hand_written_label_is_read(tmp_path):
+    """MELLON-STORE-SRS-75: an attribute definition holds its label in a label
+    attribute; label="Requirement Type" reads as that label."""
+    attrs = DEFAULT_ATTRS + (
+        '    <attribute name="req-type" label="Requirement Type" kind="enum">\n'
+        "      <option>Functional</option>\n    </attribute>\n"
+    )
+    folder = make_doc(tmp_path, attributes=attrs)
+    assert load_document(folder).attribute("req-type").label == "Requirement Type"
+
+
+def test_store_srs_89_hand_written_line_breaks_kept(tmp_path):
+    """MELLON-STORE-SRS-89: Mellon shall keep each line break in a description.
+    A hand-written description of the lines 'one', '' and 'three' reads as
+    'one\\n\\nthree'."""
+    folder = make_doc(tmp_path)
+    write(folder / "objects" / "DOC-1.xml", object_xml("DOC-1", description="one\n\nthree"))
+    assert load_document(folder).objects["DOC-1"].description == "one\n\nthree"
+
+
+def test_store_srs_101_center_alignment_read_from_file(tmp_path):
+    """MELLON-STORE-SRS-101: a col element holds the alignment left, center or
+    right in align. A hand-written <col align="center"/> reads as centred."""
+    folder = make_doc(tmp_path)
+    write(folder / "objects" / "DOC-1.xml", object_xml(
+        "DOC-1",
+        table='<columns><col/><col align="center"/></columns><row><cell>a</cell><cell>b</cell></row>'))
+    table = load_document(folder).objects["DOC-1"].table
+    assert [c.align for c in table.columns] == ["left", "center"]
+
+
+_ROWSPAN_TABLE_XML = (
+    '<columns><col/><col/></columns>'
+    '<row><cell rowspan="2">spans</cell><cell>top</cell></row>'
+    '<row><cell>bottom</cell></row>'
+)
+
+
+def test_store_srs_107_row_span_read_from_file(tmp_path):
+    """MELLON-STORE-SRS-107: a cell's rowspan holds the rows it spans. A 2x2 table
+    whose first cell has rowspan="2" and whose second row holds one cell reads
+    with that span, and the second row's cell tiles column 2 (no tiling error)."""
+    folder = make_doc(tmp_path)
+    write(folder / "objects" / "DOC-1.xml", object_xml("DOC-1", table=_ROWSPAN_TABLE_XML))
+    table = load_document(folder).objects["DOC-1"].table
+    assert table.rows[0].cells[0].rowspan == 2
+    assert [c.text for c in table.rows[1].cells] == ["bottom"]
+    assert table_geometry_errors(table) == []
+
+
+def test_store_srs_149_operator_not_fitting_kind_still_loads(tmp_path):
+    """MELLON-STORE-SRS-149: if an operator in a filter file doesn't fit the kind
+    of the attribute tested, Mellon shall read the document without a load
+    error. before on an integer and lt on an enumeration both load and are
+    listed."""
+    root = tmp_path / "r"
+    folder = make_doc(root, attributes=DEFAULT_ATTRS + '    <attribute name="count" kind="integer"/>\n')
+    write(folder / "filters" / "int-before.xml",
+          DECL + '<filter name="Int before">\n  <rule kind="attr" op="before" attr="count" value="2026-01-01"/>\n</filter>\n')
+    write(folder / "filters" / "enum-lt.xml",
+          DECL + '<filter name="Enum lt">\n  <rule kind="attr" op="lt" attr="status" value="Draft"/>\n</filter>\n')
+    docs, errors = load_with_errors(root)
+    assert errors == {}, errors
+    assert sorted(f.name for f in docs["DOC"].document.filters) == ["Enum lt", "Int before"]
+
+
+def test_store_srs_164_link_directive_without_status_is_required(tmp_path):
+    """MELLON-STORE-SRS-164: a then element's link directive has a status holding
+    required or left out. <link target-doc="PARENT"/> reads as required."""
+    root = tmp_path / "r"
+    make_doc(root, "PARENT", n=1)
+    folder = make_doc(root, "DOC", parents=("PARENT",))
+    write(folder / "DOC.rules.xml",
+          DECL + '<rules>\n  <rule>\n    <when type="Requirement"/>\n'
+          '    <then>\n      <link target-doc="PARENT"/>\n    </then>\n  </rule>\n</rules>\n')
+    (rule,) = load_document(folder).rules
+    assert [(d.target_doc, d.status) for d in rule.link_directives] == [("PARENT", "required")]
+
+
+def _crlf_or_lf_doc(root: Path, eol: str) -> Path:
+    def w(path, s):
+        write(path, s.replace("\n", eol))
+
+    folder = root / "DOC"
+    w(folder / "DOC.xml", manifest_xml("DOC", ["DOC-1", "DOC-2"]))
+    w(folder / "objects" / "DOC-1.xml", object_xml("DOC-1", description="line one\nline two"))
+    w(folder / "objects" / "DOC-2.xml", object_xml("DOC-2"))
+    w(folder / "links" / "DOC-1.xml", links_xml("DOC-1", [("DOC", "DOC-2", "refines")]))
+    w(folder / "views" / "dev.xml", DECL + '<view name="Dev">\n  <attribute name="status"/>\n</view>\n')
+    return folder
+
+
+def test_store_srs_207_crlf_reads_as_lf(tmp_path):
+    """MELLON-STORE-SRS-207: Mellon shall read a data file with CR LF line endings
+    as it reads the same file with LF. A manifest, an object file with a
+    two-line description, a links file and a view file read the same either way,
+    and the description's line break reads as one LF."""
+    crlf = _crlf_or_lf_doc(tmp_path / "crlf", "\r\n")
+    lf = _crlf_or_lf_doc(tmp_path / "lf", "\n")
+    assert b"\r\n" in (crlf / "objects" / "DOC-1.xml").read_bytes(), "precondition"
+    a, b = load_document(crlf), load_document(lf)
+    assert a == b
+    assert a.objects["DOC-1"].description == "line one\nline two"
+
+
+@pytest.mark.parametrize("where", ["description", "attribute", "cell"])
+def test_store_srs_217_whitespace_at_ends_removed_on_read(tmp_path, where):
+    """MELLON-STORE-SRS-217: when Mellon reads a description, attribute value or
+    table cell, it shall remove whitespace at the start and end of the text. A
+    hand-written '\\n    text\\n  ' reads as 'text'."""
+    folder = make_doc(tmp_path / "r")
+    padded = "\n    text\n  "
+    if where == "description":
+        content = object_xml("DOC-1", description=padded)
+    elif where == "attribute":
+        content = object_xml("DOC-1", attrs=(("type", "Requirement"), ("rationale", padded)))
+    else:
+        content = object_xml("DOC-1", table=f"<columns><col/></columns><row><cell>{padded}</cell></row>")
+    write(folder / "objects" / "DOC-1.xml", content)
+    assert _read_text(folder, where) == "text"

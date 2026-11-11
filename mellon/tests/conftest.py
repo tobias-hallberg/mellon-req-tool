@@ -397,3 +397,11 @@ def canon_repo(canon_template, tmp_path):
     dst = tmp_path / "repo"
     shutil.copytree(src, dst)
     return dst, info
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "slow: takes minutes, such as MELLON-STORE-SRS-238's 5,000-object document; "
+        "runs by default (deselect with -m 'not slow')",
+    )

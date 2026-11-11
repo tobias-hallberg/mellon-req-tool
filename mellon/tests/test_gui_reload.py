@@ -27,6 +27,23 @@ from tests.test_suspects import (  # noqa: E402
     _commit_all,
     _link_xml,
 )
+from mellon.loader import load_document  # noqa: E402
+from tests.store_support import (  # noqa: E402 -- MELLON-STORE-SRS blind tests
+    CONFLICT_HINT,
+    CONFLICT_LINE,
+    _break_doc_1,
+    _shows_load_error,
+    _svg_file,
+    changed,
+    git_commit_all,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    gui,  # noqa: F401, F811 -- fixture
+    make_doc,
+    read_only_repo,  # noqa: F401, F811 -- fixture
+    snapshot,
+    write,
+)
 
 
 @pytest.fixture
@@ -632,3 +649,167 @@ def test_refused_folder_keeps_the_open_repo(qtbot, repo_root, monkeypatch) -> No
     assert explorer.controller.root == repo_root.resolve()
     assert explorer._project_model.rowCount() == 2
     assert explorer._act_new_document.isEnabled()
+
+
+# MELLON-STORE-SRS blind tests
+
+
+@pytest.fixture
+def editor_repo(tmp_path, git_env):
+    root = git_init(git_env, tmp_path / "ed")
+    make_doc(root, "DOC", n=3)
+    git_commit_all(git_env, root, "seed")
+    return root
+
+
+def test_store_srs_37_reread_after_edit_names_file_and_line(gui, editor_repo):
+    """MELLON-STORE-SRS-37: when a Document Editor reads its document again and a
+    data file can't be read, it shall show the load error. After an edit to
+    DOC-2 while DOC-1.xml holds conflict markers, the window shows the file and
+    the line of the load error, not a general failure."""
+    ed = gui.editor(editor_repo, "DOC")
+    gui.set_read_only(ed, False)
+    _break_doc_1(editor_repo)
+    gui.messages.clear()
+    gui.grid_edit(ed, "DOC-2", "rationale", "edited after the break")
+    shown = _shows_load_error(gui, ed)
+    assert "DOC-1.xml" in shown, f"load error file not shown: {shown!r}"
+    assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="defect: MELLON-STORE-SRS-37: after an edit-triggered read the status bar shows "
+    "'Edit failed ...: XML parse error ...' without the load error's unresolved merge "
+    "conflict note (MELLON-STORE-SRS-30) that F5 shows",
+)
+def test_store_srs_37_reread_after_edit_says_merge_conflict(gui, editor_repo):
+    """MELLON-STORE-SRS-37 with -30: the load error the Document Editor shows
+    after an edit-triggered re-read is the load error, so for a file holding
+    conflict markers it says the file looks like an unresolved merge conflict."""
+    ed = gui.editor(editor_repo, "DOC")
+    gui.set_read_only(ed, False)
+    _break_doc_1(editor_repo)
+    gui.messages.clear()
+    gui.grid_edit(ed, "DOC-2", "rationale", "edited after the break")
+    shown = _shows_load_error(gui, ed)
+    assert "DOC-1.xml" in shown, f"precondition: the load error was shown: {shown!r}"
+    assert CONFLICT_HINT.search(shown), shown
+
+
+def _attempt(gui, ed, kind: str, tmp_path: Path):
+    from PySide6.QtWidgets import QFileDialog
+
+    if kind == "grid-cell":
+        gui.grid_edit(ed, "DOC-1", "rationale", "stale grid edit")
+        gui.grid_edit(ed, "DOC-2", "rationale", "stale grid edit")
+    elif kind == "inspector-description":
+        gui.inspector_description(ed, "DOC-1", "stale inspector text")
+    elif kind == "new-sibling":
+        gui.select(ed, "DOC-2")
+        gui.trigger(ed, "New")
+    elif kind == "attach-figure":
+        svg = _svg_file(tmp_path)
+        gui.monkeypatch.setattr(QFileDialog, "getOpenFileName",
+                                staticmethod(lambda *a, **k: (str(svg), "SVG (*.svg)")))
+        gui.select(ed, "DOC-2")
+        ed.grid_pane.attach_figure("DOC", "DOC-2")
+        gui.process()
+    elif kind == "table":
+        gui.select(ed, "DOC-2")
+        ed.grid_pane.insert_table("DOC", "DOC-2")
+        gui.process()
+    else:  # pragma: no cover
+        raise AssertionError(kind)
+
+
+EDIT_KINDS = ["grid-cell", "inspector-description", "new-sibling", "attach-figure", "table"]
+
+
+@pytest.mark.parametrize("kind", EDIT_KINDS)
+def test_store_srs_39_edits_refused_while_document_cant_be_read(gui, editor_repo, tmp_path, kind):
+    """MELLON-STORE-SRS-39: while a Document Editor shows a copy of a document
+    that can't be read now, it shall refuse each edit, also after the user
+    leaves read-only mode. After F5 with DOC-1.xml broken, the edit is refused;
+    after read-only mode is switched on and off it is refused again; every file
+    in DOC's folder keeps its bytes."""
+    ed = gui.editor(editor_repo, "DOC")
+    gui.set_read_only(ed, False)
+    _break_doc_1(editor_repo)
+    gui.trigger(ed, "Reload from disk")
+    assert any("DOC-1.xml" in t for _, _, t in gui.messages), "precondition: F5 showed the load error"
+    folder = editor_repo / "DOC"
+    before = snapshot(folder)
+    _attempt(gui, ed, kind, tmp_path)
+    assert changed(before, snapshot(folder)) == [], "an edit was written while DOC can't be read"
+    gui.set_read_only(ed, True)
+    gui.set_read_only(ed, False)
+    _attempt(gui, ed, kind, tmp_path)
+    assert changed(before, snapshot(folder)) == [], "an edit was written after leaving read-only mode"
+
+
+@pytest.mark.parametrize("kind", EDIT_KINDS)
+def test_store_srs_39_same_edit_is_written_while_document_reads(gui, editor_repo, tmp_path, kind):
+    """MELLON-STORE-SRS-39 (other side of the condition): while the document can
+    be read and read-only mode is off, the same edit is written to DOC's folder.
+    This also shows that the refusal test above makes real edits."""
+    ed = gui.editor(editor_repo, "DOC")
+    gui.set_read_only(ed, False)
+    folder = editor_repo / "DOC"
+    before = snapshot(folder)
+    _attempt(gui, ed, kind, tmp_path)
+    assert changed(before, snapshot(folder)) != [], f"the {kind} edit wrote nothing"
+
+
+@pytest.fixture
+def recovered_editor(gui, editor_repo, tmp_path):
+    ed = gui.editor(editor_repo, "DOC")
+    gui.set_read_only(ed, False)
+    good = _break_doc_1(editor_repo)
+    gui.trigger(ed, "Reload from disk")
+    _attempt(gui, ed, "grid-cell", tmp_path)
+    write(editor_repo / "DOC" / "objects" / "DOC-1.xml", good)
+    gui.messages.clear()
+    gui.trigger(ed, "Reload from disk")
+    return ed
+
+
+def test_store_srs_40_reload_without_load_error_allows_edits(gui, recovered_editor, editor_repo):
+    """MELLON-STORE-SRS-40: when a Document Editor reads its document again
+    without a load error, it shall stop refusing edits for the load error. After
+    DOC-1.xml is restored and F5 pressed, the Changed on disk banner is gone, no
+    load error is shown, and with read-only mode off a grid edit is written."""
+    ed = recovered_editor
+    assert not gui.stale_banner_shown(ed), "Changed on disk banner still shown"
+    assert not any("DOC-1.xml" in t for _, _, t in gui.messages), gui.messages
+    gui.set_read_only(ed, False)
+    gui.grid_edit(ed, "DOC-2", "rationale", "after recovery")
+    obj = load_document(editor_repo / "DOC").objects["DOC-2"]
+    assert obj.attrs.get("rationale") == "after recovery", obj
+
+
+def test_store_srs_40_read_only_mode_still_applies_after_reload(gui, recovered_editor, editor_repo):
+    """MELLON-STORE-SRS-40: after the reload, read-only mode applies as before:
+    with read-only mode on, a grid edit stays refused."""
+    ed = recovered_editor
+    gui.set_read_only(ed, True)
+    folder = editor_repo / "DOC"
+    before = snapshot(folder)
+    gui.grid_edit(ed, "DOC-2", "rationale", "read-only edit")
+    assert changed(before, snapshot(folder)) == []
+
+
+def test_store_srs_210_gui_open_and_reload_change_no_file(gui, read_only_repo):
+    """MELLON-STORE-SRS-210: when Mellon opens or reloads a document, it shall
+    leave each data file and figure file unchanged. Opening the repository in
+    the Project Explorer and both documents in Document Editors, and pressing F5
+    in each, changes no file outside .git."""
+    root, _ = read_only_repo
+    before = snapshot(root, include_git=False)
+    pe, ok = gui.explorer(root)
+    assert ok
+    eds = [gui.editor(root, d) for d in ("PARENT", "CHILD")]
+    gui.press_f5(pe)
+    for ed in eds:
+        gui.press_f5(ed)
+    assert changed(before, snapshot(root, include_git=False)) == []

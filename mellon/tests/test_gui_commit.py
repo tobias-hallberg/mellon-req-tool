@@ -16,6 +16,20 @@ import pygit2
 import pytest
 
 from tests.test_git_ops import no_git_identity  # noqa: F401 — fixture
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    CONFLICT_HINT,
+    CONFLICT_LINE,
+    PartialWrites,
+    _break_doc_1,
+    _shows_load_error,
+    git,
+    git_commit_all,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    gui,  # noqa: F401, F811 -- fixture
+    make_doc,
+    write,
+)
 
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -1187,3 +1201,99 @@ def test_build_dirty_ids_picks_up_figure_edit(qtbot, git_doc_repo: Path):
 
     assert controller.build_dirty_ids("CHILD") == frozenset({"CHILD-0"})
     assert controller.build_dirty_ids("PARENT") == frozenset()
+
+
+# MELLON-STORE-SRS blind tests
+
+
+@pytest.fixture
+def authorless_editor_repo(tmp_path, git_env):
+    """DOC's manifest has no author, so the Commit dialog writes one and so reads
+    DOC again. (With author and date already set, 0.3.0 reads no object file
+    while committing, so there is no re-read to observe.)"""
+    root = git_init(git_env, tmp_path / "ed")
+    make_doc(root, "DOC", n=3, metadata="<title>T</title>")
+    git_commit_all(git_env, root, "seed")
+    return root
+
+
+def _commit_via_dialog(gui, ed):
+    from PySide6.QtWidgets import QDialog
+
+    def accept(dialog):
+        gui.messages.append(("dialog", dialog.windowTitle(), ""))
+        dialog.accept()
+        return dialog.result()
+
+    gui.monkeypatch.setattr(QDialog, "exec", accept)
+    gui.trigger(ed, "Commit")
+
+
+def test_store_srs_37_reread_in_commit_dialog_names_file_and_line(gui, authorless_editor_repo):
+    """MELLON-STORE-SRS-37: when the Document Editor reads DOC again while
+    committing it in the Commit dialog and DOC-1.xml holds conflict markers,
+    the window shows the load error's file and line, not a general failure."""
+    root = authorless_editor_repo
+    ed = gui.editor(root, "DOC")
+    gui.set_read_only(ed, False)
+    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
+    _break_doc_1(root)
+    gui.messages.clear()
+    _commit_via_dialog(gui, ed)
+    shown = _shows_load_error(gui, ed)
+    assert "DOC-1.xml" in shown, f"load error file not shown: {shown!r}"
+    assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="defect: MELLON-STORE-SRS-37: when the Commit dialog's save reads DOC again, the "
+    "status bar shows 'Metadata save failed (author): ... XML parse error ...' without the "
+    "load error's unresolved merge conflict note (MELLON-STORE-SRS-30)",
+)
+def test_store_srs_37_reread_in_commit_dialog_says_merge_conflict(gui, authorless_editor_repo):
+    """MELLON-STORE-SRS-37 with -30: the load error shown after the Commit
+    dialog's re-read says the file looks like an unresolved merge conflict."""
+    root = authorless_editor_repo
+    ed = gui.editor(root, "DOC")
+    gui.set_read_only(ed, False)
+    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
+    _break_doc_1(root)
+    gui.messages.clear()
+    _commit_via_dialog(gui, ed)
+    shown = _shows_load_error(gui, ed)
+    assert "DOC-1.xml" in shown, f"precondition: the load error was shown: {shown!r}"
+    assert CONFLICT_HINT.search(shown), shown
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="defect: MELLON-STORE-SRS-167 (CF-S34): when the Commit dialog's commit fails, the "
+    "manifest is put back by a plain write, so a put-back failing partway leaves the manifest cut",
+)
+def test_store_srs_167_commit_dialog_put_back_failing_partway(gui, tmp_path, git_env):
+    """MELLON-STORE-SRS-167 (CF-S34): in the Commit dialog, when the commit fails
+    and then the put-back of the manifest fails partway, the manifest holds its
+    content before the put-back or the full content put back."""
+    root = git_init(git_env, tmp_path / "pb")
+    make_doc(root, metadata="<title>T</title>")  # no author: the dialog writes one
+    git_commit_all(git_env, root, "seed")
+    manifest = root / "DOC" / "DOC.xml"
+    original = manifest.read_bytes()
+    ed = gui.editor(root, "DOC")
+    gui.set_read_only(ed, False)
+    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
+    head = git(git_env, root, "rev-parse", "HEAD")
+    write(root / ".git" / "index.lock", b"")  # the commit fails
+    inj = PartialWrites(gui.monkeypatch, root / "DOC", nth=2)
+    with gui.qtbot.capture_exceptions():  # what the window does with the error isn't measured here
+        _commit_via_dialog(gui, ed)
+    inj.armed = False
+    (root / ".git" / "index.lock").unlink()
+    assert git(git_env, root, "rev-parse", "HEAD") == head, "precondition: the commit failed"
+    assert inj.fired, f"test error: the put-back wasn't intercepted ({inj.count} writes)"
+    assert inj.content_before is not None and inj.content_before != original, (
+        "precondition: the dialog had written an author before the commit"
+    )
+    now = manifest.read_bytes()
+    assert now in (original, inj.content_before), f"manifest left cut: {now!r}"

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
 
 import pygit2
 import pytest
 
+import mellon.mcp.server as mcp_server
 from mellon import (
     LinkState,
     discover_documents,
@@ -13,6 +15,7 @@ from mellon import (
     repo_incoming_links,
     scan_repo,
 )
+from mellon.loader import LoaderError, load_document
 from mellon.repo import (
     DocLoadError,
     doc_folder_names,
@@ -26,6 +29,18 @@ from tests.test_suspects import (
     PARENT_OBJ_V1,
     _commit_all,
     _link_xml,
+)
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    CONFLICTED_DOC_1,
+    CONFLICT_HINT,
+    DECL,
+    links_xml,
+    load_with_errors,
+    make_doc,
+    manifest_xml,
+    mcp_at,  # noqa: F401, F811 -- fixture
+    object_xml,
+    write,
 )
 
 
@@ -297,3 +312,179 @@ def test_folders_fingerprint_sees_a_same_size_replace(two_doc_repo):
     os.utime(tmp, ns=(stamp, stamp))
     os.replace(tmp, path)
     assert folders_fingerprint([doc]) != before
+
+
+# MELLON-STORE-SRS blind tests
+
+
+@pytest.fixture
+def discovery_repo(tmp_path):
+    root = tmp_path / "disc"
+    make_doc(root, "DOC")
+    write(root / ".archive" / ".archive.xml", manifest_xml(".archive"))
+    write(root / "DOC2" / "doc2.xml", manifest_xml("DOC2"))
+    write(root / "build" / "build.xml", DECL + '<project name="build">\n  <target name="all"/>\n</project>\n')
+    return root
+
+
+def test_store_srs_18_dot_folder_isnt_a_document(discovery_repo):
+    """MELLON-STORE-SRS-18: a folder whose name starts with a dot isn't a
+    document, even holding a valid manifest .archive/.archive.xml: it is neither
+    loaded nor listed with a load error."""
+    docs, errors = load_with_errors(discovery_repo)
+    assert ".archive" not in docs and ".archive" not in errors, (list(docs), list(errors))
+
+
+@pytest.mark.xfail(
+    sys.platform == "win32", strict=True,
+    reason="defect: MELLON-STORE-SRS-18: on Windows DOC2/doc2.xml makes DOC2 a document "
+    "that loads; the manifest name's letter case isn't checked",
+)
+def test_store_srs_18_manifest_name_letter_case_counts(discovery_repo):
+    """MELLON-STORE-SRS-18: a document's folder holds a file named <folder
+    name>.xml, letter case included. DOC2/doc2.xml doesn't make DOC2 a document
+    that loads, on a case-insensitive file system as on Linux."""
+    docs, _ = load_with_errors(discovery_repo)
+    assert "DOC2" not in docs, "DOC2 loaded from doc2.xml"
+
+
+def test_store_srs_18_matching_non_document_is_listed_with_load_error(discovery_repo, mcp_at):
+    """MELLON-STORE-SRS-18: a folder that matches but isn't a valid document,
+    build/build.xml with another root element, is listed with a load error (by
+    the library and by list_documents)."""
+    docs, errors = load_with_errors(discovery_repo)
+    assert "build" in errors and "build" not in docs, (list(docs), list(errors))
+    mcp_at(discovery_repo)
+    listed = {d["doc_id"]: d for d in mcp_server.list_documents()}
+    assert "load_error" in listed.get("build", {}), listed
+    assert ".archive" not in listed, listed
+
+
+def test_store_srs_18_valid_document_beside_them_loads(discovery_repo):
+    """MELLON-STORE-SRS-18: the valid document DOC beside these folders is a
+    document and loads without a load error."""
+    docs, errors = load_with_errors(discovery_repo)
+    assert "DOC" in docs and "DOC" not in errors
+    assert set(docs["DOC"].document.objects) == {"DOC-1", "DOC-2"}
+
+
+def test_store_srs_25_document_with_manifest_only(tmp_path):
+    """MELLON-STORE-SRS-25: Mellon shall read a document whose folder holds only
+    the manifest: no objects, links, figures, views or filters folder and no
+    rules file."""
+    root = tmp_path / "r"
+    write(root / "DOC" / "DOC.xml", manifest_xml("DOC"))
+    assert [p.name for p in (root / "DOC").iterdir()] == ["DOC.xml"], "precondition"
+    docs, errors = load_with_errors(root)
+    assert errors == {}, errors
+    doc = docs["DOC"].document
+    assert doc.objects == {} and doc.links == {}
+    assert doc.rules == () and doc.views == () and doc.filters == ()
+    assert doc.outline == ()
+
+
+@pytest.fixture
+def conflict_repo(tmp_path):
+    root = tmp_path / "c"
+    for d in ("CTRL", "NOEND"):
+        make_doc(root, d, n=1)
+    write(root / "CTRL" / "objects" / "CTRL-1.xml",
+          CONFLICTED_DOC_1.replace("DOC-1", "CTRL-1"))
+    write(root / "NOEND" / "objects" / "NOEND-1.xml",
+          DECL + '<object id="NOEND-1">\n  <attr name="type">Requirement</attr>\n'
+          "  <description>No end tag</description>\n")
+    docs, errors = load_with_errors(root)
+    assert CONFLICT_HINT.search(errors["CTRL"].message), (
+        "precondition: a file with all three markers is called a merge conflict"
+    )
+    return errors
+
+
+def test_store_srs_30_missing_end_tag_isnt_called_a_merge_conflict(conflict_repo):
+    """MELLON-STORE-SRS-30: the conflict note is for files holding conflict
+    markers (definitions: all three lines). An object file without its end tag
+    and no marker is a load error that doesn't say merge conflict."""
+    err = conflict_repo["NOEND"]
+    assert err.file is not None and err.file.name == "NOEND-1.xml", err
+    assert not CONFLICT_HINT.search(err.message), err.message
+
+
+def _assert_whole_document_refused(root: Path, doc_id: str, bad_name: str):
+    docs, errors = load_with_errors(root)
+    assert doc_id in errors, f"{doc_id} has no load error"
+    assert errors[doc_id].file is not None and errors[doc_id].file.name == bad_name, errors[doc_id]
+    assert doc_id not in docs, "the document was read in part"
+    with pytest.raises(LoaderError):
+        load_document(root / doc_id)
+
+
+def test_store_srs_31_truncated_object_file_is_load_error(tmp_path):
+    """MELLON-STORE-SRS-31: a data file that isn't well-formed XML is a load error
+    for its document, and the parser doesn't recover: an object file cut in half
+    inside an element fails, and no object of the document is read."""
+    root = tmp_path / "t"
+    folder = make_doc(root, n=2)
+    full = object_xml("DOC-1", description="The system shall keep each requirement whole on disk. " * 6)
+    cut = len(full) // 2
+    start = full.index("<description>") + len("<description>")
+    assert start < cut < full.index("</description>"), "precondition: cut inside an element"
+    write(folder / "objects" / "DOC-1.xml", full[:cut])
+    _assert_whole_document_refused(root, "DOC", "DOC-1.xml")
+
+
+def test_store_srs_31_zero_filled_object_file_is_load_error(tmp_path):
+    """MELLON-STORE-SRS-31: an object file of 512 zero bytes is a load error for
+    its document, and no object of the document is read."""
+    root = tmp_path / "z"
+    folder = make_doc(root, n=2)
+    write(folder / "objects" / "DOC-2.xml", b"\x00" * 512)
+    _assert_whole_document_refused(root, "DOC", "DOC-2.xml")
+
+
+def test_store_srs_85_duplicate_attr_name_is_load_error(tmp_path):
+    """MELLON-STORE-SRS-85: if an object file holds two attr elements with the
+    same name (status Draft and Approved), Mellon shall report a load error,
+    naming the object file."""
+    root = tmp_path / "r"
+    folder = make_doc(root)
+    write(folder / "objects" / "DOC-1.xml",
+          object_xml("DOC-1", attrs=(("type", "Requirement"), ("status", "Draft"), ("status", "Approved"))))
+    docs, errors = load_with_errors(root)
+    assert "DOC" in errors and "DOC" not in docs
+    assert errors["DOC"].file is not None and errors["DOC"].file.name == "DOC-1.xml", errors["DOC"]
+
+
+@pytest.mark.parametrize(
+    "table_xml",
+    [
+        '<columns><col/><col/></columns><row><cell colspan="3">wide</cell></row>',
+        '<columns><col/><col/></columns><row><cell>a</cell><cell>b</cell><cell>c</cell></row>',
+        '<columns><col/></columns><row><cell rowspan="3">tall</cell></row>',
+        '<columns><col/><col/></columns><row><cell rowspan="2">a</cell><cell>b</cell></row>'
+        '<row><cell>c</cell><cell>d</cell></row>',
+    ],
+    ids=["colspan-past-last-column", "too-many-cells", "rowspan-past-last-row", "covered-twice"],
+)
+def test_store_srs_113_table_that_doesnt_tile_is_load_error(tmp_path, table_xml):
+    """MELLON-STORE-SRS-113: if a table's cells don't cover each grid position
+    exactly once, or a cell spans past the last column or row, Mellon shall
+    report a load error."""
+    root = tmp_path / "r"
+    folder = make_doc(root)
+    write(folder / "objects" / "DOC-1.xml", object_xml("DOC-1", table=table_xml))
+    docs, errors = load_with_errors(root)
+    assert "DOC" in errors and "DOC" not in docs, "table that doesn't tile was read"
+
+
+def test_store_srs_119_links_source_must_match_file_name(tmp_path):
+    """MELLON-STORE-SRS-119: if a links file's name without .xml differs from its
+    source attribute, Mellon shall report a load error. links/DOC-1.xml with
+    source DOC-2 (both objects exist) is a load error naming the links file, so
+    no link is read from either object."""
+    root = tmp_path / "r"
+    folder = make_doc(root, n=3)
+    write(folder / "links" / "DOC-1.xml", links_xml("DOC-2", [("DOC", "DOC-3", "refines")]))
+    docs, errors = load_with_errors(root)
+    assert "DOC" in errors and "DOC" not in docs
+    err = errors["DOC"]
+    assert err.file is not None and err.file.parent.name == "links" and err.file.name == "DOC-1.xml", err

@@ -7,13 +7,17 @@ tiny git-backed repo inline for the handful of git-dependent methods.
 
 from __future__ import annotations
 
+import io
+import subprocess
 from pathlib import Path
 
 import pygit2
 import pytest
+from lxml import etree
 
 from mellon import editor
 from mellon.editor import DeleteReport, EditorError
+from mellon.loader import load_document
 from mellon.repo import DocLoadError
 from mellon.service import (
     DocumentService,
@@ -21,6 +25,20 @@ from mellon.service import (
     ServiceError,
 )
 from tests.test_repo import _write_merge_conflict
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    DEFAULT_ATTRS,
+    _ENUM_ATTRS,
+    git,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    links_xml,
+    load_with_errors,
+    make_doc,
+    manifest_xml,
+    object_xml,
+    validation_codes,
+    write,
+)
 
 
 # --- fixtures -------------------------------------------------------------
@@ -1429,3 +1447,184 @@ def test_compare_errors(git_repo: Path, mcp_repo: Path) -> None:
     with pytest.raises(ServiceError) as ei:
         svc.compare_document("NOPE", "HEAD", "HEAD")
     assert ei.value.code is ErrorCode.GIT
+
+
+# MELLON-STORE-SRS blind tests
+
+
+@pytest.mark.parametrize(
+    "date, valid",
+    [
+        ("2026-02-30", False),
+        ("2023-02-29", False),
+        ("0000-01-01", False),
+        ("10000-01-01", False),
+        ("2024-02-29", True),
+        ("0001-01-01", True),
+        ("9999-12-31", True),
+    ],
+)
+def test_store_srs_64_manifest_date_calendar_range(tmp_path, date, valid):
+    """MELLON-STORE-SRS-64: a manifest's date is YYYY-MM-DD naming a Gregorian day
+    from 0001-01-01 to 9999-12-31; another is a validation error. The document
+    is otherwise clean, so a valid date gives no validation error at all."""
+    root = tmp_path / "r"
+    make_doc(root, metadata=f"<title>T</title><date>{date}</date>")
+    codes = validation_codes(root, "DOC")
+    if valid:
+        assert codes == [], f"{date} is a day of the calendar range: {codes}"
+    else:
+        assert codes, f"{date} isn't a day from 0001-01-01 to 9999-12-31, yet no validation error"
+
+
+def test_store_srs_65_commit_with_issue_keeps_issue_out_of_manifest(tmp_path, git_env):
+    """MELLON-STORE-SRS-65: Mellon shall not store a document's issue in the
+    manifest. Committing a document with issue 1 tags the commit DOC-issue-1,
+    and the manifest at that commit holds no issue element."""
+    root = git_init(git_env, tmp_path / "iss")
+    svc = DocumentService(root)
+    svc.create_document("DOC", title="Issued")
+    svc.create_object("DOC", description="First")
+    svc.commit_document("DOC", "Issue 1", new_issue="1")
+    head = git(git_env, root, "rev-parse", "HEAD")
+    assert git(git_env, root, "rev-parse", "DOC-issue-1^{commit}") == head
+    manifest = git(git_env, root, "show", "HEAD:DOC/DOC.xml")
+    assert etree.fromstring(manifest.encode()).findall(".//issue") == [], manifest
+
+
+def test_store_srs_66_issue_element_is_ignored(tmp_path):
+    """MELLON-STORE-SRS-66: Mellon shall ignore an issue element in a manifest's
+    metadata element: no load error, no validation error, and the metadata
+    reads as without the element."""
+    plain, with_issue = tmp_path / "plain", tmp_path / "issue"
+    make_doc(plain, metadata="<title>T</title><author>A</author><date>2026-04-21</date>")
+    make_doc(with_issue, metadata="<title>T</title><author>A</author><date>2026-04-21</date><issue>3</issue>")
+    docs, errors = load_with_errors(with_issue)
+    assert errors == {}, errors
+    assert validation_codes(with_issue, "DOC") == []
+    assert docs["DOC"].document.metadata == load_document(plain / "DOC").metadata
+
+
+@pytest.mark.parametrize("required, missing_reported",
+                         [(None, False), ("false", False), ("true", True)],
+                         ids=["left-out", "false", "true"])
+def test_store_srs_74_required_only_when_true(tmp_path, required, missing_reported):
+    """MELLON-STORE-SRS-74: an attribute definition is required when required
+    holds true, optional when it holds false or is left out. An object that
+    doesn't set the attribute gets a missing-value validation error only when
+    required is true."""
+    req = "" if required is None else f' required="{required}"'
+    attrs = DEFAULT_ATTRS + f'    <attribute name="owner" kind="text"{req}/>\n'
+    root = tmp_path / "r"
+    folder = make_doc(root, attributes=attrs)
+    assert load_document(folder).attribute("owner").required is missing_reported
+    codes = validation_codes(root, "DOC")
+    if missing_reported:
+        assert codes, "required attribute not set, yet no validation error"
+    else:
+        assert codes == [], f"optional attribute reported: {codes}"
+
+
+@pytest.mark.parametrize("value, valid",
+                         [("draft", False), ("DRAFT", False), ("In  review", False),
+                          ("Draft", True), ("In review", True)])
+def test_store_srs_93_enum_value_written_exactly_as_option(tmp_path, value, valid):
+    """MELLON-STORE-SRS-93: an object file holds an enumeration value as one of
+    the options, written as the manifest writes it, so letter case and spacing
+    count. With options Draft and 'In review', a hand-written value differing
+    in either gives a validation error."""
+    root = tmp_path / "r"
+    folder = make_doc(root, attributes=_ENUM_ATTRS)
+    write(folder / "objects" / "DOC-1.xml",
+          object_xml("DOC-1", attrs=(("type", "Requirement"), ("status", value))))
+    codes = validation_codes(root, "DOC")
+    if valid:
+        assert codes == [], codes
+    else:
+        assert codes, f"{value!r} isn't an option as written, yet no validation error"
+
+
+_DATE_ATTRS = DEFAULT_ATTRS + '    <attribute name="due" kind="date"/>\n'
+
+
+@pytest.mark.parametrize(
+    "value, valid",
+    [("2026-02-30", False), ("2023-02-29", False), ("0000-01-01", False),
+     ("2024-02-29", True), ("0001-01-01", True), ("9999-12-31", True)],
+)
+def test_store_srs_98_date_value_calendar_range(tmp_path, value, valid):
+    """MELLON-STORE-SRS-98: an object file holds a date as YYYY-MM-DD naming a
+    Gregorian day from 0001-01-01 to 9999-12-31. Another value gives a
+    validation error; one in range gives none on an otherwise clean document."""
+    root = tmp_path / "r"
+    folder = make_doc(root, attributes=_DATE_ATTRS)
+    write(folder / "objects" / "DOC-1.xml",
+          object_xml("DOC-1", attrs=(("type", "Requirement"), ("due", value))))
+    codes = validation_codes(root, "DOC")
+    if valid:
+        assert codes == [], codes
+    else:
+        assert codes, f"{value} is no day of the range, yet no validation error"
+
+
+def _reference_repo(root: Path, env: dict, n: int) -> None:
+    """A reference document CHILD of `n` objects, each linking to one object of a
+    parent document PARENT of the same size, with one commit per object pair."""
+    attrs = DEFAULT_ATTRS
+    pids = [f"PARENT-{i}" for i in range(n)]
+    cids = [f"CHILD-{i}" for i in range(n)]
+    files: dict[str, str] = {
+        "PARENT/PARENT.xml": manifest_xml("PARENT", pids, attributes=attrs),
+        "CHILD/CHILD.xml": manifest_xml("CHILD", cids, parents=("PARENT",), attributes=attrs),
+    }
+    for i in range(n):
+        files[f"PARENT/objects/PARENT-{i}.xml"] = object_xml(f"PARENT-{i}", description=f"Parent {i}")
+        files[f"CHILD/objects/CHILD-{i}.xml"] = object_xml(f"CHILD-{i}", description=f"Child {i}")
+        files[f"CHILD/links/CHILD-{i}.xml"] = links_xml(f"CHILD-{i}", [("PARENT", f"PARENT-{i}", "satisfies")])
+    for rel, content in files.items():
+        write(root / rel, content)
+    # History: the manifests first, then one commit per object pair (git fast-import).
+    stream = io.BytesIO()
+
+    def blob(content: str):
+        data = content.encode("utf-8")
+        stream.write(b"data %d\n" % len(data) + data + b"\n")
+
+    t = 1_700_000_000
+    for k in range(-1, n):
+        stream.write(b"commit refs/heads/main\n")
+        stream.write(b"committer Blind Tester <blind@example.invalid> %d +0000\n" % (t + k + 1))
+        msg = b"manifests" if k < 0 else b"object %d" % k
+        stream.write(b"data %d\n%s\n" % (len(msg), msg))
+        rels = ["PARENT/PARENT.xml", "CHILD/CHILD.xml"] if k < 0 else [
+            f"PARENT/objects/PARENT-{k}.xml", f"CHILD/objects/CHILD-{k}.xml", f"CHILD/links/CHILD-{k}.xml"]
+        for rel in rels:
+            stream.write(b"M 100644 inline " + rel.encode() + b"\n")
+            blob(files[rel])
+        stream.write(b"\n")
+    r = subprocess.run(["git", "fast-import", "--quiet"], cwd=str(root), env=env, input=stream.getvalue(),
+                       capture_output=True)
+    assert r.returncode == 0, r.stderr
+    git(env, root, "reset", "-q")
+
+
+@pytest.mark.slow
+def test_store_srs_238_read_and_edit_5000_object_document(tmp_path, git_env):
+    """MELLON-STORE-SRS-238: Mellon shall read and edit a document of 5,000
+    objects. A reference document of 5,000 objects reads with 5,000 objects;
+    setting an attribute, creating an object and deleting one each complete,
+    and the document then reads with 5,000, 5,001 and 5,000 objects. No time
+    is measured (that is SRS-239 and -240)."""
+    n = 5000
+    root = git_init(git_env, tmp_path / "big")
+    _reference_repo(root, git_env, n)
+    assert git(git_env, root, "status", "--porcelain") == "", "precondition: committed"
+    svc = DocumentService(root)
+    assert len(svc.get_document("CHILD").objects) == n
+    svc.set_attribute("CHILD", "CHILD-17", "status", "Approved")
+    assert svc.get_document("CHILD").objects["CHILD-17"].attrs["status"] == "Approved"
+    new_id = svc.create_object("CHILD", description="One more").value
+    assert len(svc.get_document("CHILD").objects) == n + 1
+    svc.delete_object("CHILD", new_id)
+    doc = svc.get_document("CHILD")
+    assert len(doc.objects) == n and new_id not in doc.objects

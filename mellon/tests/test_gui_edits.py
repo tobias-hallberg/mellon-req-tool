@@ -7,11 +7,26 @@ clicks — faster and scoped to the layer we actually changed.
 
 from __future__ import annotations
 
+import errno
 import os
 import shutil
 from pathlib import Path
 
 import pytest
+
+from mellon import editor
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    _svg_file,
+    changed,
+    git_commit_all,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    gui,  # noqa: F401, F811 -- fixture
+    links_xml,
+    make_doc,
+    snapshot,
+    write,
+)
 
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
@@ -961,3 +976,95 @@ def test_reset_reuses_measured_text_heights(srs, monkeypatch):
     w.controller.reload_document("VCU3-SRS")
     assert laid_out
     assert table.rowHeight(row) > before
+
+
+# MELLON-STORE-SRS blind tests
+
+
+def test_store_srs_174_gui_delete_with_failing_manifest_write_restores_all(gui, tmp_path, git_env, monkeypatch):
+    """MELLON-STORE-SRS-174: if a file can't be written during a GUI operation
+    that edits a document, Mellon shall return each file the operation already
+    wrote or deleted to its state before. Force-deleting DOC-1, linked from
+    CHILD, with the manifest write failing, shows an error and leaves every file
+    of the repository (working copy and .git) with its bytes."""
+    root = git_init(git_env, tmp_path / "del")
+    make_doc(root, "DOC", n=2)
+    write(root / "DOC" / "figures" / "DOC-1.svg", _svg_file(tmp_path).read_bytes())
+    write(root / "DOC" / "links" / "DOC-1.xml", links_xml("DOC-1", [("DOC", "DOC-2", "refines")]))
+    make_doc(root, "CHILD", n=1, parents=("DOC",))
+    write(root / "CHILD" / "links" / "CHILD-1.xml", links_xml("CHILD-1", [("DOC", "DOC-1", "satisfies")]))
+    git_commit_all(git_env, root, "seed")
+    ed = gui.editor(root, "DOC")
+    gui.set_read_only(ed, False)
+    gui.select(ed, "DOC-1")
+    before = snapshot(root)
+    manifest = (root / "DOC" / "DOC.xml").resolve()
+    real_replace = os.replace
+    fired = []
+
+    def replace(src, dst, *a, **k):
+        if Path(dst).resolve() == manifest:
+            fired.append(dst)
+            raise OSError(errno.ENOSPC, "No space left on device (injected)")
+        return real_replace(src, dst, *a, **k)
+
+    monkeypatch.setattr(os, "replace", replace)
+    gui.messages.clear()
+    gui.trigger(ed, "Delete")
+    monkeypatch.setattr(os, "replace", real_replace)
+    assert fired, f"test error: the manifest write wasn't reached: {gui.messages} {gui.status(ed)}"
+    assert changed(before, snapshot(root)) == []
+    shown = " ".join(t for _, _, t in gui.messages) + " " + gui.status(ed)
+    assert "fail" in shown.lower() or "error" in shown.lower(), f"no error shown: {shown!r}"
+
+
+def test_store_srs_174_gui_delete_attribute_with_failing_second_write_restores_all(
+    gui, tmp_path, git_env, monkeypatch
+):
+    """MELLON-STORE-SRS-174: deleting an attribute set on objects, in the
+    Properties dialog, with the operation's second file write failing, shows an
+    error and leaves every file of the repository (working copy and .git) with
+    its bytes from before."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QDialog, QLabel, QPushButton, QTreeWidget
+
+    root = git_init(git_env, tmp_path / "attr")
+    folder = make_doc(root, "DOC", n=3)
+    for obj_id in ("DOC-1", "DOC-2", "DOC-3"):
+        editor.set_attribute(folder, obj_id, "rationale", f"Because {obj_id}")
+    git_commit_all(git_env, root, "seed")
+    ed = gui.editor(root, "DOC")
+    gui.set_read_only(ed, False)
+    before = snapshot(root)
+    real_replace = os.replace
+    writes = []
+
+    def replace(src, dst, *a, **k):
+        if folder.resolve() in Path(dst).resolve().parents:
+            writes.append(Path(dst).name)
+            if len(writes) == 2:
+                raise OSError(errno.ENOSPC, "No space left on device (injected)")
+        return real_replace(src, dst, *a, **k)
+
+    shown_in_dialog: list[str] = []
+
+    def run_dialog(dialog):
+        tree = dialog.findChildren(QTreeWidget)[0]
+        (item,) = tree.findItems("rationale", Qt.MatchFlag.MatchExactly, 0)
+        tree.setCurrentItem(item)
+        gui.process()
+        (delete,) = [b for b in dialog.findChildren(QPushButton) if b.text() == "Delete attribute"]
+        monkeypatch.setattr(os, "replace", replace)
+        delete.click()
+        gui.process()
+        monkeypatch.setattr(os, "replace", real_replace)
+        shown_in_dialog.extend(lbl.text() for lbl in dialog.findChildren(QLabel) if lbl.text())
+        dialog.reject()
+        return 0
+
+    monkeypatch.setattr(QDialog, "exec", run_dialog)
+    gui.trigger(ed, "Properties")
+    assert len(writes) >= 2, f"test error: the second write wasn't reached: {writes}"
+    assert changed(before, snapshot(root)) == []
+    shown = " ".join(shown_in_dialog + [t for _, _, t in gui.messages] + [gui.status(ed)])
+    assert "fail" in shown.lower() or "error" in shown.lower(), f"no error shown: {shown!r}"

@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import errno
 import os
 import random
 import re
+import subprocess
+import sys
 from pathlib import Path
 
 import pygit2
@@ -51,6 +54,7 @@ from mellon import (
     set_view_visible,
     validate,
 )
+from mellon.service import DocumentService
 from tests.test_repo import _write_merge_conflict
 from tests.test_suspects import (
     DOC_MANIFEST,
@@ -59,6 +63,25 @@ from tests.test_suspects import (
     PARENT_OBJ_V1,
     _commit_all,
     guard_paths_outside,
+)
+from tests.store_support import (  # MELLON-STORE-SRS blind tests
+    DECL,
+    DECL_LINE,
+    DEFAULT_ATTRS,
+    PartialWrites,
+    _BAD_SLUGS,
+    _ENUM_ATTRS,
+    _read_text,
+    _svg_file,
+    _write_text,
+    changed,
+    git_commit_all,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    make_doc,
+    slug_doc,  # noqa: F401, F811 -- fixture
+    snapshot,
+    write,
 )
 
 
@@ -2274,3 +2297,466 @@ def test_create_object_that_fails_leaves_the_number(doc_folder: Path) -> None:
         create_object(doc_folder, parent_id="DOC-999")
     assert (doc_folder / "DOC.xml").read_bytes() == before
     assert not (doc_folder / "objects" / "DOC-5.xml").exists()
+
+
+# MELLON-STORE-SRS blind tests
+
+
+def test_store_srs_61_author_written_inside_metadata(tmp_path):
+    """MELLON-STORE-SRS-61: an author set through Mellon is written as an author
+    element inside the metadata element, and nowhere else."""
+    folder = make_doc(tmp_path, metadata="<title>T</title>")
+    editor.set_metadata(folder, "author", "New Author")
+    root = etree.parse(str(folder / "DOC.xml")).getroot()
+    authors = root.findall(".//author")
+    assert [a.getparent().tag for a in authors] == ["metadata"], etree.tostring(root)
+    assert authors[0].text == "New Author"
+    assert root.find("metadata").getparent() is root
+
+
+def test_store_srs_75_label_written_as_label_attribute(tmp_path):
+    """MELLON-STORE-SRS-75: a label defined through Mellon is written as the label
+    XML attribute of the attribute element."""
+    folder = make_doc(tmp_path)
+    editor.add_attribute(folder, "risk", "text", False, label="Risk Level")
+    root = etree.parse(str(folder / "DOC.xml")).getroot()
+    (el,) = [a for a in root.iter("attribute") if a.get("name") == "risk"]
+    assert el.get("label") == "Risk Level", etree.tostring(el)
+
+
+def test_store_srs_93_setting_wrong_case_option_is_refused(tmp_path):
+    """MELLON-STORE-SRS-93: setting status to 'draft' through Mellon, with option
+    Draft, is refused and the object file is unchanged."""
+    folder = make_doc(tmp_path, attributes=_ENUM_ATTRS)
+    f = folder / "objects" / "DOC-1.xml"
+    before = f.read_bytes()
+    with pytest.raises(EditorError):
+        editor.set_attribute(folder, "DOC-1", "status", "draft")
+    assert f.read_bytes() == before
+
+
+_BOOL_ATTRS = DEFAULT_ATTRS + '    <attribute name="flag" kind="boolean"/>\n'
+
+
+def _attr_text(path: Path, name: str) -> str | None:
+    els = [a for a in etree.parse(str(path)).getroot().iter("attr") if a.get("name") == name]
+    assert len(els) <= 1
+    return els[0].text if els else None
+
+
+@pytest.mark.parametrize("value", ["true", "false"])
+def test_store_srs_97_boolean_written_lower_case(tmp_path, value):
+    """MELLON-STORE-SRS-97: an object file holds a boolean value as true or false
+    in lower case. Set through Mellon, the attr element's text is exactly the
+    value."""
+    folder = make_doc(tmp_path, attributes=_BOOL_ATTRS)
+    editor.set_attribute(folder, "DOC-1", "flag", value)
+    f = folder / "objects" / "DOC-1.xml"
+    assert _attr_text(f, "flag") == value
+    assert f'<attr name="flag">{value}</attr>'.encode() in f.read_bytes()
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="defect: MELLON-STORE-SRS-97: setting a boolean attribute to 'True' or 'FALSE' "
+    "writes that text into the object file as given, neither refused nor written in lower case",
+)
+@pytest.mark.parametrize("value", ["True", "FALSE"])
+def test_store_srs_97_boolean_not_written_in_other_case(tmp_path, value):
+    """MELLON-STORE-SRS-97: a boolean value in the file is in lower case, so
+    setting 'True' or 'FALSE' through Mellon either is refused or is written in
+    lower case; it is never written as given."""
+    folder = make_doc(tmp_path, attributes=_BOOL_ATTRS)
+    f = folder / "objects" / "DOC-1.xml"
+    try:
+        editor.set_attribute(folder, "DOC-1", "flag", value)
+    except EditorError:
+        pass
+    assert _attr_text(f, "flag") in (None, "true", "false"), f.read_text()
+
+
+def _table_in_file(folder: Path, obj_id: str = "DOC-1"):
+    return etree.parse(str(folder / "objects" / f"{obj_id}.xml")).getroot().find("table")
+
+
+def test_store_srs_101_center_alignment_written(tmp_path):
+    """MELLON-STORE-SRS-101: a table with a centred column, set through Mellon,
+    is written with align="center" on that col element."""
+    folder = make_doc(tmp_path)
+    editor.set_table(folder, "DOC-1", Table(
+        columns=(TableColumn(), TableColumn(align="center")),
+        rows=(TableRow(cells=(TableCell(text="a"), TableCell(text="b"))),),
+    ))
+    cols = _table_in_file(folder).find("columns").findall("col")
+    assert cols[1].get("align") == "center", etree.tostring(cols[1])
+
+
+_ROWSPAN_TABLE = Table(
+    columns=(TableColumn(), TableColumn()),
+    rows=(
+        TableRow(cells=(TableCell(text="spans", rowspan=2), TableCell(text="top"))),
+        TableRow(cells=(TableCell(text="bottom"),)),
+    ),
+)
+
+
+def test_store_srs_107_row_span_written(tmp_path):
+    """MELLON-STORE-SRS-107: the same table set through Mellon is written with
+    rowspan="2" on its first cell."""
+    folder = make_doc(tmp_path)
+    editor.set_table(folder, "DOC-1", _ROWSPAN_TABLE)
+    first = _table_in_file(folder).find("row").find("cell")
+    assert first.get("rowspan") == "2", etree.tostring(first)
+
+
+def test_store_srs_108_span_attributes_only_above_one(tmp_path):
+    """MELLON-STORE-SRS-108: Mellon writes colspan or rowspan only when its value
+    is more than 1. The cell spanning 2 rows and 1 column has rowspan="2" and no
+    colspan; the unmerged cells have neither."""
+    folder = make_doc(tmp_path)
+    editor.set_table(folder, "DOC-1", _ROWSPAN_TABLE)
+    cells = list(_table_in_file(folder).iter("cell"))
+    assert [c.text for c in cells] == ["spans", "top", "bottom"]
+    assert (cells[0].get("rowspan"), cells[0].get("colspan")) == ("2", None)
+    for c in cells[1:]:
+        assert (c.get("rowspan"), c.get("colspan")) == (None, None), etree.tostring(c)
+
+
+def test_store_srs_115_cells_stored_only_in_the_object_file(tmp_path, git_env):
+    """MELLON-STORE-SRS-115: Mellon shall store a table's cells only in the object
+    file of the table's object. Setting a table on DOC-1 changes only
+    objects/DOC-1.xml (working copy and .git), and no other file holds the
+    cell texts."""
+    root = git_init(git_env, tmp_path / "r")
+    folder = make_doc(root, n=3)
+    git_commit_all(git_env, root, "seed")
+    before = snapshot(root)
+    editor.set_table(folder, "DOC-1", Table(
+        columns=(TableColumn(), TableColumn()),
+        rows=(TableRow(cells=(TableCell(text="CELLTEXT-ALPHA"), TableCell(text="CELLTEXT-BETA"))),),
+    ))
+    assert changed(before, snapshot(root)) == ["DOC/objects/DOC-1.xml"]
+    holders = [p.relative_to(root).as_posix() for p in root.rglob("*")
+               if p.is_file() and b"CELLTEXT-" in p.read_bytes()]
+    assert holders == ["DOC/objects/DOC-1.xml"], holders
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="defect: MELLON-STORE-SRS-131: an svg root element in no namespace is attached "
+    "and written as the figure file instead of being refused",
+)
+def test_store_srs_131_svg_without_namespace_is_refused(tmp_path):
+    """MELLON-STORE-SRS-131: a figure file's root element is svg in the namespace
+    http://www.w3.org/2000/svg. Attaching <svg><rect/></svg>, in no namespace,
+    is refused and no figure file is written."""
+    folder = make_doc(tmp_path / "r")
+    src = write(tmp_path / "plain.svg", DECL + "<svg><rect/></svg>\n")
+    with pytest.raises(EditorError):
+        editor.set_figure(folder, "DOC-1", src)
+    assert not (folder / "figures" / "DOC-1.svg").exists()
+
+
+def test_store_srs_131_svg_in_svg_namespace_is_accepted(tmp_path):
+    """MELLON-STORE-SRS-131 (other side of the boundary): an svg root in the SVG
+    namespace is attached."""
+    folder = make_doc(tmp_path / "r")
+    src = _svg_file(tmp_path)
+    editor.set_figure(folder, "DOC-1", src)
+    assert (folder / "figures" / "DOC-1.svg").read_bytes() == src.read_bytes()
+
+
+@pytest.mark.parametrize(
+    "name, slug",
+    [
+        pytest.param("ABC", "abc", id="ascii"),
+        pytest.param("  --Hello__World--  ", "hello-world", id="runs-and-trim"),
+        pytest.param("ÄBC", "bc", id="a-umlaut"),
+        pytest.param("xK", "x", id="kelvin-sign", marks=pytest.mark.xfail(
+            strict=True, reason="defect: MELLON-STORE-SRS-153: the Kelvin sign U+212A is "
+            "lower-cased to k, giving the slug xk instead of x")),
+        pytest.param("xİ", "x", id="dotted-capital-i", marks=pytest.mark.xfail(
+            strict=True, reason="defect: MELLON-STORE-SRS-153: the dotted capital I U+0130 is "
+            "lower-cased to i, giving a slug with an i instead of x")),
+    ],
+)
+@pytest.mark.parametrize("what", ["view", "filter"])
+def test_store_srs_153_slug_from_ascii_letters_only(tmp_path, what, name, slug):
+    """MELLON-STORE-SRS-153: the slug comes from the name by turning A-Z into a-z,
+    each run of other characters than a-z and 0-9 into one hyphen, and trimming
+    hyphens. Only ASCII letters change case, so the Kelvin sign and the dotted
+    capital I give no k or i."""
+    folder = make_doc(tmp_path)
+    if what == "view":
+        got = editor.create_view(folder, name, ["status"])
+    else:
+        got = editor.create_filter(folder, name)
+    assert got == slug
+    assert (folder / f"{what}s" / f"{slug}.xml").is_file()
+
+
+_SLUG_OPS = {
+    "delete_view": lambda f, s: editor.delete_view(f, s),
+    "rename_view": lambda f, s: editor.rename_view(f, s, "Renamed"),
+    "set_view_visible": lambda f, s: editor.set_view_visible(f, s, ["rationale"]),
+    "delete_filter": lambda f, s: editor.delete_filter(f, s),
+    "rename_filter": lambda f, s: editor.rename_filter(f, s, "Renamed"),
+    "set_filter_rules": lambda f, s: editor.set_filter_rules(f, s, "any", False, []),
+}
+
+
+@pytest.mark.parametrize("slug", _BAD_SLUGS, ids=repr)
+@pytest.mark.parametrize("op", list(_SLUG_OPS))
+def test_store_srs_155_bad_slug_refused(slug_doc, op, slug):
+    """MELLON-STORE-SRS-155: if a slug given to Mellon doesn't match
+    [a-z0-9]+(-[a-z0-9]+)*, Mellon shall refuse the request. Each bad slug is
+    refused for delete, rename and edit of views and filters (with a view and a
+    filter 'main' present), and no file changes."""
+    root = slug_doc.parent
+    before = snapshot(root)
+    with pytest.raises(EditorError):
+        _SLUG_OPS[op](slug_doc, slug)
+    assert changed(before, snapshot(root)) == []
+
+
+def test_store_srs_167_write_failing_partway_keeps_old_or_new_content(tmp_path, monkeypatch):
+    """MELLON-STORE-SRS-167: if a write of a file fails, Mellon shall leave the
+    file holding its content before the write or the full content written. A
+    description write that fails halfway, as on a full disk, leaves DOC-1.xml
+    whole."""
+    folder = make_doc(tmp_path / "r")
+    target = folder / "objects" / "DOC-1.xml"
+    old = target.read_bytes()
+    new_text = "A much longer description so that half of the file is a cut file " * 4
+    inj = PartialWrites(monkeypatch, folder)
+    with pytest.raises((EditorError, OSError)):
+        editor.set_description(folder, "DOC-1", new_text)
+    monkeypatch.undo()
+    assert inj.fired, "test error: no write was intercepted"
+    now = target.read_bytes()
+    if now != old:
+        assert load_document(folder).objects["DOC-1"].description == new_text, now
+
+
+_KILL_BEFORE_REPLACE = r"""
+import os, sys
+from pathlib import Path
+from mellon import editor
+folder, obj_id, text = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+target = (folder / "objects" / (obj_id + ".xml")).resolve()
+real = {"replace": os.replace, "rename": os.rename}
+def guard(name):
+    def call(src, dst, *a, **k):
+        if Path(dst).resolve() == target:
+            os._exit(17)
+        return real[name](src, dst, *a, **k)
+    return call
+os.replace = guard("replace")
+os.rename = guard("rename")
+editor.set_description(folder, obj_id, text)
+sys.exit(0)
+"""
+
+
+def test_store_srs_167_stop_before_replace_keeps_old_content(tmp_path):
+    """MELLON-STORE-SRS-167: if Mellon stops during the write, the file holds its
+    content before the write or the full content. A process killed after
+    writing the new content and before it replaces DOC-1.xml leaves the old
+    content in full."""
+    folder = make_doc(tmp_path / "r")
+    target = folder / "objects" / "DOC-1.xml"
+    old = target.read_bytes()
+    r = subprocess.run([sys.executable, "-c", _KILL_BEFORE_REPLACE, str(folder), "DOC-1", "New text"],
+                       capture_output=True, text=True, timeout=120)
+    assert r.returncode == 17, f"test error: the process wasn't stopped at the replace: {r.stderr}"
+    assert target.read_bytes() == old
+
+
+def test_store_srs_171_temporary_file_name_starts_with_dot(tmp_path, monkeypatch):
+    """MELLON-STORE-SRS-171: Mellon shall begin the name of each temporary file it
+    writes in a document folder with a dot. A write made to fail at its final
+    replace shows the temporary file's name, which starts with a dot."""
+    folder = (make_doc(tmp_path / "r")).resolve()
+    seen: list[Path] = []
+
+    def failing(src, dst, *a, **k):
+        seen.append(Path(src).resolve())
+        raise OSError(errno.EIO, "replace failed (injected)")
+
+    monkeypatch.setattr(os, "replace", failing)
+    monkeypatch.setattr(os, "rename", failing)
+    with pytest.raises((EditorError, OSError)):
+        editor.set_description(folder, "DOC-1", "New text")
+    monkeypatch.undo()
+    in_folder = [p for p in seen if folder in p.parents]
+    assert in_folder, f"test error: no temporary file in the document folder: {seen}"
+    assert all(p.name.startswith(".") for p in in_folder), [p.name for p in in_folder]
+
+
+@pytest.fixture
+def written_repo(tmp_path):
+    """Everything written through Mellon: SYS, and DOC with a parent, a three-level
+    outline, two attributes with options, a table, a link, a view and a filter."""
+    root = tmp_path / "w"
+    root.mkdir()
+    svc = DocumentService(root)
+    svc.create_document("SYS", title="System")
+    sys_obj = svc.create_object("SYS", description="System requirement").value
+    svc.create_document("DOC", title="Written", parents=["SYS"])
+    folder = root / "DOC"
+    editor.add_attribute(folder, "status", "enum", False, options=("Draft", "Approved"))
+    editor.add_attribute(folder, "priority", "enum", False, options=("High", "Low"), label="Priority")
+    top = editor.create_object(folder, None, "Top heading")
+    mid = editor.create_object(folder, top, "Middle")
+    low = editor.create_object(folder, mid, "Low")
+    editor.set_attribute(folder, low, "status", "Draft")
+    editor.set_table(folder, low, Table(
+        columns=(TableColumn(), TableColumn(align="right")),
+        rows=(TableRow(cells=(TableCell(text="h1"), TableCell(text="h2")), header=True),
+              TableRow(cells=(TableCell(text="v1"), TableCell(text="v2")))),
+    ))
+    editor.add_link(folder, low, "SYS", sys_obj, "satisfies")
+    editor.create_view(folder, "Dev view", ["status", "priority"])
+    editor.create_filter(folder, "Drafts", rules=[FilterRule(kind="attr", attr="status", op="eq", value="Draft")])
+    return root
+
+
+def _data_files(root: Path) -> list[Path]:
+    out = []
+    for doc in sorted(p for p in root.iterdir() if p.is_dir() and not p.name.startswith(".")):
+        out += sorted(p for p in doc.rglob("*.xml") if not p.name.startswith("."))
+    return out
+
+
+def test_store_srs_189_data_files_begin_with_declaration(written_repo):
+    """MELLON-STORE-SRS-189: Mellon shall begin each data file it writes with
+    <?xml version="1.0" encoding="UTF-8"?> as the whole first line."""
+    files = _data_files(written_repo)
+    kinds = {p.parent.name if p.parent.name in ("objects", "links", "views", "filters") else p.name for p in files}
+    assert {"objects", "links", "views", "filters", "DOC.xml"} <= kinds, "precondition: each kind written"
+    for p in files:
+        assert p.read_bytes().split(b"\n", 1)[0] == DECL_LINE, p
+
+
+def test_store_srs_190_two_space_indentation_per_level(written_repo):
+    """MELLON-STORE-SRS-190: Mellon shall indent each element of a data file it
+    writes by 2 spaces for each level of nesting: each element starts on a line
+    of its own, after exactly 2 x depth spaces, the root at 0."""
+    for p in _data_files(written_repo):
+        data = p.read_bytes()
+        lines = data.decode("utf-8").split("\n")
+        root_el = etree.fromstring(data)
+        starts: dict[int, int] = {}
+
+        def walk(el, depth):
+            if not isinstance(el.tag, str):
+                return
+            line = lines[el.sourceline - 1]
+            starts[el.sourceline] = starts.get(el.sourceline, 0) + 1
+            assert line.startswith(" " * (2 * depth) + "<" + el.tag), (p.name, el.tag, depth, line)
+            for c in el:
+                walk(c, depth + 1)
+
+        walk(root_el, 0)
+        shared = [n for n, k in starts.items() if k > 1]
+        assert not shared, f"{p.name}: more than one element starts on line(s) {shared}"
+
+
+def test_store_srs_192_data_files_end_with_one_lf(written_repo):
+    """MELLON-STORE-SRS-192: Mellon shall end each data file it writes with
+    exactly one LF after the root element's end tag."""
+    for p in _data_files(written_repo):
+        data = p.read_bytes()
+        tag = etree.fromstring(data).tag
+        assert data.endswith(f"</{tag}>\n".encode()), (p, data[-40:])
+        assert not data.endswith(b"\n\n"), (p, data[-40:])
+
+
+def test_store_srs_187_utf8_without_bom(tmp_path):
+    """MELLON-STORE-SRS-187: Mellon shall write each data file in UTF-8 with no
+    byte order mark. A title, description and attribute value holding the
+    letters A-ring, euro sign and a CJK character are stored as their UTF-8
+    bytes, and each file starts with '<?xml'."""
+    text = "Å € 漢"
+    folder = make_doc(tmp_path / "r")
+    editor.set_metadata(folder, "title", text)
+    editor.set_description(folder, "DOC-1", text)
+    editor.set_attribute(folder, "DOC-1", "rationale", text)
+    for p in (folder / "DOC.xml", folder / "objects" / "DOC-1.xml"):
+        data = p.read_bytes()
+        assert data.startswith(b"<?xml"), (p, data[:8])
+        assert text.encode("utf-8") in data, p
+    assert (folder / "objects" / "DOC-1.xml").read_bytes().count(text.encode("utf-8")) == 2
+
+
+@pytest.fixture
+def stable_doc(tmp_path):
+    """DOC written through Mellon, so each data file is in the written form."""
+    root = tmp_path / "s"
+    root.mkdir()
+    svc = DocumentService(root)
+    svc.create_document("DOC", title="Stable")
+    folder = root / "DOC"
+    one = editor.create_object(folder, None, "First object")
+    two = editor.create_object(folder, None, "Second object")
+    three = editor.create_object(folder, None, "Third object")
+    editor.set_attribute(folder, one, "rationale", "Because")
+    editor.add_link(folder, one, "DOC", two, "refines")
+    editor.create_view(folder, "Dev", ["rationale", "type"])
+    editor.create_filter(folder, "Notes", combinator="any", keep_ancestors=False,
+                         rules=[FilterRule(kind="attr", attr="type", op="eq", value="Note"),
+                                FilterRule(kind="has-outgoing", attr="", op="present")])
+    return folder, one, two, three
+
+
+def _noop(kind: str, folder: Path, one: str, two: str, three: str):
+    doc = load_document(folder)
+    if kind == "manifest":
+        editor.set_metadata(folder, "title", doc.metadata.title)
+    elif kind == "object-attribute":
+        editor.set_attribute(folder, one, "rationale", doc.objects[one].attrs["rationale"])
+    elif kind == "object-description":
+        editor.set_description(folder, one, doc.objects[one].description)
+    elif kind == "view":
+        (view,) = doc.views
+        editor.set_view_visible(folder, view.slug, list(view.visible))
+    elif kind == "filter":
+        (f,) = doc.filters
+        editor.set_filter_rules(folder, f.slug, f.combinator, f.keep_ancestors, list(f.rules))
+    elif kind == "links":
+        editor.add_link(folder, one, "DOC", three, "refines")
+        editor.remove_link(folder, one, "DOC", three)
+    else:  # pragma: no cover
+        raise AssertionError(kind)
+
+
+@pytest.mark.parametrize("kind", ["manifest", "object-attribute", "object-description",
+                                  "view", "filter", "links"])
+def test_store_srs_208_unchanged_canonical_form_keeps_bytes(stable_doc, kind):
+    """MELLON-STORE-SRS-208: if a data file is in the written form and an
+    operation leaves its canonical form unchanged, Mellon shall leave its bytes
+    unchanged: setting a value to its current value, or adding and removing the
+    same link, changes no file."""
+    folder, one, two, three = stable_doc
+    before = snapshot(folder.parent)
+    _noop(kind, folder, one, two, three)
+    assert changed(before, snapshot(folder.parent)) == []
+
+
+@pytest.mark.parametrize("where", ["attribute", "cell", "title"])
+def test_store_srs_212_cr_and_crlf_become_lf(tmp_path, where):
+    """MELLON-STORE-SRS-212: when Mellon writes stored text, it shall replace each
+    CR LF pair and each other CR with one LF: 'a\\r\\nb\\rc' reads back as
+    'a\\nb\\nc'."""
+    folder = make_doc(tmp_path / "r")
+    _write_text(folder, where, "a\r\nb\rc")
+    assert _read_text(folder, where) == "a\nb\nc"
+
+
+@pytest.mark.parametrize("where", ["description", "attribute", "cell"])
+def test_store_srs_215_tab_is_kept(tmp_path, where):
+    """MELLON-STORE-SRS-215: Mellon shall keep each tab in stored text: 'a\\tb'
+    reads back with its tab."""
+    folder = make_doc(tmp_path / "r")
+    _write_text(folder, where, "a\tb")
+    assert _read_text(folder, where) == "a\tb"
