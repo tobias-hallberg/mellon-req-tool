@@ -2,8 +2,8 @@
 <object id="MELLON-EDIT-SRS-333">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Functional</attr>
-  <attr name="status">Implemented</attr>
+  <attr name="status">Proposed</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: a quick change of columns without opening a dialog.</attr>
+  <attr name="rationale">stakeholder: a quick change of columns without opening a dialog. Proposed: 0.3.0 has no such control, as the blind tests found (2026-11-11); only views change which columns show.</attr>
   <description>The grid's column header shall let the user show or hide an attribute column.</description>
 </object>

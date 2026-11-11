@@ -4,6 +4,6 @@
   <attr name="req-type">Functional</attr>
   <attr name="status">Implemented</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">stakeholder: an object can't be identified or read without them.</attr>
-  <description>The grid shall show the state, object ID and description columns in each view.</description>
+  <attr name="rationale">stakeholder: an object can't be identified or read without them. The type column is one of them as built: the blind tests found it shown in every view (2026-11-11).</attr>
+  <description>The grid shall show the state, object ID, description and type columns in each view.</description>
 </object>
