@@ -234,7 +234,7 @@
     <row>
       <cell>`bulk_set_attribute`</cell>
       <cell>`obj_ids`</cell>
-      <cell>array</cell>
+      <cell>array of strings</cell>
       <cell>yes</cell>
       <cell>—</cell>
     </row>
@@ -738,7 +738,7 @@
     <row>
       <cell>`reorder_outline`</cell>
       <cell>`ordering`</cell>
-      <cell>array</cell>
+      <cell>array of objects</cell>
       <cell>yes</cell>
       <cell>—</cell>
     </row>
