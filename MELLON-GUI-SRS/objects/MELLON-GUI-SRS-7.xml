@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the release workflow's smoke test runs mellon.exe --version from the install folder and passes on the exit status (INSTALL.md, Build in CI). Split from writing the number (review Q20).</attr>
+  <description>When the GUI starts with the argument --version, the GUI shall exit with status 0 without opening a window.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-221">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G61 (D-G32), Q-G12; review Q64. Decided on 2026-11-11: refuse rather than support long paths, since Git for Windows checks such paths out only where core.longpaths is set on each teammate's machine. STORE may take it, beside MELLON-STORE-SRS-225.</attr>
+  <description>If a file that an edit writes has a full path longer than 259 characters, Mellon shall refuse the edit, naming the file.</description>
+</object>

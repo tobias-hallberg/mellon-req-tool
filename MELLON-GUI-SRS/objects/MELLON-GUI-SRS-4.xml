@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the way to open a repository on first launch (INSTALL.md, First launch).</attr>
+  <description>The Project Explorer shall have an Open Repository… action that asks the user for a folder and opens the folder as the repository.</description>
+</object>

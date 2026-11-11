@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-18">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: as MELLON-PDF-SRS-17, for the Document Editor (review Q6). Not built.</attr>
+  <description>The Export action should let the user export the open document as the document is at an issue, a tag, a branch or a commit.</description>
+</object>

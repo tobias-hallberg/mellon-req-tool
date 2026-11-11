@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: changed after 0.3.0 to count document folders only, which is what a commit of the documents picks up (CHANGELOG Unreleased). Side files are never committed (CHANGELOG 0.3.0). Scope and kinds of file stated (review Q46).</attr>
+  <description>The status bar shall show the number of uncommitted changes in the repository's document folders, counting added, changed and deleted files and leaving out side files.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-159">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: listed as a figures follow-up in STATUS.md, beside the list of figures; a requirement of its own (review Q62).</attr>
+  <description>The exported PDF could give each drawn figure the figure's object's description as alternative text.</description>
+</object>

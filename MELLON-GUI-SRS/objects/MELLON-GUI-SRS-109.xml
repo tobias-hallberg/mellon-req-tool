@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: architecture review F2, open question Q5, failure analysis CF-G31 (change 7). Refusing an edit whose files changed is MELLON-STORE-SRS-182; this is the GUI's response to it and to MELLON-GUI-SRS-111, in one requirement (review Q2). Accepted, as the draft's SRS-79 was set on 2026-11-11.</attr>
+  <description>When the Document Editor refuses an edit or a commit because a file changed on disk, the Document Editor shall show the Changed on disk banner.</description>
+</object>

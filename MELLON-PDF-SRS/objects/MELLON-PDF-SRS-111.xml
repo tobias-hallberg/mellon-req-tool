@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an object whose outline entry was lost is left out of the PDF with nothing to show it (CF-P32; D-P9). MELLON-CHECK-SRS-28 reports it as OBJECT_NOT_IN_OUTLINE, but export doesn't validate.</attr>
+  <description>The exported PDF shall show each object that the outline doesn't name after the objects that the outline names.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-52">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: pressing Enter doesn't issue a PDF with unreviewed links. MELLON-PDF-SRS-37 says what Cancel does.</attr>
+  <description>The export warning shall offer Export anyway and Cancel, with Cancel as the default.</description>
+</object>

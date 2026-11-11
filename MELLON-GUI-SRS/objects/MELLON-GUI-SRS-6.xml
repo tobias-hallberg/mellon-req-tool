@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: fixed in 0.2.0. A Document Editor left open would edit a repository that the Project Explorer no longer shows. Test with a modal dialog open in a Document Editor and with an export running (failure analysis CF-G17). MELLON-GUI-SRS-15 and MELLON-GUI-SRS-16 say what happens to pending edits.</attr>
+  <description>When the user opens another repository, the Project Explorer shall close each Document Editor of the previous repository.</description>
+</object>

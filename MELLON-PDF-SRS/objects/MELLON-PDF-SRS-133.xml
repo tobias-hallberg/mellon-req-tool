@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: attributes at the top of a page, apart from their object ID, can't be tied to an object by a reader of that page (CF-P37; D-P15).</attr>
+  <description>The exported PDF should keep the attributes shown for an object on the same page as the last line of the object's description, table or figure.</description>
+</object>

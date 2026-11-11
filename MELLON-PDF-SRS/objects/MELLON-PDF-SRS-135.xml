@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-135">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: limited to what the samples prove prints as typed. The MELLON-VER-STS sample prints ' as a closing quote (CF-P23), and runs of hyphens and other ASCII punctuation aren't in the samples, so they are MELLON-PDF-SRS-136's (decided on 2026-11-11). 0.3.0 fixed table rows starting with [ or *; test lines starting with * or [ after a line break too (CF-P24).</attr>
+  <description>In a description, the exported PDF shall show each ASCII letter and digit, each of _ &lt; &gt; % &amp; ~ @ = ( ) / : ; , . ! and a hyphen next to no other hyphen, as the document holds the character.</description>
+</object>

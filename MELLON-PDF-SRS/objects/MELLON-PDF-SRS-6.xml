@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-6">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an export takes about 100 s at 1,000 objects, longer than common client timeouts, so the agent sees a failure while the PDF is written later, and a retry meets MELLON-PDF-SRS-32. Decided on 2026-11-11 (review Q12); the general contract for long calls is handed to MCP.</attr>
+  <description>While the MCP server's export tool runs, the MCP server should send the agent the progress notifications that the Model Context Protocol defines.</description>
+</object>

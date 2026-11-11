@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a file without the ending doesn't open as a PDF, and the MCP tool refuses such a name (MELLON-PDF-SRS-26). Decided on 2026-11-11 (review Q29). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>If the file name chosen in the save dialog doesn't end in .pdf, compared without regard to letter case, the Document Editor shall add .pdf to the output path.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-98">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: from 0.3.0. draw.io saves a figure in place, and the window holds no copy of a figure that an edit could write back (CHANGELOG 0.3.0). A figure redrawn this way counts as read for MELLON-GUI-SRS-110, MELLON-GUI-SRS-111 and MELLON-GUI-SRS-108 (review Q3, failure analysis CF-G38).</attr>
+  <description>When the only change on disk is new content in an existing figure file of the document, the Document Editor shall redraw the figure instead of showing the Changed on disk banner.</description>
+</object>

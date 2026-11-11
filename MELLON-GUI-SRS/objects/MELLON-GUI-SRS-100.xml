@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-100">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G37 (D-G19). Two lists of a document's files can drift, and a change the loader sees but the check doesn't is never flagged. MELLON-GUI-SRS-99 then holds only if loading skips side files.</attr>
+  <description>The Document Editor shall count as a change on disk a change to each file that Mellon reads to load the document or a parent document.</description>
+</object>

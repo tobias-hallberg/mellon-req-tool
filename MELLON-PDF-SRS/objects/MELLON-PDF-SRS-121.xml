@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-121">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the MELLON-VER-STS sample labels each Test Case's text REQUIREMENT, so test steps read as requirements (CF-P35). Dropping the label meets it; MELLON-PDF-SRS-120 then shows the type (review Q17).</attr>
+  <description>The exported PDF shall label an object's description as a requirement only when the object's type is Requirement.</description>
+</object>

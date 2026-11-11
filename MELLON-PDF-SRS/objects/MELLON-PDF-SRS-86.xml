@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: keeps the label agents use while the issue stays visible (review Q18, decided on 2026-11-11).</attr>
+  <description>When the MCP server's export tool is given a revision label, the cover page shall show the revision label beside the issue, labelled Revision.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-171">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: SCALING.md measured 0.11 s at 500 objects and 0.23–0.34 s at 2,000 on a busy machine, against a 0.5 s target at 5,000. Uses the reference document (review Q26).</attr>
+  <description>When the user finishes editing an attribute value of a 1,000-object reference document on the reference machine, the grid shall show the new value within TBD s.</description>
+</object>

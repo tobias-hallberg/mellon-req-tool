@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-41">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the user who closes the window no longer waits for the PDF, and quitting today waits for the job, up to about 600 s, so users kill Mellon (CF-P4). Decided on 2026-11-11 (review Q10).</attr>
+  <description>When the user closes the Document Editor while an export from the Document Editor runs, Mellon shall stop the export.</description>
+</object>

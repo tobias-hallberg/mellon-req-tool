@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: fixed in 0.2.0, when text typed before New, Delete, Link or Commit was lost (CHANGELOG 0.2.0). Keys that a text field handles itself aren't actions (definitions: Action), so Esc doesn't save first (review Q15).</attr>
+  <description>Before the Document Editor runs an action, the Document Editor shall save the Document Editor's pending edits.</description>
+</object>

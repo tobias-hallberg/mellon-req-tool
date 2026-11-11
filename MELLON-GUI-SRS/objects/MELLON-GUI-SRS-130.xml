@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: 4.5:1 is WCAG 2.1 level AA for normal text; WCAG exempts the text of disabled controls. Banners and greyed failed documents carry meaning that has to stay readable in both themes.</attr>
+  <description>In each theme, the GUI should draw text with a contrast ratio of at least 4.5:1 against the text's background.</description>
+</object>

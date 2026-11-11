@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-201">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G57, Q-G7; handed over by MCP (CF-M65). Ending mellon-mcp.exe in the middle of an operation leaves files half changed, and ending the GUI loses a pending edit. Decided on 2026-11-11.</attr>
+  <description>The Windows installer shall not close or end a program that runs from the install folder.</description>
+</object>

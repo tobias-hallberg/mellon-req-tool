@@ -30,5 +30,259 @@
     </attribute>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-GUI-SRS-0">
+      <ref id="MELLON-GUI-SRS-1">
+        <ref id="MELLON-GUI-SRS-2"/>
+        <ref id="MELLON-GUI-SRS-3"/>
+        <ref id="MELLON-GUI-SRS-4"/>
+        <ref id="MELLON-GUI-SRS-5"/>
+        <ref id="MELLON-GUI-SRS-6"/>
+        <ref id="MELLON-GUI-SRS-7"/>
+        <ref id="MELLON-GUI-SRS-8"/>
+        <ref id="MELLON-GUI-SRS-9"/>
+        <ref id="MELLON-GUI-SRS-10"/>
+        <ref id="MELLON-GUI-SRS-11"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-12">
+        <ref id="MELLON-GUI-SRS-13"/>
+        <ref id="MELLON-GUI-SRS-14"/>
+        <ref id="MELLON-GUI-SRS-15"/>
+        <ref id="MELLON-GUI-SRS-16"/>
+        <ref id="MELLON-GUI-SRS-17"/>
+        <ref id="MELLON-GUI-SRS-18"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-19">
+        <ref id="MELLON-GUI-SRS-20"/>
+        <ref id="MELLON-GUI-SRS-21"/>
+        <ref id="MELLON-GUI-SRS-22"/>
+        <ref id="MELLON-GUI-SRS-23"/>
+        <ref id="MELLON-GUI-SRS-24"/>
+        <ref id="MELLON-GUI-SRS-25"/>
+        <ref id="MELLON-GUI-SRS-26"/>
+        <ref id="MELLON-GUI-SRS-27"/>
+        <ref id="MELLON-GUI-SRS-28"/>
+        <ref id="MELLON-GUI-SRS-29"/>
+        <ref id="MELLON-GUI-SRS-30"/>
+        <ref id="MELLON-GUI-SRS-31"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-GUI-SRS-32">
+      <ref id="MELLON-GUI-SRS-33"/>
+      <ref id="MELLON-GUI-SRS-34"/>
+      <ref id="MELLON-GUI-SRS-35"/>
+      <ref id="MELLON-GUI-SRS-36"/>
+      <ref id="MELLON-GUI-SRS-37"/>
+      <ref id="MELLON-GUI-SRS-38"/>
+      <ref id="MELLON-GUI-SRS-39"/>
+      <ref id="MELLON-GUI-SRS-40"/>
+      <ref id="MELLON-GUI-SRS-41"/>
+      <ref id="MELLON-GUI-SRS-42"/>
+    </ref>
+    <ref id="MELLON-GUI-SRS-43">
+      <ref id="MELLON-GUI-SRS-44">
+        <ref id="MELLON-GUI-SRS-45"/>
+        <ref id="MELLON-GUI-SRS-46"/>
+        <ref id="MELLON-GUI-SRS-47"/>
+        <ref id="MELLON-GUI-SRS-48"/>
+        <ref id="MELLON-GUI-SRS-49"/>
+        <ref id="MELLON-GUI-SRS-50"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-51">
+        <ref id="MELLON-GUI-SRS-52"/>
+        <ref id="MELLON-GUI-SRS-53"/>
+        <ref id="MELLON-GUI-SRS-54"/>
+        <ref id="MELLON-GUI-SRS-55"/>
+        <ref id="MELLON-GUI-SRS-56"/>
+        <ref id="MELLON-GUI-SRS-57"/>
+        <ref id="MELLON-GUI-SRS-58"/>
+        <ref id="MELLON-GUI-SRS-59"/>
+        <ref id="MELLON-GUI-SRS-60"/>
+        <ref id="MELLON-GUI-SRS-61"/>
+        <ref id="MELLON-GUI-SRS-62"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-63">
+        <ref id="MELLON-GUI-SRS-64"/>
+        <ref id="MELLON-GUI-SRS-65"/>
+        <ref id="MELLON-GUI-SRS-66"/>
+        <ref id="MELLON-GUI-SRS-67"/>
+        <ref id="MELLON-GUI-SRS-68"/>
+        <ref id="MELLON-GUI-SRS-69"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-70">
+        <ref id="MELLON-GUI-SRS-71"/>
+        <ref id="MELLON-GUI-SRS-72"/>
+        <ref id="MELLON-GUI-SRS-73"/>
+        <ref id="MELLON-GUI-SRS-74"/>
+        <ref id="MELLON-GUI-SRS-75"/>
+        <ref id="MELLON-GUI-SRS-76"/>
+        <ref id="MELLON-GUI-SRS-77"/>
+        <ref id="MELLON-GUI-SRS-78"/>
+        <ref id="MELLON-GUI-SRS-79"/>
+        <ref id="MELLON-GUI-SRS-80"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-81">
+        <ref id="MELLON-GUI-SRS-82"/>
+        <ref id="MELLON-GUI-SRS-83"/>
+        <ref id="MELLON-GUI-SRS-84"/>
+        <ref id="MELLON-GUI-SRS-85"/>
+        <ref id="MELLON-GUI-SRS-86"/>
+        <ref id="MELLON-GUI-SRS-87"/>
+        <ref id="MELLON-GUI-SRS-88"/>
+        <ref id="MELLON-GUI-SRS-89"/>
+        <ref id="MELLON-GUI-SRS-90"/>
+        <ref id="MELLON-GUI-SRS-91"/>
+        <ref id="MELLON-GUI-SRS-92"/>
+        <ref id="MELLON-GUI-SRS-93"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-94">
+        <ref id="MELLON-GUI-SRS-95"/>
+        <ref id="MELLON-GUI-SRS-96"/>
+        <ref id="MELLON-GUI-SRS-97"/>
+        <ref id="MELLON-GUI-SRS-98"/>
+        <ref id="MELLON-GUI-SRS-99"/>
+        <ref id="MELLON-GUI-SRS-100"/>
+        <ref id="MELLON-GUI-SRS-101"/>
+        <ref id="MELLON-GUI-SRS-102"/>
+        <ref id="MELLON-GUI-SRS-103"/>
+        <ref id="MELLON-GUI-SRS-104"/>
+        <ref id="MELLON-GUI-SRS-105"/>
+        <ref id="MELLON-GUI-SRS-106"/>
+        <ref id="MELLON-GUI-SRS-107"/>
+        <ref id="MELLON-GUI-SRS-108"/>
+        <ref id="MELLON-GUI-SRS-109"/>
+        <ref id="MELLON-GUI-SRS-110"/>
+        <ref id="MELLON-GUI-SRS-111"/>
+        <ref id="MELLON-GUI-SRS-112"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-GUI-SRS-113">
+      <ref id="MELLON-GUI-SRS-114">
+        <ref id="MELLON-GUI-SRS-115"/>
+        <ref id="MELLON-GUI-SRS-116"/>
+        <ref id="MELLON-GUI-SRS-117"/>
+        <ref id="MELLON-GUI-SRS-118"/>
+        <ref id="MELLON-GUI-SRS-119"/>
+        <ref id="MELLON-GUI-SRS-120"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-121">
+        <ref id="MELLON-GUI-SRS-122"/>
+        <ref id="MELLON-GUI-SRS-123"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-124">
+        <ref id="MELLON-GUI-SRS-125"/>
+        <ref id="MELLON-GUI-SRS-126"/>
+        <ref id="MELLON-GUI-SRS-127"/>
+        <ref id="MELLON-GUI-SRS-128"/>
+        <ref id="MELLON-GUI-SRS-129"/>
+        <ref id="MELLON-GUI-SRS-130"/>
+        <ref id="MELLON-GUI-SRS-131"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-132">
+        <ref id="MELLON-GUI-SRS-133"/>
+        <ref id="MELLON-GUI-SRS-134"/>
+        <ref id="MELLON-GUI-SRS-135"/>
+        <ref id="MELLON-GUI-SRS-136"/>
+        <ref id="MELLON-GUI-SRS-137"/>
+        <ref id="MELLON-GUI-SRS-138"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-139">
+        <ref id="MELLON-GUI-SRS-140"/>
+        <ref id="MELLON-GUI-SRS-141"/>
+        <ref id="MELLON-GUI-SRS-142"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-GUI-SRS-143">
+      <ref id="MELLON-GUI-SRS-144">
+        <ref id="MELLON-GUI-SRS-145"/>
+        <ref id="MELLON-GUI-SRS-146"/>
+        <ref id="MELLON-GUI-SRS-147"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-148">
+        <ref id="MELLON-GUI-SRS-149"/>
+        <ref id="MELLON-GUI-SRS-150"/>
+        <ref id="MELLON-GUI-SRS-151"/>
+        <ref id="MELLON-GUI-SRS-152"/>
+        <ref id="MELLON-GUI-SRS-153"/>
+        <ref id="MELLON-GUI-SRS-154"/>
+        <ref id="MELLON-GUI-SRS-155"/>
+        <ref id="MELLON-GUI-SRS-156"/>
+        <ref id="MELLON-GUI-SRS-157"/>
+        <ref id="MELLON-GUI-SRS-158"/>
+        <ref id="MELLON-GUI-SRS-159"/>
+        <ref id="MELLON-GUI-SRS-160"/>
+        <ref id="MELLON-GUI-SRS-161"/>
+        <ref id="MELLON-GUI-SRS-162"/>
+        <ref id="MELLON-GUI-SRS-163"/>
+        <ref id="MELLON-GUI-SRS-164"/>
+        <ref id="MELLON-GUI-SRS-165"/>
+        <ref id="MELLON-GUI-SRS-166"/>
+        <ref id="MELLON-GUI-SRS-167"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-GUI-SRS-168">
+      <ref id="MELLON-GUI-SRS-169"/>
+      <ref id="MELLON-GUI-SRS-170"/>
+      <ref id="MELLON-GUI-SRS-171"/>
+      <ref id="MELLON-GUI-SRS-172"/>
+      <ref id="MELLON-GUI-SRS-173"/>
+      <ref id="MELLON-GUI-SRS-174"/>
+      <ref id="MELLON-GUI-SRS-175"/>
+      <ref id="MELLON-GUI-SRS-176"/>
+    </ref>
+    <ref id="MELLON-GUI-SRS-177">
+      <ref id="MELLON-GUI-SRS-178">
+        <ref id="MELLON-GUI-SRS-179"/>
+        <ref id="MELLON-GUI-SRS-180"/>
+        <ref id="MELLON-GUI-SRS-181"/>
+        <ref id="MELLON-GUI-SRS-182"/>
+        <ref id="MELLON-GUI-SRS-183"/>
+        <ref id="MELLON-GUI-SRS-184"/>
+        <ref id="MELLON-GUI-SRS-185"/>
+        <ref id="MELLON-GUI-SRS-186"/>
+        <ref id="MELLON-GUI-SRS-187"/>
+        <ref id="MELLON-GUI-SRS-188"/>
+        <ref id="MELLON-GUI-SRS-189"/>
+        <ref id="MELLON-GUI-SRS-190"/>
+        <ref id="MELLON-GUI-SRS-191"/>
+        <ref id="MELLON-GUI-SRS-192"/>
+        <ref id="MELLON-GUI-SRS-193"/>
+        <ref id="MELLON-GUI-SRS-194"/>
+        <ref id="MELLON-GUI-SRS-195"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-196">
+        <ref id="MELLON-GUI-SRS-197"/>
+        <ref id="MELLON-GUI-SRS-198"/>
+        <ref id="MELLON-GUI-SRS-199"/>
+        <ref id="MELLON-GUI-SRS-200"/>
+        <ref id="MELLON-GUI-SRS-201"/>
+        <ref id="MELLON-GUI-SRS-202"/>
+        <ref id="MELLON-GUI-SRS-203"/>
+        <ref id="MELLON-GUI-SRS-204"/>
+        <ref id="MELLON-GUI-SRS-205"/>
+        <ref id="MELLON-GUI-SRS-206"/>
+        <ref id="MELLON-GUI-SRS-207"/>
+        <ref id="MELLON-GUI-SRS-208"/>
+        <ref id="MELLON-GUI-SRS-209"/>
+        <ref id="MELLON-GUI-SRS-210"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-211">
+        <ref id="MELLON-GUI-SRS-212"/>
+        <ref id="MELLON-GUI-SRS-213"/>
+        <ref id="MELLON-GUI-SRS-214"/>
+        <ref id="MELLON-GUI-SRS-215"/>
+        <ref id="MELLON-GUI-SRS-216"/>
+        <ref id="MELLON-GUI-SRS-217"/>
+        <ref id="MELLON-GUI-SRS-218"/>
+        <ref id="MELLON-GUI-SRS-219"/>
+        <ref id="MELLON-GUI-SRS-220"/>
+        <ref id="MELLON-GUI-SRS-221"/>
+        <ref id="MELLON-GUI-SRS-222"/>
+      </ref>
+      <ref id="MELLON-GUI-SRS-223">
+        <ref id="MELLON-GUI-SRS-224"/>
+        <ref id="MELLON-GUI-SRS-225"/>
+      </ref>
+    </ref>
+  </outline>
 </document>

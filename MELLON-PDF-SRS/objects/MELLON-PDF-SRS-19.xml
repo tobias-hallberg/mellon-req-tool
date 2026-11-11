@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-19">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a PDF that mixes the document at one commit with its parents or figures at another shows content and coverage that never existed, and a branch can move during an export, as MELLON-VER-SRS-66 found for Compare. Figures and the parents declared at that commit added (review Q35). A declared parent absent there is MELLON-PDF-SRS-173's case.</attr>
+  <description>When Mellon exports a document at a version other than the working copy, Mellon shall read the document, its figures and its declared parent documents from the commit the version names at the export start.</description>
+</object>

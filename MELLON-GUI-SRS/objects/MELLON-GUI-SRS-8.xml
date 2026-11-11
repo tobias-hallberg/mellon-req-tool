@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: mellon-gui --version prints the version (USAGE.md). USAGE.md also says the windowed mellon.exe has no console, so whether the installed program's output can be read is in doubt until the released build is checked (review Q20, Q76; failure analysis CF-G63).</attr>
+  <description>When the GUI starts with the argument --version, the GUI shall write the release number to standard output.</description>
+</object>

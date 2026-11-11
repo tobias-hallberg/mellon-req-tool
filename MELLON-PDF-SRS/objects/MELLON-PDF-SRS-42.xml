@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an export takes minutes and has no cancel, so users kill Mellon instead (CF-P4; D-P25).</attr>
+  <description>While an export from the Export action runs, the Document Editor should offer to stop the export.</description>
+</object>

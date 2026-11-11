@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-58">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a placeholder is easy to miss in a long PDF. Test with a figure program that exits without output and one that writes an empty file: both must be listed (CF-P47).</attr>
+  <description>When the exported PDF shows a figure placeholder, the Document Editor shall show the notice of figures not drawn, listing the objects whose figures the exported PDF doesn't draw.</description>
+</object>

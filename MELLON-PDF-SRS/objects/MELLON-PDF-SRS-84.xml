@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the Export action always shows the current issue, and an empty label shows none. The label is free text and chooses nothing about what is exported (CF-P5). MELLON-PDF-SRS-85 and MELLON-PDF-SRS-86 would replace this.</attr>
+  <description>The cover page shall show as the revision the revision label that the MCP server's export tool is given, or else the document's current issue.</description>
+</object>

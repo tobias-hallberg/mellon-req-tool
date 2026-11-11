@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Keyboard shortcuts in the Document Editor. The action is EDIT's; the key is listed here with the window's other keys, so that no two actions share one. Ctrl+L and Ctrl+T are MELLON-TRACE-SRS-16 and -177.</attr>
+  <description>When the user presses Ctrl+N in a Document Editor, the Document Editor shall run New sibling.</description>
+</object>

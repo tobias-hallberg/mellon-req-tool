@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an empty list matched both the defaults and none (review Q14). None, as for a view with no attribute column (MELLON-PDF-SRS-130); see the question.</attr>
+  <description>When the MCP server's export tool is given an empty list of attributes, the exported PDF shall show no attribute.</description>
+</object>

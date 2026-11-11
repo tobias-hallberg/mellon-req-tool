@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a plain write leaves a truncated file over an issued PDF after a cancel, the time limit, a kill or a crash (CF-P59, CF-P4, CF-P8; D-P24; review Q10). A temporary file beside the output path is allowed, so the replace can be atomic (review Q25); a replace leaves another hard link to the old file as it was. MELLON-STORE-SRS-167 states the same for each file write; whether it covers the exported PDF is handed to STORE. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>If an export ends, or Mellon stops, without writing the whole exported PDF, Mellon shall leave the output path as before the export: the same file, or no file.</description>
+</object>

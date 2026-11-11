@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-76">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an absolute path puts the exporter's user name and folders into an issued PDF (CF-P52). Which form 0.3.0 prints isn't known. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>A figure placeholder shall name the figure file by the file's path inside the document's folder.</description>
+</object>

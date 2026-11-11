@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-25">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G7 (D-G7), review Q38. A failed log write is ignored today, so MELLON-GUI-SRS-24 would send the user to a file without the entry. D-G7's wording, which also says the log wasn't written, over the review's.</attr>
+  <description>If the GUI can't append an unexpected error to the error log, the unexpected-error dialog shall show the error's message and stack trace and say that the error log wasn't written.</description>
+</object>

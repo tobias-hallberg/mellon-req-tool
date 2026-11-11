@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-175">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a requirements document's PDF can't show which test cases verify each requirement, which a reviewer of an issue asks. Not built.</attr>
+  <description>The exported PDF could list with each object the objects in other documents that link to the object.</description>
+</object>

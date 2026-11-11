@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: grid cells and Inspector fields save on focus-out (STATUS.md, Editing). Which object and field the text lands in is EDIT's.</attr>
+  <description>When a text field that holds a pending edit loses the focus, the Document Editor shall save the pending edit to the working copy.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-203">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G58 (D-G29), Q-G14. A file held by antivirus or a running program can leave two releases in one install folder. Should, because the installer can check first but can't make the copy all-or-nothing; the remaining risk is accepted (decided on 2026-11-11), and MELLON-GUI-SRS-204 would find it.</attr>
+  <description>If the Windows installer can't replace an installed file, the Windows installer should leave each installed file as the file was.</description>
+</object>

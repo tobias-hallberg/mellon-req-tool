@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an outline walk prints an object named twice twice and leaves one out silently (CF-P32; D-P9), and once MELLON-PDF-SRS-130 copies the view, a filter could be expected to apply too (review Q2). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>The exported PDF shall show each object of the document exactly once, with or without an active filter in the Document Editor.</description>
+</object>

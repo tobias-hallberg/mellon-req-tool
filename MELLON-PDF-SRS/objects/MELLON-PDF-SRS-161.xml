@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-161">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: added in 0.3.0, and seen in both samples.</attr>
+  <description>When the document declares a parent document, the exported PDF shall end with a numbered Traceability section that starts on a new page.</description>
+</object>

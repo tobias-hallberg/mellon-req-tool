@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-215">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q65. MELLON-GUI-SRS-214 leaves open whether a system runtime library counts. Checked on rung 4; replaces MELLON-GUI-SRS-214 once checked.</attr>
+  <description>Mellon installed by the Windows installer shall open, edit, commit and export a repository on a 64-bit Windows installation to which no other program has been added.</description>
+</object>

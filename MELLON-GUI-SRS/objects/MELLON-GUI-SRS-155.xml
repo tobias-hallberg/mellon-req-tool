@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-155">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. The filter box and dialog text boxes are text fields (review Q5), so Del there deletes a character; test in each kind of text field (failure analysis CF-G24, change 25).</attr>
+  <description>When the user presses Del while no text field has the focus, the Document Editor shall run Delete object.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-164">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. STATUS.md lists only Ctrl+W.</attr>
+  <description>When the user presses Ctrl+W or Ctrl+F4 in a Document Editor, the Document Editor shall close.</description>
+</object>

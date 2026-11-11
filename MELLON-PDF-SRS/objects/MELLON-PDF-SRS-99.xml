@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: seen in both samples, the Traceability section included. Deeper levels don't occur in the samples; see the question.</attr>
+  <description>The exported PDF shall have, after the cover page, a table of contents that lists each numbered section of the top two levels with the section's page number.</description>
+</object>

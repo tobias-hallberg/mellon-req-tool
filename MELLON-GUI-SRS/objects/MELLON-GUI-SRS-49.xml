@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the working copy holds what the user sees, and a commit records it (USAGE.md, Surfaces). Worded by the action's end, since the definition of Edit made the old wording circular (review Q56).</attr>
+  <description>When an action of a Document Editor completes, the Document Editor shall have written the action's change to the working copy, without a separate save action.</description>
+</object>

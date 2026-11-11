@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-176">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q74. Decided on 2026-11-11 as Proposed; laptops ship at 150 % and above.</attr>
+  <description>The GUI should show each window without cut-off text at Windows display scaling from 100 % to 200 %, both included.</description>
+</object>

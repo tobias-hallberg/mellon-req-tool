@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-202">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q33, decided on 2026-11-11. An older Mellon can misread settings and documents that a newer one wrote.</attr>
+  <description>If the installed release number is higher than the Windows installer's, the Windows installer shall refuse to install.</description>
+</object>

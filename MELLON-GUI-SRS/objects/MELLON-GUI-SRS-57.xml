@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-57">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: built after 0.3.0, when these edits started to update one row instead of rebuilding the grid (CHANGELOG Unreleased). Split from the scroll position (review Q41).</attr>
+  <description>When the user edits an attribute value, the description or the table of an object, the Document Editor shall keep the edited object selected.</description>
+</object>

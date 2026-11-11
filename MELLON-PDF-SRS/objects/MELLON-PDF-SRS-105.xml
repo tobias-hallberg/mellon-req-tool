@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the samples' object IDs are found by search. Narrowed from search and copy to a test (review Q44). Test an ID and a hyphenated word broken across lines too (CF-P29).</attr>
+  <description>The exported PDF shall hold its text so that a PDF reader's search for an object ID finds each place the PDF shows that ID.</description>
+</object>

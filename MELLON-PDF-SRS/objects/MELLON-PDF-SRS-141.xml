@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-141">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the table is part of the object's content. The samples hold no table; USAGE.md and STATUS.md describe the export.</attr>
+  <description>The exported PDF shall show an object's table with each of the table's rows and cells, in the table's order.</description>
+</object>

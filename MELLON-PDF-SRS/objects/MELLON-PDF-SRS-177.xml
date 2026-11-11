@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-177">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an export reads the document; the PDF isn't document content, so it is neither staged nor committed, and the MCP export tool takes no commit message. MELLON-STORE-SRS-210 says the same for data and figure files; this adds the index, references and other files. Saving pending edits (MELLON-PDF-SRS-12) and the temporary file beside the output (MELLON-PDF-SRS-40) are allowed (review Q25).</attr>
+  <description>While exporting, Mellon shall change no file in the working copy, the git index or a git reference other than by saving pending edits and writing the exported PDF and its temporary file.</description>
+</object>

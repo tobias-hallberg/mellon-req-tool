@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-116">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q37. "Abbreviated" in MELLON-GUI-SRS-115 has no length; read the value from 0.3.0.</attr>
+  <description>The status bar shall show at least the first TBD hex digits of the latest commit's hash.</description>
+</object>

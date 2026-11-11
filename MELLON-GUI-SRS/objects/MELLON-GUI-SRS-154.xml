@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-154">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Keyboard shortcuts in the Document Editor.</attr>
+  <description>When the user presses Alt+Down in a Document Editor, the Document Editor shall run Move down.</description>
+</object>

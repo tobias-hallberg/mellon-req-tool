@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-224">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G53 (D-G26). On Windows a program started by name is looked for in the current folder before PATH, so a program committed to a repository could run when Mellon looks for draw.io or the typesetter. The MCP server shares the lookup.</attr>
+  <description>Mellon shall start no program and load no library from a file in the current folder or in the open repository.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the print order and a duplicate's effect were open (review Q14; CF-P9).</attr>
+  <description>When the MCP server's export tool is given a list of attributes, the exported PDF shall show the listed attributes in the list's order, each once.</description>
+</object>

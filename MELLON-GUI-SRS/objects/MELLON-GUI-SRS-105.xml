@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-105">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: TEAM.md's daily loop: pull, then reload each window. Reading files whose size and time didn't change is MELLON-STORE-SRS-181 (failure analysis D-G17). A load error at reload is MELLON-STORE-SRS-37 to -40.</attr>
+  <description>The Document Editor shall have a Reload from disk action that reloads the document and hides the Changed on disk banner.</description>
+</object>

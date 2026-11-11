@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-27">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G10, CF-G11, Q-G3; review Q9. A failed action puts the files back (MELLON-STORE-SRS-174) but not the window's copy, so the next edit could write from a copy that matches nothing on disk. Its own message, not the Changed on disk banner, since the files may not have changed. Shall: with the dialog rate-limited (MELLON-GUI-SRS-24), this is what tells the user an edit didn't land.</attr>
+  <description>After an unexpected error during an action of a Document Editor, the Document Editor shall refuse each edit, with a message that names the error and says to reload, until the user reloads.</description>
+</object>

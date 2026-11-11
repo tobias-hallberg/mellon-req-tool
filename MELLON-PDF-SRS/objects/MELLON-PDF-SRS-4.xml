@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-4">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: exporting makes no edit, and a Document Editor opens in read-only mode, so a reader who only wants a PDF shouldn't have to enable editing. MELLON-VER-SRS-3 decided the same, with shall, for Compare (review Q58). The read-only server refuses export (MELLON-MCP-SRS-99), because an agent chooses where the file goes. architecture.md says Export works in read-only mode. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>While the Document Editor is in read-only mode, the Export action shall be enabled.</description>
+</object>

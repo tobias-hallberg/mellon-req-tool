@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-67">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: description rows grow to fit, with no ellipsis (STATUS.md). A cut-off description hides words that a reviewer has to read. Kept as it is, relying on the data file size limit of MELLON-STORE-SRS-234 (failure analysis Q-G13).</attr>
+  <description>The grid shall show each description in full, making the row as tall as the text needs.</description>
+</object>

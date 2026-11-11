@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-54">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the agent gets what the export warning shows, in a form the agent already reads (MELLON-TRACE-SRS-104).</attr>
+  <description>The MCP server's export tool shall return with the result each suspect and broken outgoing link of the document, in the form the MCP server's suspects tool gives.</description>
+</object>

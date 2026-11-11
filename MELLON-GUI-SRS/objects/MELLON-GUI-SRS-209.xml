@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-209">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G59 (D-G30, change 16). Removing the install folder whole deletes files the user put there.</attr>
+  <description>When the user uninstalls Mellon, the uninstaller shall delete no file in the install folder that neither a Windows installer nor Mellon wrote.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-155">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a smaller figure keeping its size was only in a rationale, and how SVG pixels map to the page was unset (review Q53; 96 px to the inch decided on 2026-11-11). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>The exported PDF shall show a figure that fits within the text area at the size the figure file gives, at 96 px to the inch.</description>
+</object>

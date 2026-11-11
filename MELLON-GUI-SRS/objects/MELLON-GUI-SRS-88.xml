@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checked in the code on 2026-11-11. Only the committing window returns, and the other windows keep their mode (review Q42). TEAM.md's "windows" is handed to Process to fix.</attr>
+  <description>When a commit or a tag from a Document Editor succeeds, the Document Editor shall return to read-only mode.</description>
+</object>

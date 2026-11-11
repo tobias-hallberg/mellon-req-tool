@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-151">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: without the figure program the figures renumber, so a reference to Figure 3 points elsewhere and two PDFs of one commit differ by machine (review Q26; CF-P51). Decided on 2026-11-11 (failure analysis Q10).</attr>
+  <description>The exported PDF shall number the figures from 1 in the order the figures appear, each figure placeholder included.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-90">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checked in the code on 2026-11-11.</attr>
+  <description>While a Document Editor is in read-only mode, the Document Editor shall disable the Properties action.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-91">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the Traceability section counts against the parents in the working copy, and MELLON-PDF-SRS-90 marks only the document (CF-P14; D-P2). Chosen over widening MELLON-PDF-SRS-90 to parents (review Q19), because it says which part of the PDF is a draft.</attr>
+  <description>When a parent document has an uncommitted document file, the cover page shall state that the Traceability section includes uncommitted changes.</description>
+</object>

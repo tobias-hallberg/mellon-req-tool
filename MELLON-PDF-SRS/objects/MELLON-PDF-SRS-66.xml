@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-66">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a developer or tool install needs the program on the search path, and the message says what is missing. Worded as a case of MELLON-PDF-SRS-65's reason (review Q52).</attr>
+  <description>Where Mellon produces PDFs with a separate program, if Mellon can't find the program, the reason Mellon reports shall name the program.</description>
+</object>

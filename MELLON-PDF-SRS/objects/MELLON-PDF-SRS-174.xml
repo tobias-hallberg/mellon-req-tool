@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-174">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: such links appear nowhere in the PDF, so the document reads as less traced than it is, or a link outside the hierarchy goes unseen (CF-P64). MELLON-CHECK-SRS-33 makes them validation errors. Decided on 2026-11-11 (failure analysis Q11); link types only if reviewers ask.</attr>
+  <description>The Traceability section shall state how many of the document's outgoing links go to documents that aren't parent documents.</description>
+</object>

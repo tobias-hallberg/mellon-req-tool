@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: since 0.3.0 Mellon no longer appends .pdf, so the file written is the one the agent named, and a file of another kind isn't overwritten. Letter case from MCP's D-M21 (review Q43); the refusal holds whichever way 0.3.0 compares case, so the requirement stays Implemented, and whether 0.3.0 accepts .PDF is to be confirmed. MELLON-MCP-SRS-64 makes the refusal write no file.</attr>
+  <description>If the MCP server's export tool is given an output path whose file name doesn't end in .pdf, in upper or lower case, the MCP server shall refuse the export.</description>
+</object>

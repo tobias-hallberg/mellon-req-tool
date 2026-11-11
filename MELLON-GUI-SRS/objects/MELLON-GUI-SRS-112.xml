@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-112">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G33 (change 9), Q-G2. MELLON-GUI-SRS-96 and MELLON-GUI-SRS-108 together leave a shown but inactive window, beside an agent's terminal, showing old text with no mark. 5 s decided on 2026-11-11, to confirm once the check is timed at 1,000 objects.</attr>
+  <description>While a Document Editor is shown, the Document Editor should show the Changed on disk banner within 5 s after a file of the document or of a parent document changes on disk.</description>
+</object>

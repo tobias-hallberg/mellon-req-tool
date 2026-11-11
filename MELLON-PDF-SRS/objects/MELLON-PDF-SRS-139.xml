@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-139">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: unbroken runs (a path or a hash), narrow attribute columns, tables wider than the page and rows taller than a page put text past the edge, where print loses it (CF-P27, CF-P40, CF-P41, CF-P42; D-P13). Takes in the former table-width requirement and the tall-row case (review Q32), which are this requirement's test cases.</attr>
+  <description>The exported PDF shall show each character taken from the document within the text area or the header of a page, overlapping no other text.</description>
+</object>

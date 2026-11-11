@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md, Document Editor: "This document has no objects yet." with Add first object (review Q75).</attr>
+  <description>When the document has no objects, the grid shall say that the document has no objects and offer to add the first object.</description>
+</object>

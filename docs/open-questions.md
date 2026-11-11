@@ -305,3 +305,73 @@ Raised by the requirements view of the Compare section and answered the same day
   - -175: the name of the start option that turns the trailer off. Recommendation: `--no-trailer`.
   - Compare requirements -60 and -68 to shall, and -59 to refer to the MCP compare tool (review Q59). Decide this with the person, since it changes committed Compare requirements and their test cases' links.
 - **Answer:** open
+
+## Q16: The PDF specification's questions (2026-11-11)
+
+- **Raised by:** the PDF author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-PDF-SRS`, by the IDs below
+- **How they were handled:** as for Q10 to Q15.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - **The page total.** It stays Implemented although both samples print it one short, and print "Page 1" on the cover and on the contents page. That is a defect to fix.
+  - **Characters as typed.** The characters the samples prove print as typed are Implemented. A wider set of printable characters is Proposed, and characters outside it are reported. The samples show `'` printing as `’`.
+  - **Exporting from the GUI.**
+    - The GUI export reads the document, its figures and its parents as the working copy holds them at the export start.
+    - The GUI warns before exporting uncommitted changes (should), and the export goes on.
+    - Validation errors are counted on the cover and in the export warning; they don't refuse the export.
+  - **The cover.**
+    - It always shows the issue at the exported version, labelled Issue. The MCP tool's `rev` is a revision label shown beside it. A `rev` that resolves as a git version is refused.
+    - The issue date is the issue commit's date; otherwise the manifest date is labelled Date.
+  - **What counts as uncommitted.** Only files the on-disk format defines count as uncommitted for the cover. At an earlier version, the cover says link states weren't checked.
+  - **Typesetting.** No hyphen is added at a line break, and text is ragged-right. A figure is drawn at its SVG size, 96 px to the inch. The page the SVG shows is the page drawn.
+  - **Programs.** The minimum draw.io version is the oldest one a release was tested with. The source-checkout lookup of the PDF program in the project's `tools` folder is to be dropped, in favour of `MELLON_TECTONIC`.
+  - **Refusals.** An export of a document with a load error, or during a merge in progress, is refused.
+  - **The Traceability section.** It states how many outgoing links go to documents that aren't parents.
+  - **One decision each:**
+    - The MCP export, which asks no question, stays Implemented, while the cover counts and per-link marks that make such PDFs safe to read stay Proposed. These are review Q37, -50, -84 and -151.
+    - The commit hash on the cover is accepted only together with the uncommitted-changes mark (review Q63, -80 and -83).
+- **Still open, each with a recommendation:**
+  - -71: should the 300 s limit grow with size? Recommendation: no; measure 1,000- and 2,000-object documents first.
+  - -8: the responsiveness limit while an export runs. Recommendation: measure, and use the value `MELLON-TRACE-SRS-112` gets.
+  - -67: drop the project `tools` lookup? Recommendation: yes, and say so in INSTALL.md's developer set-up.
+  - -128: an empty attribute list given to the MCP export tool. Recommendation: no attribute.
+  - -99: contents depth. Recommendation: three levels, once they are numbered.
+  - -98: A4 only, or US Letter too? Recommendation: A4 only until a user asks.
+  - -144: 0.3.0's table caption format. Recommendation: check the released build.
+  - -88: committer or author date for the issue date. Recommendation: the committer date.
+- **Answer:** open
+
+## Q17: The GUI specification's questions (2026-11-11)
+
+- **Raised by:** the GUI author, its requirements view and its failure analysis, 2026-11-10
+- **Affects:** `MELLON-GUI-SRS`, by the IDs below
+- **How they were handled:** as for Q10 to Q16. Undo and redo moved to `MELLON-EDIT-SRS`.
+- **Answered with the recommendation (2026-11-11, to confirm):**
+  - **Changed on disk.** "Changed on disk" is decided by content (`MELLON-STORE-SRS-181`). A Document Editor checks before each write, at the moment of commit, around each read, and every 5 s while shown (should, TBD once measured). Activation still raises the banner.
+  - **Pending edits.** A pending edit that couldn't be saved is never dropped without asking.
+  - **Read-only mode.** It ends only by the user's choice, and a reload keeps it. It forbids changing the git index and references, so a read-only window can't commit or tag, as built.
+  - **Selection.** The moved, created or edited object stays selected, and the first visible row stays first.
+  - **Errors.** If the error log can't be written, the error's text is shown in the dialog. The log is capped at 10 MB. An error dialog is shown at most once per 10 s.
+  - **Themes.** Follow system follows the OS setting live (should), and is the first-launch default.
+  - **The installer.** It doesn't downgrade, and refuses while a Mellon program runs; it never closes one. Nothing writes into the install folder at run time (should). Checking the installer by a build-provenance attestation is a could.
+  - **Paths.** Paths with spaces and non-ASCII letters work. Paths past 259 characters are refused.
+  - **Platforms.** Windows 11 64-bit (x64) is supported.
+  - **Accessibility.** Suspect and broken links differ by shape, not only by colour (should).
+  - **Accepted risks.** The gap between the check and the write, and a draw.io session left open when a window returns to read-only mode.
+- **Checked in the code that night:**
+  - Read-only mode disables Commit and the Properties dialog.
+  - The outline pane shows each object.
+  - Closing the Project Explorer closes each Document Editor and ends the GUI.
+  - A commit returns only its own window to read-only mode.
+  - The grid has single selection.
+- **Still open, each with a recommendation:**
+  - -8: does the installed, windowed program print its release number for `--version`? Recommendation: check; if not, withdraw -8 for the installed program.
+  - -10: how many recent repositories to list. Recommendation: 10.
+  - -23: where the error log is on Linux. Recommendation: read it from a source checkout on Ubuntu.
+  - -61: what is selected after Delete object. Recommendation: the next object shown, or the one before.
+  - -116: how many hash digits the status bar shows. Recommendation: at least 7.
+  - -169 to -174: the performance and responsiveness limits. Recommendation: measure, then about twice the result.
+  - -112: is 5 s right for noticing changes and refreshing the status bar? Recommendation: keep it unless the check takes over 0.5 s.
+  - -213: drop Windows 10? Recommendation: yes; support each Windows 11 version still serviced at release.
+  - -218: which Ubuntu release. Recommendation: the LTS that CI runs, pinned.
+  - -198: what the installer does today while Mellon runs. Recommendation: check on rung 4.
+- **Answer:** open

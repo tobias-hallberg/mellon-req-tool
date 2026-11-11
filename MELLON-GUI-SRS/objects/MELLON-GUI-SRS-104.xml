@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: from 0.2.0. The window's copy is old, and writing from it would overwrite the change on disk (USAGE.md, Banners). Test over each input path, as for MELLON-GUI-SRS-91 (failure analysis, change 23). Refusing for a load error is MELLON-STORE-SRS-39.</attr>
+  <description>While the Changed on disk banner is shown, the Document Editor shall refuse each edit with a message that says to reload.</description>
+</object>

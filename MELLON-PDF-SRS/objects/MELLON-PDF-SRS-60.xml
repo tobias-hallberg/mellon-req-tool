@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: expected failures show in the status bar for seconds, so the exporter can miss that the PDF is incomplete (CF-P65; D-P17).</attr>
+  <description>The Document Editor shall keep each notice that an export ends with on screen until the user closes the notice.</description>
+</object>

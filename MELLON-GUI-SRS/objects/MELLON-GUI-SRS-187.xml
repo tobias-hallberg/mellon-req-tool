@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-187">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: INSTALL.md, Run the installer.</attr>
+  <description>The Windows installer shall add a Start menu entry named Mellon that starts the GUI.</description>
+</object>

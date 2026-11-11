@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-173">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a parent renamed or removed isn't a load error, so it could be skipped and the section read as fully covered (review Q31; CF-P63). MELLON-CHECK-SRS-38 reports it as DOC_PARENT_MISSING, but export doesn't validate.</attr>
+  <description>If a declared parent document doesn't exist, the Traceability section shall name the parent and state that the parent doesn't exist.</description>
+</object>

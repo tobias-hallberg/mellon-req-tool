@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G15 (D-G10). A copy read earlier for the Project Explorer, checked only later when the window opens, is an old copy that MELLON-GUI-SRS-96 never flags.</attr>
+  <description>When a Document Editor opens, the Document Editor shall show the document and the document's parent documents as the working copy holds the documents at that moment.</description>
+</object>

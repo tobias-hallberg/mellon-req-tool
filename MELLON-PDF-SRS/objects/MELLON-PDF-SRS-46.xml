@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a link whose state isn't known isn't known to be reviewed either, and a document whose only such links are unknown would get no warning (review Q8). Handed to PDF by TRACE (MELLON-TRACE-SRS-70).</attr>
+  <description>When the Export action starts on a document with an outgoing link whose link state is unknown, the Document Editor shall show the export warning before the save dialog.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-40">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a pull that adds or removes a document shows without Refresh (STATUS.md). The pass condition is stated (review Q60).</attr>
+  <description>When the Project Explorer is activated after a document folder was added or removed, the Project Explorer shall list the added document and stop listing the removed one.</description>
+</object>

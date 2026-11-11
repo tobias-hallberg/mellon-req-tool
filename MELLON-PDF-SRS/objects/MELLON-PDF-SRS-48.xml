@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: export doesn't validate, so a document missing required attributes or with outline errors is issued as complete (CF-P33). Decided on 2026-11-11: a count, not a refusal, since drafts are exported for review (failure analysis Q3, review Q64).</attr>
+  <description>When the Export action starts on a document with validation errors, the Document Editor should show the export warning before the save dialog, stating the number of validation errors.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: review Q16, decided on 2026-11-11, to confirm. Read-only mode is the window's state, not the document's; confirm in the test mapping.</attr>
+  <description>When the Document Editor reloads the document, the Document Editor shall keep read-only mode on or off as before.</description>
+</object>

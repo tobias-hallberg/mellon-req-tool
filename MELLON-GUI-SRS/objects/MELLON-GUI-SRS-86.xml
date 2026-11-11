@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-86">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: review Q16, decided on 2026-11-11, to confirm. Nothing in the documents leaves read-only mode otherwise; confirm in the test mapping.</attr>
+  <description>The Document Editor shall leave read-only mode only when the user chooses Read-only or Enable editing.</description>
+</object>

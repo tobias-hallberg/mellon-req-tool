@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-206">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q33. The installer doesn't touch the settings, so the risk is the new release misreading them.</attr>
+  <description>After an upgrade, the GUI shall start with the theme, pane sizes and filters that the previous release saved.</description>
+</object>

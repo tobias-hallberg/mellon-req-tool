@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: exporting on would print the text on disk, which differs from the screen (review Q34).</attr>
+  <description>If saving the pending edits fails, the Document Editor shall end the export and report why the edits weren't saved.</description>
+</object>

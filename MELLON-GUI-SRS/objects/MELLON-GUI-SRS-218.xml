@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-218">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q67. CI tests on Ubuntu and Windows (INSTALL.md) but names no Ubuntu release, so the supported one moves with the CI runner; "run" was undefined.</attr>
+  <description>Mellon shall pass Mellon's automated tests from a source checkout on 64-bit Ubuntu TBD LTS.</description>
+</object>

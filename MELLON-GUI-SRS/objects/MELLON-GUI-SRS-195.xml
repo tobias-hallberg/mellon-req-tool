@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-195">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q66, decided on 2026-11-11 as should. A file written there at run time would make an upgraded folder differ from a fresh install (MELLON-GUI-SRS-204) and be kept or lost by chance at uninstall.</attr>
+  <description>Mellon should write no file into the install folder while Mellon runs.</description>
+</object>

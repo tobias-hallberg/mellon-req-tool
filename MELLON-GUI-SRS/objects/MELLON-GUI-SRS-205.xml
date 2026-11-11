@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-205">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G59 (D-G31). The upgrade first removes the previous release's libraries (INSTALL.md); the same limit applies to that removal.</attr>
+  <description>When the Windows installer upgrades Mellon, the Windows installer shall delete no file in the install folder that neither a Windows installer nor Mellon wrote.</description>
+</object>

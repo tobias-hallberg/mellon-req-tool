@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-59">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the notice says whether draw.io desktop was missing, which tells the user what to install. Worded with the figure program so that a replacement exporter can meet it (review Q4).</attr>
+  <description>When Mellon can't find the figure program, the notice of figures not drawn shall name the figure program and say that Mellon didn't find the program.</description>
+</object>

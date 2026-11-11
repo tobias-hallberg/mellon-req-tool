@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-216">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: INSTALL.md lists Git for Windows for the git client that pulls and pushes, and doesn't say whether Mellon needs it. MELLON-GUI-SRS-225 makes it hold by construction. Where a commit's author comes from on a clean machine is VER's (review Q30).</attr>
+  <description>Mellon installed by the Windows installer shall open, edit and commit a repository on a machine without a git program.</description>
+</object>

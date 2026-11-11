@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: added in 0.3.0. A merged cell that spans a header row and a row below can't be repeated without the lower row (CF-P43). Header row, merged cell and span are EDIT's terms.</attr>
+  <description>The exported PDF shall repeat a table's leading header rows at the top of each page the table continues onto, unless a merged cell spans a header row and a row below the header rows.</description>
+</object>

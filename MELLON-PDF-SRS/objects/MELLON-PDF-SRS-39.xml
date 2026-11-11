@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an agent reports the export to a person and must pass on that the PDF is a draft, unreviewed or incomplete (CF-P12, CF-P13, CF-P22; D-P7). Result shapes are MCP's (MELLON-MCP-SRS-45, -46).</attr>
+  <description>The MCP server's export tool shall return with the result the issue, revision label and exported commit that the cover page shows, and each statement the cover page makes.</description>
+</object>

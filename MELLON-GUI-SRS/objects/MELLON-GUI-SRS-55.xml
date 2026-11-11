@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md, Document Editor. Incoming links in the Inspector are MELLON-TRACE-SRS-34, and link states MELLON-TRACE-SRS-90.</attr>
+  <description>The Inspector shall show the selected object's attributes, description and outgoing links.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-88">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the manifest date prints as the issue date today, though each GUI commit writes it and it isn't the date of the issue (CF-P18). Decided on 2026-11-11 (failure analysis Q4).</attr>
+  <description>When the cover page shows an issue, the cover page shall show the committer date of the issue's commit, labelled Issue date.</description>
+</object>

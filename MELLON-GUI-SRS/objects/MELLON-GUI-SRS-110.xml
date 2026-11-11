@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-110">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: review Q2, Q3; failure analysis CF-G31, Q-G1. MELLON-STORE-SRS-182 checks only the files an edit writes, but an edit is worked out from the window's copy: an Ack after the target's parent changed, a link to a deleted target, New with an old next object number. Widens SRS-79, so Proposed (decided on 2026-11-11). Test a change that keeps size and time, and one made just before an own edit.</attr>
+  <description>If a file of the document or of a parent document changed on disk since the Document Editor read the file, other than a figure redrawn since, the Document Editor shall refuse each edit.</description>
+</object>

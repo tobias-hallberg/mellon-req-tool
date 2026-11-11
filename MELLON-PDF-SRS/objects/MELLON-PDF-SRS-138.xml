@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-138">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a description written as several lines, steps and then an expected result, reads as one paragraph if its line breaks are lost (CF-P30). Table cells and empty lines added (review, author's question). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>The exported PDF shall start a new line at each line break in a description or table cell, an empty line included.</description>
+</object>

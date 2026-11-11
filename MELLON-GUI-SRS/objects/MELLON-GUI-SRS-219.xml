@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-219">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: handed over by STORE (Q-S15): both replace files atomically. FAT, exFAT, network shares and folders a sync program manages aren't supported, and INSTALL.md is to say so (handed to Process).</attr>
+  <description>Mellon shall open, edit and commit a repository on a local NTFS volume on Windows and on a local ext4 volume on Linux.</description>
+</object>

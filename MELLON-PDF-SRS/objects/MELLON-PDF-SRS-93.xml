@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-93">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: an issue tag can be moved or re-created and a revision label is free text, so a PDF that names only them can't be checked later; MELLON-VER-SRS-67 decided the same for Compare. A repository with no commit added (review Q38). Accepted only together with MELLON-PDF-SRS-90, since a real hash on uncommitted text gives false assurance (review Q63, decided on 2026-11-11).</attr>
+  <description>The cover page shall show the exported commit by at least the first 7 hexadecimal digits of the commit's hash, or state that the repository has no commit.</description>
+</object>

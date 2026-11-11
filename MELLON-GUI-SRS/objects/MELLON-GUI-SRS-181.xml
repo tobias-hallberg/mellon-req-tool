@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-181">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: MCP client configurations point at the MCP server in this folder (INSTALL.md), so the path is an interface.</attr>
+  <description>The Windows installer shall install Mellon in the folder %LOCALAPPDATA%\Programs\Mellon, without offering another folder.</description>
+</object>

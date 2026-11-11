@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-101">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G36 (D-G18), review Q1. A same-length change within one tick of the file clock, or by a tool that restores times, keeps both. Should, because comparing content costs reading each file. Reading the new content is MELLON-STORE-SRS-181.</attr>
+  <description>The Document Editor should find a change on disk to a file that leaves the file's size and modified time unchanged.</description>
+</object>

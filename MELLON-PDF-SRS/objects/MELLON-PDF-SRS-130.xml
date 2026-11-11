@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-130">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the Export action always prints the four defaults, so Mellon's own requirements print without req-type, level and rationale; DOORS prints the current view (CF-P34). Column order and an empty view (no attribute) decided on 2026-11-11 (review Q42). MELLON-PDF-SRS-110 keeps the filter out.</attr>
+  <description>When the Export action exports a document, the exported PDF should show only the attributes whose columns the Document Editor shows, in the columns' order.</description>
+</object>

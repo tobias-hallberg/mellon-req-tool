@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-47">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the warning covers suspect links but not a draft, which the cover only marks afterwards (CF-P12; D-P8). Decided on 2026-11-11 as should, and the export goes on (failure analysis Q2). Uncommitted document file: only files the on-disk format defines count (failure analysis Q5).</attr>
+  <description>When the Export action starts on a document with an uncommitted document file, the Document Editor should show the export warning before the save dialog, stating that the exported PDF includes uncommitted changes.</description>
+</object>

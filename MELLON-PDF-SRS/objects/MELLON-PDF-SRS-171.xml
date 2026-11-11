@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-171">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an empty list can't be told apart from a section that failed, as MELLON-VER-SRS-34 found for Compare. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>When a parent document's direct incoming coverage by the document leaves no counted object uncovered, the Traceability section shall state for the parent that no counted object is uncovered.</description>
+</object>

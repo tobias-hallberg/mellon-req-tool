@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the Document Editor shows the message, and the MCP export tool returns an error result instead of stopping (MELLON-MCP-SRS-73). The error_type names the program used today, which is handed to MCP (MELLON-MCP-SRS-55).</attr>
+  <description>If an export fails, Mellon shall report that the export failed, with the reason.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-79">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G22 (D-G13). These updates come without any action by the user, and rebuilding the grid can close open editors without saving. Test a rebuild after another window's edit too.</attr>
+  <description>When the Changed on disk banner appears, link states change, a figure is redrawn or a theme is applied, the Document Editor shall keep each open text field open with the field's typed text.</description>
+</object>

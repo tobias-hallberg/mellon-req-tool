@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-67">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: Windows finds a bare program name in the current folder first, and an MCP server usually starts in the repository, so a program committed there runs at export (CF-P58; D-P21). Decided on 2026-11-11 (failure analysis Q9): the source-checkout lookup inside the project's own folder goes, which changes the development set-up, so it stays a question too.</attr>
+  <description>For an export, Mellon shall run no program file inside the repository or the folder Mellon was started in, other than a file the user named in a setting.</description>
+</object>

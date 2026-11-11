@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-72">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a character dropped from the PDF, a less-than-or-equal sign for instance, changes what a requirement says while the PDF looks complete (CF-P26). The printable characters are those MELLON-PDF-SRS-136 requires (review Q3, decided on 2026-11-11), so this has a test.</attr>
+  <description>If the document's text that the exported PDF shows holds a character that is neither whitespace nor a printable character, Mellon shall report with the export result the object ID and the character.</description>
+</object>

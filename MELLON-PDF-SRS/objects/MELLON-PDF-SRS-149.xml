@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-149">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: draw.io figures and other SVG figures alike, since 0.3.0. Worded with the figure program so that a replacement exporter can meet it (review Q4).</attr>
+  <description>When Mellon finds the figure program and the figure program can draw an object's figure, the exported PDF shall draw the figure.</description>
+</object>

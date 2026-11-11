@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-135">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G4 (D-G5). Settings keyed by document ID alone carry over to another repository's document with that ID.</attr>
+  <description>The GUI should keep the settings the GUI keeps per document (active filter, hidden columns, column order, column widths and pane sizes) apart for each repository.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-22">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: INSTALL.md, Error log. Worded by the environment variables instead of folders the definitions don't name (review Q63).</attr>
+  <description>If %LOCALAPPDATA% is unset or isn't a folder, the GUI shall keep the error log in the file %TEMP%\logs\mellon-gui.log.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: architecture.md records one dialog per 10 s (failure analysis, change 1), and STATUS.md calls the dialog rate-limited. Merged with the rate limit, which contradicted a dialog for each error (review Q8). Confirm the value in the test mapping.</attr>
+  <description>When an unexpected error occurs and no unexpected-error dialog opened less than 10 s before, the GUI shall show a dialog that names the error log file.</description>
+</object>

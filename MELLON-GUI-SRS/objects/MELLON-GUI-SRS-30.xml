@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G3 (D-G3). A fatal error gets past the handling of unexpected errors (MELLON-GUI-SRS-20), and the windowed program has no console, so the defect leaves no trace.</attr>
+  <description>When a fatal error ends the GUI, the GUI should first append the error and the place in the program where the error occurred to the error log.</description>
+</object>

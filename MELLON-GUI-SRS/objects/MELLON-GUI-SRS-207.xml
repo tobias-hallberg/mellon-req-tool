@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-207">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: uninstalling is done from Settings → Apps (INSTALL.md, Upgrade or uninstall).</attr>
+  <description>The Windows installer shall register Mellon in the Windows list of installed apps, with an uninstaller.</description>
+</object>

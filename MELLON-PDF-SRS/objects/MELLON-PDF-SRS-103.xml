@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-103">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: pages are printed and passed on without the cover. Should, because the cover already says so (MELLON-PDF-SRS-90).</attr>
+  <description>When the cover page states that the exported PDF includes uncommitted changes, each page after the cover page should state that the PDF includes uncommitted changes.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-117">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the samples leave headings alone at the foot of a page (VCU3-SRS's 2 Power Management, MELLON-VER-STS's 1.2 Choosing versions and 2 Merging), which reads as an empty section (CF-P38).</attr>
+  <description>The exported PDF shall keep each heading on the same page as the start of the object that follows the heading.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a PDF program from the search path can be any version, and the samples' properties name only the typesetting programs, so a wrong PDF can't be traced to a build (CF-P57; D-P27).</attr>
+  <description>The exported PDF's document properties should hold the version of Mellon that made the exported PDF.</description>
+</object>

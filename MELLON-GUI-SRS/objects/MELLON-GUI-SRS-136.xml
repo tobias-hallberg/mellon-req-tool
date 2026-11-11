@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q52. Corrupt or unreadable settings had no response. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If the GUI can't read a saved setting, the GUI shall start with the setting's default value.</description>
+</object>

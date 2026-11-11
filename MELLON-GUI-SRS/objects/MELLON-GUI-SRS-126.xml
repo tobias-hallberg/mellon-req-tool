@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: one theme for the whole GUI, shared by both kinds of window (STATUS.md). Test with windows open (failure analysis, change 24).</attr>
+  <description>When the user chooses a theme, the GUI shall apply the theme to each open window.</description>
+</object>

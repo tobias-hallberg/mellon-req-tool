@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-167">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: fixed in 0.2.0 for the outline pane's actions (CHANGELOG 0.2.0); widened to each pane (review Q58). Confirm the collapsed right pane in the test mapping.</attr>
+  <description>Whichever of the Document Editor's panes are collapsed, the Document Editor shall run each Document Editor shortcut's action when the user presses the shortcut.</description>
+</object>

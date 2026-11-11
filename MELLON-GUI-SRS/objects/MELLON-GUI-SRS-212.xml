@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-212">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: INSTALL.md, Before you install. MELLON-GUI-SRS-213 would replace it; whether to keep Windows 10 is a question (review Q34).</attr>
+  <description>Mellon installed by the Windows installer shall run on 64-bit Windows 10 and on 64-bit Windows 11.</description>
+</object>

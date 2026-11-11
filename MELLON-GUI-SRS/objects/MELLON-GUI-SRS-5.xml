@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q14. Read with MELLON-GUI-SRS-6, picking a wrong folder could close the open editors and their pending edits. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If the GUI refuses a folder, the Project Explorer shall keep open the repository that was open and each of the repository's Document Editors.</description>
+</object>

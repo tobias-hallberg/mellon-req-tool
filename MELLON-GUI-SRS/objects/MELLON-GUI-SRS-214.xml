@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-214">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: no Python needed (INSTALL.md, Before you install). MELLON-GUI-SRS-215 would replace it.</attr>
+  <description>Mellon installed by the Windows installer shall run without a separately installed programming-language runtime.</description>
+</object>

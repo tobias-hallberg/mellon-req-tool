@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-92">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: MELLON-PDF-SRS-89 and MELLON-PDF-SRS-90 are the only sign of a draft, and a check that fails silently reads as clean (CF-P15; D-P3).</attr>
+  <description>If Mellon can't work out whether the document or a parent document has uncommitted document files, or whether the document has changed since its issue, the cover page shall state what Mellon couldn't check.</description>
+</object>

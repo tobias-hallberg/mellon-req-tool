@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-162">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md. Undo itself is MELLON-EDIT-SRS's; a text field keeps Ctrl+Z for its own text. Test in each kind of text field (failure analysis change 25).</attr>
+  <description>When the user presses Ctrl+Z while no text field has the focus, the Document Editor shall run Undo.</description>
+</object>

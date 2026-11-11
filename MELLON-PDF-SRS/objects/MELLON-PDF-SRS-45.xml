@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-45">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: added in 0.3.0. The exported PDF shows no link states, so the warning is where a user learns that the traceability isn't reviewed.</attr>
+  <description>When the Export action starts on a document with suspect or broken outgoing links, the Document Editor shall show the export warning before the save dialog.</description>
+</object>

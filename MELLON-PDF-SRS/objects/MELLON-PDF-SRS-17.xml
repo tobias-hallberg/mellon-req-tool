@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the revision label only relabels the working copy (MELLON-PDF-SRS-84), so re-issuing an earlier issue's PDF needs a git checkout, which changes the working copy of each document. A version parameter of its own, not the revision label (failure analysis Q1, decided on 2026-11-11); its name goes in MELLON-MCP-SRS-36's table. Split from the GUI half (review Q6). Not built.</attr>
+  <description>The MCP server's export tool should export a document as the document is at an issue, a tag, a branch or a commit that the call names.</description>
+</object>

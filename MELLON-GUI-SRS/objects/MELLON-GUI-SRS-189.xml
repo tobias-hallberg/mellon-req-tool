@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-189">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the installer and the programs take the number from one place (INSTALL.md, Building the installer). The test reads the number each program reports, not an exit status (failure analysis CF-G63, change 28).</attr>
+  <description>The release number in the Windows installer's file name shall be the release number that the installed GUI and MCP server report.</description>
+</object>

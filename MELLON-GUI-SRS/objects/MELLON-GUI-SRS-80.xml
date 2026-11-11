@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G26, Q-G9. Deferred on 2026-11-11: MELLON-GUI-SRS-31 tells the user instead. Kept outside the repository so that a draft is never committed.</attr>
+  <description>The GUI could keep each pending edit outside the repository, so that the typed text survives a fatal error.</description>
+</object>

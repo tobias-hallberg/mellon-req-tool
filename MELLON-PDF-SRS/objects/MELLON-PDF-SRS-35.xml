@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: two writers to one file race, and one PDF can hold the other's content (review Q36; CF-P60).</attr>
+  <description>If an export starts with the output path of an export that is still running, Mellon shall refuse the second export.</description>
+</object>

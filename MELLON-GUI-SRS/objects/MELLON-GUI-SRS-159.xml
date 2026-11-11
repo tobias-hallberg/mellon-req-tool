@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-159">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Keyboard shortcuts in the Document Editor.</attr>
+  <description>When the user presses Ctrl+F in a Document Editor, the Document Editor shall move the focus to the filter box.</description>
+</object>

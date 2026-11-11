@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-198">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: CHANGELOG 0.2.0 says the installer refuses to start while either runs, leaving the install untouched. INSTALL.md describes it differently, so the status holds only once rung 4 confirms it, with mellon-mcp.exe in a long call (review Q31, Q76; failure analysis Q-G7). MELLON-GUI-SRS-199 would replace it.</attr>
+  <description>If mellon.exe or mellon-mcp.exe is running, the Windows installer shall stop without changing the installed files.</description>
+</object>

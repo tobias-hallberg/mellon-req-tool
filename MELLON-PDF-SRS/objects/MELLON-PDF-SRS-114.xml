@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-114">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: seen in both samples. Objects that aren't headings get no number. MELLON-PDF-SRS-115 states the deeper levels.</attr>
+  <description>The exported PDF shall number the headings of the top two outline levels in outline order, as 1, 2 at the top level and 1.1, 1.2 under heading 1.</description>
+</object>

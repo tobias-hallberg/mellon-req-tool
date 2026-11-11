@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-191">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: unsigned programs get a SmartScreen warning, and AppLocker, WDAC or Smart App Control can block them on managed machines (INSTALL.md). The key would belong in the release workflow's secrets.</attr>
+  <description>The Windows installer, mellon.exe and mellon-mcp.exe could carry a code signature.</description>
+</object>

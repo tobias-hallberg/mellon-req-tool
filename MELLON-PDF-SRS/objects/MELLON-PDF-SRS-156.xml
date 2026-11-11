@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-156">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a known limitation of 0.3.0 (STATUS.md). MELLON-PDF-SRS-157 would replace it, and MELLON-PDF-SRS-63 reports it.</attr>
+  <description>When a draw.io figure's diagram has more than one figure page, the exported PDF shall draw the first figure page.</description>
+</object>

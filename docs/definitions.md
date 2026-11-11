@@ -156,6 +156,31 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | View | A saved choice of which attribute columns the grid shows, and in what order. |
 | Filter | A saved set of conditions on attributes and links that decides which objects the grid shows. |
 
+## Exporting
+
+| Term | Meaning |
+|---|---|
+| Export | Writing one document to a PDF file, with the Document Editor's Export action or the MCP server's export tool. |
+| Export action | The Document Editor action that exports the open document. |
+| Exported PDF | The PDF file that one export writes. |
+| Output path | The file path that an export writes the exported PDF to. |
+| Export start | For the Export action, the moment the user confirms the output path; for the MCP server's export tool, the moment the MCP server receives the call. |
+| Export result | What Mellon reports when an export ends: for the Export action, what the Document Editor shows; for the MCP server's export tool, the tool call's result. |
+| Export fails | An export fails when it ends without writing the exported PDF for a reason other than the user cancelling the export. |
+| Exported version | The version an export reads the document at: the working copy, unless the export chooses another version. |
+| Exported commit | The exported version's commit, or the latest commit when the exported version is the working copy. |
+| Issue at a version | For a version, the highest issue of a document, in issue order, whose commit is the version's commit or an ancestor of it. At the working copy it is the current issue. |
+| Uncommitted document file | A file in a document's folder that the on-disk format defines and that differs from the latest commit. |
+| Cover page | The first page of an exported PDF. |
+| Revision label | The text that the MCP server's export tool is given, as `rev`, to show as the document's revision. |
+| Traceability section | The last section of the exported PDF of a document with parent documents, which states its coverage against them and lists its links to their objects. |
+| Export warning | The Document Editor's warning, before the save dialog of an export, about the document's outgoing links whose link state is suspect, broken or unknown, its uncommitted changes and its validation errors. |
+| Figure program | The program Mellon draws figures with for an export. Mellon 0.3.0 uses draw.io desktop. |
+| Figure page | One page of a draw.io figure's diagram. The shown figure page is the one whose picture the figure file holds. |
+| Figure placeholder | The line an exported PDF shows in place of a figure that the PDF doesn't draw. |
+| Notice of figures not drawn | The Document Editor's message, at the end of an export, that lists the objects whose figures the exported PDF doesn't draw. |
+| Printable character | A character from U+0021 to U+007E, or of the Unicode blocks Latin-1 Supplement, Latin Extended-A, General Punctuation or Greek and Coptic, or ≤ or ≥, other than control characters, whitespace and invisible characters. |
+
 ## Programs and windows
 
 | Term | Meaning |
@@ -164,6 +189,10 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Project Explorer | The GUI's main window, which lists the documents in a repository. |
 | Document Editor | The GUI window for one document. |
 | Grid | The Document Editor pane that lists the document's objects, one row each, with a column for each attribute shown. |
+| Outline pane | The Document Editor's left pane, which shows the outline as a tree. |
+| Selected object | The object selected in a Document Editor's outline pane and grid. |
+| Read-only banner | The banner above the grid shown while a Document Editor is in read-only mode. |
+| Status bar | The line at the bottom of the Project Explorer and of each Document Editor. |
 | State gutter | The grid column that shows a mark for the states of each object's outgoing links. |
 | Inspector | The Document Editor tab that shows the selected object's attributes, description, outgoing links and incoming links. |
 | Suspect banner | The bar above the grid that holds the Suspects only and Ack selected controls. |
@@ -181,7 +210,17 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Table editor | The Document Editor's in-place editor for one object's table, opened from the table shown in the grid. |
 | Table menu, Figure menu, Filters menu, Views menu | The Document Editor toolbar menus that hold the actions on the selected object's table, the actions on its figure, the document's filters and the document's views. |
 | draw.io desktop | The draw.io program for Windows, macOS and Linux (https://www.drawio.com/), which Mellon opens figures in and renders figures with. It isn't part of Mellon. |
-| Read-only mode | A Document Editor state in which no edit can be made. A window opens in it. |
+| Read-only mode | A Document Editor state in which the window makes no edit from the user's input. Other programs, such as an agent, can still change the files. |
+| Action | A command that the user starts in a GUI window: from a menu, a toolbar, a button, a context menu, a shortcut, a drag and drop or a paste. Keys that a text field handles itself (Esc, Enter, Ctrl+Enter and the keys that edit text) don't start an action. |
+| Text field | A control in a GUI window that the user types text into. |
+| Activated, active | A window is active while it receives keyboard input, and is activated when it becomes active. |
+| Shown | A window is shown while it is open and not minimised, whether or not it is active. |
+| Reload | To read a document and its parent documents again from the working copy, in place of the copy that a Document Editor read before. |
+| Changed on disk | A file in a document folder has changed on disk for a Document Editor when the file was added or removed, or holds content other than what the Document Editor last read or wrote there. |
+| Theme | The set of colours the GUI draws with: Light or Dark. |
+| Unexpected error | An error in the GUI or the MCP server that Mellon has no planned response for: not a refusal, a load error or a validation error. |
+| Fatal error | An error that ends a program at once, outside its handling of unexpected errors, for example an access violation. |
+| Error log | The file that the GUI appends unexpected errors to. |
 | `mellon-check` | The command-line program that checks a repository for check problems and reports the result by its exit status. |
 | Validate action | The Document Editor action that validates the open document and shows the result. |
 | MCP server | The program that offers Mellon's functions to an agent over the Model Context Protocol, on standard input and output. |
@@ -195,5 +234,9 @@ The terms Mellon's requirements and test cases use, and the only list of them. A
 | Log level | How much the MCP server writes to standard error: `DEBUG`, `INFO`, `WARNING` or `ERROR`, from the most messages to the fewest. Each log message has one of these levels, and each level is more severe than the ones before it. |
 | Trailer | A `Key: value` line in the last paragraph of a commit message, as git defines trailers. |
 | Released build | A Mellon build from a published release, as opposed to a development build. |
+| Release number | The number of a Mellon build, in the form 0.3.0. |
+| Windows installer | The program `Mellon-Setup-<version>.exe`, which installs Mellon on Windows. |
+| Install folder | The folder that the Windows installer installs Mellon into. |
+| Source checkout | A clone of Mellon's own source code, run without the Windows installer. |
 | Reference machine | The computer that performance requirements are measured on: the one `mellon/SCALING.md` records its measurements on. See open question Q2. |
 | Reference document | A document made for a performance requirement as `mellon/SCALING.md`'s method makes one: of the stated number of objects, each object other than a heading linking to one object of a parent document of the same size, with as many commits as objects in its history. |

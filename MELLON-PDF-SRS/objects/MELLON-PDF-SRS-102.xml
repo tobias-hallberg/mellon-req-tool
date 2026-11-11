@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: each header shows the issue, and pages are passed on without the cover, as MELLON-PDF-SRS-103 says for uncommitted changes (CF-P13; D-P4; review Q19).</attr>
+  <description>When the document has changed since its issue at the exported version, each page of the exported PDF after the cover page should state that the document has changed since that issue.</description>
+</object>

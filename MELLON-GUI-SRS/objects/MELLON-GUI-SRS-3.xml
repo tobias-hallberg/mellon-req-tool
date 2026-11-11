@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-3">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q48. Nothing says what a mistyped path in a shortcut, or a file in place of a folder, does. Confirm against 0.3.0; Implemented if 0.3.0 does this.</attr>
+  <description>If the path given at start doesn't name an existing folder, the GUI shall open the Project Explorer with no repository and a message that names the path.</description>
+</object>

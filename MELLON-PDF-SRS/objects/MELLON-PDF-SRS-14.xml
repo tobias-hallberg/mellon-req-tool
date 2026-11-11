@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a document that can't be read can't be exported as it is, and an export of its last good copy would look current. Decided on 2026-11-11 (review Q64). A parent document with a load error is named in the Traceability section instead (MELLON-PDF-SRS-172). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>If the document has a load error, Mellon shall refuse the export, naming the load error.</description>
+</object>

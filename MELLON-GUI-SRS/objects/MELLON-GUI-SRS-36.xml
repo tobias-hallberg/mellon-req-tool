@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-36">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a double-click opens the document in its own window (USAGE.md, Surfaces).</attr>
+  <description>When the user opens a document that loads, the Project Explorer shall open a Document Editor for the document.</description>
+</object>

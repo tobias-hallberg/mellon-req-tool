@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-199">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q31. The typesetter during an export and mellon-check.exe (MELLON-GUI-SRS-193) also hold files, beside the two programs MELLON-GUI-SRS-198 names.</attr>
+  <description>If a program in the install folder is running, the Windows installer shall leave the install folder unchanged.</description>
+</object>

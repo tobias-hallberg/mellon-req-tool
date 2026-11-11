@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-70">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the program runs with a 300 s timeout (STATUS.md). Its message wrongly suggests a network problem (SCALING.md), a defect to fix. MELLON-PDF-SRS-71 would replace it with one limit for the whole export.</attr>
+  <description>Where Mellon produces PDFs with a separate program, if the program hasn't finished 300 s after the program's start, Mellon shall stop the program and end the export.</description>
+</object>

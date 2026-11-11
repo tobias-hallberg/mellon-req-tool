@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-153">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the description already prints as the heading's title or the table's caption.</attr>
+  <description>On a heading or an object with a table, the exported PDF shall show the figure after the heading or the table, captioned 'Figure N' alone.</description>
+</object>

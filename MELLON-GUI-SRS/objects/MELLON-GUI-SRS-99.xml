@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-99">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: draw.io writes a backup beside each figure it saves (STATUS.md, External changes).</attr>
+  <description>The Document Editor shall not count a change to a side file as a change on disk.</description>
+</object>

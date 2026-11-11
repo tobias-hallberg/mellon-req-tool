@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-61">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: unrendered_figures, the agent's counterpart of MELLON-PDF-SRS-58.</attr>
+  <description>The MCP server's export tool shall return with the result the object ID of each object whose figure the exported PDF doesn't draw.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-91">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: architecture review F15/E75, failure analysis CF-G27, CF-G28 (change 6), review Q7. Checked control by control, so an input added later can miss the check, as a column drag did before 0.2.0. Test each input path (typing, paste, drag and drop, file drops, list picks, the Table dropdown) in each window state, comparing bytes, the index and the references. Discard and Ack: confirm in the test mapping (MELLON-TRACE-SRS-137). Export in read-only mode is PDF's.</attr>
+  <description>While in read-only mode, the Document Editor shall leave unchanged the git index, each git reference, and each file and folder of the work tree but exported PDFs, whatever the user's input.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-217">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: draw.io is needed only to edit figures and to draw them in PDFs (INSTALL.md, Before you install).</attr>
+  <description>Mellon shall start and edit documents on a machine without draw.io desktop.</description>
+</object>

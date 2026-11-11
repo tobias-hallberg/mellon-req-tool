@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-27">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a file written there could damage git's own records. MELLON-PDF-SRS-30 closes other spellings of the folder (review Q22).</attr>
+  <description>If the MCP server's export tool is given an output path inside the repository's .git folder, the MCP server shall refuse the export.</description>
+</object>

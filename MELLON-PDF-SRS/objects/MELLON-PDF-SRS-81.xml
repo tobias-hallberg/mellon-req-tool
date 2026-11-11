@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-81">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: Mellon records no owner, so an Owner field that repeats the author reads as a separate fact, and the date's form was open (review Q50). The manifest date prints as the issue date today, though each GUI commit writes it; MELLON-PDF-SRS-88 gives the issue's own date (CF-P18). Decided on 2026-11-11 (failure analysis Q4).</attr>
+  <description>The cover page shall show the document ID and the document's title, author and date, each once, as the manifest holds the value, with the date labelled Date.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-41">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q47, failure analysis CF-G14 (change 10). In 0.3.0 a document that breaks in place, with conflict markers after a pull, looks fine until Refresh, and one fixed in place stays unopenable. Measure against MELLON-GUI-SRS-173.</attr>
+  <description>When the Project Explorer is activated, the Project Explorer should mark each listed document by whether the document loads from the working copy at that moment.</description>
+</object>

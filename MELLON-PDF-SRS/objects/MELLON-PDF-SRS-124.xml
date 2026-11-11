@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-124">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the label is the name the user sees elsewhere (MELLON-VER-SRS-45). The samples print VERIFICATION-METHOD, the attribute's name in capitals, so the label may not be used. Functional, not Quality (review Q61).</attr>
+  <description>The exported PDF shall name each attribute by the attribute's label.</description>
+</object>

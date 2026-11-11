@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-136">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: typographic conversions change text (' prints as a closing quote, -- can print as an en dash), and attribute values, labels and metadata take other paths where a % can cut a value short (CF-P23, CF-P25, CF-P31; D-P12; review Q3, Q16). Printable characters: decided on 2026-11-11 (review Q3). Test each special character and sequence in each field, against the PDF's text layer.</attr>
+  <description>The exported PDF shall show each printable character of each description, table cell, attribute label, attribute value, metadata field and revision label as the document holds the character, in the same order.</description>
+</object>

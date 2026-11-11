@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-7">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the export runs in the background, because it takes about 100 s at 1,000 objects. MELLON-PDF-SRS-8 would replace it with a measured limit.</attr>
+  <description>While an export runs, the Document Editor windows should respond to input.</description>
+</object>

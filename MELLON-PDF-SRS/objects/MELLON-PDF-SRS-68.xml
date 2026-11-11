@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-68">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: any version is used today, and the figure program draws figures from other clones at each export (CF-P50; D-P20). The version is read at export; decided on 2026-11-11 (failure analysis Q8).</attr>
+  <description>If the figure program found is older than the oldest version that the running release of Mellon was tested with, Mellon shall draw no figure with the program, reporting the version found.</description>
+</object>

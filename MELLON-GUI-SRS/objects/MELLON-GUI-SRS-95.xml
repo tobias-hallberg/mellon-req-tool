@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a person and an agent edit one repository together (USAGE.md, Banners). This section keeps either from overwriting the other only once MELLON-GUI-SRS-110, MELLON-GUI-SRS-111 and MELLON-GUI-SRS-100 to MELLON-GUI-SRS-103 are built (failure analysis, change 29).</attr>
+  <description>The GUI shall open and edit a repository while the MCP server or another GUI has the same repository open.</description>
+</object>

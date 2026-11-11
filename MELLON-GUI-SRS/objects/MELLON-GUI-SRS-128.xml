@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-128">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q51. The first launch's theme was unstated. Decided on 2026-11-11, to confirm; Implemented if 0.3.0 does this.</attr>
+  <description>When the GUI starts with no saved theme, the GUI shall use Follow system.</description>
+</object>

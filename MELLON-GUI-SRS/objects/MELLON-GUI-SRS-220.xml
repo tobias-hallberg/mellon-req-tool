@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-220">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q64, failure analysis CF-G62 (change 27). Test also under a user profile whose path holds both, for the install folder, the error log and the typesetter's cache.</attr>
+  <description>Mellon shall open, edit, commit and export a repository whose path holds spaces and non-ASCII letters.</description>
+</object>

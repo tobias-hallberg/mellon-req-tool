@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q4 and the failure analysis (change 11) agree on shall. A Document Editor closes on Close, Ctrl+W, opening another repository (MELLON-GUI-SRS-6), Quit (MELLON-GUI-SRS-13) and closing the Project Explorer (MELLON-GUI-SRS-14), and nothing records whether typed text is saved then. Confirm against 0.3.0.</attr>
+  <description>When a Document Editor closes, the Document Editor shall first save the Document Editor's pending edits.</description>
+</object>

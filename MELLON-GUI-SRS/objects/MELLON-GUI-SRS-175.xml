@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-175">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a window that doesn't redraw for seconds looks hung, and Windows then offers to end Mellon (failure analysis CF-G45). 1 s agreed by the review.</attr>
+  <description>While an action of the GUI runs longer than 1 s, the GUI should show that the action is still running.</description>
+</object>

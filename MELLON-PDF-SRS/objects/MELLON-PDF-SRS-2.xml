@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an issued document goes as a PDF to readers who don't use Mellon. Split from the shortcut (review Q57).</attr>
+  <description>The Document Editor shall have an Export action that exports the open document to a PDF file.</description>
+</object>

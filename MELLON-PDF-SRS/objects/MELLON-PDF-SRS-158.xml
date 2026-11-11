@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-158">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Deferred</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: listed as a figures follow-up in STATUS.md. The rationale's source was STATUS.md, not a stakeholder (review Q62).</attr>
+  <description>The exported PDF could have a list of figures.</description>
+</object>

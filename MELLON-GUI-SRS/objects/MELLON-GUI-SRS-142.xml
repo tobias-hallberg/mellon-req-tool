@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-142">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: GPL-3.0 sections 0 and 5(d), Appropriate Legal Notices (review Q39). What 0.3.0's dialog shows isn't recorded.</attr>
+  <description>The About dialog shall show Mellon's copyright notice, that Mellon comes with no warranty, that GPL-3.0-or-later lets the user convey Mellon, and how to view the licence.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-21">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: support asks a user for this file, so its place is an interface (INSTALL.md, Error log).</attr>
+  <description>On Windows, the GUI shall keep the error log in the file %LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log.</description>
+</object>

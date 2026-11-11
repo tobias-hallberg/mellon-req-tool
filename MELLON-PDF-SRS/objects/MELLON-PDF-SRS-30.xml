@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-30">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: on Windows one folder has several spellings (.GIT, .git., GIT~1, a junction, a \\?\ prefix, a\..\.git), so a check of the path's text is bypassed (CF-P7; D-P22; review Q22). Applies to MELLON-PDF-SRS-27, MELLON-PDF-SRS-28, MELLON-PDF-SRS-29 and MELLON-PDF-SRS-32.</attr>
+  <description>The MCP server's export tool shall judge an output path by the file that the path names once the file system resolves the path's letter case, short names, links, junctions and '..'.</description>
+</object>

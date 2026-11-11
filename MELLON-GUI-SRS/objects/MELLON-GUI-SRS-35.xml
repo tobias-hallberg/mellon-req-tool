@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-35">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q74. An empty list looks like a failed load, and a new repository has no document until the first is created (MELLON-STORE-SRS-13). Decided on 2026-11-11, to confirm; Implemented if 0.3.0 does this.</attr>
+  <description>When the open repository holds no document, the Project Explorer shall say that the repository holds no document and offer New document.</description>
+</object>

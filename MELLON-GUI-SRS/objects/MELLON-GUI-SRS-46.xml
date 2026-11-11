@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-46">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the grid gets the width when the outline or the tabs aren't needed (STATUS.md). The grid itself doesn't collapse (review Q24).</attr>
+  <description>The Document Editor shall let the user collapse and restore the outline pane and the pane with the Inspector and the History tab.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-39">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: used after a pull, and to check again a document that failed to load (TEAM.md, Daily loop). Worded by its result (review Q59).</attr>
+  <description>When the user chooses Refresh, the Project Explorer shall list the documents and load errors of the working copy as the working copy is at that moment.</description>
+</object>

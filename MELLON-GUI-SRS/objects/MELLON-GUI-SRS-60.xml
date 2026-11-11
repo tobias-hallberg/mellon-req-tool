@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-60">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q10. Otherwise text typed after New sibling can go to the previous object. Decided on 2026-11-11, to confirm; Implemented if 0.3.0 does this.</attr>
+  <description>When the user creates an object, the Document Editor shall select the new object.</description>
+</object>

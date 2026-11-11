@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-119">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G44 (change 15), review Q54. A tooltip isn't seen, so a commit lands on no branch. Replaces MELLON-GUI-SRS-118 once built.</attr>
+  <description>While no branch is checked out, the status bar of each GUI window shall show, without hovering, that no branch is checked out.</description>
+</object>

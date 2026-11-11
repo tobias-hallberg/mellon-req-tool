@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-94">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the exported PDF shows no link states, so a PDF issued past the export warning, or over MCP where nothing warns, reads as fully reviewed (architecture review; CF-P22). Decided with MELLON-PDF-SRS-56 and MELLON-PDF-SRS-169 as one decision on 2026-11-11 (review Q37).</attr>
+  <description>When the document has outgoing links whose link state is suspect, broken or unknown, the cover page shall state how many outgoing links are in each of the three states.</description>
+</object>

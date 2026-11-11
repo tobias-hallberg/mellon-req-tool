@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-106">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q22, failure analysis CF-G6 (change 14). An absent folder isn't a load error, so MELLON-STORE-SRS-37 to -39 don't cover it.</attr>
+  <description>If the document's folder is absent when the Document Editor reloads, the Document Editor shall say that the document was removed and refuse each edit.</description>
+</object>

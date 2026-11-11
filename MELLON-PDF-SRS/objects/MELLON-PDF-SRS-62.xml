@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: drawio_found false. Worded with the figure program (review Q4); the field's name stays (MELLON-MCP-SRS-38).</attr>
+  <description>When Mellon can't find the figure program, the MCP server's export tool shall return with the result that Mellon didn't find the figure program.</description>
+</object>

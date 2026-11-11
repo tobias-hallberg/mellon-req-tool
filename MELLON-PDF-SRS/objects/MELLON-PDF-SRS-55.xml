@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-55">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: as MELLON-PDF-SRS-46, for agents (review Q8). Not built.</attr>
+  <description>The MCP server's export tool shall return with the result each outgoing link of the document whose link state is unknown, with the link's state.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-145">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: merged cells printed as separate cells would change what the table says. Test a merged cell taller than its rows, and one cut by a page break (CF-P42).</attr>
+  <description>The exported PDF shall show each merged cell across the rows and columns the cell spans.</description>
+</object>

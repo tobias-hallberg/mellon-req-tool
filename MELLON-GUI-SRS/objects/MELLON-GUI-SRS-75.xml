@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-75">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q15. Otherwise Export, Commit or Compare would run without the typed text. Confirm against 0.3.0.</attr>
+  <description>If the Document Editor can't save a pending edit before an action, the Document Editor shall cancel the action.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-188">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: MCP clients start the server by its full path (INSTALL.md), and the user's command line stays as it was.</attr>
+  <description>The Windows installer shall not change the PATH environment variable.</description>
+</object>

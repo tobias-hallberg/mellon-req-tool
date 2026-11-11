@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the window has one selection, which the panes share (STATUS.md, file map). MELLON-GUI-SRS-56 covers an object the grid hides.</attr>
+  <description>When the user selects an object in the outline pane, the Document Editor shall select the object in the grid.</description>
+</object>

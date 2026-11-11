@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-144">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: caption position and form were open (review Q54); figures have theirs in MELLON-PDF-SRS-152. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>The exported PDF shall show a table's caption above the table, as 'Table N:' followed by the object's description.</description>
+</object>

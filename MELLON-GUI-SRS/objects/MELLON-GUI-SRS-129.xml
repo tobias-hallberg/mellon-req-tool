@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q51, failure analysis CF-G48. Decided on 2026-11-11 as should. Test the switch with windows open: cells painted earlier can keep the old colours and draw text in the background colour.</attr>
+  <description>While Follow system is chosen, the GUI should switch theme when the operating system's light or dark setting changes.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-84">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the user sees why edits do nothing (USAGE.md, Banners).</attr>
+  <description>While a Document Editor is in read-only mode, the Document Editor shall show the read-only banner.</description>
+</object>

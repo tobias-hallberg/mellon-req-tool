@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-24">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: replacing an issued PDF by mistake loses the record of what was issued (CF-P3). The Windows save dialog probably asks already. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>If the output path chosen in the save dialog names an existing file, the Document Editor shall ask the user to confirm replacing the file.</description>
+</object>

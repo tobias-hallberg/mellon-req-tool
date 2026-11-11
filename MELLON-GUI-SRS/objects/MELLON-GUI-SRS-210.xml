@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-210">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q32. Keeps the settings and the error log for a reinstall.</attr>
+  <description>When the user uninstalls Mellon, the uninstaller shall leave each file outside the install folder unchanged, apart from the Start menu entry and the installed-apps entry.</description>
+</object>

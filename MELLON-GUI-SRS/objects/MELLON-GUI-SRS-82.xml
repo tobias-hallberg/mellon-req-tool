@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-82">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a window opened to read can't change a file by a stray key; TEAM.md's daily loop starts editing with Enable editing. Read-only mode stops only the window's own input: other windows, other programs and the Project Explorer can still change the document (failure analysis CF-G30).</attr>
+  <description>When a Document Editor opens, the Document Editor shall be in read-only mode.</description>
+</object>

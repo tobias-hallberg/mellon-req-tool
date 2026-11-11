@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-157">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the Document Editor shows the page that was current when the figure was saved, so the PDF can show another diagram than the author sees (CF-P48). Decided on 2026-11-11 (review Q27). Test a figure saved while page 2 was shown.</attr>
+  <description>When a figure's diagram has more than one figure page, the exported PDF shall draw the shown figure page.</description>
+</object>

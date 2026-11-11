@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-63">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a figure cut to one page (MELLON-PDF-SRS-156, MELLON-PDF-SRS-157) looks complete in the PDF (CF-P48). Not built.</attr>
+  <description>When a figure's diagram has more than one figure page, Mellon shall report with the export result the object ID and that the exported PDF draws one figure page only.</description>
+</object>

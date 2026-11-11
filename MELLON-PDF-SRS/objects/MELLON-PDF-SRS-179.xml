@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-179">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: SCALING.md measured 101 s at 1,000 objects on a mostly idle reference machine with the installer's build. 1,000 objects is the recommended document size, and export time sets it. 150 s leaves half of the 300 s stop; the workload is the defined reference document (review Q33, decided on 2026-11-11).</attr>
+  <description>On the reference machine, Mellon shall export a 1,000-object reference document, from the export start to the exported PDF written, in at most 150 s.</description>
+</object>

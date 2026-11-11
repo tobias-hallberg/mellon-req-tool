@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-192">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G55 (D-G25), Q-G6. A checksum on the same page as the installer protects against a damaged download, not a replaced one. The means, decided on 2026-11-11: a build-provenance attestation from the release workflow, with the command to check it in INSTALL.md.</attr>
+  <description>Each published release of Mellon could let a user check, without relying on the release page alone, that the Windows installer was built from the release's tagged source.</description>
+</object>

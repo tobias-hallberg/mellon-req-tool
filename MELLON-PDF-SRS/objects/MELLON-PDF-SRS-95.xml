@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-95">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: export doesn't validate, so a document missing required attributes or with outline errors is issued as complete (CF-P33, CF-P44; D-P10). Decided on 2026-11-11: a count, not a refusal (failure analysis Q3).</attr>
+  <description>When the document has validation errors, the cover page shall state the number of validation errors.</description>
+</object>

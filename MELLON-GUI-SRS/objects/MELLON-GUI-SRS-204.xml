@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-204">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q66. A library left from the previous release can be loaded by the new one. 0.3.0 removes the previous libraries first (INSTALL.md), and nothing records the other folders.</attr>
+  <description>After an upgrade, the install folder should hold the same files, with the same contents, as a fresh install of the new release.</description>
+</object>

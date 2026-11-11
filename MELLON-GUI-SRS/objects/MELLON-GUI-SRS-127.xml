@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-127">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the choice is saved in the per-user settings (STATUS.md, Themes).</attr>
+  <description>When the GUI starts, the GUI shall use the theme that the user last chose.</description>
+</object>

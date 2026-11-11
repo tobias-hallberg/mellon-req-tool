@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-170">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the MELLON-VER-STS sample lists them in MELLON-VER-SRS's outline order. Stated as Coverage (review Q5).</attr>
+  <description>The Traceability section shall list, for each parent document, in the parent's outline order, the counted objects that the parent's direct incoming coverage by the document leaves uncovered.</description>
+</object>

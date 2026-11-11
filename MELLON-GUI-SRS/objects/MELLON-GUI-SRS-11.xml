@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the other half of MELLON-GUI-SRS-10 (review Q72).</attr>
+  <description>When the user picks a repository that the Project Explorer lists as recently opened, the Project Explorer could open the repository.</description>
+</object>

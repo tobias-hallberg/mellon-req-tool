@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-222">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q68. The detection goes to STORE, so that an agent is warned too; the GUI shows it. The changed-on-disk check depends on modified times, which network file systems and sync clients don't keep reliably (failure analysis).</attr>
+  <description>When Mellon warns that the repository is on a network drive or in a folder that a sync program manages, the Project Explorer should show the warning.</description>
+</object>

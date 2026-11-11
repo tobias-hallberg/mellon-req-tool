@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-9">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a person usually works in one clone. INSTALL.md says the Project Explorer opens empty on first launch, and doesn't say what later launches do.</attr>
+  <description>When the GUI starts without a folder path, the Project Explorer could open the repository that was open when the GUI last closed.</description>
+</object>

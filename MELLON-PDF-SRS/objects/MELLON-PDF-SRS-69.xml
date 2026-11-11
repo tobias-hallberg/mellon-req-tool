@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the installer ships what export needs so that export works offline; 0.3.0 fixed a page break inside a heading that failed offline. The test case exports offline, on a clean machine, a document with figures, a figure on a heading, tables, a heading at a page break, each heading level, each attribute kind, merged header rows across pages and non-ASCII text (rung 4; review Q45, CF-P56).</attr>
+  <description>Where Mellon was installed with the Windows installer, Mellon shall export a document without a network connection.</description>
+</object>

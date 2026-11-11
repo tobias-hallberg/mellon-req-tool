@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-15">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: files can hold conflict markers or one side's text mid-merge, and the PDF would print a state nobody committed or intends. Decided on 2026-11-11 for a merge (review Q64); widened to each git operation in progress, as MELLON-MCP-SRS-107 is.</attr>
+  <description>While a git operation is in progress, Mellon shall refuse an export.</description>
+</object>

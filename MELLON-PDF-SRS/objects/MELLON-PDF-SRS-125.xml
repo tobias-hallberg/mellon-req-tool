@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-125">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the Export action always uses these four, and the samples print them in this order (review Q14).</attr>
+  <description>When an export is given no list of attributes, the exported PDF shall show the attributes type, status, priority and verification-method, in that order.</description>
+</object>

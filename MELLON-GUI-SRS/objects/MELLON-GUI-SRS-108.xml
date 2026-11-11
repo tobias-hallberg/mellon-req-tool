@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-108">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: by design there is no automatic reload (STATUS.md), so text doesn't change under someone reading it. Redrawn figures are MELLON-GUI-SRS-98's exception (review Q3).</attr>
+  <description>When a Document Editor finds a change on disk, the Document Editor shall keep showing the copy of the document read before, apart from redrawn figures, until the user reloads.</description>
+</object>

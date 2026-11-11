@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-16">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G20 (D-G12), review Q4. MELLON-GUI-SRS-74 and MELLON-GUI-SRS-15 save first, MELLON-GUI-SRS-104 refuses, and the reload or close then went on, so the text was lost without a message. The review's wording, which states the outcome, over D-G12's. Decided on 2026-11-11, to confirm.</attr>
+  <description>If a Document Editor holds a pending edit that the Document Editor couldn't save, the Document Editor shall reload or close only after the user agrees to discard the pending edit.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the object's attributes still print below the figure.</attr>
+  <description>On an object that isn't a heading and has no table, the exported PDF shall show the figure in place of the description, captioned 'Figure N:' followed by the description.</description>
+</object>

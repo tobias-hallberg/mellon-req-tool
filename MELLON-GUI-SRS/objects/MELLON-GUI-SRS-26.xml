@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-26">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: errors are logged and shown in a rate-limited dialog (STATUS.md), so the GUI goes on after one. Ending the GUI would lose the pending edits in the other windows.</attr>
+  <description>After an unexpected error, the GUI shall keep running with the GUI's windows open.</description>
+</object>

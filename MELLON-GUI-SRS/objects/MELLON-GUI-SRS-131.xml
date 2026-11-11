@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-131">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G47 (D-G22). MELLON-GUI-SRS-130 covers text; a faint mark makes a suspect or broken link read as OK. 3:1 is WCAG 2.1 success criterion 1.4.11 for graphical objects. Telling the marks apart by shape is TRACE's (MELLON-TRACE-SRS-85, -87).</attr>
+  <description>In each theme, the GUI shall draw each link-state mark, each banner and the failed-to-load marking with a contrast ratio of at least 3:1 against the adjacent colours.</description>
+</object>

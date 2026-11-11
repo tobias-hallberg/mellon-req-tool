@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-152">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Keyboard shortcuts in the Document Editor. Shift+Tab is the alternative to Ctrl+[ (review Q70).</attr>
+  <description>When the user presses Ctrl+[, or Shift+Tab while the grid has the focus and no cell is being edited, the Document Editor shall run Outdent.</description>
+</object>

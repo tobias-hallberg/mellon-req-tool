@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-193">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: handed to GUI: mellon-check isn't in the installer, so a user with only the installer can't run the release gate before pushing (CHANGELOG Unreleased). File name as for the other programs (review Q79).</attr>
+  <description>The Windows installer should install mellon-check as mellon-check.exe in the install folder.</description>
+</object>

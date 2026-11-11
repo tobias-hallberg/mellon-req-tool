@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-225">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G54 (D-G28). A repository received as a folder carries its own git settings, some of which name commands that a git program runs. It also makes MELLON-GUI-SRS-216 hold by construction.</attr>
+  <description>Mellon shall read and write the repository's git data without starting a git program.</description>
+</object>

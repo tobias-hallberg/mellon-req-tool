@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-168">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the order of several IDs on one row was open (review Q41, decided on 2026-11-11). Object number order, as decided; document ID first only parts the IDs of two parent documents. The samples' three such rows are in this order, which may be chance. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>When an object links to more than one object of its parent documents, the Traceability section shall list the linked objects' IDs in order of document ID, then object number.</description>
+</object>

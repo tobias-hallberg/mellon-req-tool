@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-50">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: at most 10 passes with an empty list, and which links, in what order and with what, was open (review Q24). Unknown links included (review Q8; MELLON-TRACE-SRS-70, cited wrongly before, review Q47). Takes in the former requirement that listed unknown links.</attr>
+  <description>The export warning shall list the document's first 10 outgoing links whose link state is suspect, broken or unknown, in the outline order of the links' sources, each with source, target and state.</description>
+</object>

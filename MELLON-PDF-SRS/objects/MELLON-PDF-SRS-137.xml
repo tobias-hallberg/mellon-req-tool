@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the VCU3-SRS sample prints temper-ature, and in an identifier or value an added hyphen reads as part of the text (CF-P28; D-P14). Decided on 2026-11-11: no added hyphens, with text set ragged right (failure analysis Q7).</attr>
+  <description>The exported PDF shall add no character to the document's text at a line break.</description>
+</object>

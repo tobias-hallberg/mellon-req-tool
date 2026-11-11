@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-80">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: seen in both sample PDFs. The samples show the author twice, as Owner and as Prepared by, and the date as Issue date; MELLON-PDF-SRS-81 and MELLON-PDF-SRS-88 would change that.</attr>
+  <description>The exported PDF's first page shall be a cover page that shows the document ID and the document's title, author and date.</description>
+</object>

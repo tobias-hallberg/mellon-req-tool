@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: today only .git is refused, so an agent, or text that steers one, can overwrite any writable PDF on the machine (CF-P6; hand-offs from STORE and MCP). Narrows MELLON-MCP-SRS-112's allowance for out_path once accepted. A network path is refused already by MELLON-MCP-SRS-114, and a relative path is read from the root by MELLON-MCP-SRS-115 (review Q49). Breaks agents that export elsewhere, so it needs an upgrade note (review Q48).</attr>
+  <description>If the MCP server's export tool is given an output path outside the repository root, the MCP server shall refuse the export.</description>
+</object>

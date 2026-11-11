@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-13">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Quit is in the Project Explorer's menu (STATUS.md). Windows has no standard Quit shortcut (USAGE.md).</attr>
+  <description>The Project Explorer shall have a Quit action that closes each GUI window and ends the GUI.</description>
+</object>

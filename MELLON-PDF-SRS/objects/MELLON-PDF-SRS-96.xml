@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: these omissions are told only to the exporter, so the PDF's reader can't tell (CF-P26, CF-P47, CF-P48, CF-P65; D-P16).</attr>
+  <description>When the exported PDF leaves out a figure, a figure page or a character of the document's text, the cover page shall state that the exported PDF is incomplete.</description>
+</object>

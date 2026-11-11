@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-77">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a figure from another clone can make the figure program load a local image into an issued PDF, or reach a share and send the user's credentials (CF-P49; D-P19). MELLON-STORE-SRS-231 forbids the read; this is the export's response. The test cases cover MELLON-STORE-SRS-231 for drawn figures (STORE hand-off).</attr>
+  <description>If drawing a figure needs a file or network resource outside the figure file, the exported PDF shall show a figure placeholder in place of the figure.</description>
+</object>

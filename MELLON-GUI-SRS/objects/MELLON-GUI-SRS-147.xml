@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-147">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the same key as Reload from disk in the Document Editor (MELLON-GUI-SRS-161), as TEAM.md's daily loop says.</attr>
+  <description>When the user presses F5 in the Project Explorer, the Project Explorer shall run Refresh.</description>
+</object>

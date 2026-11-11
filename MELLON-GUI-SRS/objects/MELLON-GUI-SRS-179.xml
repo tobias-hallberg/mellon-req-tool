@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-179">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the file name is what users and scripts look for on the Releases page (INSTALL.md). &lt;version&gt; is the release number.</attr>
+  <description>Mellon shall be distributed for Windows as an installer named Mellon-Setup-&lt;version&gt;.exe.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-104">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: built, but wrongly: in both samples the cover and the contents page both say Page 1, and the number of pages printed is one less than the PDF holds (7 pages print of 6, 17 print of 16), a defect to fix (CF-P39). After the cover page, so the cover may leave its number off (review Q59).</attr>
+  <description>Each page of the exported PDF after the cover page shall show its page number, counting the cover page as page 1, and the PDF's number of pages.</description>
+</object>

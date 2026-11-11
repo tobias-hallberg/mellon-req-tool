@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-97">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q44. The Inspector's incoming links would otherwise stay old with no mark. Decided on 2026-11-11, to confirm. MELLON-TRACE-SRS-39 works incoming links out afresh when they are shown.</attr>
+  <description>When a Document Editor is activated after a change on disk to another document adds or removes a link to the document, the Document Editor should show the Changed on disk banner.</description>
+</object>

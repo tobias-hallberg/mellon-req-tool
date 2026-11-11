@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-213">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q34. Windows 10's support ended in October 2025 and its consumer extended updates in October 2026, and "run" was undefined. Decided on 2026-11-11: Windows 11, 64-bit, x64; ARM64 isn't supported.</attr>
+  <description>Mellon installed by the Windows installer shall open, edit, commit and export a repository on 64-bit Windows 11 TBD or later for x64 processors.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-2">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: lets a shortcut or a script open one repository directly, as in `mellon.exe C:\work\project-reqs` (INSTALL.md, First launch). Which folders are refused, and what the refusal says, is MELLON-STORE-SRS-5 to -12.</attr>
+  <description>When the GUI starts with a folder path as the argument, the GUI shall open the folder as the repository.</description>
+</object>

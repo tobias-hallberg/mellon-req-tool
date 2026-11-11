@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-83">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: empty isn't the defined blank, and the page header had no rule (review Q51).</attr>
+  <description>When the document's title, author or date, or the revision to show, is blank, the cover page and each page header shall leave out the field.</description>
+</object>

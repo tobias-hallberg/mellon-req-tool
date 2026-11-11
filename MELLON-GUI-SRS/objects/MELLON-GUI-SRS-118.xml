@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-118">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: shown as a tooltip for a detached HEAD (STATUS.md). MELLON-GUI-SRS-119 would replace it.</attr>
+  <description>While no branch is checked out, the Document Editor's status bar shall say that no branch is checked out.</description>
+</object>

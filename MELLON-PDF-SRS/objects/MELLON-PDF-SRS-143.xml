@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-143">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the samples hold no table, so table numbering was open, and a replacement exporter couldn't tell what to print (review Q54). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>The exported PDF shall number the tables from 1 in the order the tables appear.</description>
+</object>

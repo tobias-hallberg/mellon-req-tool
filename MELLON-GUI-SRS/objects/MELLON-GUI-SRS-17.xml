@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-17">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G25 (D-G14), review Q35. Log-off, shutdown and an update restart may skip the close path that MELLON-GUI-SRS-15 relies on. Merge into MELLON-GUI-SRS-15 if a test shows that the close path runs.</attr>
+  <description>When Windows ends the user's session while the GUI runs, the GUI shall save each Document Editor's pending edits before the GUI ends.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-132">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the Export action prints four fixed attributes and an agent chooses others, so an attribute a reader needs can be missing without a word (CF-P34; D-P11).</attr>
+  <description>The cover page shall name each of the document's attributes that the exported PDF leaves out.</description>
+</object>

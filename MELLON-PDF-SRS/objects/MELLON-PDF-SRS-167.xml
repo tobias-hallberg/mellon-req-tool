@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-167">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an object with several parent links shows each, as MELLON-VER-STS-30 does in its sample. The column heads repeat on each page.</attr>
+  <description>The Traceability section shall list each object other than a heading, in outline order, with the object IDs of the objects of parent documents that the object links to, or 'none'.</description>
+</object>

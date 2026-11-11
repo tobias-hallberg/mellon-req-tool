@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-3">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Ctrl+E is in the Document Editor's list of shortcuts. Split from MELLON-PDF-SRS-2 so that each can pass or fail alone (review Q57).</attr>
+  <description>The Export action shall have the shortcut Ctrl+E.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-140">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Help → About in the Project Explorer and About in the Document Editor's menu (STATUS.md).</attr>
+  <description>The Project Explorer and the Document Editor shall each have an About action that opens the About dialog.</description>
+</object>

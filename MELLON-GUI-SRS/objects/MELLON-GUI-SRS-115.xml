@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-115">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: `branch @ shorthash` in both windows (STATUS.md). The user sees what the next commit goes on top of.</attr>
+  <description>The status bar shall show the current branch and an abbreviated hash of the latest commit.</description>
+</object>

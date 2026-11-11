@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G8 (D-G8), Q-G4; review Q38. An error raised on each repaint is logged each time, and a log without a limit can fill the disk, after which each save fails. 10 MB holds thousands of stack traces. Decided on 2026-11-11, to confirm.</attr>
+  <description>The GUI should keep the error log at most 10 MB, removing the entries written first.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-65">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: without these a row can't be identified or its link state seen (USAGE.md, Views). Views themselves are EDIT's. Named without undefined column terms (review Q77). Test with a stored column width of 0 (failure analysis CF-G5, change 19).</attr>
+  <description>Whichever view is chosen, the grid shall show the state gutter, the column of object IDs and the column of descriptions.</description>
+</object>

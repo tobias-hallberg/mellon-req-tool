@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-150">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a reader refers to a figure by its number. MELLON-PDF-SRS-151 would replace it.</attr>
+  <description>The exported PDF shall number the drawn figures from 1, in the order the figures appear.</description>
+</object>

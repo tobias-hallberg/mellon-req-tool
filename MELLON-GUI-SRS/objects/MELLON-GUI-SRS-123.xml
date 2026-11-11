@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-123">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G50 (D-G24). MELLON-VER-SRS-82 marks such characters in Compare only, and the text rules (MELLON-STORE-SRS-220) reach only text entered through Mellon.</attr>
+  <description>When the grid, the Inspector or the outline pane shows text that holds an invisible character, the Document Editor shall mark the character.</description>
+</object>

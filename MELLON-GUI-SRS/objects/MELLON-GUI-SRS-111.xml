@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-111">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: architecture review F2, open question Q5, failure analysis CF-G32 (change 8), review Q3. In 0.3.0 a commit validates the window's copy but commits the files on disk. Test a change made while the commit dialog is open. That a commit records what its validation read is VER's (review Q13). The moment between this check and the commit is an accepted risk (review Q73).</attr>
+  <description>If a file of the document or of a parent document changed on disk since the Document Editor read the file, other than a figure redrawn since, the Document Editor shall refuse to commit.</description>
+</object>

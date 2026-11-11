@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-129">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a misspelt attribute, or a label given for a name, would leave a column out of an issued PDF without a word (CF-P9). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>If the MCP server's export tool is given an attribute that the document doesn't define, the MCP server shall refuse the export, naming the attribute.</description>
+</object>

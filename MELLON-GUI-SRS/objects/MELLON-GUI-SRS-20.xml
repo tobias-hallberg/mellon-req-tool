@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the windowed program has no console, so without the log a defect leaves no trace (CHANGELOG 0.2.0). Test an error raised before the first window shows, and one raised in each kind of background job (failure analysis CF-G2, CF-G9, change 18).</attr>
+  <description>When an unexpected error occurs in the GUI, the GUI shall append the error to the error log.</description>
+</object>

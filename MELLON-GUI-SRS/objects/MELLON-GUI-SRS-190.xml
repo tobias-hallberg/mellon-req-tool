@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-190">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the release workflow attaches SHA256SUMS.txt (INSTALL.md, Build in CI). It detects a damaged download; a signature (MELLON-GUI-SRS-191) or an attestation (MELLON-GUI-SRS-192) would detect a replaced one (review Q78, failure analysis change 30).</attr>
+  <description>Each published release of Mellon shall carry the SHA-256 checksum of the release's Windows installer.</description>
+</object>

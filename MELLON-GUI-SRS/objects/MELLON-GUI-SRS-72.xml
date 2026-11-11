@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-72">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q6, failure analysis change 20. In TEAM.md's loop the user types, switches to the git client and commits, so the text has to be on disk by then. The activation check assumes it. Confirm against 0.3.0 with Alt+Tab.</attr>
+  <description>When a Document Editor stops being the active window, the Document Editor shall save the Document Editor's pending edits to the working copy.</description>
+</object>

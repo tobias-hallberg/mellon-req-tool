@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-42">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G12 (D-G9). A listing that fails partway makes documents look absent or present; MELLON-STORE-SRS-27 covers only a document that fails to load.</attr>
+  <description>If the Project Explorer can't list the documents again, the Project Explorer shall say that the list is out of date until a later listing succeeds.</description>
+</object>

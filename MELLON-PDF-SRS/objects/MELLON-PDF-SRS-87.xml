@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-87">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the parameter's name reads as a git revision, so an agent passing a tag, a hash or HEAD~2 expects that version and gets the working copy labelled with it (CF-P5). Decided on 2026-11-11 (failure analysis Q1).</attr>
+  <description>If the MCP server's export tool is given a revision label that git's revision syntax resolves to a commit, the MCP server shall refuse the export.</description>
+</object>

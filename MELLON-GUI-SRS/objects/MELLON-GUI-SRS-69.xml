@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-69">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: STATUS.md: "No requirements match the current filter." with Clear filters (review Q75). Worded so that an empty document with a filter isn't both cases (review Q23). Confirm in the test mapping that Clear filters also turns Suspects only off.</attr>
+  <description>When the document has at least one object and the filter, the filter box and Suspects only together hide each object, the grid shall say that no object matches and offer to clear the three.</description>
+</object>

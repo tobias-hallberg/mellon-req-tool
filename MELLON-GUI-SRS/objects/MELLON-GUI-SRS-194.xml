@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-194">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G56 (D-G27). An installer run from the Downloads folder can load a library planted there.</attr>
+  <description>The Windows installer shall load no library from the folder that the Windows installer runs from.</description>
+</object>

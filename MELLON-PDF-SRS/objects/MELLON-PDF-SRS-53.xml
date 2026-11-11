@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-53">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a link state is unknown until worked out (definitions), so an export right after opening a document or a pull would print every link as unknown on the cover and in the warning (review Q9). Test also with the whole state scan failing, which TRACE reports as unknown (CF-P20).</attr>
+  <description>When an export starts before Mellon has worked out the document's link states, Mellon shall work the states out before reporting or printing a link state.</description>
+</object>

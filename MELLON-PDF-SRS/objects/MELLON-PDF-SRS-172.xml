@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-172">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: a parent left out without a word would read as fully covered. Worded with the defined load error (review Q31). MELLON-TRACE-SRS-195 names such a document with a coverage report too.</attr>
+  <description>If a parent document has a load error, the Traceability section shall name the parent and state that the parent didn't load.</description>
+</object>

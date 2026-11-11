@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-89">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the cover shows the issue, so a PDF of later commits passes for that issue (architecture review; CF-P13). Changed since an issue is defined against the latest commit; at an earlier version the exported commit takes its place, which is handed to VER (review Q6).</attr>
+  <description>When the document has changed since its issue at the exported version, the cover page shall state that the document has changed since that issue.</description>
+</object>

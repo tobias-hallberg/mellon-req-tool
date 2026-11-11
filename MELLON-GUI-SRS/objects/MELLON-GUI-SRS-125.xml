@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-125">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Menu → View → Theme (STATUS.md).</attr>
+  <description>The GUI shall offer the themes Light and Dark, and a Follow system choice that takes the operating system's light or dark setting.</description>
+</object>

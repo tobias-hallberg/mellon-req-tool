@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-100">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: both samples hold a bookmark for each section their table of contents lists, and each entry of the table of contents links to its section. Stated so a replacement exporter keeps them (review Q60).</attr>
+  <description>The exported PDF should have a bookmark for each section that the table of contents lists.</description>
+</object>

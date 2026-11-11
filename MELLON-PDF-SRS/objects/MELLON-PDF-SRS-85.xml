@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-85">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: a free-text label prints where the issue goes, so an agent can head a PDF Issue 5 when there is none (CF-P5; D-P6; review Q18), and a missing revision doesn't tell a reader that the document was never issued; the STS sample shows an issue date with no revision (CF-P18; D-P5). Decided on 2026-11-11. At an earlier version the issue is the one at that version, not the current issue (review Q6).</attr>
+  <description>The cover page shall show, labelled Issue, the document's issue at the exported version, or state that the document has no issue at the exported version, with or without a revision label.</description>
+</object>

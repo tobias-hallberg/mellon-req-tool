@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-8">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: MELLON-PDF-SRS-7 has no measure and leaves out the Project Explorer (review Q39). Decided on 2026-11-11; the value is measured first. Replaces MELLON-PDF-SRS-7 once accepted.</attr>
+  <description>While an export runs, the Project Explorer and each Document Editor window should respond to input within TBD ms.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-138">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G5 (D-G6), review Q69. A window restored onto a screen that is gone looks as if it didn't open. Should, as the failure analysis asks, over the review's could.</attr>
+  <description>If no connected screen shows a window's saved position, the GUI should open the window on the primary screen.</description>
+</object>

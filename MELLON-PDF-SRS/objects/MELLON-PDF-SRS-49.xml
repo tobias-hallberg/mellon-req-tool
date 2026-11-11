@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-49">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the first 10 are listed. MELLON-PDF-SRS-50 and MELLON-PDF-SRS-51 would replace it (review Q24).</attr>
+  <description>The export warning shall list at most 10 of the document's suspect and broken outgoing links.</description>
+</object>

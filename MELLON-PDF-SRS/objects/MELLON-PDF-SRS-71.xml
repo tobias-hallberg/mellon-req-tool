@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-71">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: as built, the PDF program and the figure program each stop at 300 s, about 600 s in all, and the message blames the network (CF-P55). Measured from the export start, awake time only (review Q13, decided on 2026-11-11); MELLON-PDF-SRS-43 ends the programs. Functional, not Quality (review Q61). Whether the limit grows with document size is open.</attr>
+  <description>If an export hasn't ended 300 s after the export start, counting only time the computer is awake, Mellon shall stop the export and report that the export didn't end within 300 s.</description>
+</object>

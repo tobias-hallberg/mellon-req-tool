@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-62">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a reload follows each pull (TEAM.md), and in a 1,000-object document the reader would otherwise have to find the place again. Reloading rebuilds the grid (SCALING.md), so the selection isn't kept by itself.</attr>
+  <description>When the Document Editor reloads the document, the Document Editor should keep the selected object selected if the object still exists.</description>
+</object>

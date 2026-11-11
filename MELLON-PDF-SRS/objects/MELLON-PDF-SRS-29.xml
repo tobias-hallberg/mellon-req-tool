@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-29">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: commit_changes without paths takes each uncommitted change inside document folders, so a PDF there is committed into the document, and Compare reports it (MELLON-VER-SRS-75). Matches MCP's D-M22.</attr>
+  <description>If the MCP server's export tool is given an output path inside a document's folder, the MCP server shall refuse the export.</description>
+</object>

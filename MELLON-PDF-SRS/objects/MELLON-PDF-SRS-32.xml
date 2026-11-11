@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-32">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: an agent can replace an issued PDF without anyone seeing it; asking to replace makes that a choice the call records. The parameter is off by default and goes in MELLON-MCP-SRS-36's table; it breaks agents that re-export over a file, so it needs an upgrade note (review Q48). Test with a hard link too (CF-P8).</attr>
+  <description>If the MCP server's export tool is given an output path that names an existing file, the MCP server shall refuse the export unless the call asks to replace the file.</description>
+</object>

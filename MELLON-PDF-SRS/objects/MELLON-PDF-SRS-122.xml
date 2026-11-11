@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an attribute the object has no value for is left out, as the MELLON-VER-STS sample shows for priority, and headings print none in the samples (review Q55). MELLON-PDF-SRS-125 and MELLON-PDF-SRS-126 say which attributes are chosen.</attr>
+  <description>Below the description of each object other than a heading, the exported PDF shall show each chosen attribute that the object has a value for, with the attribute's value.</description>
+</object>

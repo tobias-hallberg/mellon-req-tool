@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-33">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: a file named .pdf can be another kind of file, which a replace would destroy. From MCP's hand-off (D-M22, its review Q12).</attr>
+  <description>If the MCP server's export tool is asked to replace a file whose content doesn't begin with %PDF-, the MCP server shall refuse the export.</description>
+</object>

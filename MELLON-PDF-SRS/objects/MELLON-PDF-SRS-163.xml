@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-163">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the VCU3-SRS sample says 18 of 21 objects link to a parent document. Stated as the defined Coverage, so the PDF and the coverage report count alike; which links count, broken and suspect ones included, is TRACE's (MELLON-TRACE-SRS-183, -191; review Q5, CF-P62).</attr>
+  <description>The Traceability section shall state the document's direct outgoing coverage by its parent documents, as the number of counted objects covered out of the number counted.</description>
+</object>

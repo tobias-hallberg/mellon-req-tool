@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-12">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: text still being typed shows on screen but isn't in the working copy, so the PDF would differ from what the user sees; Compare does the same (MELLON-VER-SRS-73). architecture.md says Ctrl+E writes pending text first. Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>When the Export action starts, Mellon shall first save the pending edits of the Document Editor.</description>
+</object>

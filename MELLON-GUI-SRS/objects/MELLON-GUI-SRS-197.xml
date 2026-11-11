@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-197">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: MCP client configurations keep working because the path doesn't change (INSTALL.md, Upgrade or uninstall).</attr>
+  <description>When the Windows installer runs on a machine where Mellon is installed, the Windows installer shall replace the installed release in the same install folder.</description>
+</object>

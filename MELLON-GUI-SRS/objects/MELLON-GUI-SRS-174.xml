@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-174">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q28, failure analysis CF-G45. Opening or reloading takes seconds at 5,000 objects (SCALING.md); "respond to input" had no limit a test could fail.</attr>
+  <description>While a Document Editor loads or reloads a document, the Project Explorer and the other Document Editors should handle each key press and click within TBD s.</description>
+</object>

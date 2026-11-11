@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-96">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: USAGE.md, Banners. Built on modified time and size; MELLON-GUI-SRS-101 adds a change that keeps both, and reading the new content is MELLON-STORE-SRS-181. Parents count because links and validation read them.</attr>
+  <description>When a Document Editor is activated after a file of the document or of a parent document changed on disk, the Document Editor shall show the Changed on disk banner.</description>
+</object>

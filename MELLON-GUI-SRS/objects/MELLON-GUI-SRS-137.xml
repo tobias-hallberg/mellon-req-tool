@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-137">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: architecture.md A7 records that window geometry is saved on close (failure analysis, change 4); confirm in the test mapping.</attr>
+  <description>When a GUI window opens, the GUI could give the window the size and position that the window last had.</description>
+</object>

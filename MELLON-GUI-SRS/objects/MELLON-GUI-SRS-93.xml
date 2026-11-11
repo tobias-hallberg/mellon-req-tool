@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-93">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G29 (change 21), review Q43. draw.io saves into the figure file itself, past Mellon's checks. A draw.io session started before the window returned to read-only keeps saving: an accepted risk, decided on 2026-11-11, and USAGE.md is to say so (handed to Process).</attr>
+  <description>While a Document Editor is in read-only mode, the Document Editor shall not start draw.io on a file in a document folder.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-14">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: checked in the code on 2026-11-11 (review Q36). A Document Editor left without its Project Explorer would have no way to open another document or repository.</attr>
+  <description>When the user closes the Project Explorer, the GUI shall close each Document Editor and end.</description>
+</object>

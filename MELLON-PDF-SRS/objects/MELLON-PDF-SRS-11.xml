@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-11">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: the GUI exports from its cached copy, which misses a change on disk that the window hasn't seen (an agent's edit, a pull, a changed parent, a document that now fails to load), and an export takes minutes at 1,000 objects, so an edit, a pull or a draw.io save meanwhile mixes two states in one PDF that looks real (CF-P1, CF-P17; D-P1). As built, text is read at the start and figures during the job (architecture.md). Figures and parents added (review Q20). Test with a change made while the window stays active, and with a figure saved during an export.</attr>
+  <description>When an export chooses no version, the exported PDF shall show the document, its figures and its parent documents as the working copy held the files at the export start.</description>
+</object>

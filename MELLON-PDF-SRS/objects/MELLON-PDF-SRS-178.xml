@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-178">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: text from another clone or an agent that reaches the PDF program as markup can read a local file into a PDF that leaves the company, loop until the time limit, or write a file (CF-P31; D-P18; MCP hand-off on text reaching the typesetter).</attr>
+  <description>While exporting, Mellon shall carry out no instruction held in text from the document or the export's arguments to read, write or run a file.</description>
+</object>

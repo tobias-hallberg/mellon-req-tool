@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-170">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Performance</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: SCALING.md measured 0.03 s at 500 objects and 0.04 s at 2,000, against a 0.2 s target at 5,000. With the History tab shown the time is the history walk's, which is VER's. Uses the reference document (review Q26).</attr>
+  <description>When the user selects an object of a 1,000-object reference document on the reference machine, with the History tab hidden, the Inspector shall show the object within TBD s.</description>
+</object>

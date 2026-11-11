@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-31">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G3, CF-G26, CF-G60 (D-G4). After a fatal error or a kill the user can't tell whether the last typed text was saved, and the next start is the only point where Mellon can say so.</attr>
+  <description>When the GUI starts after the GUI's previous run ended without closing the GUI's windows, the GUI shall say that Mellon ended unexpectedly and name the error log.</description>
+</object>

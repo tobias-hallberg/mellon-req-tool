@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-23">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: USAGE.md says only "the equivalent folder", so a Linux user can't find the log from the documentation.</attr>
+  <description>On Linux, the GUI shall keep the error log in the file TBD.</description>
+</object>

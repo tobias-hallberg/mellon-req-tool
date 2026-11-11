@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-183">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: MCP clients start this file by its full path (INSTALL.md, Connect an MCP client).</attr>
+  <description>The Windows installer shall install the MCP server as mellon-mcp.exe in the install folder.</description>
+</object>

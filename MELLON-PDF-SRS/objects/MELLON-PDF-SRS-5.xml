@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-5">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: agents issue documents too, and get the same PDF as the Export action. The tool's parameters are in MELLON-MCP-SRS-36's table, and the read-only server refuses the tool (MELLON-MCP-SRS-99).</attr>
+  <description>The MCP server shall have an export tool that, given a document and an output path, exports the document to a PDF file at the output path.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-20">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: link states are defined against the working copy and the latest commit (MELLON-TRACE-SRS-42 and the definitions), so today's states printed on an old issue would be wrong (CF-P19). Decided on 2026-11-11 (failure analysis Q6) until TRACE defines a link state at a version.</attr>
+  <description>When Mellon exports a document at a version other than the working copy, the cover page shall state that link states weren't checked.</description>
+</object>

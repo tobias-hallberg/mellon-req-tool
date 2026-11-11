@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-78">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: handed over by the Compare code review (V4); failure analysis CF-G19, CF-G21 (change 13); review Q4. "Can't save" covers a refusal and a failure. The user discards the text by Esc, or by agreeing under MELLON-GUI-SRS-16 before a reload or close.</attr>
+  <description>If the Document Editor can't save a pending edit, the Document Editor shall keep the text field open with the typed text until the text is saved or the user discards the text.</description>
+</object>

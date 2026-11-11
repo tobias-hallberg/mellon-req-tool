@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-134">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the theme, pane sizes and active filter are one person's choices, kept in the registry on Windows (USAGE.md). Outside the repository, they never show as uncommitted changes.</attr>
+  <description>The GUI shall keep the GUI's settings per user, outside the repository.</description>
+</object>

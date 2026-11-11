@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-126">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: an agent chooses the attributes its readers need. One or more, because what an empty list does isn't documented (MELLON-PDF-SRS-128; review Q14).</attr>
+  <description>When the MCP server's export tool is given a list of one or more attributes, the exported PDF shall show only the listed attributes.</description>
+</object>

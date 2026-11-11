@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-28">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q62. A log entry helps only when it can be tied to a release and a moment. architecture.md A15 says 0.3.0 doesn't write the version, so this stays Proposed (failure analysis, change 3).</attr>
+  <description>The GUI should write with each error in the error log the local date and time with the UTC offset, the release number and the stack trace.</description>
+</object>

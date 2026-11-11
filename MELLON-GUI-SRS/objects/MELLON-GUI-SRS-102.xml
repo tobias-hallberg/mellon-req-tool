@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-102">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G34 (D-G15, change 22), review Q57. A check taken again from disk after the window's own write absorbs each change made since the last check. Replaces the draft's exception for the window's own edits, which the Changed on disk definition now covers.</attr>
+  <description>If another program or window changed a file of the document or of a parent document before a Document Editor's own edit, the Document Editor shall show the Changed on disk banner when next activated.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-74">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: MELLON-PDF-SRS-152 prints the description only as a drawn figure's caption, so requirement text could vanish from an issued PDF (review Q1). Confirm against 0.3.0; set Implemented if 0.3.0 does this (review Q46).</attr>
+  <description>When the exported PDF shows a figure placeholder on an object, the exported PDF shall show the object's description as for an object without a figure.</description>
+</object>

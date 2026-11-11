@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-116">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: without it, a nested object reads as a sibling of the object above it, and DOORS shows the nesting. The samples hold no such object. Decided on 2026-11-11 (failure analysis Q13).</attr>
+  <description>The exported PDF shall indent a sub-object of an object other than a heading further than the object the sub-object is under.</description>
+</object>

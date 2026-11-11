@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-103">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G35 (D-G16). Another writer's half-applied operation would otherwise be held as current. Reported rather than read again, as MELLON-VER-SRS-72 decided for Compare.</attr>
+  <description>If a file of the document or of a parent document changes while the Document Editor reads the document, the Document Editor shall show the Changed on disk banner.</description>
+</object>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-77">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G23 (change 12), review Q12. MELLON-GUI-SRS-76 covers grid cells only. Clicking into an empty Inspector field and away can turn an attribute from not set to set and empty, or write an old value over an agent's change. Replaces MELLON-GUI-SRS-76 once built.</attr>
+  <description>When a text field closes or loses the focus holding the text that the text field held when the text field got the focus, the Document Editor shall write nothing.</description>
+</object>

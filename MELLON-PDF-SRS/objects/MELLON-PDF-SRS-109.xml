@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-109">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: in the VCU3-SRS sample, VCU3-SRS-10 follows VCU3-SRS-13, as in the outline, not in object ID order.</attr>
+  <description>The exported PDF shall show the document's objects in outline order, each object before its sub-objects.</description>
+</object>

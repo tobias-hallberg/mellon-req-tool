@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-122">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G49 (D-G23). Text from another clone or another person's commit reaches widgets that guess rich text, where markup can spoof text, freeze layout or make Windows open a network path. MELLON-CHECK-SRS-84 says the same for validation results.</attr>
+  <description>The GUI shall show text read from the repository or from git history as plain text in each label, tooltip, grid cell, message, banner and window title.</description>
+</object>

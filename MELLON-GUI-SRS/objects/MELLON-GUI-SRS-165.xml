@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-165">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: plain Enter inserts a line break in these editors (USAGE.md).</attr>
+  <description>When the user presses Ctrl+Enter in the description editor or a table-cell editor, the Document Editor shall save the text and close the editor.</description>
+</object>

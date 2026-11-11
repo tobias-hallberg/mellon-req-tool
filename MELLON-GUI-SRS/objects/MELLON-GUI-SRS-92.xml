@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-92">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q61. A shortcut that silently does nothing reads as a fault; disabled controls already show it.</attr>
+  <description>If the user presses an edit action's shortcut or types into a grid cell while the Document Editor is in read-only mode, the Document Editor should say that the window is in read-only mode.</description>
+</object>

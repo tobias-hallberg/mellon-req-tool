@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Interface</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: the agent decides from the links returned (MELLON-PDF-SRS-54). Safe only together with the cover counts (MELLON-PDF-SRS-94) and the per-link marks (MELLON-PDF-SRS-169), so the three were decided as one on 2026-11-11 (review Q37): this stays as built, the other two stay Proposed.</attr>
+  <description>The MCP server's export tool shall export a document that has suspect or broken outgoing links.</description>
+</object>

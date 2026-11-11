@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-169">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the counts on the cover (MELLON-PDF-SRS-94) say how many; the marks say which, where a reviewer checks coverage (architecture review). Decided with MELLON-PDF-SRS-56 and MELLON-PDF-SRS-94 as one decision on 2026-11-11 (review Q37).</attr>
+  <description>For each link to an object of a parent document, when the link state is suspect, broken or unknown, the Traceability section shall show the link state beside the linked object's ID.</description>
+</object>

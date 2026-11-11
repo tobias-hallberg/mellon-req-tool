@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-120">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Quality</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G43 (D-G20), Q-G5; review Q37. If the bar refreshes only on activation, it can name a branch other than the one the next commit lands on. The same 5 s as MELLON-GUI-SRS-112.</attr>
+  <description>While a GUI window is shown, the window's status bar should show a change of the checked-out branch, the latest commit or the number of uncommitted changes within 5 s of the change.</description>
+</object>

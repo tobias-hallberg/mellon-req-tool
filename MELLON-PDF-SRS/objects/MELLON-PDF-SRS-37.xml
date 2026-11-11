@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: Cancel is the warning's default (MELLON-PDF-SRS-52), and a cancelled save dialog gives no output path. Stated as a requirement, not only in a rationale (review Q28).</attr>
+  <description>When the user cancels the export warning or the save dialog, Mellon shall end the export without writing a file.</description>
+</object>

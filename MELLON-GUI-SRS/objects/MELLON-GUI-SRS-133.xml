@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-133">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: pane sizes are saved per document (STATUS.md).</attr>
+  <description>When a Document Editor opens, the Document Editor shall restore the pane sizes that the document's Document Editor last had.</description>
+</object>

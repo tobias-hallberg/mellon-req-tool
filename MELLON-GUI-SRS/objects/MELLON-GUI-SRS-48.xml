@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-48">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">derived: failure analysis CF-G1, CF-G17 (D-G2). Document Editors of one document ID from two clones look the same on the taskbar, and a window left on a previous repository has to say so.</attr>
+  <description>Each Document Editor shall show in the Document Editor's title the document ID and the full path of the repository root.</description>
+</object>

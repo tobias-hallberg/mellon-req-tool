@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-56">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Proposed</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: review Q40. MELLON-GUI-SRS-53 can't be met for a row the grid hides. Decided on 2026-11-11, to confirm.</attr>
+  <description>When the user selects in the outline pane an object that the grid hides, the Document Editor shall show the object in the Inspector without clearing the grid's filters.</description>
+</object>

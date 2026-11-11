@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-185">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Constraint</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: GPL-3.0-or-later and the included libraries' licences ask for their texts to go with the program (INSTALL.md). The test needs a list of the bundled components to check against (review).</attr>
+  <description>The Windows installer shall install Mellon's licence text and the licence notices of the third-party software that Mellon contains.</description>
+</object>

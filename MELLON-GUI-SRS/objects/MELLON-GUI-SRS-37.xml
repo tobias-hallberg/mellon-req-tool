@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-SRS-37">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Functional</attr>
+  <attr name="status">Implemented</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">as implemented: one window per document (STATUS.md), so two windows can't hold different copies of one document. Test on Windows, whose rules on bringing a window to the front can stop the activation (failure analysis CF-G65).</attr>
+  <description>When the user opens a document that already has a Document Editor, the Project Explorer shall activate that Document Editor instead of opening a second one.</description>
+</object>
