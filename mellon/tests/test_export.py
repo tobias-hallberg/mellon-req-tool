@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import io
 import re
 import subprocess
 import sys
@@ -10,6 +11,7 @@ import zlib
 from pathlib import Path
 
 import pytest
+from pypdf import PdfReader
 
 from mellon import Table, TableCell, TableColumn, TableRow, set_table
 from mellon import export
@@ -702,6 +704,90 @@ def test_pdf_compiles_with_minimal_metadata(doc_folder: Path):
     blob = pdf(load_document(doc_folder))
     assert blob.startswith(b"%PDF-")
     assert _pdf_info_string(blob, "Title") == "DOC"
+
+
+# --- page numbers -----------------------------------------------------------
+
+
+def _multipage_doc() -> Document:
+    """Three headed sections of 25 requirement cards each: several pages
+    per section, so each section starts on a page of its own."""
+    objects: dict[str, RequirementObject] = {}
+    outline = []
+    for s in (1, 2, 3):
+        heading = RequirementObject(f"DOC-{s}00", {"type": "Heading"}, f"Section {s}")
+        objects[heading.id] = heading
+        cards = []
+        for n in range(1, 26):
+            card = RequirementObject(
+                f"DOC-{s}{n:02d}",
+                {"type": "Requirement", "status": "Draft"},
+                f"The system shall do thing {n} of section {s}. " * 3,
+            )
+            objects[card.id] = card
+            cards.append(OutlineNode(card.id))
+        outline.append(OutlineNode(heading.id, tuple(cards)))
+    return Document(
+        id="DOC",
+        metadata=Metadata(title="Paging doc", author="tester", date="2026-04-21"),
+        parents=(),
+        attributes=(),
+        outline=tuple(outline),
+        objects=objects,
+        links={},
+    )
+
+
+@pytest.fixture(scope="module")
+def multipage_pdf_text() -> list[str]:
+    """The text of each page of the exported `_multipage_doc`, in PDF order."""
+    reader = PdfReader(io.BytesIO(pdf(_multipage_doc(), rev="1")))
+    return [page.extract_text() for page in reader.pages]
+
+
+_PAGE_NUMBER = re.compile(r"Page (\d+) of (\d+)")
+
+
+@_needs_tectonic
+def test_pdf_srs_104_pages_after_cover_show_their_number_and_the_total(
+    multipage_pdf_text: list[str],
+):
+    """Page k of the PDF prints "Page k of N", N being the PDF's page count:
+    the cover counts as page 1, so the table of contents is page 2."""
+    total = len(multipage_pdf_text)
+    assert total >= 6
+    for k, text in enumerate(multipage_pdf_text[1:], start=2):
+        assert _PAGE_NUMBER.findall(text) == [(str(k), str(total))], k
+    # The cover may leave its number off, but a number it shows is right.
+    assert set(_PAGE_NUMBER.findall(multipage_pdf_text[0])) <= {("1", str(total))}
+
+
+@_needs_tectonic
+def test_pdf_srs_104_contents_page_numbers_match_the_printed_page_numbers(
+    multipage_pdf_text: list[str],
+):
+    """Each table-of-contents entry names the page its section heading is
+    on, which is the number that page prints."""
+    contents = multipage_pdf_text[1]
+    entries = re.findall(
+        r"^(\d+) (Section \d+)[ .]+?(\d+)$", contents, re.M
+    )
+    assert [(num, title) for num, title, _ in entries] == [
+        ("1", "Section 1"), ("2", "Section 2"), ("3", "Section 3"),
+    ]
+    starts = []
+    for num, title, listed in entries:
+        heading = re.compile(rf"^{num}\. {title}$", re.M)
+        on = [
+            k for k, text in enumerate(multipage_pdf_text, start=1)
+            if heading.search(text)
+        ]
+        assert len(on) == 1, (title, on)
+        assert int(listed) == on[0], title
+        assert _PAGE_NUMBER.findall(multipage_pdf_text[on[0] - 1])[0][0] == listed
+        starts.append(on[0])
+    # The sections start on different pages, so the check isn't vacuous.
+    assert starts[0] == 3 and starts[0] < starts[1] < starts[2]
 
 
 # --- tectonic lookup --------------------------------------------------------

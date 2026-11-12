@@ -354,6 +354,9 @@
         \syrsmono{\syrs@idrev}}
     \end{tabularx}
   \end{titlepage}%
+  %% A one-sided titlepage resets the page counter to 1 when it ends; the
+  %% cover is page 1, so the page after it is page 2.
+  \setcounter{page}{2}%
   \pagecolor{paper}%
 }
 

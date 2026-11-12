@@ -139,6 +139,10 @@ All notable changes to Mellon. The format follows
   counted two problems. It now prints only the `LINK_TARGET_MISSING` line. A
   broken link into another document still prints its `BROKEN` line
   (`MELLON-CHECK-SRS-134`).
+- **Exported PDFs number their pages from the cover.** The cover and the
+  contents page both said Page 1, the total was one short (7 pages printed
+  "of 6"), and the contents gave each section's page one too low. The page
+  after the cover is now page 2 (`MELLON-PDF-SRS-104`).
 
 ### Security
 
