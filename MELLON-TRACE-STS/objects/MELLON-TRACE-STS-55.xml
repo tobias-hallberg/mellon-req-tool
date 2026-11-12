@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-55">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_log_for_path_since_commit_truncates
+tests/test_git_ops.py::test_log_for_path_since_commit_keeps_other_side_of_a_merge[True]
+tests/test_git_ops.py::test_log_for_path_since_commit_keeps_other_side_of_a_merge[False]
+tests/test_git_ops.py::test_log_for_path_since_commit_off_history_stops_at_common_ancestor</attr>
+  <description>List the commits that changed an object's file or figure since a given commit: (a) on a straight history; (b) where a branch forked before that commit, changed the figure and was merged, in either parent order; (c) where a rebase left that commit off the history. Expected: (a) only the later commits; (b) the branch's commit and the merge; (c) only the rebased commit.</description>
+</object>

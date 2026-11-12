@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-178">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_manage_view_edit_replaces_visible_order
+tests/test_mcp_write.py::test_manage_view_edit_dedupes
+tests/test_mcp_write.py::test_manage_view_edit_preserves_display_name
+tests/test_editor.py::test_set_view_visible_replaces_order
+tests/test_editor.py::test_set_view_visible_dedupes
+tests/test_editor.py::test_set_view_visible_grows_and_shrinks</attr>
+  <description>Through manage_view, edit a view of status, type to type, status; edit a view of status to type, status, type; edit the view Dev View of status to type. In the library, grow a view's columns and shrink them to none. Expected: the columns are type, status; then type, status; then type alone, the view still named Dev View; then status, type, and then none.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-72">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_inspect_object_includes_outgoing_and_trace
+tests/test_mcp_read.py::test_trace_srs_175_inspect_object_traces_to_depth_two_by_default</attr>
+  <description>Over MCP, call inspect_object for a test case without trace_depth or include_trace. Expected: the answer holds a trace up and a trace down, the trace up reaching the system requirement at depth 2.</description>
+</object>

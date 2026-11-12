@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-172">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_grid_view_order.py::test_drag_reorder_writes_view_xml
+tests/test_gui_grid_view_order.py::test_apply_view_applies_column_order_from_xml
+tests/test_gui_grid_view_order.py::test_edit_srs_326_active_view_shows_exactly_its_attribute_columns</attr>
+  <description>Save a view listing five attributes and make it active; rewrite the view's file with the order reversed, reload, and make the view active again. Expected: the grid's attribute columns are exactly the five, first in the view's order, then in the reversed order.</description>
+</object>

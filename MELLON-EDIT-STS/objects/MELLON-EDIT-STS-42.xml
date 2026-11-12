@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_attribute_rejects_unknown_name
+tests/test_editor.py::test_add_attr_option_rejects_unknown_attr
+tests/test_editor.py::test_delete_attribute_rejects_unknown
+tests/test_editor.py::test_change_required_unknown_attr_fails</attr>
+  <description>Name an attribute that the document doesn't define when setting a value, adding an option, deleting the attribute and changing whether the attribute is required. Expected: each edit is refused.</description>
+</object>

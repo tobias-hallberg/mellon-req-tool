@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Disagrees with other tests. remove_parent_doc and remove_link naming a missing item return NotFound, and clear_figure with no figure returns NotFound. A missing document raises instead of returning a result. See the weak list.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_pre_validation_unknown_attr_no_files_written
+tests/test_mcp_write.py::test_new_object_pre_validation_disallowed_target_doc
+tests/test_mcp_write.py::test_new_object_pre_validation_bad_links_no_files_written
+tests/test_mcp_write.py::test_edit_attribute_validation_fails
+tests/test_mcp_write.py::test_update_object_unknown_obj_raises
+tests/test_mcp_write.py::test_change_attribute_required_unknown_fails
+tests/test_mcp_write.py::test_create_document_bad_id_fails
+tests/test_mcp_write.py::test_set_figure_rejects_non_svg
+tests/test_mcp_write.py::test_set_figure_unknown_obj
+tests/test_mcp_write.py::test_set_table_tool_bad_geometry
+tests/test_mcp_write.py::test_manage_view_create_empty_name_fails
+tests/test_mcp_write.py::test_manage_view_rename_unknown_fails
+tests/test_mcp_write.py::test_manage_view_delete_unknown_fails
+tests/test_mcp_write.py::test_manage_view_edit_unknown_fails
+tests/test_mcp_write.py::test_delete_object_blocked_by_children
+tests/test_mcp_write.py::test_mcp_srs_53_missing_item_or_refused_value_returns_editor_error</attr>
+  <description>Make write tool calls that name a missing object, attribute or view, or give a value that the tool or the document's attribute definitions refuse. The calls give: an undeclared attribute, a value that isn't an option, a link to a document that isn't a parent, the same link twice and a link to a missing object in one call, a missing object, an undeclared attribute to make required, document IDs with a slash, a space, a dot or nothing, a figure that isn't SVG, a figure for a missing object, a table whose cells don't fill its columns, a blank view name, a missing view to rename, delete or edit, and deleting an object that has children. Expected: each call fails with error_type EditorError.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_120_each_level_writes_a_subset_of_the_level_below
+tests/test_mcp_server.py::test_mcp_srs_120_serving_line_only_under_debug_and_info
+tests/test_mcp_server.py::test_mcp_srs_120_no_document_warning_hidden_under_error</attr>
+  <description>Start on an empty repository and on a clone with --log-level DEBUG, INFO, WARNING and ERROR in turn, and make one call. Expected: INFO shows the serving line and the no-document warning. WARNING shows the warning without the serving line. ERROR shows neither. DEBUG adds debug lines.</description>
+</object>

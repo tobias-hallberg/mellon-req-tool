@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_properties_close_asks_about_unapplied_metadata[Apply-True-True]
+tests/test_gui_edits.py::test_properties_close_asks_about_unapplied_metadata[Discard-True-False]
+tests/test_gui_edits.py::test_properties_close_asks_about_unapplied_metadata[Cancel-False-False]</attr>
+  <description>Open the Properties dialog and close it without typing; then type a title, do not apply, and close it, answering Apply, Discard and Cancel in turn. Expected: no question when nothing was typed; otherwise one question; Apply writes the title and closes, Discard closes without writing, Cancel keeps the dialog open and writes nothing.</description>
+</object>

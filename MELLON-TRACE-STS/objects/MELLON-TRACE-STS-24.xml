@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_link_first_link_escapes_link_type
+tests/test_mcp_write.py::test_trace_srs_14_mcp_accepts_any_link_type_with_a_non_whitespace_character
+tests/test_mcp_write.py::test_trace_srs_14_mcp_accepts_link_type_with_surrounding_spaces</attr>
+  <description>Add a link whose link type holds an ampersand, double quotes and angle brackets. Expected: the link is stored and reads back with exactly that link type.</description>
+</object>

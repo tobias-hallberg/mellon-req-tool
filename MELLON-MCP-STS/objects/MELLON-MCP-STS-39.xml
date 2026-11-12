@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_25_does_not_listen_for_network_connections</attr>
+  <description>Start mellon-mcp over stdio on a clone. Initialize, then call list_documents and compare_document, and export_document with a stand-in typesetter. While the session is open, list the server process's sockets (psutil.Process(pid).net_connections('all'), or netstat -ano filtered by PID). Expected: the process has no TCP socket in LISTEN state and no bound UDP socket.</description>
+</object>

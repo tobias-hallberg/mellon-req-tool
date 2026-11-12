@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-23">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_create_object_full_rejects_bad_links_before_write[duplicate-in-request]
+tests/test_service.py::test_create_object_full_rejects_bad_links_before_write[missing-target]
+tests/test_service.py::test_update_object_rejects_existing_link_before_write
+tests/test_service.py::test_add_link_duplicate_is_already_exists
+tests/test_editor.py::test_add_link_rejects_duplicate</attr>
+  <description>Create an object with links (a) giving the same link twice and (b) to an object that doesn't exist; update an object, changing its description and adding a link it already has; add a second link between an already linked pair. Expected: each is refused before any file is written, and the object files are unchanged.</description>
+</object>

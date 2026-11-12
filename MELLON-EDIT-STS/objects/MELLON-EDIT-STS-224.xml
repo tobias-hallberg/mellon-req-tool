@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-224">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_edit_srs_323_changing_active_filter_keeps_shown_columns</attr>
+  <description>Make view V active, then choose filter F1, then F2, then clear the filter. Expected: the shown attribute columns and their order are V's each time.</description>
+</object>

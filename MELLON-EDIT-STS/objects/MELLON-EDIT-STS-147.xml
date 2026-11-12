@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-147">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. An empty result would pass too (see weak).</attr>
+  <attr name="automated-tests">tests/test_search.py::test_doc_ids_filter_limits_scan
+tests/test_mcp_read.py::test_search_objects_doc_ids_narrows
+tests/test_mcp_read.py::test_edit_srs_261_search_with_doc_ids_searches_only_those</attr>
+  <description>Search for shall, which objects of both documents contain, giving only the child document. Expected: each hit is from the child document.</description>
+</object>

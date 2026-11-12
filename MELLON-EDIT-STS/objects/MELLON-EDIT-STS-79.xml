@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-79">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_new_sibling_at_top_level
+tests/test_gui_outline.py::test_outline_shortcuts_work_with_outline_pane_hidden
+tests/test_gui_outline.py::test_edit_srs_113_new_sibling_goes_directly_after_selected</attr>
+  <description>In the Document Editor, select a top-level object and choose New sibling, by the action and by its shortcut with the outline pane hidden. Expected: one new object is created, selected, and placed at the top level.</description>
+</object>

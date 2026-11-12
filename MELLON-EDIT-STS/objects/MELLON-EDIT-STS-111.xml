@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-111">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_move_preserves_descendants</attr>
+  <description>Give object A a sub-object B, create a top-level object C, and move A under C. Expected: A's place in the outline is C, A, and B's is C, A, B: B moved with A.</description>
+</object>

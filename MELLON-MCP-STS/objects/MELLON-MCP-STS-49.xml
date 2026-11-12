@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_105_overlapping_new_object_calls_run_as_one_after_the_other
+tests/test_mcp_server.py::test_mcp_srs_105_overlapping_write_and_compare_run_as_one_after_the_other</attr>
+  <description>Over stdio, send two new_object requests for VCU3-SRS, and separately a set_attribute and a compare_document, without waiting for the first response; use concurrent session.call_tool in an anyio task group. Expected: the two objects get different IDs, and the manifest lists both. Each result, and the files afterwards, equal those of the same calls made one after the other on a copy.</description>
+</object>

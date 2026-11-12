@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_12_warns_when_repository_has_no_document</attr>
+  <description>Start the same empty repository with --log-level DEBUG, INFO, WARNING and ERROR in turn. Expected: standard error holds a warning that the repository has no document under the first three levels, and no warning under ERROR.</description>
+</object>

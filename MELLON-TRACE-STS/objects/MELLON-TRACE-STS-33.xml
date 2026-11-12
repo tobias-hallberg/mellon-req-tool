@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ok_when_ack_equals_current
+tests/test_suspects.py::test_suspect_when_target_changed
+tests/test_suspects.py::test_suspect_when_parent_commit_reverted
+tests/test_suspects.py::test_squash_merge_invalidates_ack
+tests/test_suspects.py::test_replayed_commits_invalidate_ack[rebase]
+tests/test_suspects.py::test_replayed_commits_invalidate_ack[cherry-pick]
+tests/test_suspects.py::test_broken_link_when_target_missing
+tests/test_repo.py::test_scan_repo_covers_every_doc
+tests/test_repo.py::test_scan_repo_detects_suspect_after_parent_revision</attr>
+  <description>Make a link whose acknowledged commit is the target's last change, then commit a revision of the target; acknowledge a revision, then commit a revert to the earlier text; acknowledge a revision on a branch, then replay it on a new base by squash, rebase and cherry-pick; make a link to an object ID with no object. Expected: the link reads OK only while its acknowledged commit is the target's last change; after each later commit that changes the target, the revert and each replayed commit included, it reads suspect with that commit as the last change; the link to a missing object never reads OK.</description>
+</object>

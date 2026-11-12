@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-173">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. No view is active in these tests; with a view active is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_grid_columns_match_document_schema
+tests/test_gui_theme.py::test_system_columns_never_hidden
+tests/test_gui_grid_view_order.py::test_edit_srs_327_system_columns_show_in_each_view</attr>
+  <description>Open the grid on each of three documents. Expected: the first columns are the state gutter, object ID, description and type, and none of them is hidden.</description>
+</object>

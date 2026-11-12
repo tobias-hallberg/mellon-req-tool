@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-23">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak. No test hashes each file under the root before and after each write tool and compares the result with the list both ways, as the requirement's rationale describes. A clean git status after the commit also passes if the commit took more files than affected_files, and it misses ignored files.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_bulk_set_attribute_happy
+tests/test_mcp_write.py::test_bulk_set_attribute_empty_is_noop
+tests/test_mcp_write.py::test_update_object_no_changes_is_noop
+tests/test_mcp_write.py::test_manage_view_rename_same_slug
+tests/test_mcp_write.py::test_manage_view_rename_new_slug_moves_file
+tests/test_mcp_write.py::test_manage_view_delete_success
+tests/test_mcp_write.py::test_manage_view_edit_replaces_visible_order
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[copy_object]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[create_document]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[delete_attribute]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[delete_object]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[manage_view_rename]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[new_object_with_links]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[remove_attr_option]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[remove_link_deletes_file]
+tests/test_mcp_write.py::test_mcp_srs_67_affected_files_are_exactly_the_files_changed</attr>
+  <description>Make write calls that change one file, several files, delete a file or rename one: bulk_set_attribute on three objects; manage_view rename (keeping and changing the slug), delete and edit; update_object and bulk_set_attribute with nothing to change. Then, with a commit_message, make eight calls: create_document, delete_attribute, remove_attr_option, new_object with a link, copy_object, remove_link that deletes the links file, delete_object with force, and manage_view rename. Expected: affected_files lists the files written, deleted or renamed from, and is empty when nothing changed. After each committing call, git reports no uncommitted change.</description>
+</object>

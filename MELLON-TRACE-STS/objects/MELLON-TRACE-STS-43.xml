@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_cached_scan_rescans_after_commit_revises_parent</attr>
+  <description>Acknowledge a link and commit, change the target's description without committing and read the link's state, then commit the change. Expected: the link stays OK while the change is uncommitted, and reads suspect after the commit.</description>
+</object>

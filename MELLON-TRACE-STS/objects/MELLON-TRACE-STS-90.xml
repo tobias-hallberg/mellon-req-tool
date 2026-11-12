@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-90">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_trace_srs_177_ctrl_t_opens_the_trace_view_for_the_selected_object</attr>
+  <description>Document Editor with an object selected: the trace view action's shortcut is Ctrl+T, and triggering it opens the trace view for the selected object. No test (only that the action is enabled while read-only).</description>
+</object>

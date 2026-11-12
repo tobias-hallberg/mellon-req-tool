@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-MCP-STS-14">
+  <link target-doc="MELLON-MCP-SRS" target-id="MELLON-MCP-SRS-2" type="verifies" ack="aa6d7a4"/>
+  <link target-doc="MELLON-MCP-SRS" target-id="MELLON-MCP-SRS-3" type="verifies" ack="aa6d7a4"/>
+</links>

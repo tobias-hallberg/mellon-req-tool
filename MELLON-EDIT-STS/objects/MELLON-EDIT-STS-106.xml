@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-106">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_delete_refuses_while_a_sibling_doc_fails_to_load[False]
+tests/test_editor.py::test_delete_refuses_while_a_sibling_doc_fails_to_load[True]</attr>
+  <description>With a link from document DOC to an object of PARENT, put conflict markers into DOC's object file so that DOC has a load error, then delete PARENT's object, with and without force. Expected: each delete is refused with a message naming DOC's load error, and both the object and the link stay.</description>
+</object>

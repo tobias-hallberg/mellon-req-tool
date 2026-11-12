@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-170">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A hidden object that starts to match, and pending text in another row, are a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_edit_that_stops_matching_the_saved_filter_hides_the_row
+tests/test_gui_filter.py::test_edit_srs_319_edit_shows_row_that_now_matches_active_filter
+tests/test_gui_filter.py::test_edit_srs_319_edit_hides_row_that_stops_matching</attr>
+  <description>Make a filter of status eq Draft active, without ancestor objects; in the grid, set a shown Draft requirement's status to Approved. Expected: its row is hidden at once, and one row fewer shows.</description>
+</object>

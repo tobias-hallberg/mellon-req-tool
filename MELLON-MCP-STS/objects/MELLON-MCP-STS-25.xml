@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak for MELLON-MCP-SRS-81. No test leaves another file changed or staged to show that it stays out of the commit, and none checks that the commit's message is the given commit_message (only that the trailer is there). For MELLON-MCP-SRS-87, short_hash isn't compared with the new latest commit.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_auto_commit_set_attribute_against_git_repo
+tests/test_mcp_write.py::test_auto_commit_uses_via_mellon_mcp_trailer
+tests/test_mcp_write.py::test_auto_commit_bulk_set_attribute_single_commit
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[copy_object]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[create_document]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[delete_attribute]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[delete_object]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[manage_view_rename]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[new_object_with_links]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[remove_attr_option]
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean[remove_link_deletes_file]
+tests/test_mcp_server.py::test_mcp_srs_81_commits_exactly_affected_files_with_the_message
+tests/test_mcp_server.py::test_mcp_srs_81_commits_with_no_git_program_installed
+tests/test_mcp_server.py::test_mcp_srs_87_returns_commit_short_hash_and_message</attr>
+  <description>In a copy of the req-test repository, make each of these calls with a commit_message: set_attribute; bulk_set_attribute on three objects; and the eight multi-file writes (create_document, delete_attribute, remove_attr_option, new_object with a link, copy_object, remove_link that deletes the links file, delete_object with force, manage_view rename). Expected: each call makes a new commit and git reports no uncommitted change afterwards. The result's commit holds a short_hash that names a commit carrying the Via: mellon-mcp trailer, and a commit_message.</description>
+</object>

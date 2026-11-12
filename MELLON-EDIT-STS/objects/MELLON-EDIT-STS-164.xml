@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-164">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_has_outgoing_present_any_doc
+tests/test_filter.py::test_has_outgoing_present_target_doc_match_and_miss</attr>
+  <description>Only requirement A has an outgoing link, to document PARENT. Apply has-outgoing present naming no document, naming PARENT, and naming OTHER. Expected: A; A; nothing.</description>
+</object>

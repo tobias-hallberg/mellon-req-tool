@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-84">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[0-5]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[3-5]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[4-5]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[5-5]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[6-6]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[10-10]
+tests/test_editor.py::test_edit_srs_1_higher_of_recorded_and_highest_plus_one[9223372036854775808-9223372036854775808]
+tests/test_editor.py::test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id[abc]
+tests/test_editor.py::test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id[-1]
+tests/test_editor.py::test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id[1.5]
+tests/test_editor.py::test_edit_srs_1_invalid_recorded_number_still_gives_an_unused_id[]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[0]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[1]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[2]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[3]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[4]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[5]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[6]
+tests/test_editor.py::test_edit_srs_1_generated_no_object_id_given_out_twice[7]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[0]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[1]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[2]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[3]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[4]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[5]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[6]
+tests/test_editor.py::test_edit_srs_1_generated_new_number_is_one_more_than_highest_ever[7]</attr>
+  <description>Create objects in a new document and in documents whose manifest records a next object number of 0, 3, 4, 5, 6, 10, 2^63, none, or a damaged value, after deleting the highest, several highest or all objects, as sub-objects, with a document ID holding a hyphen and digits, and over seeded random runs of creates and deletes. Expected: each new object's number is the higher of the recorded number and one more than the highest object number present, compared as whole numbers; its object file holds the returned ID; no object ID is given out twice.</description>
+</object>

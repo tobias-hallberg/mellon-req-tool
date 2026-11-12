@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-163">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_is_empty_matches_blank_text</attr>
+  <description>Requirement A has the rationale because we must, requirement B has rationale set to an empty value, and two headings have no rationale. Apply rationale is-empty. Expected: B and both headings match; A doesn't.</description>
+</object>

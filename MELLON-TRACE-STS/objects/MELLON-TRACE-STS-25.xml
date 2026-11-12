@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_add_link_action_writes_to_disk
+tests/test_gui_links.py::test_link_picker_selected_returns_tuple
+tests/test_gui_links.py::test_trace_srs_16_ctrl_l_opens_the_link_picker_for_the_selected_object</attr>
+  <description>In a Document Editor, select an object without outgoing links, open the link picker with the add-link action, search for a system requirement, choose it with link type satisfies and accept. Expected: the picker returns that target and link type, and the selected object's links file holds a satisfies link to the target.</description>
+</object>

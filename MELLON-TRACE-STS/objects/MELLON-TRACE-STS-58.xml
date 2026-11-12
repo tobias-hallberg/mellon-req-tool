@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_review_never_reviewed_has_no_changed_fields
+tests/test_mcp_git.py::test_review_says_when_the_ack_cannot_be_resolved
+tests/test_mcp_git.py::test_review_ok_link_has_no_changed_fields
+tests/test_mcp_git.py::test_trace_srs_120_changed_fields_unknown_when_target_did_not_exist_at_the_acknowledged_commit</attr>
+  <description>Over MCP, review a link that was never acknowledged, a link whose acknowledged commit names no commit in the repository, and an OK link. Expected: the first two return the changed fields as unknown and say the acknowledged commit wasn't found; the OK link says it was found.</description>
+</object>

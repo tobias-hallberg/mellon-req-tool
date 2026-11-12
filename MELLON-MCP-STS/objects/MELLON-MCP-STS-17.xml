@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-17">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The stdio tests of CHECK and VER exercise this as a precondition.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_86_mcp_stdio_results_match_in_process
+tests/test_mcp_read.py::test_check_srs_9_mcp_stdio_validate_tools_change_no_working_copy_file
+tests/test_mcp_git.py::test_ver59_mcp_reports_each_changed_object_with_its_changes</attr>
+  <description>Start the installed MCP server as a child process with its standard input and standard output connected to a Model Context Protocol client. Initialize a session and call validate_document, validate_repo, repo_health and compare_document. Expected: the session initializes, and each call is answered over the same two streams.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_remove_link_last_link_deletes_file
+tests/test_editor.py::test_remove_link_keeps_file_when_other_links_remain
+tests/test_editor.py::test_remove_link_missing_returns_false
+tests/test_service.py::test_remove_link_happy</attr>
+  <description>Remove the only link of an object, one of two links of an object, and a link that doesn't exist. Expected: the links file of the object left without links is deleted; the other of two links stays; removing a missing link reports that nothing was removed.</description>
+</object>

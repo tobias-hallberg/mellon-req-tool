@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-80">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_coverage_report_incoming_default
+tests/test_mcp_read.py::test_coverage_report_include_headings
+tests/test_mcp_read.py::test_coverage_report_compact_default_omits_lists</attr>
+  <description>Over MCP, call coverage_report with include_lists, without and with headings, and without include_lists. Expected: with include_lists, the covered list names the requirement with its link count, and the uncovered list names the heading once headings are included; without include_lists neither list is returned.</description>
+</object>

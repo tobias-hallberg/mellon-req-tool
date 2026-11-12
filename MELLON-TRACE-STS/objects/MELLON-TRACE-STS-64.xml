@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-64">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_ack_suspects_subset_acks_only_listed_keys
+tests/test_mcp_write.py::test_trace_srs_139_link_keys_acknowledge_exactly_the_named_link
+tests/test_mcp_write.py::test_trace_srs_139_link_keys_differing_in_letter_case_acknowledge_nothing
+tests/test_mcp_write.py::test_trace_srs_139_each_subset_of_link_keys_acknowledges_exactly_that_subset
+tests/test_mcp_write.py::test_trace_srs_139_link_keys_over_stdio_without_git_user_name
+tests/test_mcp_write.py::test_trace_srs_140_each_key_that_names_no_suspect_link_is_skipped_with_a_reason</attr>
+  <description>Over MCP, call ack_suspects with link_keys naming one of six suspect links and a link that doesn't exist. Expected: exactly the named suspect link is acknowledged, the missing link is reported as skipped, and five suspect links remain.</description>
+</object>

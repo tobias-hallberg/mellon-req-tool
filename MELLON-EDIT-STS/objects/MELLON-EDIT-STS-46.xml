@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_pre_validation_unknown_attr_no_files_written
+tests/test_mcp_write.py::test_update_object_bad_attr_value_no_files_touched
+tests/test_mcp_write.py::test_bulk_set_attribute_bad_enum_no_files_touched
+tests/test_mcp_write.py::test_edit_srs_12_update_object_with_bad_enum_value_refused_whole
+tests/test_mcp_write.py::test_edit_srs_12_update_object_with_undefined_attribute_refused_whole
+tests/test_mcp_write.py::test_edit_srs_12_new_object_refused_whole
+tests/test_mcp_write.py::test_edit_srs_12_bulk_set_attribute_refused_whole
+tests/test_mcp_write.py::test_edit_srs_12_refusal_holds_while_another_document_fails_to_load
+tests/test_mcp_write.py::test_edit_srs_12_refused_calls_write_nothing_over_stdio</attr>
+  <description>Over MCP, call new_object with an attribute that the document doesn't define, update_object with an enumeration value outside the options, and bulk_set_attribute with such a value. Expected: each call is refused; new_object makes no object file and the other two leave the object file's text unchanged.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-15">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. In process: the tests read the folder the server keeps rather than the answers of a tool call, and don't run the installed program.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_main_repo_root_defaults_to_claude_project_dir
+tests/test_mcp_git.py::test_main_repo_root_defaults_to_cwd
+tests/test_mcp_server.py::test_mcp_srs_5_claude_project_dir_names_the_folder_to_serve
+tests/test_mcp_server.py::test_mcp_srs_6_working_directory_is_the_folder_to_serve</attr>
+  <description>Start the MCP server without --repo-root, first with CLAUDE_PROJECT_DIR naming a copy of the req-test repository while the current working directory is a folder outside any repository, then with CLAUDE_PROJECT_DIR unset while the current working directory is the copy. Expected: the server starts both times, and the folder it serves is the copy.</description>
+</object>

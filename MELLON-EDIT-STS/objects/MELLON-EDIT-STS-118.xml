@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-118">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Only the left-out case checks that nothing was written.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_outline_missing_id_raises
+tests/test_editor.py::test_set_outline_extra_id_raises
+tests/test_editor.py::test_set_outline_duplicate_id_raises
+tests/test_mcp_write.py::test_reorder_outline_missing_id_returns_error
+tests/test_editor.py::test_edit_srs_190_library_refuses_bad_outline_before_writing
+tests/test_mcp_write.py::test_edit_srs_190_reorder_outline_refuses_bad_outline_before_writing
+tests/test_mcp_write.py::test_edit_srs_190_control_full_outline_is_written
+tests/test_mcp_write.py::test_edit_srs_190_refusal_writes_nothing_beside_document_with_load_error</attr>
+  <description>Give an outline that leaves out an object; one that names each object and also an ID the document doesn't have; and one that names an object twice. Give the first through reorder_outline too. Expected: each is refused, saying which objects are left out, unknown or named more than once; after the first, the outline is unchanged, and reorder_outline returns not ok naming the left-out object.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-214">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_edit_srs_224_split_cell_from_table_menu</attr>
+  <description>Table 2x2 whose top-left cell spans both columns and both rows; select it, choose the Table menu's Split cell, save. Expected: the saved table has four single cells, each position covered once.</description>
+</object>

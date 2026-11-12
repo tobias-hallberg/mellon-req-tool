@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: the answers aren't compared with the answers of the server without --read-only.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[compare_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[coverage_report]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[git_history]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[incoming_links]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[inspect_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[list_documents]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[outline]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[repo_health]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[review_suspect_link]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[search_objects]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[show_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[show_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[show_object_at]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[suspects]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[trace]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[validate_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[validate_repo]
+tests/test_mcp_write.py::test_read_only_blocks_writes
+tests/test_mcp_git.py::test_compare_document_works_read_only
+tests/test_mcp_server.py::test_mcp_srs_101_read_only_server_answers_other_tools_unchanged</attr>
+  <description>On a copy of the req-test repository, run the server in read-only mode and call each of the 17 tools that aren't write tools, commit_changes or export_document, with its required parameters. Also call list_documents, and compare_document with its defaults. Expected: each call is answered, not refused. list_documents lists the repository's documents and compare_document finds the document's changes.</description>
+</object>

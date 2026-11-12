@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-86">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_suspect.py::test_trace_srs_154_ack_selected_after_selecting_everything_acknowledges_one_object_at_most
+tests/test_gui_suspect.py::test_trace_srs_154_no_control_acknowledges_more_than_one_objects_links</attr>
+  <description>Document Editor on a document with suspect links in several objects: enumerate every action of the menus, toolbars, suspect banner, grid and Inspector context menus; trigger each with no selection and with one object selected (stubbing dialogs to accept). Expected: no action acknowledges links of more than one object. No test.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-156">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. No case tells all from any (see weak).</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_combinator_all_and_any
+tests/test_filter.py::test_edit_srs_284_all_needs_each_condition_any_needs_one</attr>
+  <description>In a document where requirement A has priority High and approved true, and requirement B has priority Low and approved false, apply priority eq High with approved is-true under all and under any, and priority eq Low with approved is-true under any. Expected: all gives A; any gives A; the last gives A and B.</description>
+</object>

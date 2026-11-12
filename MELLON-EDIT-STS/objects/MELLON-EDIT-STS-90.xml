@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-90">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_grid_description_multiline_roundtrip
+tests/test_gui_edits.py::test_inspector_description_multiline_roundtrip
+tests/test_gui_edits.py::test_edit_srs_126_grid_description_editor_keeps_line_break
+tests/test_gui_edits.py::test_edit_srs_126_inspector_description_keeps_line_break</attr>
+  <description>Give a description with line breaks and an empty line through a grid cell and through the Inspector. Expected: the stored description equals the text given, line breaks included, and the grid shows all of it.</description>
+</object>

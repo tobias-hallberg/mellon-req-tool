@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access[../OUT-OUT-1]
+tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access[PARENT-../../../OUT-1]
+tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access[\\\\mellon-test-host\\share-share-1]
+tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access[PARENT-PARENT-42/../../../../OUT-1]
+tests/test_suspects.py::test_trace_srs_77_an_object_id_of_another_document_is_broken
+tests/test_editor.py::test_trace_srs_79_add_link_reads_nothing_outside_the_repository[../../../OUT-1]
+tests/test_editor.py::test_trace_srs_79_add_link_reads_nothing_outside_the_repository[PARENT-42/../../../../OUT-1]
+tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_access
+tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_without_opening_files
+tests/test_editor.py::test_trace_srs_79_add_link_reads_nothing_outside_the_repository
+tests/test_mcp_git.py::test_trace_srs_79_review_of_a_target_that_is_no_object_id_reads_nothing_outside
+tests/test_mcp_git.py::test_trace_srs_79_no_path_outside_the_repository_is_opened
+tests/test_mcp_read.py::test_trace_srs_79_no_path_outside_the_repository_is_opened</attr>
+  <description>In a repository, give a link a target that isn't an object ID: a document folder outside the repository ('../OUT'), an object path climbing out of the document ('../../../OUT-1', 'PARENT-42/../../../../OUT-1'), a Windows share, and the object ID of another document; work out the link's state while recording each path the file system is asked about. Also create links with such target IDs. Expected: each link reads broken with no last change, and no path outside the repository is opened, listed or looked up, whether the link is created or refused.</description>
+</object>

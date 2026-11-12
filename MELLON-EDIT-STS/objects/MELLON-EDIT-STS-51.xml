@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-51">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_document_with_custom_schema_skips_rules
+tests/test_editor.py::test_edit_srs_27_given_attribute_definitions_only_and_no_rules_file</attr>
+  <description>Create a document with one given attribute definition. Expected: no rules file is written.</description>
+</object>

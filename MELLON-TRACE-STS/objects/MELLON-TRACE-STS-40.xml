@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ack_on_branch_stays_ok_when_main_merges_branch
+tests/test_suspects.py::test_ack_on_branch_stays_ok_when_branch_merges_main
+tests/test_suspects.py::test_ack_on_branch_stays_ok_after_fast_forward
+tests/test_suspects.py::test_merge_resolution_with_new_parent_text_is_suspect
+tests/test_git_ops.py::test_last_commit_follows_the_parent_a_merge_matches
+tests/test_link_index.py::test_matches_git_log[0]
+tests/test_link_index.py::test_matches_git_log[1]
+tests/test_link_index.py::test_matches_git_log[2]
+tests/test_link_index.py::test_matches_git_log[3]
+tests/test_link_index.py::test_matches_git_log[4]
+tests/test_link_index.py::test_matches_git_log[5]
+tests/test_suspects.py::test_trace_srs_59_merge_taking_file_from_one_side_and_figure_from_other_is_a_change
+tests/test_suspects.py::test_trace_srs_59_merge_equal_to_one_parent_is_no_change</attr>
+  <description>On a branch, revise the target and acknowledge the link, then merge the branch into main, merge main into the branch, and fast-forward main. Separately, resolve a merge with target text neither side had; find the last change after a merge that took one side's text; and compare each object's last change with git log -1 over its object file and figure on random histories with branches, merges and shuffled commit dates. Expected: after each merge that takes one parent's target files the link stays OK, with the branch's revising commit as the last change; the resolution with new text makes the link suspect with the merge as the last change; the last change equals git log's in each case.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-204">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_edit_srs_131_grid_boolean_editor_offers_true_false_empty
+tests/test_gui_edits.py::test_edit_srs_131_inspector_boolean_field_offers_true_false_empty</attr>
+  <description>Define a boolean attribute; open its grid editor and its Inspector field. Expected: each offers exactly an empty entry, true and false.</description>
+</object>

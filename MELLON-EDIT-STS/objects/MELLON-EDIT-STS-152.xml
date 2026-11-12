@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-152">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_filter_narrows_grid_by_id
+tests/test_gui_smoke.py::test_filter_by_description_text
+tests/test_gui_edits.py::test_edit_that_stops_matching_the_text_filter_hides_the_row</attr>
+  <description>In a 27-object document, type SRS-10 in the filter box; then type watchdog; then type an object's ID, then a text no object holds, then edit that object's description to contain the text. Expected: with SRS-10, each shown row's object ID contains SRS-10; watchdog shows at least two rows; the object shows for its ID, is hidden for the text, and shows again once its description contains the text.</description>
+</object>

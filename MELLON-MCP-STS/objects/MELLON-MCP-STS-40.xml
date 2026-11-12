@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_34_offers_the_read_tools_of_the_table</attr>
+  <description>No test compares the offered tools with the table. Read the table rows from the committed object file MELLON-MCP-SRS/objects/MELLON-MCP-SRS-34.xml, start mellon-mcp over stdio and call list_tools. For each row, find the tool and parameter in its inputSchema. Expected: they exist; the type matches (string, integer, boolean, array of strings, object of strings; 'or null' is anyOf with null; 'one of' is an enum); the parameter is in required exactly when the row says yes; the schema default equals the row's default; a tool row '(none)' has no properties. A one-off comparison on 2026-11-11 found all 35 rows matched the development build.</description>
+</object>

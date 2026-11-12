@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-53">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_metadata_sets_title
+tests/test_mcp_write.py::test_edit_srs_36_edit_metadata_sets_field
+tests/test_mcp_write.py::test_edit_srs_36_edit_metadata_over_stdio
+tests/test_mcp_write.py::test_edit_srs_36_edit_metadata_without_git_user_name</attr>
+  <description>Over MCP, set a document's title with edit_metadata. Expected: the call succeeds and the manifest holds the new title.</description>
+</object>

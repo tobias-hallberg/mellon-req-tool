@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-84">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_trace_srs_100_double_click_selects_target_in_the_open_target_document_editor
+tests/test_gui_links.py::test_trace_srs_100_double_click_shows_target_selected_when_no_target_editor_is_open</attr>
+  <description>In a Document Editor on CHILD, double-click CHILD-1's outgoing link to PARENT-1 in the Inspector. Expected: PARENT's Document Editor shows (opened or activated) with PARENT-1 selected. No test.</description>
+</object>

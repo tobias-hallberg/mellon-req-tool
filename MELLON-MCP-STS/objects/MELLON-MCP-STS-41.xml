@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_35_offers_the_write_tools_of_the_table</attr>
+  <description>As for MELLON-MCP-SRS-34, against the 123 rows of MELLON-MCP-SRS-35. The 2026-11-11 comparison matched every row, but two types are less precise than what is offered: bulk_set_attribute.obj_ids is 'array' where the server offers array of strings, and reorder_outline.ordering is 'array' where it offers array of objects. A test would have to accept 'array', or the table be made exact.</description>
+</object>

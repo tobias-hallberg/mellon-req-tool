@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-193">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_srs_67_attribute_defined_not_required_by_default</attr>
+  <description>Define_attribute(doc, 'comment', 'text') without the required flag. Expected: show_document(include=['attributes']) gives required false, and validation reports nothing for objects without `comment`.</description>
+</object>

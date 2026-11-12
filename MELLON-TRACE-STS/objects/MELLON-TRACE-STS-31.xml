@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_incoming_links_tool
+tests/test_mcp_read.py::test_show_object_incoming_is_repo_wide</attr>
+  <description>Over MCP, call incoming_links and show_object for a parent object that a child document's object links to, and incoming_links for a parent object nothing links to. Expected: both return exactly the one incoming link, with source document, source object and link type; the unlinked object has none.</description>
+</object>

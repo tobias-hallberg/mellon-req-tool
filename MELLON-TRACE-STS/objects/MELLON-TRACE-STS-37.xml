@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_two_commit_rule</attr>
+  <description>Acknowledge a link, then make one commit that revises the target and also changes the link's acknowledged commit; acknowledge the link and commit again. Expected: after the first commit the link is suspect, with that commit as the target's last change; after acknowledging it reads OK, and the second commit, which changed only the links file, isn't the target's last change.</description>
+</object>

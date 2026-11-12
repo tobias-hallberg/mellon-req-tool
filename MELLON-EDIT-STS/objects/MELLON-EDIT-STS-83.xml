@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-83">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_with_attrs_populates_dict
+tests/test_mcp_write.py::test_new_object_simple_returns_populated_object
+tests/test_mcp_write.py::test_edit_srs_119_default_value_not_applied_to_new_object</attr>
+  <description>Over MCP, create an object with two attribute values, and another with none, in a document that defines more attributes. Expected: the first object has exactly the two given values and the second has no attribute values.</description>
+</object>

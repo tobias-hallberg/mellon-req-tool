@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-138">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_edit_in_drawio_opens_existing_figure
+tests/test_drawio.py::test_open_in_drawio_launches_detached</attr>
+  <description>Attach a draw.io figure, select the object and choose Edit in draw.io. Expected: draw.io desktop is asked to open the object's figure file, whose bytes are unchanged; draw.io desktop is started with the figure file's path as its argument.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-153">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: the filter box isn't used, and the row set isn't checked (see gaps).</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_filter_match_set_ands_with_text_and_suspect
+tests/test_gui_filter.py::test_edit_srs_274_grid_shows_objects_passing_all_three_narrowings
+tests/test_gui_filter.py::test_edit_srs_274_each_narrowing_alone</attr>
+  <description>Make a filter of Must priority active, then turn on Suspects only. Expected: no more rows show than with the filter alone.</description>
+</object>

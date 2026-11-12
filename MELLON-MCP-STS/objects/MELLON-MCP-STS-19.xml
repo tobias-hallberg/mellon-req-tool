@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-19">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: each test checks part of the shape for one tool. No test checks all three fields for each of the 27 write tools.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_appends_top_level
+tests/test_mcp_write.py::test_add_attribute_enum_success
+tests/test_mcp_write.py::test_change_attribute_required_flips_flag
+tests/test_mcp_write.py::test_manage_view_rename_same_slug
+tests/test_mcp_write.py::test_update_object_no_changes_is_noop
+tests/test_mcp_write.py::test_mcp_srs_44_successful_write_returns_ok_affected_files_and_message</attr>
+  <description>Make successful calls of new_object, define_attribute, change_attribute_required, manage_view rename, and update_object with nothing to change. Expected: each result has ok true, affected_files listing the files written, which is empty when nothing changed, and a message.</description>
+</object>

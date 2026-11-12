@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-151">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The default of 50, and exactly the maximum, are a gap.</attr>
+  <attr name="automated-tests">tests/test_search.py::test_max_results_caps_output
+tests/test_mcp_read.py::test_search_objects_max_results
+tests/test_mcp_read.py::test_edit_srs_266_search_returns_at_most_the_maximum_default_50
+tests/test_mcp_read.py::test_edit_srs_266_search_limit_holds_beside_document_with_load_error</attr>
+  <description>Search for shall, which several objects contain, with a maximum of 1. Expected: at most one hit.</description>
+</object>

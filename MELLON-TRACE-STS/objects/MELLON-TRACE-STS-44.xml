@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_committing_a_parent_revision_flips_open_gutters_to_suspect
+tests/test_gui_suspect.py::test_trace_srs_91_suspect_banner_shows_for_a_broken_link_alone</attr>
+  <description>With Document Editors open on a parent and a child document joined by one OK link, revise the parent object without committing, then commit the revision from the parent's window and activate the child's window. Expected: before the commit the parent object's link is still OK; after it, the parent's window shows the link suspect at once, and on activation the child's state gutter marks the source object suspect and the suspect banner shows.</description>
+</object>

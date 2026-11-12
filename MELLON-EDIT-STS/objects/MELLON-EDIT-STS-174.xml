@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-174">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Below the Document Editor only; the Views menu's New view action is a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_view_writes_file_and_round_trips
+tests/test_gui_grid_view_order.py::test_edit_srs_329_new_view_saves_name_and_chosen_columns</attr>
+  <description>Save a view named Main View with the attribute columns status and type. Expected: the file views/main-view.xml exists, and the document has one view, Main View, listing status then type.</description>
+</object>

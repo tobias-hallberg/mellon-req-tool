@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-139">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The requirement's own case, a plain SVG holding the text mxfile, is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_drawio_edit_disabled_for_plain_svg
+tests/test_gui_figure.py::test_figure_menu_drawio_edit_enabled_for_drawio_svg
+tests/test_gui_figure.py::test_edit_srs_245_edit_in_drawio_disabled_for_plain_svg_with_mxfile_text
+tests/test_gui_figure.py::test_edit_srs_245_edit_in_drawio_enabled_for_drawio_figure</attr>
+  <description>Attach a plain SVG figure and open the Figure menu; repeat with a draw.io figure. Expected: Edit in draw.io… is disabled for the plain SVG, with a tooltip saying that it wasn't made with draw.io, and enabled for the draw.io figure.</description>
+</object>

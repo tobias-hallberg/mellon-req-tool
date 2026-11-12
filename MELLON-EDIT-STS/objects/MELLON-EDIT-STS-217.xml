@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-217">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_edit_srs_283_advanced_filter_dialog_builds_link_conditions</attr>
+  <description>In the Advanced filter dialog, build has-outgoing present to a named document and has-incoming absent from any document, and save. Expected: the dialog offers both kinds with a document choice and present/absent, and the saved filter holds the two conditions.</description>
+</object>

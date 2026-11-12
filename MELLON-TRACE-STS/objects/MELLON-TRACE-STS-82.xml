@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-82">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_trace_srs_61_mode_only_commits_are_no_change_to_the_target</attr>
+  <description>Commit the target's object file and acknowledge a link (OK); commit a change of only the object file's mode (executable bit), and separately of only the figure's mode. Expected: the link stays OK and the last change is unchanged. Today only test_every_head_matches_a_per_target_walk touches modes, and it compares Mellon with its own reference function, so it can't show this.</description>
+</object>

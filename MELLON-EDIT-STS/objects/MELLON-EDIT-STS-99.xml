@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-99">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_copy_object_parent_id_places_under_target
+tests/test_service.py::test_edit_srs_147_copy_placed_as_sibling_or_under_given_parent</attr>
+  <description>Over MCP, copy an object with a parent object given. Expected: the copy is a sub-object of the given parent.</description>
+</object>

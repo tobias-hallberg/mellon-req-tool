@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-116">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The move_object tool's successful moves are asserted only below the tool: the tool-level tests pass without any move (see weak), so a test through the tool is a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_move_to_top_level
+tests/test_editor.py::test_move_under_new_parent
+tests/test_editor.py::test_move_before_sibling
+tests/test_editor.py::test_move_after_sibling
+tests/test_mcp_write.py::test_edit_srs_187_move_object_under_a_parent
+tests/test_mcp_write.py::test_edit_srs_187_move_object_to_top
+tests/test_mcp_write.py::test_edit_srs_187_move_object_directly_before_object_in_other_section
+tests/test_mcp_write.py::test_edit_srs_187_move_object_directly_after_object_in_other_section
+tests/test_mcp_write.py::test_edit_srs_187_move_object_before_with_parent_named</attr>
+  <description>Move a sub-object to the top level; move an object under a new top-level object; with top-level objects 0, 2 and 3, move 3 before 2, and in a fresh copy move 0 after 2. Expected: the first object is at the top level; the second is under the new parent object; the top level reads 0, 3, 2; and then 2, 0, 3.</description>
+</object>

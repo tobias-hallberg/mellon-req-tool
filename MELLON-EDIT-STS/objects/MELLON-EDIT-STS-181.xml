@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-181">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_undo_a_delete_brings_back_links_in_other_documents
+tests/test_service.py::test_undo_and_redo_a_delete_across_documents
+tests/test_editor.py::test_journal_reverts_and_reapplies
+tests/test_editor.py::test_journal_figure_round_trip_and_unchanged_files</attr>
+  <description>Delete an object that test cases in another document link to, then Undo, then Redo. Make one step of two description edits and a create, undo and redo it. Undo and redo the attaching of a figure. Expected: after Undo each file in both documents is byte for byte as before the delete and the object is back; Redo gives the files as after the delete; the three-change step puts back each file, the manifest except for its next object number; undoing the attach removes the figure and the emptied figures folder, and redoing gives the figure's bytes back.</description>
+</object>

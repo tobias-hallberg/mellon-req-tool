@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-81">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_empty_state_visible_when_document_has_no_objects
+tests/test_gui_outline.py::test_empty_state_button_triggers_new_top_level</attr>
+  <description>Open a document with no objects in the Document Editor, then use the grid's action for a first object. Expected: the grid shows its empty state with the action; after the action the document has one object and the grid shows it.</description>
+</object>

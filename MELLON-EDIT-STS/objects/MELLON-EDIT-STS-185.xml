@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-185">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Redo, a file in another document, and a rewrite to the same size within 2 s are a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_undo_refused_after_an_outside_change
+tests/test_service.py::test_undo_refuses_after_another_change
+tests/test_editor.py::test_journal_revert_refuses_after_an_outside_change
+tests/test_gui_undo.py::test_edit_srs_356_undo_refused_when_other_documents_links_file_changed
+tests/test_gui_undo.py::test_edit_srs_356_undo_refused_after_same_size_rewrite_within_2_s
+tests/test_gui_undo.py::test_edit_srs_358_refused_redo_clears_history</attr>
+  <description>Set a description from the Document Editor, change the same object file from outside, and choose Undo. In the library and the service, make a step and then change one of its files outside the step, and undo. Expected: the undo is refused and no file changes; the user is warned once that the file changed on disk since; the window keeps no undo step and Undo is disabled.</description>
+</object>

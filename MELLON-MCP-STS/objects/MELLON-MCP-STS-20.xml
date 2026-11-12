@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A write tool call that names a missing document doesn't meet this requirement. The call raises, and an agent sees a protocol error with no ok or error_type. test_new_object_unknown_doc_raises asserts the raise. See the gaps.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_pre_validation_unknown_attr_no_files_written
+tests/test_mcp_write.py::test_edit_attribute_validation_fails
+tests/test_mcp_write.py::test_create_document_duplicate_fails
+tests/test_mcp_write.py::test_update_object_unknown_obj_raises
+tests/test_mcp_write.py::test_set_figure_rejects_non_svg
+tests/test_mcp_write.py::test_mcp_srs_45_failed_write_returns_ok_false_error_and_error_type</attr>
+  <description>Make write tool calls that fail: new_object with an attribute the document doesn't declare, set_attribute with a value that isn't an option, create_document with the ID of an existing document, update_object naming a missing object, and set_figure with a file that isn't SVG. Expected: each result has ok false, an error message that names the problem, and an error_type.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-88">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_trace_srs_171_trace_without_max_depth_stops_at_depth_two</attr>
+  <description>Over MCP, a four-level chain D -&gt; C -&gt; B -&gt; A; trace D up without max_depth. Expected: C at depth 1 and B at depth 2, and A absent. The fixture chain is only two deep, so the default can't be seen.</description>
+</object>

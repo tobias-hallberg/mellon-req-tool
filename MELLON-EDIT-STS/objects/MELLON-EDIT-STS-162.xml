@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-162">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_integer_comparisons
+tests/test_filter.py::test_real_lt</attr>
+  <description>With integer weights 10 and 3, apply weight ge 5; with real ratios 1.5 and 0.5, apply ratio lt 1.0. Expected: ge 5 matches only weight 10, which compared as text wouldn't reach 5; lt 1.0 matches only 0.5.</description>
+</object>

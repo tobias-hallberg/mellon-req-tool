@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-130">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Making a header row a body row again is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_window_toggle_header_handler
+tests/test_gui_tables.py::test_edit_srs_226_header_row_toggles_back_to_body_row
+tests/test_gui_tables.py::test_edit_srs_226_header_row_makes_body_row_a_header</attr>
+  <description>Open the table editor, select a cell in a body row and choose the Table menu's Header row. Expected: that row is a header row.</description>
+</object>

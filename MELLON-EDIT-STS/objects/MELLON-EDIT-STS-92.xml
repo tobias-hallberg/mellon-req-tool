@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-92">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_inspector_combobox_autocommits_on_change
+tests/test_gui_edits.py::test_inspector_combo_popup_click_commits_without_destroying_combo
+tests/test_gui_edits.py::test_edit_srs_135_grid_enum_choice_saved_at_once
+tests/test_gui_edits.py::test_edit_srs_135_inspector_enum_choice_saved_at_once</attr>
+  <description>In the Inspector, choose an enumeration value from the list, once programmatically and once by clicking the open list. Expected: the object file holds the value at once, without leaving the field, and the Inspector keeps working.</description>
+</object>

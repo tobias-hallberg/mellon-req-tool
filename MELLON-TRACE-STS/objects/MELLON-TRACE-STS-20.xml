@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_add_link_no_git_has_no_ack
+tests/test_editor.py::test_trace_srs_4_link_to_target_with_no_last_change_gets_no_acknowledged_commit
+tests/test_editor.py::test_trace_srs_4_link_in_repository_without_commits_gets_no_acknowledged_commit
+tests/test_mcp_write.py::test_trace_srs_4_link_to_target_with_no_last_change_gets_no_acknowledged_commit
+tests/test_mcp_write.py::test_trace_srs_19_add_link_creates_link_with_given_type</attr>
+  <description>Over MCP, in a folder with no git history, call add_link from a child object to an existing parent object with link type satisfies. Expected: the call succeeds, reports no acknowledged commit, and the source's links file holds the new link next to its earlier one.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_38_offers_each_tool_and_parameter_of_the_previous_release</attr>
+  <description>Record a snapshot of the previous release (v0.3.0): its list_tools inputSchema, the result fields of one successful and one failed call of each tool, and the error_type values. Commit the snapshot as test data and compare the current server with it. Expected: each snapshot tool, parameter, type and default is offered unchanged; each optional parameter is still optional; each result field and error_type is still returned by the same call. A one-off comparison of inputSchema on 2026-11-11 found only additions: outline's root and depth, both with default null, and compare_document. Result fields and error_type values weren't compared.</description>
+</object>

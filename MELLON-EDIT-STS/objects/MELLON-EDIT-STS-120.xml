@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-120">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_outline_depth_lists_top_levels_and_counts_the_rest
+tests/test_mcp_read.py::test_outline_root_lists_the_subtree_below_it</attr>
+  <description>In a document whose top-level heading has a chain of three objects below it, each a sub-object of the one before, followed by a second top-level object: read the outline with depth 1, 2 and 4; with the heading's sub-object as root, without a depth and with depth 1; and with the last object of the chain as root. Expected: depth 1 lists the two top-level objects, the heading with 3 objects left out; depth 2 also lists the heading's sub-object, with 2 left out; depth 4 equals the whole outline; the root lists only the two objects below it, at their levels in the document, 2 and 3, and with depth 1 only the first of them, with 1 left out; the last object as root lists nothing.</description>
+</object>

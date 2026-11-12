@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_attribute_rejects_bad_enum
+tests/test_editor.py::test_set_attribute_empty_clears_enum
+tests/test_service.py::test_set_attribute_unknown_enum_value_is_validation
+tests/test_editor.py::test_edit_srs_10_every_other_letter_case_refused_by_the_library
+tests/test_mcp_write.py::test_edit_srs_10_enum_value_in_other_letter_case_refused
+tests/test_mcp_write.py::test_edit_srs_10_enum_value_in_exact_case_accepted</attr>
+  <description>Set an enumeration attribute to a value that isn't one of its options, then to the empty value. Expected: the first edit is refused as a validation error and the second is accepted.</description>
+</object>

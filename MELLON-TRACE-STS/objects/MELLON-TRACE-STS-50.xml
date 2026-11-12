@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_suspect.py::test_suspect_only_filter_narrows_grid
+tests/test_gui_suspect.py::test_trace_srs_93_suspects_only_shows_filtered_objects_with_suspect_or_broken_links</attr>
+  <description>In a Document Editor on a document where six objects have suspect outgoing links and the rest have only OK links or none, turn Suspects only on. Expected: the grid shows exactly the six objects.</description>
+</object>

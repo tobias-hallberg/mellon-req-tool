@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-136">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_clear_figure_removes
+tests/test_editor.py::test_clear_figure_removes_file_and_empty_dir
+tests/test_editor.py::test_clear_figure_preserves_dir_with_other_figures</attr>
+  <description>Attach a figure through set_figure and remove it through clear_figure; in the library, give two objects figures and clear one. Expected: clear_figure returns ok and the figure file is gone; the other object's figure stays.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-171">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. An active filter that matches nothing is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_filter_empty_state_when_text_hides_everything
+tests/test_gui_polish.py::test_clear_filters_restores_table
+tests/test_gui_polish.py::test_filter_empty_distinct_from_document_empty
+tests/test_gui_filter.py::test_edit_srs_321_no_match_says_so_and_offers_to_clear</attr>
+  <description>Type a text no object holds in the filter box; turn on Suspects only; use the empty grid's clear control. Open a Document Editor on a document that has no object. Expected: no row shows and the grid shows that nothing matches; the clear control empties the filter box, turns Suspects only off and shows the rows; the empty document shows its own empty state, not the no-match one.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-229">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_edit_srs_354_commit_in_git_client_clears_history
+tests/test_gui_undo.py::test_edit_srs_354_commit_of_other_document_keeps_history</attr>
+  <description>Edit the document from the window, then commit all its changes in a git client (outside Mellon) and activate the window. Expected: no step to undo. Control: commit only another document's files while this document keeps an uncommitted change: the history stays (as built; MELLON-EDIT-SRS-355 would change this).</description>
+</object>

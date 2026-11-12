@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-105">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_delete_object_blocked_by_children
+tests/test_gui_outline.py::test_delete_refused_when_object_has_children</attr>
+  <description>Over MCP, delete an object that has a sub-object; in the Document Editor, choose Delete on such an object. Expected: the call is refused and names the sub-objects; the Document Editor warns, naming the object, never asks to confirm, and the object stays.</description>
+</object>

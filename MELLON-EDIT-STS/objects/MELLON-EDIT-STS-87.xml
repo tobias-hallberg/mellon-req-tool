@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-87">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_grid_setdata_commits_enum_attribute
+tests/test_gui_edits.py::test_grid_setdata_edits_description
+tests/test_gui_edits.py::test_typed_attribute_editors_write_only_when_changed</attr>
+  <description>In the grid, set an enumeration cell, a description cell and an integer cell to new values. Expected: each object file holds the new value and the grid shows it.</description>
+</object>

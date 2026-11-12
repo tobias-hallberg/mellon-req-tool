@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_100_read_only_refusal_returns_permission_error</attr>
+  <description>Defect: no test verifies it. Over stdio with --read-only, call each of the 29 refused tools. Expected: each result carries error_type PermissionError. A probe on 2026-11-11 gave isError true and the text 'Error executing tool set_attribute: Server is running in --read-only mode; write tools are disabled.', with no error_type and no 'PermissionError' anywhere. test_read_only_refuses_every_write_tool checks only the class of the exception raised in process, so it passes while agents never see the value.</description>
+</object>

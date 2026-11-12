@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-26">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: in process, and checks the server's own flag rather than a refused call. The refusal tests set read-only mode directly, so no test links the option to a refusal.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_main_read_only_builds_read_only_service
+tests/test_mcp_server.py::test_mcp_srs_98_read_only_option_makes_the_read_only_server</attr>
+  <description>Start the MCP server with --repo-root naming a copy of the req-test repository, and --read-only. Expected: the server starts in read-only mode.</description>
+</object>

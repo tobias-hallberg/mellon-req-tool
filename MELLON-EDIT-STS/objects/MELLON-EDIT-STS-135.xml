@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-135">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_labels_with_figure
+tests/test_gui_figure.py::test_figure_menu_labels_without_figure
+tests/test_gui_figure.py::test_clear_figure_via_grid_removes</attr>
+  <description>Attach a figure to an object, open the Figure menu, then clear the figure, answering OK if asked to confirm. Expected: Clear figure is enabled while the object has a figure and disabled while it has none; after clearing, the object has no figure.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_repo.py::test_repo_incoming_links
+tests/test_service.py::test_incoming_links
+tests/test_mcp_read.py::test_trace_srs_33_incoming_links_found_in_each_document
+tests/test_repo.py::test_trace_srs_33_incoming_links_found_in_each_document
+tests/test_repo.py::test_trace_srs_33_incoming_links_match_generated_link_sets</attr>
+  <description>In a repository where an object of one document links to an object of another, ask for the incoming links of the target and of an object nothing links to. Expected: the target has one incoming link naming the source document, the source object and the link type; the other object has none.</description>
+</object>

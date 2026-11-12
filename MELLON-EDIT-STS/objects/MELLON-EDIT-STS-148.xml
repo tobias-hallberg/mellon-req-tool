@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-148">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_search.py::test_attr_filter_requires_exact_match
+tests/test_mcp_read.py::test_search_objects_attr_filter</attr>
+  <description>Search for shall with status Draft, and with status Rejected, which no object has. Expected: Draft gives exactly the child document's object, the parent's objects being Approved; Rejected gives no hit.</description>
+</object>

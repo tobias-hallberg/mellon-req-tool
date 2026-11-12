@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_attribute_existing
+tests/test_editor.py::test_set_attribute_new
+tests/test_editor.py::test_set_description_replaces_text
+tests/test_editor.py::test_create_object_top_level</attr>
+  <description>Set an attribute value that the object already has set, set an attribute that isn't set on the object yet, replace an object's description, and create an object. Read the document back from the working copy as soon as each edit returns. Expected: each read shows the edit.</description>
+</object>

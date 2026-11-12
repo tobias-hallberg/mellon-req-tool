@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: only the document ID of three tools. Object IDs, link targets, view slugs, version names and commit_changes' paths aren't tried.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_doc_id_cannot_reach_a_document_outside_the_repo
+tests/test_mcp_server.py::test_mcp_srs_112_refuses_paths_outside_the_repository</attr>
+  <description>Make a document folder outside the repository. Call git_history, show_document and edit_metadata with a document ID that climbs out of the repository to it (../X/X). Expected: each call is refused as naming no document, and the outside document's manifest is unchanged.</description>
+</object>

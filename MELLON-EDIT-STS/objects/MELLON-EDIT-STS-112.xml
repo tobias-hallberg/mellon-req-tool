@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-112">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Covers under itself and under a descendant. Before or after a descendant, and an unchanged outline after the refusal, are gaps.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_move_under_self_fails
+tests/test_editor.py::test_move_under_own_descendant_fails
+tests/test_mcp_write.py::test_move_object_cycle_rejected
+tests/test_editor.py::test_edit_srs_177_library_refuses_move_under_or_beside_descendant
+tests/test_editor.py::test_edit_srs_177_control_move_of_non_ancestor_is_made
+tests/test_mcp_write.py::test_edit_srs_177_move_object_tool_refuses_move_under_or_beside_descendant
+tests/test_mcp_write.py::test_edit_srs_177_refusal_beside_document_with_load_error</attr>
+  <description>Move a top-level heading under itself, and move it under its own sub-object, in the library and through the move_object tool. Expected: each move is refused, saying that the object would go under itself or under one of its descendants.</description>
+</object>

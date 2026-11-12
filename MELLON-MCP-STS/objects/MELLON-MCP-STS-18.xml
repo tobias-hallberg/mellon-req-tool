@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-18">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. outline's root and depth are the only parameters added since 0.3.0. That was checked on 2026-11-11 by comparing the tool list of v0.3.0 with the working tree; the comparison isn't a test. test_outline_is_preorder_with_depth is unchanged since v0.3.0, so its expected value is the previous release's answer. No write tool gained a parameter, so 'writes' has nothing to check yet.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_outline_is_preorder_with_depth
+tests/test_mcp_read.py::test_outline_depth_lists_top_levels_and_counts_the_rest</attr>
+  <description>On a document whose heading has one child, call outline with only the document ID. Then nest objects four deep and call outline with only the document ID, and with a depth deep enough to reach every object. Expected: leaving out root and depth gives what the previous release gave: each object in pre-order with its ID, depth and heading or text, and no count of descendants left out. The deep enough depth gives the same result.</description>
+</object>

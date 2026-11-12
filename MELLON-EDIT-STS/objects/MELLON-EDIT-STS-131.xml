@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-131">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Replacing a figure from the Figure menu is a gap; replacing is checked in the library under MELLON-EDIT-SRS-232.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_labels_without_figure
+tests/test_gui_figure.py::test_attach_figure_via_grid_sets_figure
+tests/test_gui_figure.py::test_figure_menu_labels_with_figure
+tests/test_gui_figure.py::test_edit_srs_230_figure_menu_replaces_existing_figure</attr>
+  <description>Select an object without a figure and open the Figure menu; attach an SVG file chosen in the file chooser; open the menu again. Expected: the menu lists New draw.io figure…, Attach figure…, Clear figure and View full size, with Clear figure and View full size disabled; after attaching, the object's figure is figures/&lt;object ID&gt;.svg, and the menu offers Replace figure… enabled.</description>
+</object>

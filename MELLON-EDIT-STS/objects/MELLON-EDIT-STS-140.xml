@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-140">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Each place is tried alone, so the order between places is a gap.</attr>
+  <attr name="automated-tests">tests/test_drawio.py::test_find_drawio_env_override_wins
+tests/test_drawio.py::test_find_drawio_windows_install_dirs[per-machine]
+tests/test_drawio.py::test_find_drawio_windows_install_dirs[per-user]
+tests/test_drawio.py::test_find_drawio_falls_back_to_path
+tests/test_drawio.py::test_find_drawio_none_when_missing
+tests/test_drawio.py::test_edit_srs_246_mellon_drawio_wins_over_programfiles
+tests/test_drawio.py::test_edit_srs_246_programfiles_wins_over_localappdata
+tests/test_drawio.py::test_edit_srs_246_localappdata_wins_over_path
+tests/test_drawio.py::test_edit_srs_246_path_is_last_place</attr>
+  <description>On a computer without draw.io desktop, set MELLON_DRAWIO; separately, put draw.io.exe in %ProgramFiles%\draw.io, then in %LOCALAPPDATA%\Programs\draw.io; separately, put drawio on PATH; and finally have none of them. Expected: each time Mellon finds the program at that place, and with none it finds no program.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_real_repo_suspects_scoped_to_one_doc
+tests/test_mcp_git.py::test_review_ok_link_is_clean
+tests/test_suspects.py::test_trace_srs_62_changes_to_the_targets_outgoing_links_are_no_change
+tests/test_suspects.py::test_trace_srs_63_changes_to_the_target_documents_manifest_are_no_change</attr>
+  <description>Over MCP, on the fixture repository, call suspects for the test specification and review an OK link to a system requirement. In the fixture, the software requirements' outgoing links were changed after the commit that the test cases' links acknowledge, and the newest commits change only the documents' manifests. Expected: the test specification has no suspect link, and the reviewed link reads OK.</description>
+</object>

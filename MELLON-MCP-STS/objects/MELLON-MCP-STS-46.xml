@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_91_failed_commit_returns_commit_error_with_reason</attr>
+  <description>On a req-test copy, write .git/MERGE_HEAD to put a merge in progress; separately, give the server no git identity. Call edit_description with a commit_message. Expected: the result holds commit_error with a reason naming the merge, or the missing identity. Probe, with the merge: ok true and commit_error {error: 'a merge (or another git operation) is in progress; finish the merge in your git client, then commit again', error_type: 'GitError'}. GitError isn't in MELLON-MCP-SRS-55's table.</description>
+</object>

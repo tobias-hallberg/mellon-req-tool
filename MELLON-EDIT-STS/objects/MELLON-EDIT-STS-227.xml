@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-227">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_edit_srs_349_three_undos_restore_three_states_newest_first
+tests/test_gui_undo.py::test_edit_srs_349_commit_leaves_nothing_to_undo</attr>
+  <description>Make three edits; Undo three times. Expected: each Undo restores the state before one edit, newest first, and a fourth Undo is unavailable. Then commit: nothing to undo.</description>
+</object>

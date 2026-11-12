@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-159">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The delete is driven below the window's dialog; deleting from the dialog is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_delete_filter_via_controller_removes_file_and_drops_active
+tests/test_editor.py::test_delete_filter_removes_file
+tests/test_gui_filter.py::test_edit_srs_289_manage_filters_deletes_filter</attr>
+  <description>Make a filter active, then delete it from the Document Editor; in the library, delete a filter. Expected: the filter file is gone, the document has no such filter, and no filter is active.</description>
+</object>

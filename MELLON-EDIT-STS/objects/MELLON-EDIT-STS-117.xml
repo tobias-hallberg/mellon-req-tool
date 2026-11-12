@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-117">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_reorder_outline_round_trip_identity
+tests/test_mcp_write.py::test_reorder_outline_reparents
+tests/test_editor.py::test_set_outline_flat_swap
+tests/test_editor.py::test_set_outline_nest_under_sibling
+tests/test_editor.py::test_set_outline_deep_three_levels
+tests/test_editor.py::test_set_outline_empty_doc_empty_ordering</attr>
+  <description>Through reorder_outline, send a document's outline back unchanged, then send it with the sub-object made a second top-level object. In the library, swap two objects, nest one under the other, nest three objects three levels deep, and give an empty document an empty outline. Expected: reorder_outline returns ok naming the manifest, and the outline read back is the one sent; each library outline is the one given; after the swap and the nesting, validation reports no error.</description>
+</object>

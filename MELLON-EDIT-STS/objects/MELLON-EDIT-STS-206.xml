@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-206">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_srs_141_update_object_without_description_keeps_it</attr>
+  <description>Update_object(doc, obj, attrs={'status': 'Approved'}) with no description. Expected: the description is unchanged. Then update_object(doc, obj, description=''). Expected: the description is empty.</description>
+</object>

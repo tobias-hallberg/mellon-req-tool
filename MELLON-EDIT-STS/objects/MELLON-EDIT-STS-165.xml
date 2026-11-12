@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-165">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The incoming links are given by a stand-in; a named document, and links read from a repository, are a gap.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_has_incoming_uses_provider
+tests/test_gui_filter.py::test_edit_srs_309_has_incoming_present_reads_links_from_repository</attr>
+  <description>Only requirement B is the target of a link, from document OTHER-DOC. Apply has-incoming present naming no document. Expected: B alone.</description>
+</object>

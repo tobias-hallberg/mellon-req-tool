@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-85">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[0-5]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[3-5]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[4-5]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[5-5]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[6-6]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[10-10]
+tests/test_editor.py::test_edit_srs_2_number_is_one_more_than_new_object[9223372036854775808-9223372036854775808]
+tests/test_editor.py::test_edit_srs_2_damaged_number_replaced_on_create[abc]
+tests/test_editor.py::test_edit_srs_2_damaged_number_replaced_on_create[-1]
+tests/test_editor.py::test_edit_srs_2_damaged_number_replaced_on_create[1.5]
+tests/test_editor.py::test_edit_srs_2_damaged_number_replaced_on_create[]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[0]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[1]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[2]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[3]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[4]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[5]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[6]
+tests/test_editor.py::test_edit_srs_2_generated_number_is_one_more_than_highest_ever[7]</attr>
+  <description>Create objects in a new document, after deleting the highest object, in a manifest that records no number, a number of 0, 3, 4, 5, 6, 10 or 2^63, or a damaged value, and over seeded random runs of creates and deletes. Expected: after each create the manifest records one more than the new object's number; after each delete it still records one more than the highest number ever created.</description>
+</object>

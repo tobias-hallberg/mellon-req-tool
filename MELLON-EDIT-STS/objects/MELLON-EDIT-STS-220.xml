@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-220">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_edit_srs_313_filters_menu_lists_filters_and_activates_choice</attr>
+  <description>Save filters Alpha and Beta; open the Filters menu. Expected: it lists Alpha and Beta by name; choosing Beta makes Beta the active filter (its name shows above the grid and only its rows show).</description>
+</object>

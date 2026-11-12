@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-73">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_remove_attr_option_blanks_matching_values
+tests/test_editor.py::test_remove_attr_option_returns_every_written_file
+tests/test_service.py::test_remove_attr_option_happy</attr>
+  <description>Remove an option that one object has as its value and another object doesn't. Expected: the option is gone; the object that had it keeps the attribute with an empty value; the other object keeps its value; only the manifest and that object's file are written.</description>
+</object>

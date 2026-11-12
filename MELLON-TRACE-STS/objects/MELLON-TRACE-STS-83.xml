@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-83">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_suspect.py::test_trace_srs_84_state_gutter_marks_an_object_with_a_broken_link</attr>
+  <description>In a Document Editor on a document whose object has a link to a missing object (and no suspect link), read the state gutter. Expected: the object is marked (broken). No GUI test has a broken link.</description>
+</object>

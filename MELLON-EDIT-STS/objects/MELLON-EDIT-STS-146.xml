@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-146">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Each search text has the stored letter case, so ignoring letter case is a gap.</attr>
+  <attr name="automated-tests">tests/test_search.py::test_substring_match_in_description
+tests/test_search.py::test_obj_id_match_outranks_description_only
+tests/test_search.py::test_attr_value_match_recorded_in_match_fields
+tests/test_mcp_read.py::test_search_objects_basic
+tests/test_mcp_read.py::test_edit_srs_260_search_ignores_letter_case
+tests/test_mcp_read.py::test_edit_srs_260_search_finds_nothing_for_text_no_object_contains
+tests/test_mcp_read.py::test_edit_srs_260_search_objects_over_stdio</attr>
+  <description>In a repository of a parent document and a child document, search for child, for PARENT-1, and, after setting one object's type to Note, for Note. Expected: child finds the child document's object by its description; PARENT-1 finds that object first, with its ID among the matched fields; Note finds exactly the retyped object, with its type among the matched fields; each hit gives the document ID, object ID, snippet, score and matched fields.</description>
+</object>

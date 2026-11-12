@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-210">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_edit_srs_211_table_editor_keeps_pasted_line_break
+tests/test_gui_tables.py::test_edit_srs_211_table_editor_keeps_typed_line_break</attr>
+  <description>In the table editor, type a cell text of two lines, first and second, separated by a line break; save; reload. Expected: the saved cell text is first, line break, second, and the grid's table shows two lines in that cell.</description>
+</object>

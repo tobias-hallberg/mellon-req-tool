@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-78">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_coverage.py::test_coverage_excludes_headings_by_default
+tests/test_coverage.py::test_coverage_include_headings</attr>
+  <description>Work out coverage of a document with one heading and two requirements, first leaving headings out, then including them. Expected: 2 objects counted without the heading; 3 counted with it, the heading uncovered.</description>
+</object>

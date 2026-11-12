@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-59">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_list_documents_with_parents_include
+tests/test_mcp_read.py::test_list_documents_all_returns_fat_shape
+tests/test_mcp_read.py::test_show_document_with_include
+tests/test_mcp_write.py::test_manage_view_create_appears_in_show_document
+tests/test_mcp_read.py::test_edit_srs_56_include_star_and_all_return_every_part
+tests/test_mcp_read.py::test_edit_srs_56_include_filters_returns_filters_only</attr>
+  <description>Call list_documents with include parents and with include all, and show_document with include metadata, attributes and outline, and with include views. Expected: each named part is returned with the document's values, and a part not named is absent.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-218">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_edit_srs_287_new_filter_starts_and_saves_with_ancestors_kept</attr>
+  <description>Open the Advanced filter dialog with New filter…; without touching the setting, add a condition and save. Expected: the dialog starts with ancestor objects kept, and the saved filter keeps them.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-128">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_table_menu_structural_for_table_object
+tests/test_gui_tables.py::test_window_add_row_handler
+tests/test_gui_tables.py::test_window_table_edit_commits_and_persists
+tests/test_gui_tables.py::test_edit_srs_213_add_row_from_table_menu_is_saved_empty</attr>
+  <description>Open the table editor on a two-row table and choose the Table menu's Add row below; then type in the new row and save. Expected: the menu offers Add row below; the editor has three rows; after saving, the object's table has three rows.</description>
+</object>

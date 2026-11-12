@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_create_document_success
+tests/test_mcp_write.py::test_create_document_with_parents
+tests/test_mcp_write.py::test_create_document_with_attr_schema
+tests/test_editor.py::test_edit_srs_20_library_create_document_outside_git_has_no_objects
+tests/test_mcp_write.py::test_edit_srs_20_mcp_create_document_has_no_objects</attr>
+  <description>Over MCP, create a document from an ID and a title; another with two parent documents; another with three attribute definitions. Expected: each call succeeds. The first document has a folder named as its ID holding a manifest with that ID and the title in its metadata; the second declares both parent documents; the third defines the three attributes.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-98">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_copy_object_single_copy
+tests/test_mcp_write.py::test_copy_object_count_creates_n_copies
+tests/test_service.py::test_edit_srs_145_copy_has_new_id_description_and_attributes
+tests/test_service.py::test_edit_srs_145_copy_has_the_table</attr>
+  <description>Over MCP, copy an object once, then three times. Expected: one and then three new object IDs, all different, each copy with the object's description and attribute values.</description>
+</object>

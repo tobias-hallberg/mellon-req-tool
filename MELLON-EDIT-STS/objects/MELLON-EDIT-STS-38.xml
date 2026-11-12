@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-38">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_attribute_success
+tests/test_mcp_write.py::test_edit_description_replaces_text
+tests/test_mcp_write.py::test_bulk_set_attribute_happy
+tests/test_gui_edits.py::test_grid_setdata_commits_enum_attribute
+tests/test_gui_edits.py::test_inspector_combobox_autocommits_on_change</attr>
+  <description>Over MCP, call set_attribute, edit_description and bulk_set_attribute; in the Document Editor, give a grid cell a new enumeration value and choose a new value in the Inspector. Read each changed object's file as soon as the call or action returns. Expected: each file already holds the new value.</description>
+</object>

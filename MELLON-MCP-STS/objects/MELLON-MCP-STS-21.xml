@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-21">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. add_parent_doc, add_attr_option and add_link aren't covered. Their duplicate tests don't check error_type.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_create_document_duplicate_fails
+tests/test_mcp_write.py::test_add_attribute_duplicate_fails
+tests/test_mcp_write.py::test_mcp_srs_52_adding_an_existing_item_returns_already_exists</attr>
+  <description>Call create_document with the ID of an existing document, and define_attribute with the name of an attribute the document declares. Expected: each call fails with error_type AlreadyExists, and create_document lists no affected file.</description>
+</object>

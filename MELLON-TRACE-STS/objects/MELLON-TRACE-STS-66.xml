@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-66">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_suspect.py::test_ack_selected_button_acks_suspects_on_current_object
+tests/test_gui_suspect.py::test_trace_srs_152_ack_selected_acknowledges_each_suspect_link_of_the_selected_object</attr>
+  <description>In a Document Editor, select an object with one never-reviewed link and press Ack selected. Expected: the object has no suspect link left.</description>
+</object>

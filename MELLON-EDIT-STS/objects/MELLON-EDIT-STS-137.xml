@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-137">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. That the action isn't offered while the object has a figure is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_labels_without_figure
+tests/test_gui_figure.py::test_new_drawio_figure_creates_blank_and_opens_it
+tests/test_drawio.py::test_blank_template_is_an_editable_drawio_svg
+tests/test_gui_figure.py::test_edit_srs_242_new_drawio_figure_only_without_figure</attr>
+  <description>With draw.io desktop present (stood in for), select an object without a figure, open the Figure menu and choose New draw.io figure. Expected: New draw.io figure… is enabled; the object gets the figure figures/&lt;object ID&gt;.svg, which is a draw.io figure; draw.io desktop is asked to open exactly that file; the blank figure is a draw.io figure.</description>
+</object>

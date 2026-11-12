@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-126">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_model_exposes_table_role
+tests/test_gui_tables.py::test_delegate_sizehint_grows_for_table
+tests/test_gui_tables.py::test_table_sizehint_equals_caption_plus_grid_plus_padding
+tests/test_gui_tables.py::test_table_editor_insets_option_rect
+tests/test_gui_tables.py::test_table_editor_tracks_caption_but_has_no_label</attr>
+  <description>Give an object a table and show its row in the grid; open the table editor on it. Expected: the description cell carries the table; the row is taller than without the table, by exactly the description's height plus the table's height plus the cell padding; the table editor starts below the description, and its caption is the object's description.</description>
+</object>

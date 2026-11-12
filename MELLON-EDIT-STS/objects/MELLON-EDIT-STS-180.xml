@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-180">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_undo_and_redo_an_edit
+tests/test_gui_undo.py::test_steps_undo_newest_first_and_a_new_edit_drops_redo
+tests/test_gui_edits.py::test_field_edit_can_be_undone_and_redone</attr>
+  <description>In a Document Editor, set an object's description, Undo, Redo. Then set a description and then an attribute, and Undo once. Edit a description in the grid, Undo, Redo. Expected: Undo is disabled before any edit; after the edit it reads Undo set description; Undo puts the object file back byte for byte, the window shows the old text, Undo is disabled and Redo reads Redo set description; Redo writes the edited bytes back; with two steps, Undo undoes set attribute and then reads Undo set description; the grid shows the original text after Undo and the new text after Redo.</description>
+</object>

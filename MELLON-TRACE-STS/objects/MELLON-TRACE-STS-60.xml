@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-60">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ack_all_round_trip
+tests/test_suspects.py::test_ack_all_round_trip_with_figure
+tests/test_suspects.py::test_two_commit_rule</attr>
+  <description>Acknowledge a suspect link after a commit that revised the target's text, after one that changed only the target's figure, and after one that revised the target together with the links file. Expected: each acknowledgement records the target's last change, after which the link reads OK; the source object's file is unchanged.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-110">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_delete_unlinked_leaf
+tests/test_editor.py::test_delete_object_removes_figure_so_reused_id_starts_clean
+tests/test_editor.py::test_delete_object_removes_symlinked_figure
+tests/test_editor.py::test_emptied_outline_parent_has_no_whitespace_residue[delete_object]</attr>
+  <description>Delete a leaf object that has an outgoing link; delete an object that has a figure, once a figure file and once a link to a shared figure file; delete a parent object's only sub-object. Expected: the object file, links file and figure are gone (the shared file itself stays); the object is no longer in the outline, and its parent's outline entry is left empty.</description>
+</object>

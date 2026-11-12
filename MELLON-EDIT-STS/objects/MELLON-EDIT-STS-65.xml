@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_attribute_rejects_options_on_text
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[integer]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[real]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[boolean]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[date]</attr>
+  <description>Define a text, an integer, a real, a boolean and a date attribute, each with an option. Expected: each edit is refused.</description>
+</object>

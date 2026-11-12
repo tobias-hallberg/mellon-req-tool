@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-68">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_trace.py::test_trace_down_follows_chain
+tests/test_service.py::test_trace_down_across_docs</attr>
+  <description>Trace down from the stakeholder need of that chain, and from the parent object. Expected: the first trace holds the system requirement (refines) and, below it, the software requirement (satisfies); the second holds the child object with link type satisfies.</description>
+</object>

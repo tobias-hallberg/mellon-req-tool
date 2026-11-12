@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-179">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Below the Document Editor only; the window's own table, figure, Properties dialog, filter and view operations are a gap.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_change_listener_gets_one_step_per_write_call
+tests/test_service.py::test_change_listener_quiet_on_failure_and_no_op
+tests/test_editor.py::test_journal_figure_round_trip_and_unchanged_files
+tests/test_gui_undo.py::test_edit_srs_341_table_editor_save_is_one_undo_step
+tests/test_gui_undo.py::test_edit_srs_341_figure_attach_is_one_undo_step
+tests/test_gui_undo.py::test_edit_srs_341_properties_dialog_change_is_one_undo_step
+tests/test_gui_undo.py::test_edit_srs_341_saving_filter_from_dialog_is_one_undo_step
+tests/test_gui_undo.py::test_edit_srs_341_saving_new_view_is_one_undo_step</attr>
+  <description>Set an attribute, then make one change that edits the description and removes a link; make a change that is refused, and one that changes nothing. In one step, attach a figure, change a description and change it back. Expected: two steps, set attribute and update object, the second holding the object file and the links file; the refused and the empty change make no step; the figure step holds only the figure file.</description>
+</object>

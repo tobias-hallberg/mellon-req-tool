@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-102">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_bulk_set_attribute_unknown_obj_no_files_touched</attr>
+  <description>Over MCP, call bulk_set_attribute on an existing object and an object ID that doesn't exist. Expected: the call is refused, names the missing object, and leaves the existing object's file unchanged.</description>
+</object>

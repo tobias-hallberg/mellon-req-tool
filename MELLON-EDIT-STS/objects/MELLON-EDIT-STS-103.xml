@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-103">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_delete_with_no_incoming_prompts_then_succeeds
+tests/test_gui_outline.py::test_delete_cancelled_leaves_doc_intact
+tests/test_gui_outline.py::test_delete_confirmation_has_no_dont_ask_again
+tests/test_gui_edits.py::test_edit_srs_160_delete_asks_and_declining_changes_nothing
+tests/test_gui_edits.py::test_edit_srs_160_delete_confirmed_deletes</attr>
+  <description>In the Document Editor, select an object with no incoming links and choose Delete, confirming; choose Delete on another object and decline; delete two objects in turn with the real confirmation. Expected: each delete asks first, with Cancel as the default and no option to stop asking; a confirmed delete removes the object and its file; a declined one changes nothing.</description>
+</object>

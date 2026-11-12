@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-86">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_default_selection_populates_grid
+tests/test_gui_grid_view_order.py::test_edit_srs_122_grid_rows_follow_outline_preorder</attr>
+  <description>Open a document in the Document Editor. Expected: the grid has one row for each object in the outline.</description>
+</object>

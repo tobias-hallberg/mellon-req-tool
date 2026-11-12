@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-182">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_346_undoing_a_create_keeps_the_next_object_number
+tests/test_editor.py::test_edit_srs_346_redo_and_undo_again_keep_the_number
+tests/test_editor.py::test_edit_srs_346_undo_keeps_a_number_raised_since_the_step
+tests/test_service.py::test_edit_srs_346_undoing_two_creates_never_gives_their_ids_again
+tests/test_editor.py::test_journal_reverts_and_reapplies</attr>
+  <description>Create an object, undo the create, create again. Create, undo, redo and undo again. Make a step with an edit and a create and a later step with a create, then undo the later and then the earlier. Create two objects, undo both, newest first, and create a third. Expected: after each undo or redo the next object number is no lower than before it; no new object gets an undone object's ID.</description>
+</object>

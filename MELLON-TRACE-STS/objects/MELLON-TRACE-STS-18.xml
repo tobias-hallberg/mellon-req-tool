@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-18">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ack_all_round_trip
+tests/test_suspects.py::test_never_reviewed_is_suspect
+tests/test_service.py::test_discard_document_changes_refreshes_other_documents_suspect_scans
+tests/test_mcp_read.py::test_trace_srs_1_uncommitted_new_link_counts_in_incoming_trace_and_coverage
+tests/test_mcp_read.py::test_trace_srs_1_uncommitted_removal_drops_link_from_incoming_trace_and_coverage</attr>
+  <description>In a repository, (a) acknowledge a suspect link without committing and read its state; (b) leave a link in the working copy with no acknowledged commit while the latest commit holds the link with one; (c) delete a committed target's object file from the working copy without committing, read the state, then restore the file. Expected: (a) the link reads OK before any commit; (b) the link reads suspect with the reason never reviewed; (c) the link reads broken while the file is missing and suspect once it is restored.</description>
+</object>

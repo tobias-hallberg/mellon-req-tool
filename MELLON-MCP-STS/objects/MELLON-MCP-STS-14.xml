@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-14">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The tests were written for CHECK and VER. They fail if --repo-root is ignored, because the fallback, the working directory, is a subfolder of a clone and isn't served. Not covered: a path with spaces and non-ASCII letters, which MELLON-MCP-SRS-3's rationale asks for, and a tool call in the same session that names a path in another clone.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_86_mcp_stdio_results_match_in_process
+tests/test_mcp_git.py::test_ver59_mcp_reports_each_changed_object_with_its_changes
+tests/test_mcp_git.py::test_srs46_links_added_and_removed_through_mcp
+tests/test_mcp_server.py::test_mcp_srs_2_answers_only_from_the_folder_chosen_at_start
+tests/test_mcp_server.py::test_mcp_srs_3_repo_root_names_the_folder_to_serve</attr>
+  <description>Build a repository in a temporary folder. Start the installed MCP server over standard input and output with --repo-root naming the folder, its working directory a subfolder of another clone and CLAUDE_PROJECT_DIR left out of its environment, and make several tool calls in one session; then start the server in process with --repo-root and call a tool. Expected: the server starts, and each answer describes the named folder: req-test's validation errors and suspect-link counts with one bad enumeration value added, the changes between two named versions of the built repository, and the links added and removed between two of its commits.</description>
+</object>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-129">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The column, merge and alignment results are read from the editor, not from the saved object; the menu entries for Add column and Column alignment aren't checked.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_inline_widget_public_api
+tests/test_gui_tables.py::test_inline_widget_merge_stays_valid
+tests/test_gui_tables.py::test_table_menu_structural_for_table_object
+tests/test_gui_tables.py::test_edit_srs_216_add_column_from_table_menu
+tests/test_gui_tables.py::test_edit_srs_221_merge_cells_from_table_menu
+tests/test_gui_tables.py::test_edit_srs_227_column_alignment_from_table_menu</attr>
+  <description>In the table editor on a two-column table with a header row: select a body cell and add a row below and a column to the right; select the two header cells and merge them; select a cell in the first column and set its alignment to center. Merge the two header cells of a fresh table too. Expected: three rows, then three columns; the first header cell spans two columns and each position is covered exactly once; the first column is centred. The Table menu offers Merge cells.</description>
+</object>

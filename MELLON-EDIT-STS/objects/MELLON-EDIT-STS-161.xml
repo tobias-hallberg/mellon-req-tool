@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-161">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Bounds are tried on an integer only.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_integer_between_inclusive
+tests/test_filter.py::test_date_before_after_between
+tests/test_filter.py::test_edit_srs_300_between_includes_both_bounds</attr>
+  <description>With integer weights 10 and 3, apply weight between 3 and 10; with dates 2026-05-01 and 2026-06-01, apply between 2026-04-01 and 2026-05-31. Expected: both weights match, as each is a bound; only the first date matches.</description>
+</object>

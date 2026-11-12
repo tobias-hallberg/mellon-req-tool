@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-188">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_edit_srs_18_project_explorer_new_document_creates_it
+tests/test_gui_app.py::test_edit_srs_18_project_explorer_refuses_document_id_with_space</attr>
+  <description>Project Explorer, New document: trigger the action and enter `NEWDOC`. Expected: a folder NEWDOC with a manifest whose document ID is NEWDOC and no objects, and the Project Explorer lists NEWDOC. Enter `bad id` instead: refused, no folder made.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-176">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_grid_view_order.py::test_drag_reorder_writes_view_xml</attr>
+  <description>With a view of five attributes active, drag the last attribute column to the first attribute place. Expected: the grid shows the new order, and the view's file lists the attributes in the new order.</description>
+</object>

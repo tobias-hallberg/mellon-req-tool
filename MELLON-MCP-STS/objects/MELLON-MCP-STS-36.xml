@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_15_serving_line_gives_absolute_root</attr>
+  <description>Start mellon-mcp over stdio on a clone, with --repo-root given relative to the working directory, under each log level. Expected: under DEBUG and INFO, standard error holds the clone's resolved absolute path, and a test checks that the path is absolute. Under WARNING and ERROR it doesn't. Probe: the line is 'mellon-mcp serving &lt;absolute path&gt; (3 document(s))'.</description>
+</object>

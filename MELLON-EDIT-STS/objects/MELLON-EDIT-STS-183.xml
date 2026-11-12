@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-183">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. That Redo gives back the typed text is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_undo_flushes_pending_text_first_and_undoes_it
+tests/test_gui_undo.py::test_edit_srs_348_undo_discards_pending_text_and_redo_brings_it_back</attr>
+  <description>Save a description, type new text in the Inspector's description without leaving it, and choose Undo. Expected: the object's description is the saved text, and Undo then reads Undo set description.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-175">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Below the Document Editor only; Manage views is a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_rename_view_changes_slug
+tests/test_editor.py::test_rename_view_changes_name_only
+tests/test_editor.py::test_delete_view_removes_file
+tests/test_gui_grid_view_order.py::test_edit_srs_331_manage_views_renames_view
+tests/test_gui_grid_view_order.py::test_edit_srs_332_manage_views_deletes_view</attr>
+  <description>Rename the view Main View to QA View, rename a view to its own name, and delete a view. Expected: QA View keeps its columns, its file is views/qa-view.xml and main-view.xml is gone; the view renamed to its own name keeps its file; after deleting, the view's file is gone and the document has no view.</description>
+</object>

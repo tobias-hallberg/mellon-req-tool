@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-150">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Exact scores, and the description score 1, are a gap.</attr>
+  <attr name="automated-tests">tests/test_search.py::test_obj_id_match_outranks_description_only
+tests/test_search.py::test_attr_value_match_recorded_in_match_fields
+tests/test_mcp_read.py::test_edit_srs_265_search_scores_id_5_attribute_2_each_description_1</attr>
+  <description>Search for an object ID, and for an attribute value that no description holds. Expected: the object ID hit scores at least 5, and the attribute value hit at least 2.</description>
+</object>

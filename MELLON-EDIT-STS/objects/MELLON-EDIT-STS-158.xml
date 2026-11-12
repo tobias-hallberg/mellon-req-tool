@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-158">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Below the Document Editor only; renaming from the Document Editor is a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_rename_filter_changes_slug
+tests/test_editor.py::test_rename_filter_changes_name_only
+tests/test_gui_filter.py::test_edit_srs_288_manage_filters_renames_filter</attr>
+  <description>Rename the filter Approved to High Priority, and rename a filter to its own name. Expected: the renamed filter has the new name and its filter conditions, its filter file is filters/high-priority.xml and approved.xml is gone; the other keeps its name and file.</description>
+</object>

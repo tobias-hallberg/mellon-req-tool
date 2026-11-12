@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-141">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_figure_saved_in_place_does_not_flag_stale</attr>
+  <description>Attach a figure from the Document Editor, overwrite the figure file in place as draw.io desktop saves it, and return to the window. Expected: the figure's object is marked as having an uncommitted change, and no Changed on disk banner shows.</description>
+</object>

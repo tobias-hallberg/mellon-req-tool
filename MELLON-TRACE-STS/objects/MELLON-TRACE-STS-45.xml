@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_suspects_refuses_to_report_clean_when_a_document_failed_to_load</attr>
+  <description>Over MCP, leave conflict markers in one document's manifest, then call suspects naming no document, and naming a document that loads. Expected: the call naming no document is refused, naming the document that failed to load; the call naming the loading document answers.</description>
+</object>

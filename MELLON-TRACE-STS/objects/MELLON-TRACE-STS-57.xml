@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-57">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_review_names_a_description_revision
+tests/test_mcp_git.py::test_review_names_an_attribute_only_revision
+tests/test_mcp_git.py::test_review_names_a_table_only_revision
+tests/test_mcp_git.py::test_review_names_a_figure_only_revision
+tests/test_mcp_git.py::test_review_ok_link_has_no_changed_fields
+tests/test_mcp_git.py::test_review_flags_parent_edits_an_ack_would_not_cover</attr>
+  <description>Over MCP, starting from an OK link, commit in turn a change to only the target's description, only its status, only its table and only its figure, reviewing the link after each; also review the unchanged OK link and the OK link with an uncommitted description change. Expected: the changed fields are exactly description, attr:status, table and figure respectively, and empty for the unchanged link and for the uncommitted change.</description>
+</object>

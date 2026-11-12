@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-104">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_delete_refuses_with_children
+tests/test_editor.py::test_edit_srs_162_library_refuses_delete_with_sub_object_even_forced
+tests/test_mcp_write.py::test_edit_srs_162_mcp_refuses_delete_with_sub_object_even_forced
+tests/test_mcp_write.py::test_edit_srs_162_object_without_sub_objects_is_deleted</attr>
+  <description>Delete an object that has a sub-object. Expected: the delete is refused.</description>
+</object>

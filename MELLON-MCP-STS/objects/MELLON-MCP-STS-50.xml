@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_117_standard_output_holds_only_protocol_messages</attr>
+  <description>Point MELLON_TECTONIC at a stand-in typesetter and MELLON_DRAWIO at a stand-in draw.io; both print lines to standard output and write their output file. Start mellon-mcp as a process with its own pipes (not the SDK client, which may drop bad lines). Export a document that has a figure. Expected: each line on the server's standard output parses as a JSON-RPC message, and the stand-ins' text doesn't appear.</description>
+</object>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-60">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_add_attribute_enum_success
+tests/test_mcp_write.py::test_add_attribute_text_success
+tests/test_mcp_write.py::test_add_attribute_label_round_trips
+tests/test_mcp_write.py::test_add_attribute_non_string_kinds[integer]
+tests/test_mcp_write.py::test_add_attribute_non_string_kinds[real]
+tests/test_mcp_write.py::test_add_attribute_non_string_kinds[boolean]
+tests/test_mcp_write.py::test_add_attribute_non_string_kinds[date]
+tests/test_mcp_write.py::test_define_attribute_default_value_backfills_objects</attr>
+  <description>Over MCP, define an enumeration attribute with required and options; a text attribute; a text attribute with a label; one attribute of each of the kinds integer, real, boolean and date; and a required text attribute with a default value. Expected: each call succeeds and the manifest, or show_document, holds each attribute with the given kind, options and label; the default value is set on the existing object.</description>
+</object>

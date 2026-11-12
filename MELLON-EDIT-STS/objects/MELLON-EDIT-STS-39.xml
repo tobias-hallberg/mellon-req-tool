@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_attr_editor_opened_and_left_writes_nothing
+tests/test_gui_edits.py::test_enum_editor_keeps_value_outside_options
+tests/test_gui_edits.py::test_typed_attribute_editors_write_only_when_changed
+tests/test_gui_edits.py::test_grid_setdata_unchanged_value_is_a_noop</attr>
+  <description>In the Document Editor, open the grid editor on empty enumeration cells and on a cell holding an option, and leave each without a change; do the same on a cell holding a value that isn't among the attribute's options; do the same with an integer and a date editor on empty cells; give a description and an attribute cell the value it already holds. Then change the integer value and leave the cell. Expected: no edit is made and the object file's bytes stay the same, until the integer value is changed, which is written.</description>
+</object>

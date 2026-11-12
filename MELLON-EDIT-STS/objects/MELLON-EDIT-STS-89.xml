@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-89">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_inspector_description_autocommits_on_focus_out
+tests/test_gui_edits.py::test_inspector_combobox_autocommits_on_change
+tests/test_gui_edits.py::test_reload_commits_pending_inspector_text
+tests/test_gui_edits.py::test_inspector_edit_shows_in_the_grid</attr>
+  <description>In the Inspector, type a new description and leave the field; choose a new enumeration value; type a description and a text attribute value and reload. Expected: each object file holds the new text or value, and the grid shows the new description.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-154">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_filter_dialog_save_persists_and_applies
+tests/test_gui_filter.py::test_create_filter_via_controller_writes_xml
+tests/test_gui_filter.py::test_new_filter_does_not_overwrite_previous_when_one_is_active
+tests/test_gui_filter.py::test_open_dialog_unset_seed_uses_active_filter
+tests/test_editor.py::test_set_filter_rules_replaces_rules</attr>
+  <description>Open the Advanced filter dialog for a new filter, name it, and build one filter condition by choosing the attribute priority, the operator eq and the value Must; save. With a filter active, choose New filter… and save a second filter. Open the dialog from the active filter. In the library, replace a filter's filter conditions, combinator and ancestor setting. Expected: the saved filter has the name and exactly the filter condition priority eq Must, and its filter file is written; the second filter gets a new file and the first filter's condition is unchanged; opened from the active filter the dialog starts from that filter, and New filter… starts empty; the replaced filter keeps its name and holds the new conditions, any and no ancestors.</description>
+</object>

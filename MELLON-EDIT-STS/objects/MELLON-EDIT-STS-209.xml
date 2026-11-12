@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-209">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_edit_srs_207_library_refuses_span_below_one
+tests/test_mcp_write.py::test_edit_srs_207_set_table_tool_refuses_span_below_one
+tests/test_mcp_write.py::test_edit_srs_207_control_span_of_one_is_written</attr>
+  <description>No test writes a span below 1. Through the library and set_table, write a one-column, one-row table whose cell has colspan 0; then rowspan 0; then colspan -1. Expected: each refused, object file unchanged; colspan 1 accepted.</description>
+</object>

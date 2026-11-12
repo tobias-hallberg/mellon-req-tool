@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-124">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Only a position left uncovered is tried; overlapping, extra and overflowing cells are a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_table_rejects_inconsistent_geometry
+tests/test_mcp_write.py::test_set_table_tool_bad_geometry
+tests/test_gui_tables.py::test_inline_widget_blocks_invalid_commit
+tests/test_editor.py::test_edit_srs_205_library_refuses_table_not_tiled_once
+tests/test_mcp_write.py::test_edit_srs_205_set_table_tool_refuses_table_not_tiled_once
+tests/test_mcp_write.py::test_edit_srs_205_control_exact_tiling_with_merged_block_is_written</attr>
+  <description>Write a two-column table whose only row has one single-column cell: in the library, through set_table, and from the table editor. Expected: each is refused; the table editor warns the user and saves nothing.</description>
+</object>

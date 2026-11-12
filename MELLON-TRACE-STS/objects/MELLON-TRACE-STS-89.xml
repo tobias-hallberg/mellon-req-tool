@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-89">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_trace_srs_172_trace_with_null_max_depth_has_no_depth_limit</attr>
+  <description>Over MCP, the same four-level chain (and a five-level one); trace with max_depth null. Expected: every object of the chain, A at depth 3 (and 4). No test.</description>
+</object>

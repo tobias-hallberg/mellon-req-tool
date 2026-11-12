@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-222">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_edit_srs_318_active_filter_kept_outside_repository_per_user</attr>
+  <description>Make a filter active, then check the repository: no file in the working copy changed (git status clean). With a second, separate settings store standing for another user, open the document. Expected: no filter is active there.</description>
+</object>

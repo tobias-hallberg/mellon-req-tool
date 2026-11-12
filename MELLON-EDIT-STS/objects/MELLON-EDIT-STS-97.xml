@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-97">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_update_object_description_only
+tests/test_mcp_write.py::test_update_object_attrs_and_links_combined</attr>
+  <description>Over MCP, call update_object with a description only, and with an attribute value and an outgoing link to add. Expected: the first changes the description and no attribute; the second sets the value and adds the link while keeping the existing link.</description>
+</object>

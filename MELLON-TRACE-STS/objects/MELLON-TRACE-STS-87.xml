@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-87">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_trace_srs_169_trace_without_direction_returns_up_and_down</attr>
+  <description>Over MCP, trace(doc, obj) with no direction for an object with both targets and sources. Expected: the answer holds both the trace up and the trace down, each with content. (Probe: both keys present.) No test.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-51">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_real_repo_suspects_match_fixture
+tests/test_mcp_read.py::test_real_repo_suspects_scoped_to_one_doc
+tests/test_mcp_write.py::test_ack_suspects_rewrites_link_files
+tests/test_mcp_read.py::test_trace_srs_104_suspects_returns_suspect_and_broken_links_of_the_document
+tests/test_mcp_read.py::test_trace_srs_105_suspects_without_document_returns_each_suspect_or_broken_link</attr>
+  <description>Over MCP, on the fixture repository, call suspects naming no document, naming the document with six suspect links, and naming each document whose links are all OK. Expected: with no document, six links, each with state suspect; with the first document, its six links; with a clean document, none.</description>
+</object>

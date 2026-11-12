@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-186">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. An MCP server or another window editing this window's document is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_edits_to_other_documents_are_not_steps_here
+tests/test_gui_undo.py::test_edit_srs_360_other_service_edit_adds_no_undo_step
+tests/test_gui_undo.py::test_edit_srs_360_other_window_edit_adds_no_undo_step</attr>
+  <description>With a Document Editor open on one document, edit an object of another document. Expected: Undo stays disabled.</description>
+</object>

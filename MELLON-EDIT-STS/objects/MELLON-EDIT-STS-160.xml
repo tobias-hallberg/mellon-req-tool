@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-160">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Only one operator outside a kind's set is tried; the rest of the matrix is a gap.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_invalid_op_for_kind_raises
+tests/test_filter.py::test_valid_ops_returned_per_kind
+tests/test_filter.py::test_enum_eq_matches
+tests/test_filter.py::test_text_contains_is_case_insensitive
+tests/test_filter.py::test_text_starts_with
+tests/test_filter.py::test_is_empty_matches_blank_text
+tests/test_filter.py::test_integer_comparisons
+tests/test_filter.py::test_integer_between_inclusive
+tests/test_filter.py::test_real_lt
+tests/test_filter.py::test_boolean_is_true_false
+tests/test_filter.py::test_date_before_after_between
+tests/test_filter.py::test_edit_srs_292_enumeration_accepts_only_eq_ne_is_empty_is_not_empty
+tests/test_filter.py::test_edit_srs_293_text_accepts_only_its_seven_operators
+tests/test_filter.py::test_edit_srs_294_number_accepts_only_its_nine_operators
+tests/test_filter.py::test_edit_srs_295_boolean_accepts_only_is_true_is_false_is_empty
+tests/test_filter.py::test_edit_srs_296_date_accepts_only_its_seven_operators</attr>
+  <description>In a document with an attribute of each kind, apply lt to an enumeration; and apply eq to an enumeration, contains, starts-with and is-empty to text, ge and between to an integer, lt to a real, is-true and is-false to a boolean, and before, after and between to a date. Expected: lt on the enumeration is refused as not valid; each of the others is applied. The operators Mellon offers include eq for an enumeration, between for an integer and a real, before for a date, is-true for a boolean and starts-with for text, and none for an unknown kind.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-132">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_set_figure_attaches_svg
+tests/test_mcp_write.py::test_set_figure_appears_in_show_object
+tests/test_editor.py::test_set_figure_creates_file
+tests/test_editor.py::test_set_figure_populates_loader_field
+tests/test_editor.py::test_set_figure_overwrites_existing</attr>
+  <description>Attach an SVG file to an object through set_figure, then read the object and an object without a figure with show_object; in the library, attach a second SVG over the first. Expected: the figure file figures/&lt;object ID&gt;.svg holds the chosen file's bytes and is named in the call's affected files; show_object gives it as the object's figure and none for the other object; after the second attach the figure file holds the second file's bytes.</description>
+</object>

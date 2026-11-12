@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-29">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_update_object_remove_then_add_same_target_nets_to_add</attr>
+  <description>Over MCP, call update_object on an object with a satisfies link to a target, removing that link and adding one to the same target with link type refines. Expected: the call reports the removal and the addition, and the object's links file holds the refines link.</description>
+</object>

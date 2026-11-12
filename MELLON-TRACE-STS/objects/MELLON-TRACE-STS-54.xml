@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_review_parent_edited_suspect
+tests/test_mcp_git.py::test_review_lists_figure_only_revision
+tests/test_mcp_git.py::test_trace_srs_117_commits_after_a_rebase_that_dropped_the_acknowledged_commit
+tests/test_mcp_git.py::test_trace_srs_117_commits_from_a_branch_forked_before_the_acknowledged_commit</attr>
+  <description>Over MCP, review a suspect link whose target three commits changed after the acknowledged commit, among commits that changed other objects; and review a link after a commit that changed only the target's figure. Expected: the first review lists exactly those three commits, newest first; the second lists exactly the figure commit.</description>
+</object>

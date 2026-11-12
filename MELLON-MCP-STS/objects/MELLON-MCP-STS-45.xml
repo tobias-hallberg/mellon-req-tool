@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_mcp_srs_54_operating_system_refusal_returns_os_error</attr>
+  <description>No test at the MCP interface. test_service.py::test_os_error_during_write_is_io checks the service's own error code, not error_type. On Windows, hold VCU3-SRS/objects/VCU3-SRS-1.xml open without write sharing; elsewhere, make the objects folder unwritable. Over stdio, call set_attribute on VCU3-SRS-1. Expected: ok false, error_type OSError (not PermissionError), an error naming the file, and the file unchanged.</description>
+</object>

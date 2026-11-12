@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_94_failed_commit_keeps_the_change_in_the_working_copy</attr>
+  <description>Same setup as MELLON-MCP-SRS-91. Expected: the edited object file keeps the new text in the working copy and HEAD is unchanged. The probe met this: git status showed ' M VCU3-SRS/objects/VCU3-SRS-1.xml'.</description>
+</object>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-205">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_edit_srs_132_133_grid_number_editor_stores_fitting_value
+tests/test_gui_edits.py::test_edit_srs_132_133_134_grid_editor_stores_no_misfit
+tests/test_gui_edits.py::test_edit_srs_132_133_134_grid_editor_accepts_empty_value
+tests/test_gui_edits.py::test_edit_srs_132_133_134_inspector_stores_fitting_value
+tests/test_gui_edits.py::test_edit_srs_132_133_134_inspector_refuses_misfit
+tests/test_gui_edits.py::test_edit_srs_134_grid_date_editor_stores_range_ends</attr>
+  <description>Define an integer attribute; in the grid editor and the Inspector, try `42`, `-7`, an empty value, `3.14` and `abc`. Expected: the first three are accepted and stored; the last two can't be entered or are refused, and no file changes. Define a real attribute; try `3.14`, `-2`, an empty value, `abc` and `1.2.3`. Expected: the first three are stored; the last two can't be entered or are refused. Define a date attribute; enter 0001-01-01, 9999-12-31 and an empty value, and try 0000-12-31 and 10000-01-01. Expected: the first three are stored; the last two can't be entered.</description>
+</object>

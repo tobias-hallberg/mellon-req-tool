@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-70">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_real_repo_trace_chains_sts_to_syrs
+tests/test_mcp_read.py::test_trace_srs_168_trace_returns_the_asked_direction</attr>
+  <description>Over MCP, trace a test case up in the fixture. Expected: the answer holds only the trace up: the software requirement the test case verifies, then the system requirement that requirement satisfies, each with its link type.</description>
+</object>

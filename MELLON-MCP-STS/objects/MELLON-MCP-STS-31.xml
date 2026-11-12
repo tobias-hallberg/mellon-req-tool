@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Only test_set_figure_relative_path_resolves_against_repo_root sets the working directory. The other two rely on pytest running from a folder other than the temporary repository, which always holds.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_set_figure_relative_path_resolves_against_repo_root
+tests/test_mcp_write.py::test_export_document_writes_pdf
+tests/test_mcp_git.py::test_commit_changes_respects_paths</attr>
+  <description>Set the server's working directory to a folder other than the repository's root folder. Call set_figure with a source_path relative to the root, export_document with out_path out/report.pdf, and commit_changes with paths naming one object file relative to the root. Expected: the figure is read from under the root, the PDF is written to out/report.pdf under the root, and the commit holds the named file.</description>
+</object>

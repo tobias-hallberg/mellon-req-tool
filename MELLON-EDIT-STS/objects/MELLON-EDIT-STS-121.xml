@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-121">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_table_menu_insert_for_plain_object
+tests/test_gui_tables.py::test_insert_table_via_grid</attr>
+  <description>Select an object without a table and open the Table menu; then add a table to the object. Expected: the Table menu holds only Insert table, and after adding, the object has a table.</description>
+</object>

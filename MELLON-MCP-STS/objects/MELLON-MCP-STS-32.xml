@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-32">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_9_exit_2_when_folder_cannot_be_listed</attr>
+  <description>Make a clone whose root folder can't be listed (Windows: deny List folder on the root with icacls; POSIX: chmod 0o311). Start the installed mellon-mcp with --repo-root naming it, and write initialize to its standard input. Expected: exit status 2 and empty standard output. Restore the permissions in teardown.</description>
+</object>

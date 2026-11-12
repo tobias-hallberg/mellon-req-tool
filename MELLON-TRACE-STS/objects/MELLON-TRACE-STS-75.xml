@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-75">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_coverage.py::test_coverage_outgoing_direction</attr>
+  <description>Work out outgoing coverage of a software requirements document against its system requirements document, where one requirement links to a system requirement and another links nowhere. Expected: the first is covered with one link and the second is uncovered.</description>
+</object>

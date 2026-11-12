@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-79">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_coverage_report_incoming_default
+tests/test_mcp_read.py::test_coverage_report_outgoing_direction
+tests/test_mcp_read.py::test_coverage_report_compact_default_omits_lists
+tests/test_mcp_read.py::test_trace_srs_197_coverage_report_returns_counts_and_share
+tests/test_mcp_read.py::test_trace_srs_200_coverage_report_defaults</attr>
+  <description>Over MCP, call coverage_report for a parent document of a heading and one requirement against a child document that links to the requirement, with no other options; and with direction outgoing for the child against the parent. Expected: incoming, not transitive, 1 counted, 1 covered, 100 %; outgoing, 1 of 1 covered.</description>
+</object>

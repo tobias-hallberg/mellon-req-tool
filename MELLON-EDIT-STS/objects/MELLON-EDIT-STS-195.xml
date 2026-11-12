@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-195">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_edit_srs_73_grid_headers_use_labels
+tests/test_gui_edits.py::test_edit_srs_73_inspector_uses_labels</attr>
+  <description>Define `req-type` labelled `Requirement Type` and `rationale` with no label; open the Document Editor. Expected: the grid column headers and the Inspector field names read `Requirement Type`, `rationale` and, for `type` without a label, `Type`.</description>
+</object>

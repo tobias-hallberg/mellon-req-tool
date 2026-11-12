@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-64">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_attribute_rejects_invalid_kind
+tests/test_editor.py::test_add_attribute_enum
+tests/test_editor.py::test_add_attribute_text
+tests/test_editor.py::test_add_attribute_non_string_kinds[integer]
+tests/test_editor.py::test_add_attribute_non_string_kinds[real]
+tests/test_editor.py::test_add_attribute_non_string_kinds[boolean]
+tests/test_editor.py::test_add_attribute_non_string_kinds[date]</attr>
+  <description>Define an attribute of the kind `bogus`, then one attribute of each of the kinds enumeration, text, integer, real, boolean and date. Expected: the first is refused and each of the others is defined with its kind.</description>
+</object>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-EDIT-STS-160">
+  <link target-doc="MELLON-EDIT-SRS" target-id="MELLON-EDIT-SRS-292" type="verifies" ack="f8a3ef6"/>
+  <link target-doc="MELLON-EDIT-SRS" target-id="MELLON-EDIT-SRS-293" type="verifies" ack="f8a3ef6"/>
+  <link target-doc="MELLON-EDIT-SRS" target-id="MELLON-EDIT-SRS-294" type="verifies" ack="f8a3ef6"/>
+  <link target-doc="MELLON-EDIT-SRS" target-id="MELLON-EDIT-SRS-295" type="verifies" ack="f8a3ef6"/>
+  <link target-doc="MELLON-EDIT-SRS" target-id="MELLON-EDIT-SRS-296" type="verifies" ack="f8a3ef6"/>
+</links>

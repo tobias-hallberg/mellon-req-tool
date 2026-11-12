@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_add_and_remove_parent_doc</attr>
+  <description>Over MCP, add a parent document with add_parent_doc, remove it with remove_parent_doc, then remove it again. Expected: the first call writes the declaration to the manifest, the second succeeds, and the third is refused as NotFound.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_create_document_duplicate_fails
+tests/test_editor.py::test_edit_srs_23_library_refuses_existing_plain_folder
+tests/test_mcp_write.py::test_edit_srs_23_mcp_refuses_existing_plain_folder</attr>
+  <description>Over MCP, create a document with the ID of a document that already exists. Expected: the call is refused as AlreadyExists and no file is written.</description>
+</object>

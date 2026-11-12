@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-149">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The order of hits of equal score is a gap.</attr>
+  <attr name="automated-tests">tests/test_search.py::test_results_stable_sorted_by_score_then_id
+tests/test_mcp_read.py::test_edit_srs_263_hits_ordered_by_score_then_doc_then_object_id_as_text</attr>
+  <description>Search for shall across both documents. Expected: the hits' scores never rise down the list.</description>
+</object>

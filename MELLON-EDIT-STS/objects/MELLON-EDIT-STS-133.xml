@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-133">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The PNG is refused by its name, not its content; a non-SVG file named .svg is a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_figure_rejects_invalid_xml
+tests/test_editor.py::test_set_figure_rejects_non_svg_root
+tests/test_editor.py::test_set_figure_rejects_wrong_extension
+tests/test_mcp_write.py::test_set_figure_rejects_non_svg
+tests/test_editor.py::test_edit_srs_233_library_refuses_non_svg_named_svg
+tests/test_mcp_write.py::test_edit_srs_233_set_figure_tool_refuses_non_svg_named_svg
+tests/test_mcp_write.py::test_edit_srs_233_control_well_formed_svg_replaces_figure</attr>
+  <description>Attach a file that isn't well-formed XML, an XML file whose root is html, and a PNG file, in the library, and the PNG also through set_figure. Expected: each is refused, saying that the file isn't well-formed XML, that the root must be svg, or that the file must be .svg; after the PNG, the document has no figures folder.</description>
+</object>

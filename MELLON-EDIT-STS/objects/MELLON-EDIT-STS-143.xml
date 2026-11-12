@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-143">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_labels_with_figure
+tests/test_gui_figure.py::test_figure_menu_labels_without_figure
+tests/test_gui_figure.py::test_view_figure_opens_dialog_with_path
+tests/test_gui_figure.py::test_figure_view_dialog_constructs_from_svg
+tests/test_gui_figure.py::test_view_figure_noop_without_figure</attr>
+  <description>Open the Figure menu with and without a figure attached; choose View full size with a figure, and for an object without one. Expected: View full size is enabled with a figure and disabled without; a viewer opens on the object's figure file figures/&lt;object ID&gt;.svg, titled Figure — &lt;object ID&gt;, showing a valid picture; for the object without a figure no viewer opens.</description>
+</object>

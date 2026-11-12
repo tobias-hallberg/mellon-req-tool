@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-21">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_link_rejects_non_parent_target
+tests/test_editor.py::test_add_link_top_level_doc_cannot_link_out
+tests/test_editor.py::test_add_link_allows_self_link</attr>
+  <description>Add a link from an object to (a) an object of a document that the source's document doesn't declare as a parent; (b) an object of another document when the source's document declares no parent; (c) another object of the source's own document. Expected: (a) and (b) are refused and no links file is written; (c) is created.</description>
+</object>

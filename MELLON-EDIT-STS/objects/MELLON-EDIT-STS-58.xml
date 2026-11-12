@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_list_documents_compact_default_shape
+tests/test_mcp_read.py::test_show_document_compact_default_shape
+tests/test_mcp_read.py::test_edit_srs_55_compact_reads_with_issue_tag
+tests/test_mcp_read.py::test_edit_srs_55_compact_reads_without_issue_tag</attr>
+  <description>Call list_documents and show_document without include. Expected: each document's entry has its ID and object and link counts, and has no metadata, parents, attributes, outline, views or filters.</description>
+</object>

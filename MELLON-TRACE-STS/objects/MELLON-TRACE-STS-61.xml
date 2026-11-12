@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-61">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ack_all_never_rewrites_a_broken_link
+tests/test_gui_suspect.py::test_trace_srs_131_inspector_offers_no_ack_on_a_broken_link
+tests/test_mcp_write.py::test_trace_srs_131_ack_suspects_skips_a_broken_link
+tests/test_mcp_write.py::test_trace_srs_131_ack_suspects_without_keys_leaves_a_broken_link_alone</attr>
+  <description>Acknowledge a link whose target object doesn't exist. Expected: nothing is acknowledged and the links file is byte-identical.</description>
+</object>

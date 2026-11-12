@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-184">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_history_cleared_by[commit]
+tests/test_gui_undo.py::test_history_cleared_by[reload]
+tests/test_gui_undo.py::test_history_cleared_by[stale]</attr>
+  <description>With one undone step and one step to undo, commit the document; in a fresh copy, reload the document from disk; in another, let the Changed on disk banner show. Expected: each time the window has nothing to undo or redo, and Undo and Redo are disabled.</description>
+</object>

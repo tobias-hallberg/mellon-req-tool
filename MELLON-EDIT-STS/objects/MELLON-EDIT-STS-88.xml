@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-88">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_inspector_populates_on_object_select
+tests/test_gui_smoke.py::test_outline_click_updates_inspector
+tests/test_gui_edits.py::test_grid_edit_shows_in_the_inspector
+tests/test_gui_edits.py::test_edit_srs_124_inspector_shows_values_and_description</attr>
+  <description>Select objects in the Document Editor, and change the selected object's description in the grid. Expected: the Inspector shows the selected object's description, outgoing links and place in the outline, and follows the edit; an edit to another object leaves it alone.</description>
+</object>

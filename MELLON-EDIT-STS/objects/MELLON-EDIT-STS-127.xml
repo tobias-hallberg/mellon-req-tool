@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-127">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The edited text is read from the editor, not from the saved object; that is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_tables.py::test_inline_widget_roundtrip
+tests/test_gui_tables.py::test_edit_srs_210_table_editor_saves_edited_cell_text</attr>
+  <description>In the table editor, change a body cell's text to FAULT_X and read the table back from the editor. Expected: that cell holds FAULT_X, the header row is still a header row, and each position is covered exactly once.</description>
+</object>

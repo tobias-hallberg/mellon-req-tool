@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_pre_validation_disallowed_target_doc
+tests/test_mcp_write.py::test_new_object_pre_validation_bad_links_no_files_written
+tests/test_mcp_write.py::test_add_link_duplicate_fails
+tests/test_editor.py::test_trace_srs_6_link_to_missing_target_is_refused
+tests/test_gui_links.py::test_trace_srs_6_document_editor_refuses_link_to_target_deleted_on_disk
+tests/test_mcp_write.py::test_trace_srs_6_link_to_missing_target_is_refused
+tests/test_mcp_write.py::test_trace_srs_6_link_to_missing_target_over_stdio_is_refused
+tests/test_editor.py::test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused
+tests/test_mcp_write.py::test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused
+tests/test_mcp_write.py::test_trace_srs_7_link_to_another_target_is_not_refused
+tests/test_mcp_write.py::test_trace_srs_24_new_object_with_refused_link_changes_no_file
+tests/test_mcp_write.py::test_trace_srs_24_update_object_with_refused_link_changes_no_file</attr>
+  <description>Over MCP, call new_object with (a) a link to an object of a document that isn't a parent, (b) the same link twice, (c) a link to an object that doesn't exist; and call add_link for a pair of objects already linked. Expected: each call reports a failure naming the cause; the new_object calls under (b) and (c) leave the document's object files as they were.</description>
+</object>

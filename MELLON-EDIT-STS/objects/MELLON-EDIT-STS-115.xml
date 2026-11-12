@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-115">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The test checks the top level, not that the object directly follows its former parent object; that is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_outdent_promotes_one_level
+tests/test_gui_polish.py::test_edit_srs_181_outdent_makes_object_next_sibling_of_its_parent</attr>
+  <description>Select the first sub-object of a top-level heading and choose Outdent. Expected: the object is at the top level.</description>
+</object>

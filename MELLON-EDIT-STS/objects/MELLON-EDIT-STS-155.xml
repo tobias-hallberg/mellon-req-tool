@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-155">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A name of spaces, a rename to no name, and the dialog are a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_filter_rejects_empty_name
+tests/test_editor.py::test_edit_srs_278_library_refuses_filter_without_name
+tests/test_gui_filter.py::test_edit_srs_278_advanced_filter_dialog_refuses_filter_without_name
+tests/test_gui_filter.py::test_edit_srs_278_manage_filters_refuses_rename_to_empty_name</attr>
+  <description>Save a filter with an empty name. Expected: refused, saying that the name can't be empty.</description>
+</object>

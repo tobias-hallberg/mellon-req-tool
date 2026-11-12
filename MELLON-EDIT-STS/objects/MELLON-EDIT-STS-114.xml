@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-114">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The test checks the new parent object, not that the object is the heading's last sub-object; that is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_indent_makes_obj_child_of_previous_sibling
+tests/test_gui_polish.py::test_edit_srs_180_indent_makes_object_last_sub_object_of_sibling_before</attr>
+  <description>Select a top-level object whose preceding sibling is a heading with sub-objects, and choose Indent. Expected: the object's parent object is that heading.</description>
+</object>

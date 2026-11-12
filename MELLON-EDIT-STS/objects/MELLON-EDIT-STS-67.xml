@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-67">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_define_attribute_default_value_backfills_objects
+tests/test_mcp_write.py::test_define_attribute_default_value_skips_objects_already_set</attr>
+  <description>Over MCP, define a text attribute with a default value in a document whose objects don't have the attribute: first with one object, then with two. Expected: each object gets the default value and is reported; with a required attribute, validation is then clean.</description>
+</object>

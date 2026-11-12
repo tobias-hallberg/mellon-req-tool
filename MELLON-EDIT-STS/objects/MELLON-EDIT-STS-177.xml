@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-177">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_manage_view_create_success
+tests/test_mcp_write.py::test_manage_view_rename_same_slug
+tests/test_mcp_write.py::test_manage_view_rename_new_slug_moves_file
+tests/test_mcp_write.py::test_manage_view_delete_success
+tests/test_mcp_write.py::test_manage_view_edit_replaces_visible_order</attr>
+  <description>Through manage_view, create the view Main View with status and type; rename Dev to DEV, and Dev to QA Pass; delete a view; edit a view's columns. Expected: create writes views/main-view.xml naming both attributes; the rename to DEV keeps dev.xml, now named DEV; the rename to QA Pass moves the file to qa-pass.xml; delete removes the file and show_document lists no view; edit returns the slug and the one file it wrote.</description>
+</object>

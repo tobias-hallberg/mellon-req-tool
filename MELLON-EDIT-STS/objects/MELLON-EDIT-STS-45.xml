@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_attribute_validation_fails
+tests/test_mcp_write.py::test_new_object_pre_validation_bad_enum_value
+tests/test_mcp_write.py::test_update_object_bad_attr_value_no_files_touched
+tests/test_mcp_write.py::test_bulk_set_attribute_bad_enum_no_files_touched
+tests/test_gui_edits.py::test_grid_setdata_invalid_enum_is_rejected
+tests/test_gui_edits.py::test_inspector_failed_commit_emits_error_and_leaves_file_intact</attr>
+  <description>Give an enumeration attribute a value that isn't one of its options through MCP set_attribute, new_object, update_object and bulk_set_attribute, through a grid cell, and through an Inspector field. Expected: each is refused, the error names the value or the attribute, and the object file keeps its old value.</description>
+</object>

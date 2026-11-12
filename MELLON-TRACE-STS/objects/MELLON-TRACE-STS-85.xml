@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-85">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_trace_srs_101_inspector_offers_jump_on_each_outgoing_link
+tests/test_gui_links.py::test_trace_srs_101_jump_has_the_same_result_as_double_click</attr>
+  <description>Right-click the same outgoing link row. Expected: the menu offers Jump, and triggering it gives the same result as the double-click (PARENT-1 selected in PARENT's Document Editor). No test.</description>
+</object>

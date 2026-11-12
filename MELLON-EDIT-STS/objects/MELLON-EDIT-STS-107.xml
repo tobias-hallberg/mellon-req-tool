@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-107">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_delete_with_incoming_prompts_and_cascades</attr>
+  <description>In the Document Editor, delete an object that an object of another document links to, confirming both questions. Expected: after the first confirmation a second question lists the linking object; after it, the object and the incoming link are gone.</description>
+</object>

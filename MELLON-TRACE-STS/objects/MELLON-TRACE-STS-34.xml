@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_broken_link_when_target_missing
+tests/test_service.py::test_discard_document_changes_refreshes_other_documents_suspect_scans</attr>
+  <description>Make a link to an object ID that has no object file; and delete a committed target's object file from the working copy without committing, then restore it. Expected: both links read broken while the target's file is missing; once restored the link is no longer broken.</description>
+</object>

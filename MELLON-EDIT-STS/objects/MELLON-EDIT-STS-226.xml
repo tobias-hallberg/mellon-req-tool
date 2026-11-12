@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-226">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_edit_srs_347_undo_shortcut_in_text_field_acts_on_its_text</attr>
+  <description>Focus the Inspector's description, type abc after its text, press the undo shortcut. Expected: abc is removed from the field, no file changes and the window's undo history is unchanged; the redo shortcut puts abc back in the field.</description>
+</object>

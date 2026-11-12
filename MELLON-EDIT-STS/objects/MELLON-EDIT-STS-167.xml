@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-167">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak: which rows show isn't checked (see gaps).</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_apply_filter_narrows_proxy_via_match_set
+tests/test_gui_filter.py::test_clear_active_filter_restores_full_grid
+tests/test_gui_filter.py::test_edit_srs_314_active_filter_shows_matches_and_their_ancestors</attr>
+  <description>Make a filter of priority eq Must active, with ancestor objects kept and without; then clear it. Expected: with the filter, fewer rows show than without it, but at least one; after clearing, each row shows again.</description>
+</object>

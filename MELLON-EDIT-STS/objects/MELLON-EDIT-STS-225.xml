@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-225">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_grid_view_order.py::test_edit_srs_325_views_menu_lists_views_and_activates_choice</attr>
+  <description>Save views Dev and Test with different columns; open the Views menu. Expected: it lists Dev and Test; choosing Test shows Test's columns.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_head_move_refreshes_inspector_link_state_and_ack_selected
+tests/test_gui_links.py::test_trace_srs_90_inspector_shows_each_outgoing_links_state
+tests/test_gui_suspect.py::test_trace_srs_135_inspector_ack_acknowledges_that_link_alone</attr>
+  <description>With a child object's OK link selected in the child's Document Editor, commit a revision of the target from the parent's window and activate the child's window. Expected: the Inspector shows the link as OK before and as SUSPECT after, with an Ack button on it; the gutter marks the object suspect and Ack selected is enabled.</description>
+</object>

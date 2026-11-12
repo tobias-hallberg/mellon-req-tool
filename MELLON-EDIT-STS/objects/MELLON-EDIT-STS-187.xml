@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-187">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Redo in read-only mode is a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_undo.py::test_undo_disabled_while_read_only
+tests/test_service.py::test_undo_refused_read_only
+tests/test_gui_undo.py::test_edit_srs_361_read_only_disables_undo_and_redo</attr>
+  <description>Make an edit, turn read-only mode on, then off; ask a read-only service to undo. Expected: Undo is disabled while read-only and enabled again after; the read-only service refuses the undo as read-only.</description>
+</object>

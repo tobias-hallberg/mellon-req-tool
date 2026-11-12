@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-69">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_trace.py::test_trace_cycle_safe
+tests/test_trace.py::test_trace_srs_160_trace_down_ends_at_an_object_reached_a_second_time
+tests/test_trace.py::test_trace_srs_160_trace_up_ends_at_an_object_reached_a_second_time
+tests/test_trace.py::test_trace_srs_160_paths_end_at_the_first_repeat_in_generated_graphs</attr>
+  <description>Trace up from an object A that links to an object B, which links back to A. Expected: the trace holds B and below it A, with nothing below A.</description>
+</object>

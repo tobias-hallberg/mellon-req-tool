@@ -42,5 +42,115 @@
     <attribute name="automated-tests" kind="text" required="false" label="Automated Tests"/>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-TRACE-STS-0">
+      <ref id="MELLON-TRACE-STS-1">
+        <ref id="MELLON-TRACE-STS-19"/>
+        <ref id="MELLON-TRACE-STS-20"/>
+        <ref id="MELLON-TRACE-STS-21"/>
+        <ref id="MELLON-TRACE-STS-22"/>
+        <ref id="MELLON-TRACE-STS-23"/>
+        <ref id="MELLON-TRACE-STS-24"/>
+        <ref id="MELLON-TRACE-STS-25"/>
+        <ref id="MELLON-TRACE-STS-81"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-2">
+        <ref id="MELLON-TRACE-STS-26"/>
+        <ref id="MELLON-TRACE-STS-27"/>
+        <ref id="MELLON-TRACE-STS-28"/>
+        <ref id="MELLON-TRACE-STS-29"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-18"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-3">
+      <ref id="MELLON-TRACE-STS-30"/>
+      <ref id="MELLON-TRACE-STS-31"/>
+      <ref id="MELLON-TRACE-STS-32"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-4">
+      <ref id="MELLON-TRACE-STS-5">
+        <ref id="MELLON-TRACE-STS-38"/>
+        <ref id="MELLON-TRACE-STS-39"/>
+        <ref id="MELLON-TRACE-STS-40"/>
+        <ref id="MELLON-TRACE-STS-41"/>
+        <ref id="MELLON-TRACE-STS-42"/>
+        <ref id="MELLON-TRACE-STS-43"/>
+        <ref id="MELLON-TRACE-STS-82"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-6">
+        <ref id="MELLON-TRACE-STS-45"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-7">
+        <ref id="MELLON-TRACE-STS-46"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-8">
+        <ref id="MELLON-TRACE-STS-44"/>
+        <ref id="MELLON-TRACE-STS-47"/>
+        <ref id="MELLON-TRACE-STS-48"/>
+        <ref id="MELLON-TRACE-STS-49"/>
+        <ref id="MELLON-TRACE-STS-50"/>
+        <ref id="MELLON-TRACE-STS-83"/>
+        <ref id="MELLON-TRACE-STS-84"/>
+        <ref id="MELLON-TRACE-STS-85"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-9">
+        <ref id="MELLON-TRACE-STS-51"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-33"/>
+      <ref id="MELLON-TRACE-STS-34"/>
+      <ref id="MELLON-TRACE-STS-35"/>
+      <ref id="MELLON-TRACE-STS-36"/>
+      <ref id="MELLON-TRACE-STS-37"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-10">
+      <ref id="MELLON-TRACE-STS-52"/>
+      <ref id="MELLON-TRACE-STS-53"/>
+      <ref id="MELLON-TRACE-STS-54"/>
+      <ref id="MELLON-TRACE-STS-55"/>
+      <ref id="MELLON-TRACE-STS-56"/>
+      <ref id="MELLON-TRACE-STS-57"/>
+      <ref id="MELLON-TRACE-STS-58"/>
+      <ref id="MELLON-TRACE-STS-59"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-11">
+      <ref id="MELLON-TRACE-STS-12">
+        <ref id="MELLON-TRACE-STS-66"/>
+        <ref id="MELLON-TRACE-STS-86"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-60"/>
+      <ref id="MELLON-TRACE-STS-61"/>
+      <ref id="MELLON-TRACE-STS-62"/>
+      <ref id="MELLON-TRACE-STS-63"/>
+      <ref id="MELLON-TRACE-STS-64"/>
+      <ref id="MELLON-TRACE-STS-65"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-13">
+      <ref id="MELLON-TRACE-STS-14">
+        <ref id="MELLON-TRACE-STS-70"/>
+        <ref id="MELLON-TRACE-STS-71"/>
+        <ref id="MELLON-TRACE-STS-72"/>
+        <ref id="MELLON-TRACE-STS-87"/>
+        <ref id="MELLON-TRACE-STS-88"/>
+        <ref id="MELLON-TRACE-STS-89"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-15">
+        <ref id="MELLON-TRACE-STS-73"/>
+        <ref id="MELLON-TRACE-STS-90"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-67"/>
+      <ref id="MELLON-TRACE-STS-68"/>
+      <ref id="MELLON-TRACE-STS-69"/>
+    </ref>
+    <ref id="MELLON-TRACE-STS-16">
+      <ref id="MELLON-TRACE-STS-17">
+        <ref id="MELLON-TRACE-STS-79"/>
+        <ref id="MELLON-TRACE-STS-80"/>
+      </ref>
+      <ref id="MELLON-TRACE-STS-74"/>
+      <ref id="MELLON-TRACE-STS-75"/>
+      <ref id="MELLON-TRACE-STS-76"/>
+      <ref id="MELLON-TRACE-STS-77"/>
+      <ref id="MELLON-TRACE-STS-78"/>
+    </ref>
+  </outline>
 </document>

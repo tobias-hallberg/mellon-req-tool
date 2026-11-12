@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_document_writes_default_rules
+tests/test_editor.py::test_delete_attribute_strips_rules
+tests/test_editor.py::test_edit_srs_25_default_attributes_are_type_and_rationale
+tests/test_editor.py::test_edit_srs_26_default_rules_forbid_rationale_on_headings_only</attr>
+  <description>Create a document without attribute definitions. Expected: the document has a rules file with at least one rule, and the rules name `rationale`; its `type` attribute has the options Heading, Information and Note.</description>
+</object>

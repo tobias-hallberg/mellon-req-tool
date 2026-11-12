@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-81">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_trace_srs_17_link_picker_offers_exactly_four_link_types</attr>
+  <description>Open the link picker and read its link type choices. Expected: exactly satisfies, verifies, refines and implements, no other entry and none missing. No test reads the list.</description>
+</object>

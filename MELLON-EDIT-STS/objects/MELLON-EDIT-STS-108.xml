@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-108">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_delete_force_strips_same_doc_incoming
+tests/test_editor.py::test_delete_force_strips_cross_doc_incoming
+tests/test_service.py::test_delete_object_force_cascades_across_docs</attr>
+  <description>Delete, with force, an object that an object of the same document links to, and one that an object of another document links to. Expected: the object is deleted, the deletion reports each incoming link, and each link is removed; a links file left empty is deleted.</description>
+</object>

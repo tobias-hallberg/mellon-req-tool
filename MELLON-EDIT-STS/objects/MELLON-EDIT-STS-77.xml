@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-77">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_delete_attribute_strips_manifest_and_objects
+tests/test_editor.py::test_delete_attribute_returns_every_written_file
+tests/test_service.py::test_delete_attribute_happy</attr>
+  <description>Delete an attribute that one object has a value for and another doesn't. Expected: the attribute is undefined, neither object has a value for it, and only the manifest and the object that had the value are written.</description>
+</object>

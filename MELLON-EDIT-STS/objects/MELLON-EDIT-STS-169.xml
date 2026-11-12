@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-169">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Reopening with the filter still active, and with the filter deleted since, are a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_active_filter_restored_when_switching_back_to_document
+tests/test_gui_filter.py::test_pill_clear_button_persists_clear_across_relaunch
+tests/test_gui_filter.py::test_none_menu_entry_persists_clear_across_relaunch
+tests/test_gui_filter.py::test_edit_srs_317_reopened_editor_restores_active_filter</attr>
+  <description>Make a saved filter active, switch the window to another document and back. Then make a filter active, clear it with the clear control or the Filters menu's (none), and open a new Document Editor on the document. Expected: switching back makes the filter active again; after a clear, the new Document Editor opens with no active filter.</description>
+</object>

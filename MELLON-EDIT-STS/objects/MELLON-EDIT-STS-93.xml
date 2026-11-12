@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-93">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_grid_description_multiline_roundtrip
+tests/test_gui_edits.py::test_grid_row_height_grows_with_line_count
+tests/test_gui_edits.py::test_field_edit_refits_only_its_row
+tests/test_gui_edits.py::test_description_resize_refits_rows_once_after_drag</attr>
+  <description>Give a description several lines in the grid; narrow the description column. Expected: the grid shows the whole description and the row grows to fit, without changing the height of other rows, and grows again once the column is narrowed.</description>
+</object>

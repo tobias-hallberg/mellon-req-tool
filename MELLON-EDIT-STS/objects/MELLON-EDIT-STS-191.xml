@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-191">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_edit_srs_59_properties_dialog_defines_attribute</attr>
+  <description>Properties dialog: define an attribute through the dialog's add form (name `prio`, kind enumeration, options High and Low). Expected: the manifest defines it and the attributes tab lists it. The current test defines it through the library.</description>
+</object>

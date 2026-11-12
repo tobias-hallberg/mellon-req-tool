@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Weak. Branches and the git index aren't checked, an explicit null isn't sent, and only one tool is called.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_auto_commit_skipped_when_no_message
+tests/test_mcp_server.py::test_mcp_srs_79_no_commit_message_leaves_commits_branches_and_index</attr>
+  <description>In a copy of the req-test repository, call set_attribute without a commit_message. Expected: the call succeeds, the latest commit is unchanged, and the result has neither commit nor commit_error.</description>
+</object>

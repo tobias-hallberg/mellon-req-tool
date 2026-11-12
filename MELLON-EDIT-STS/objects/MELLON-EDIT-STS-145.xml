@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-145">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The colour cases of the parametrized colour test can't be listed, because their node ids hold spaces.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_thumbnail_keeps_drawio_adaptive_colours
+tests/test_drawio.py::test_qt_svg_turns_text_fallback_into_wrapping_text_area
+tests/test_drawio.py::test_qt_svg_nowrap_label_centres_on_its_anchor
+tests/test_drawio.py::test_qt_svg_keeps_picture_fallbacks
+tests/test_drawio.py::test_qt_svg_drops_text_is_not_svg_notice
+tests/test_drawio.py::test_qt_svg_resolves_adaptive_colours_but_not_content</attr>
+  <description>Draw the thumbnail of a figure whose rectangle is filled with light-dark(red, black). Prepare a draw.io figure for drawing whose label is an HTML label with a bold word and a line break and a shortened plain-text fallback; one with a label that doesn't wrap; one with a picture label; one with draw.io's notice that text isn't SVG; and one with light-dark() and var() colours in its styles. Expected: the rectangle is drawn red; the HTML label is drawn with its whole text, Battery Management System and then second line on a new line, in a box at draw.io's position, in draw.io's font, size and light-theme colour; the label that doesn't wrap is centred on its anchor; the picture label keeps its picture; the notice isn't drawn; each light-dark() and var() colour takes its light value, and the diagram the file carries is unchanged.</description>
+</object>

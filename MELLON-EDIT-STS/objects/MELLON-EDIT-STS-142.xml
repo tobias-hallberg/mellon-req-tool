@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-142">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The test checks that the area is there, not what is drawn in it.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_delegate_figure_rect_present_and_absent
+tests/test_gui_figure.py::test_edit_srs_254_thumbnail_shows_the_figure</attr>
+  <description>Attach a figure to one object and show the grid. Expected: that object's description cell has a figure area of non-zero size, and an object without a figure has none.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-82">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_new_object_appends_top_level
+tests/test_mcp_write.py::test_new_object_with_attrs_populates_dict
+tests/test_mcp_write.py::test_new_object_with_links_creates_link_file</attr>
+  <description>Over MCP, call new_object with a description only; with a description and two attribute values; and with a description, attribute values and an outgoing link. Expected: each call creates the object in one call, with its object file, its manifest entry, the given values and, for the third, its links file.</description>
+</object>

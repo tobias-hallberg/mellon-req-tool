@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The parametrized test takes the tool list from the server, so a new tool that isn't refused fails it unless it is added to the test's list of read tools. It runs in process through the MCP layer, not over standard input and output.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[ack_suspects]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[add_attr_option]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[add_link]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[add_parent_doc]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[bulk_set_attribute]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[change_attribute_required]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[clear_figure]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[clear_table]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[commit_changes]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[copy_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[create_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[define_attribute]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[delete_attribute]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[delete_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[edit_description]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[edit_metadata]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[export_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[manage_view]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[move_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[new_object]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[remove_attr_option]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[remove_link]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[remove_parent_doc]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[reorder_outline]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[set_attribute]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[set_figure]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[set_table]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[tag_issue]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[update_object]
+tests/test_mcp_write.py::test_read_only_blocks_writes
+tests/test_mcp_write.py::test_copy_object_read_only_raises
+tests/test_mcp_write.py::test_bulk_set_attribute_read_only_raises
+tests/test_mcp_write.py::test_reorder_outline_read_only_raises
+tests/test_mcp_write.py::test_manage_view_read_only_blocks
+tests/test_mcp_write.py::test_create_document_read_only_raises
+tests/test_mcp_write.py::test_set_figure_read_only_raises
+tests/test_mcp_write.py::test_clear_figure_read_only_raises
+tests/test_mcp_write.py::test_set_table_read_only_raises
+tests/test_mcp_write.py::test_export_document_read_only_raises
+tests/test_mcp_server.py::test_mcp_srs_99_read_only_server_refuses_each_changing_tool</attr>
+  <description>On a copy of the req-test repository, run the server in read-only mode and call each tool the server lists with its required parameters. Also call the write tools one at a time with typical arguments, all four manage_view actions and export_document. Expected: each of the 27 write tools, commit_changes and export_document is refused as a permission error, and git reports no change in the working copy afterwards.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-168">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_filter.py::test_apply_filter_narrows_proxy_via_match_set
+tests/test_gui_filter.py::test_pill_summary_reflects_filter_state
+tests/test_gui_filter.py::test_pill_clear_button_persists_clear_across_relaunch
+tests/test_gui_filter.py::test_open_dialog_unset_seed_uses_active_filter</attr>
+  <description>Make filter Must active; make filter X active, with two filter conditions under any and ancestor objects kept; use the clear control shown with the filter; open the filter for editing from the active filter. Expected: the active filter's name shows above the grid; for X it also says 2 rules, Any and keep ancestors; the clear control clears the active filter; editing opens the dialog on the active filter.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_ack_on_branch_stays_ok_when_branch_merges_main
+tests/test_suspects.py::test_trace_srs_64_changes_to_the_source_object_do_not_change_the_state</attr>
+  <description>Acknowledge a link on a branch, commit a change to the link's source object on main, and merge main into the branch. Expected: the link stays OK.</description>
+</object>

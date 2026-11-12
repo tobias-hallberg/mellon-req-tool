@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-157">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_enum_eq_with_keep_ancestors_includes_heading
+tests/test_filter.py::test_enum_eq_matches</attr>
+  <description>Under heading H, requirement A has priority High. Apply priority eq High with ancestor objects kept, and without. Expected: with, H and A; without, A alone.</description>
+</object>

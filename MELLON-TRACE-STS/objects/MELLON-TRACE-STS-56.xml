@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_review_flags_a_truncated_commit_list
+tests/test_mcp_git.py::test_trace_srs_118_twenty_commits_are_listed_whole
+tests/test_mcp_git.py::test_trace_srs_118_twenty_one_commits_are_cut_to_the_twenty_nearest_in_history</attr>
+  <description>Over MCP, commit 21 revisions of a target after its link's acknowledged commit, then review the link. Expected: the review lists 20 commits and reports that more exist.</description>
+</object>

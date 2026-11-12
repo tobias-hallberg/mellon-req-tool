@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-19">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_link_sets_ack_from_git
+tests/test_suspects.py::test_add_link_to_target_with_newer_figure_is_ok
+tests/test_suspects.py::test_add_link_right_after_merge_is_ok</attr>
+  <description>Create a link to a committed target object (a) whose object file the latest commit changed; (b) whose figure was committed after its object file; (c) that main revised before an unrelated branch was merged. Expected: each link's acknowledged commit is the target's last change (the commit that changed the object file, the figure commit, and the revising commit rather than the merge commit), and each link reads OK.</description>
+</object>

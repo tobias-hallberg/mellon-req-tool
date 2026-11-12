@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-125">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Library only; through set_table, and an unchanged object file, are a gap.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_table_rejects_bad_align
+tests/test_mcp_write.py::test_edit_srs_206_refuses_column_alignment_outside_left_center_right
+tests/test_mcp_write.py::test_edit_srs_206_accepts_left_center_right_and_reads_them_back</attr>
+  <description>Write a table with a column aligned sideways. Expected: refused, naming the alignment.</description>
+</object>

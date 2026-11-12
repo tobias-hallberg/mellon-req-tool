@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-113">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_move_up_swaps_with_previous
+tests/test_gui_outline.py::test_move_down_swaps_with_next</attr>
+  <description>In a heading whose sub-objects start 1, 2, 11, select 2 and choose Move up; in a fresh copy, select 1 and choose Move down. Expected: both times the heading's sub-objects start 2, 1, 11.</description>
+</object>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-123">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_set_table_tool_ok
+tests/test_mcp_read.py::test_show_object_includes_table
+tests/test_mcp_write.py::test_clear_table_tool_ok
+tests/test_editor.py::test_set_table_round_trips_via_loader
+tests/test_editor.py::test_set_table_replaces_existing
+tests/test_editor.py::test_clear_table_removes_element</attr>
+  <description>Through set_table, give an object a two-column table, aligned left and right, with a header row and a body row whose one cell spans both columns; read the object with show_object; remove the table through clear_table. In the library, replace one table with another. Expected: set_table returns ok naming the object file; show_object returns the alignments left and right, the first row as a header row and the column span 2; after the replacement the object holds exactly one table, equal to the new one; after clear_table the object file holds no table.</description>
+</object>

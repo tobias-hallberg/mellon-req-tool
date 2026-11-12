@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-215">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_edit_srs_250_saved_figure_shows_on_return_without_reload</attr>
+  <description>Attach a blue figure from the Document Editor; overwrite its file in place with a red picture, as draw.io desktop saves; activate the window. Expected: the grid's thumbnail for the object shows red, without a reload.</description>
+</object>

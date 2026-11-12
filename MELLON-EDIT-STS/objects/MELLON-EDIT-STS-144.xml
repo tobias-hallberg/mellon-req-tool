@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-144">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The full-size viewer, and the dark theme, are a gap.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_thumbnail_paints_figure_on_white
+tests/test_gui_figure.py::test_edit_srs_256_dark_theme_draws_figures_on_white</attr>
+  <description>Draw the grid thumbnail of an SVG figure whose only shape is a small black square in the top-left corner. Expected: a point outside the square is white.</description>
+</object>

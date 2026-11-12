@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_suspect.py::test_gutter_column_reports_state
+tests/test_gui_suspect.py::test_gutter_column_reports_per_direction_link_states</attr>
+  <description>In a Document Editor on the fixture's software requirements, read the state gutter for an object with a suspect outgoing link and for one with only OK outgoing links. Expected: the first is marked suspect and the second OK.</description>
+</object>

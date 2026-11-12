@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-38">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_suspects.py::test_suspect_when_only_figure_changed
+tests/test_suspects.py::test_suspect_when_figure_removed
+tests/test_suspects.py::test_ack_all_round_trip_with_figure
+tests/test_git_ops.py::test_last_commit_for_paths_returns_newer_of_two
+tests/test_git_ops.py::test_last_commit_for_paths_prefers_more_recent_change</attr>
+  <description>Acknowledge a link, then commit (a) adding a figure to the target, (b) removing the target's figure; and find the last change of an object whose figure was added, or changed, after its object file. Expected: the link reads suspect after each figure commit, with that commit as the last change; acknowledging after a figure-only commit records the figure commit and the link reads OK; the last change is the figure commit.</description>
+</object>

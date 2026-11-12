@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-59">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_review_flags_parent_edits_an_ack_would_not_cover
+tests/test_mcp_git.py::test_review_ok_link_has_no_changed_fields</attr>
+  <description>Over MCP, review an OK link whose target has an uncommitted description change, and one whose target has none. Expected: the first reports that the target differs from the latest commit; the second that it doesn't.</description>
+</object>

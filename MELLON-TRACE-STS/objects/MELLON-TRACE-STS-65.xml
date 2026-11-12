@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_ack_suspects_dry_run
+tests/test_mcp_write.py::test_trace_srs_141_dry_run_lists_the_links_the_real_call_acknowledges
+tests/test_mcp_write.py::test_trace_srs_142_dry_run_changes_no_file</attr>
+  <description>Over MCP, call ack_suspects as a dry run for a document with six suspect links. Expected: the answer lists the six links it would acknowledge and reports no changed file.</description>
+</object>

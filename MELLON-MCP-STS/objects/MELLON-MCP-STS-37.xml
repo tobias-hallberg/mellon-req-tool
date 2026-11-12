@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-MCP-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_server.py::test_mcp_srs_20_version_option_writes_version_and_exits_0</attr>
+  <description>CI's wheel smoke job runs --version without checking the output. Run the installed mellon-mcp --version three ways: with the working directory outside any repository, with --repo-root naming a non-repository folder, and with CLAUDE_PROJECT_DIR naming a missing folder. Expected: each run writes exactly 'mellon-mcp &lt;version&gt;' and a line break to standard output, where &lt;version&gt; is the package's version, and exits 0. Probe: 'mellon-mcp 0.3.0', status 0, outside a repository.</description>
+</object>

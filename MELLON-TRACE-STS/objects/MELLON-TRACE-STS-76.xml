@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-TRACE-STS-76">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_coverage.py::test_coverage_direct_misses_transitive_chain
+tests/test_coverage.py::test_coverage_transitive_follows_chain
+tests/test_coverage.py::test_coverage_transitive_uncovered_remains_uncovered
+tests/test_coverage.py::test_trace_srs_184_transitive_coverage_follows_a_chain_in_the_reports_direction</attr>
+  <description>In a chain where a test case verifies a software requirement that satisfies a system requirement, work out the system requirements' coverage against the test document, direct and transitive, and the software requirements' transitive coverage. Expected: the system requirement is uncovered directly and covered transitively; a software requirement without a test case stays uncovered.</description>
+</object>

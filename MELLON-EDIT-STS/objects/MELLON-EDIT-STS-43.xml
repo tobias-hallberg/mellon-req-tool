@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_attribute_unknown_attr
+tests/test_mcp_write.py::test_new_object_pre_validation_unknown_attr_no_files_written
+tests/test_mcp_write.py::test_bulk_set_attribute_unknown_attr_no_files_touched
+tests/test_mcp_write.py::test_delete_attribute_unknown_fails
+tests/test_mcp_write.py::test_change_attribute_required_unknown_fails</attr>
+  <description>Over MCP, name an attribute that the document doesn't define in set_attribute, new_object, bulk_set_attribute, delete_attribute and change_attribute_required. Expected: each call is refused with an error that names the attribute or says it isn't defined; new_object writes no object file.</description>
+</object>

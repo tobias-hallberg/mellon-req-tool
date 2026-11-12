@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-202">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_edit_srs_118_new_object_under_parent_goes_last
+tests/test_mcp_write.py::test_edit_srs_118_new_object_without_parent_goes_last_at_top</attr>
+  <description>New_object(doc, parent_id=P) where P has sub-objects A, B: expected sub-objects A, B, &lt;new&gt;. new_object(doc) with top-level objects X, Y: expected top level X, Y, &lt;new&gt;. The current tests only check that the new ID appears in the manifest.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-119">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_outline_is_preorder_with_depth
+tests/test_mcp_read.py::test_outline_depth_lists_top_levels_and_counts_the_rest</attr>
+  <description>Read the outline of a document whose top-level heading has one sub-object. Then add a sub-object below that sub-object, another below that one, and a second top-level object, and read the outline again. Expected: the first read lists the heading at level 0 and its sub-object at level 1, each with its text; the second lists the heading, its sub-object, that one's sub-object, the next one down, then the second top-level object, with no count of objects left out.</description>
+</object>

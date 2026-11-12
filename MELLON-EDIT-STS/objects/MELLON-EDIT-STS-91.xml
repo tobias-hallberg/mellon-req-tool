@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-91">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_enum_delegate_populates_options
+tests/test_gui_edits.py::test_edit_srs_130_grid_enum_editor_offers_options_and_empty_entry
+tests/test_gui_edits.py::test_edit_srs_130_inspector_enum_field_offers_empty_entry</attr>
+  <description>Open the grid's editor on an enumeration cell. Expected: the editor offers an empty entry followed by the attribute's options in the manifest's order.</description>
+</object>
