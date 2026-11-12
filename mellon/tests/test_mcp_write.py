@@ -3228,3 +3228,195 @@ def test_trace_srs_142_dry_run_changes_no_file(tmp_path, mcp):
     assert git_state(r) == git, "a dry run changed git status, the index or refs"
     mcp.restart()
     assert _suspects_set(s.suspects("CHILD")) == before_suspects
+
+
+# MELLON-VER-SRS blind tests
+from tests.ver_support import (  # noqa: E402
+    ANN,
+    IDENTITY,
+    _assert_hooks_live,
+    _assert_identity,
+    _attr,
+    _changed,
+    _description,
+    _git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _head,
+    _install_hooks,
+    _make_repo,
+    _mcp_root,
+    _obj,
+    _parents,
+    _status,
+    _stdio,
+    _tree,
+    _work_files,
+    _write,
+    only_repo_git_config,  # noqa: F401, F811 -- fixture
+)
+
+
+def _commit_paths(root: Path, rev: str = "HEAD") -> set[str]:
+    out = _git(root, "diff-tree", "-r", "--root", "--no-commit-id", "--name-only", rev).stdout
+    return {line for line in out.splitlines() if line}
+
+
+def test_ver_srs_107_commit_message_commits_only_the_files_the_call_changed(mcp_repo):
+    """MELLON-VER-SRS-107: When a write tool is called with `commit_message`,
+    the MCP server commits the files that the call changed and no other path.
+    Another uncommitted change stays uncommitted with its edit."""
+    root = _mcp_root(mcp_repo)
+    server.edit_description("CHILD", "CHILD-1", "An edit left uncommitted.")
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Changed by hand."))
+    before = _work_files(root)
+
+    res = server.set_attribute("CHILD", "CHILD-0", "status", "Approved", commit_message="Approve CHILD-0")
+
+    assert "commit" in res, f"the write made no commit: {res}"
+    by_call = _changed(before, _work_files(root))
+    assert by_call == {"CHILD/objects/CHILD-0.xml"}
+    assert _commit_paths(root) == by_call, "the commit holds a path the call didn't change"
+    assert _description((root / "CHILD/objects/CHILD-1.xml").read_bytes()) == "An edit left uncommitted."
+    still = _status(root)
+    assert any(line.endswith("CHILD/objects/CHILD-1.xml") for line in still), still
+    assert any(line.endswith("PARENT/objects/PARENT-2.xml") for line in still), still
+
+
+def test_ver_srs_107_commit_message_commits_files_the_call_changed_in_other_documents(mcp_repo):
+    """MELLON-VER-SRS-107: the files that the call changed, in whichever
+    document: deleting PARENT-1 strips CHILD-0's link to it, and the commit
+    holds exactly the files the call wrote or deleted."""
+    root = _mcp_root(mcp_repo)
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Unrelated uncommitted edit."))
+    before = _work_files(root)
+
+    res = server.delete_object("PARENT", "PARENT-1", force=True, commit_message="Delete PARENT-1")
+
+    assert "commit" in res, f"the delete made no commit: {res}"
+    by_call = _changed(before, _work_files(root))
+    assert "PARENT/objects/PARENT-1.xml" in by_call
+    assert "CHILD/links/CHILD-0.xml" in by_call, "the delete didn't strip the incoming link"
+    assert _commit_paths(root) == by_call
+    assert any(line.endswith("CHILD/objects/CHILD-1.xml") for line in _status(root))
+
+
+def test_ver_srs_115_commit_message_commit_records_git_identity_as_author_and_committer(mcp_repo):
+    """MELLON-VER-SRS-115: a write tool's `commit_message` commit records git's identity."""
+    root = _mcp_root(mcp_repo, ANN)
+
+    res = server.set_attribute("CHILD", "CHILD-0", "status", "Approved", commit_message="Approve as Ann")
+
+    assert "commit" in res, res
+    _assert_identity(root, *ANN)
+
+
+def test_ver_srs_131_commit_message_commit_runs_no_git_hook(mcp_repo, tmp_path_factory):
+    """MELLON-VER-SRS-131: a write tool's `commit_message` commit runs no git hook."""
+    root = _mcp_root(mcp_repo)
+    markers = tmp_path_factory.mktemp("hooks") / "markers"
+    _install_hooks(root, markers)
+    old_head = _head(root)
+
+    res = server.set_attribute("CHILD", "CHILD-0", "status", "Approved", commit_message="Approve past hooks")
+
+    assert "commit" in res, res
+    assert _parents(root) == [old_head]
+    assert sorted(p.name for p in markers.iterdir()) == [], "a git hook ran"
+    _assert_hooks_live(root, markers)
+
+
+# ==========================================================================
+# Commits over MCP
+# ==========================================================================
+
+ver_WRITE_TOOLS = [
+    "new_object", "set_attribute", "edit_description", "update_object", "copy_object",
+    "bulk_set_attribute", "set_figure", "clear_figure", "set_table", "clear_table",
+    "edit_metadata", "tag_issue", "add_parent_doc", "remove_parent_doc", "add_attr_option",
+    "define_attribute", "change_attribute_required", "delete_attribute", "remove_attr_option",
+    "manage_view", "create_document", "move_object", "reorder_outline", "add_link",
+    "remove_link", "delete_object", "ack_suspects",
+]
+
+
+def _accepts_string(schema: dict) -> bool:
+    if schema.get("type") == "string":
+        return True
+    return any(s.get("type") == "string" for s in schema.get("anyOf", []))
+
+
+def test_ver_srs_171_write_tools_take_an_optional_commit_message_over_stdio(tmp_path):
+    """MELLON-VER-SRS-171: Each write tool other than `tag_issue` accepts an
+    optional `commit_message`; `tag_issue` has none. Read from the tools'
+    input schemas, listed over stdio."""
+    root = _make_repo(tmp_path / "repo")
+
+    async def work(session):
+        return (await session.list_tools()).tools
+
+    tools = {t.name: t.inputSchema for t in _stdio(root, work, tmp_path)}
+
+    missing = [n for n in ver_WRITE_TOOLS if n not in tools]
+    assert missing == [], f"write tools not offered: {missing}"
+    wrong = []
+    for name in ver_WRITE_TOOLS:
+        props = tools[name].get("properties", {})
+        required = tools[name].get("required", [])
+        if name == "tag_issue":
+            if "commit_message" in props:
+                wrong.append(f"{name} has commit_message")
+            continue
+        if "commit_message" not in props:
+            wrong.append(f"{name} has no commit_message")
+        elif "commit_message" in required:
+            wrong.append(f"{name}'s commit_message is required")
+        elif not _accepts_string(props["commit_message"]):
+            wrong.append(f"{name}'s commit_message isn't a string: {props['commit_message']}")
+    assert wrong == []
+
+
+@pytest.mark.parametrize("cause", ["index_lock", "no_user_email"])
+def test_ver_srs_173_failed_commit_message_commit_keeps_the_write_and_returns_the_error(mcp_repo, request, cause):
+    """MELLON-VER-SRS-173: If the commit for a write tool's `commit_message`
+    fails, the MCP server keeps the write in the working copy and returns the
+    commit's error with the result; once the cause is gone, `commit_changes`
+    commits the kept write."""
+    root = _mcp_root(mcp_repo)
+    old_head = _head(root)
+    lock = root / ".git/index.lock"
+    if cause == "index_lock":
+        _write(lock, "")
+    else:
+        request.getfixturevalue("only_repo_git_config")
+        _git(root, "config", "--unset", "user.email")
+    try:
+        res = server.set_attribute("CHILD", "CHILD-0", "status", "Approved", commit_message="Approve CHILD-0")
+    finally:
+        if lock.exists():
+            lock.unlink()
+
+    assert res.get("ok") is True, f"the write isn't reported as done: {res}"
+    assert res.get("commit_error"), f"the result carries no commit error: {res}"
+    assert "commit" not in res, f"the result reports a commit: {res}"
+    assert _head(root) == old_head
+    assert _attr((root / "CHILD/objects/CHILD-0.xml").read_bytes(), "status") == "Approved"
+
+    if cause == "no_user_email":
+        _git(root, "config", "user.email", IDENTITY[1])
+    again = server.commit_changes("Commit the kept write")
+    assert again.get("ok") is True, again
+    assert _attr(_tree(root)["CHILD/objects/CHILD-0.xml"], "status") == "Approved"
+
+
+def test_ver_srs_173_commit_message_without_a_git_repository_keeps_the_write(mcp_repo):
+    """MELLON-VER-SRS-173 with git absent: the root holds documents but no
+    git repository, so the commit fails; the write stays and the result
+    carries the commit's error."""
+    root = Path(mcp_repo)
+    assert not (root / ".git").exists()
+
+    res = server.set_attribute("CHILD", "CHILD-0", "status", "Approved", commit_message="Approve CHILD-0")
+
+    assert res.get("ok") is True, f"the write isn't reported as done: {res}"
+    assert res.get("commit_error"), f"the result carries no commit error: {res}"
+    assert _attr((root / "CHILD/objects/CHILD-0.xml").read_bytes(), "status") == "Approved"

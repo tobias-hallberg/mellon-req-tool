@@ -620,3 +620,88 @@ def test_store_srs_34_warning_icon_only_on_document_with_load_error(gui, tmp_pat
         icon = rows[name]["icon"]
         if isinstance(icon, QIcon) and not icon.isNull():
             assert icon.pixmap(16, 16).toImage() != bad_img, f"{name} shows the warning icon"
+
+
+# MELLON-VER-SRS blind tests
+from tests.ver_support import (  # noqa: E402
+    SVG_RED,
+    _action,
+    _activate,
+    _commit,
+    _git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _head,
+    _make_repo,
+    _obj,
+    _open_editor,
+    _open_explorer,
+    _rev,
+    _status_labels,
+    _write,
+)
+
+
+# ==========================================================================
+# Uncommitted changes
+# ==========================================================================
+
+
+def test_ver_srs_184_side_files_dont_count_as_uncommitted_changes(tmp_path, qtbot):
+    """MELLON-VER-SRS-184: Mellon leaves each editor side file out of the
+    count of uncommitted changes, in the Project Explorer's and the Document
+    Editor's status bars. Control: a real change does change the count."""
+    root = _make_repo(tmp_path / "repo")
+    pe = _open_explorer(qtbot, root)
+    w = _open_editor(qtbot, root)
+    clean_pe, clean_w = _status_labels(pe), _status_labels(w)
+
+    def refresh():
+        _action(pe, "Refresh").trigger()
+        _activate(qtbot, pe)
+        _action(w, "Reload from disk").trigger()
+        _activate(qtbot, w)
+
+    _write(root / "CHILD/figures/.$CHILD-1.svg.bkp", SVG_RED)
+    _write(root / "CHILD/~$CHILD.xml", "lock file")
+    refresh()
+
+    assert _status_labels(pe) == clean_pe, "the Project Explorer counts a side file"
+    assert _status_labels(w) == clean_w, "the Document Editor counts a side file"
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "A real change."))
+    refresh()
+    assert _status_labels(pe) != clean_pe and _status_labels(w) != clean_w, "control: a real change isn't counted"
+
+
+def test_ver_srs_375_project_explorer_status_bar_shows_branch_and_latest_commit(tmp_path, qtbot):
+    """MELLON-VER-SRS-375: The Project Explorer shows in the status bar the
+    current branch's name and the latest commit's hash, and the new hash after
+    a git client commits and the window is activated."""
+    root = _make_repo(tmp_path / "repo")
+    _git(root, "checkout", "-q", "-b", "feature-x")
+    pe = _open_explorer(qtbot, root)
+    first = " ".join(_status_labels(pe))
+    assert "feature-x" in first and _head(root)[:7] in first, f"status bar: {first}"
+
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Committed in a git client."))
+    new = _commit(root, "git client commit", tick=5)
+    _activate(qtbot, pe)
+
+    shown = " ".join(_status_labels(pe))
+    assert new[:7] in shown and "feature-x" in shown, f"status bar after the commit: {shown}"
+
+
+def test_ver_srs_377_document_editor_status_bar_shows_detached_head(tmp_path, qtbot):
+    """MELLON-VER-SRS-377: While HEAD is detached, the Document Editor's status
+    bar shows that HEAD is detached (MELLON-VER-SRS-376: with the commit's hash)."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Second commit."))
+    _commit(root, "second", tick=2)
+    first = _rev(root, "HEAD~1")
+    _git(root, "checkout", "-q", first)
+    assert _git(root, "symbolic-ref", "-q", "HEAD", check=False).returncode != 0
+
+    w = _open_editor(qtbot, root, writable=False)
+    shown = " ".join([w.statusBar().currentMessage(), *_status_labels(w)])
+
+    assert "detached" in shown.lower(), f"the status bar doesn't say HEAD is detached: {shown}"
+    assert first[:7] in shown, f"the status bar doesn't show the commit: {shown}"

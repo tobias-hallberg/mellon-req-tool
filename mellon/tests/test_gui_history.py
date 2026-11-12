@@ -308,3 +308,47 @@ def test_object_at_commit_dialog_renders_snapshot(window, qtbot) -> None:
     assert dialog._description.isReadOnly()
     # Attribute rows reflect the historical attrs map.
     assert dialog._attrs_form.rowCount() == len(snapshot.object.attrs)
+
+
+# MELLON-VER-SRS blind tests
+from PySide6.QtWidgets import QAbstractItemView, QTabWidget  # noqa: E402
+
+from mellon.gui.panels.history_tab import HistoryTab  # noqa: E402
+from tests.ver_support import (  # noqa: E402
+    _button,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _grid_index,
+    _make_repo,
+    _open_editor,
+    _texts,
+    _two_status_commits,
+    ui,  # noqa: F401, F811 -- fixture
+)
+
+
+def test_ver_srs_230_history_tab_view_at_this_commit_shows_values_from_that_commit(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-230: the History tab's View at this commit… shows the
+    object's attribute values and description from the selected commit."""
+    root = _make_repo(tmp_path / "repo")
+    first, _ = _two_status_commits(root)
+    w = _open_editor(qtbot, root, writable=False)
+    w.grid_pane.table.setCurrentIndex(_grid_index(w, "CHILD-0", "Description"))
+    tabs = w.right_pane.findChildren(QTabWidget)[0]
+    tabs.setCurrentIndex([tabs.tabText(i) for i in range(tabs.count())].index("History"))
+    hist = w.findChildren(HistoryTab)[0]
+    hist.refresh()
+    qtbot.wait(50)
+    view = [v for v in hist.findChildren(QAbstractItemView) if v.model() and v.model().rowCount() and v.model().columnCount() > 1][0]
+    m = view.model()
+    rows = [r for r in range(m.rowCount()) if first.startswith(str(m.data(m.index(r, 0))))]
+    assert rows, f"the History tab doesn't list {first[:7]}"
+    view.selectRow(rows[0])
+    qtbot.wait(20)
+
+    _button(hist, "View at this commit").click()
+    qtbot.wait(20)
+
+    assert ui.object_dialogs, "View at this commit… showed nothing"
+    shown = "\n".join(_texts(ui.object_dialogs[-1]))
+    assert "Draft" in shown and "Text of CHILD-0." in shown, shown
+    assert "Approved text." not in shown

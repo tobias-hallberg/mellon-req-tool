@@ -1253,3 +1253,434 @@ def test_trace_srs_120_changed_fields_unknown_when_target_did_not_exist_at_the_a
     assert before_creation["changed_fields"] is None, before_creation
     control = s.review_suspect_link("CHILD", "CHILD-2", "PARENT", "PARENT-1")
     assert control["changed_fields"] == ["description"], control
+
+
+# MELLON-VER-SRS blind tests
+from pygit2.enums import ConfigLevel  # noqa: E402
+
+from tests.ver_support import (  # noqa: E402
+    ANN,
+    GIT_OPERATIONS,
+    SVG_RED,
+    _assert_hooks_live,
+    _assert_identity,
+    _assert_only_branch_and_tags_moved,
+    _clear,
+    _commit,
+    _git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _head,
+    _init,
+    _install_hooks,
+    _make_repo,
+    _many_refs,
+    _mcp_root,
+    _obj,
+    _parents,
+    _refs,
+    _remote,
+    _remote_state,
+    _rev,
+    _start_clean_merge,
+    _status,
+    _stdio,
+    _stop_git_operation,
+    _tree,
+    _two_status_commits,
+    _unborn_doc,
+    _write,
+    only_repo_git_config,  # noqa: F401, F811 -- fixture
+)
+
+
+def _tool_json(result):
+    assert not result.isError, f"tool call failed: {result.content}"
+    sc = getattr(result, "structuredContent", None)
+    if sc is not None:
+        if isinstance(sc, dict) and set(sc) == {"result"}:
+            return sc["result"]
+        return sc
+    vals = [json.loads(c.text) for c in result.content if getattr(c, "type", "") == "text"]
+    return vals[0] if len(vals) == 1 else vals
+
+
+def _names_commit(entry: dict, full: str) -> bool:
+    """True when a history entry names the commit `full` by 7 or more digits."""
+    return any(isinstance(v, str) and len(v) >= 7 and full.startswith(v) for v in entry.values())
+
+
+def _which(entry: dict, commits: dict[str, str]) -> str:
+    hits = [name for name, full in commits.items() if _names_commit(entry, full)]
+    assert len(hits) == 1, f"history entry {entry} names {hits} of {list(commits)}"
+    return hits[0]
+
+
+# ==========================================================================
+# What a commit holds
+# ==========================================================================
+
+
+def test_ver_srs_91_commit_changes_folder_path_commits_the_folders_files_without_side_files(mcp_repo):
+    """MELLON-VER-SRS-91: When Mellon commits, the new commit holds the latest
+    commit's files, with each selected path other than an editor side file as
+    the working copy holds it. Term Selected path: a folder given as a path
+    selects each file under the folder."""
+    root = _mcp_root(mcp_repo)
+    before = _tree(root)
+    old_head = _head(root)
+    edited = _obj("CHILD-0", "Edited for the folder commit.")
+    _write(root / "CHILD/objects/CHILD-0.xml", edited)
+    _write(root / "CHILD/figures/.$CHILD-0.svg.bkp", SVG_RED)
+    _write(root / "CHILD/~$CHILD.xml", "lock file")
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Outside the selected folder."))
+
+    res = server.commit_changes("Commit the CHILD folder", paths=["CHILD"])
+
+    assert res.get("ok") is True, f"commit_changes(paths=['CHILD']) made no commit: {res}"
+    assert _parents(root) == [old_head], "the new commit is not on the latest commit"
+    expected = dict(before)
+    expected["CHILD/objects/CHILD-0.xml"] = edited.encode()
+    after = _tree(root)
+    assert sorted(set(after) ^ set(expected)) == [], "the commit's files differ from latest + selected"
+    assert after == expected, "a file in the commit doesn't match the latest commit or the working copy"
+
+
+def test_ver_srs_91_side_file_named_as_a_path_is_left_out_of_the_commit(mcp_repo):
+    """MELLON-VER-SRS-91: each selected path other than an editor side file
+    goes into the commit; a side file named in `paths` stays out."""
+    root = _mcp_root(mcp_repo)
+    before = _tree(root)
+    edited = _obj("CHILD-0", "Edited with a side file beside it.")
+    _write(root / "CHILD/objects/CHILD-0.xml", edited)
+    _write(root / "CHILD/figures/.$CHILD-0.svg.bkp", SVG_RED)
+
+    res = server.commit_changes(
+        "Commit an object and a side file",
+        paths=["CHILD/objects/CHILD-0.xml", "CHILD/figures/.$CHILD-0.svg.bkp"],
+    )
+
+    assert res.get("ok") is True, f"no commit was made: {res}"
+    expected = dict(before)
+    expected["CHILD/objects/CHILD-0.xml"] = edited.encode()
+    assert _tree(root) == expected, "the side file, or another file, went into the commit"
+
+
+def test_ver_srs_92_commit_changes_deleted_folder_leaves_its_files_out(mcp_repo):
+    """MELLON-VER-SRS-92: When Mellon commits, each selected path that the
+    latest commit holds and the working copy doesn't is left out of the new
+    commit. A deleted folder selects each file the latest commit holds under it."""
+    root = _mcp_root(mcp_repo)
+    before = _tree(root)
+    shutil.rmtree(root / "CHILD")
+
+    res = server.commit_changes("Remove the CHILD document", paths=["CHILD"])
+
+    assert res.get("ok") is True, f"commit_changes(paths=['CHILD']) made no commit: {res}"
+    expected = {p: b for p, b in before.items() if not p.startswith("CHILD/")}
+    after = _tree(root)
+    assert [p for p in after if p.startswith("CHILD/")] == [], "files of the deleted folder stayed in the commit"
+    assert after == expected, "a file outside the deleted folder changed in the commit"
+
+
+def test_ver_srs_92_commit_changes_deleted_file_is_left_out(mcp_repo):
+    """MELLON-VER-SRS-92: a deleted file given as a path is left out of the
+    new commit, and every other file is as the latest commit holds it."""
+    root = _mcp_root(mcp_repo)
+    before = _tree(root)
+    (root / "CHILD/objects/CHILD-1.xml").unlink()
+
+    res = server.commit_changes("Remove CHILD-1's file", paths=["CHILD/objects/CHILD-1.xml"])
+
+    assert res.get("ok") is True, f"no commit was made: {res}"
+    expected = {p: b for p, b in before.items() if p != "CHILD/objects/CHILD-1.xml"}
+    assert _tree(root) == expected
+
+
+def test_ver_srs_93_first_commit_through_commit_changes_holds_only_the_selected_path(mcp_repo):
+    """MELLON-VER-SRS-93: While the repository has no commit, Mellon makes the
+    new commit hold only the selected paths' content in the working copy."""
+    root = Path(mcp_repo)
+    _clear(root)
+    _init(root)
+    files = _unborn_doc(root)
+    assert _head(root) is None
+
+    res = server.commit_changes("First commit", paths=["DOC/DOC.xml"])
+
+    assert res.get("ok") is True, f"no first commit was made: {res}"
+    assert _parents(root) == [], "the first commit has a parent"
+    assert _tree(root) == {"DOC/DOC.xml": files["DOC/DOC.xml"].encode()}
+
+
+# ==========================================================================
+# Refused commits
+# ==========================================================================
+
+
+@pytest.mark.parametrize("missing", ["user.email", "user.name"])
+def test_ver_srs_112_commit_changes_refused_when_one_identity_setting_is_missing(mcp_repo, only_repo_git_config, missing):
+    """MELLON-VER-SRS-112: If git's `user.name` or `user.email` isn't set,
+    Mellon refuses to commit: HEAD doesn't move and the change stays."""
+    root = _mcp_root(mcp_repo)
+    _git(root, "config", "--unset", missing)
+    assert missing not in pygit2.Repository(str(root)).config, f"{missing} is still set somewhere"
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Waiting for an identity."))
+
+    res = server.commit_changes("Should be refused", paths=["CHILD/objects/CHILD-0.xml"])
+
+    assert res.get("ok") is not True, f"the commit was made without {missing}: {res}"
+    assert _head(root) == old_head
+    assert any(line.endswith("CHILD/objects/CHILD-0.xml") for line in _status(root))
+
+
+def test_ver_srs_115_commit_changes_records_git_identity_as_author_and_committer(mcp_repo):
+    """MELLON-VER-SRS-115: a `commit_changes` commit records git's identity."""
+    root = _mcp_root(mcp_repo, ANN)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed by Ann."))
+
+    res = server.commit_changes("Commit as Ann")
+
+    assert res.get("ok") is True, res
+    _assert_identity(root, *ANN)
+
+
+@pytest.fixture
+def global_identity(tmp_path_factory):
+    """libgit2's global config holds the only identity: Gil Global."""
+    home = tmp_path_factory.mktemp("global-identity")
+    (home / ".gitconfig").write_text("[user]\n\tname = Gil Global\n\temail = gil@example.invalid\n", newline="\n")
+    empty = tmp_path_factory.mktemp("no-other-git-config")
+    levels = {ConfigLevel.GLOBAL: home, ConfigLevel.XDG: empty, ConfigLevel.SYSTEM: empty, ConfigLevel.PROGRAMDATA: empty}
+    saved = {lvl: pygit2.settings.search_path[lvl] for lvl in levels}
+    for lvl, path in levels.items():
+        pygit2.settings.search_path[lvl] = str(path)
+    yield ("Gil Global", "gil@example.invalid")
+    for lvl, value in saved.items():
+        pygit2.settings.search_path[lvl] = value
+
+
+def test_ver_srs_115_commit_records_the_identity_from_the_global_git_config(mcp_repo, global_identity):
+    """MELLON-VER-SRS-115 with the identity set only in the global git config:
+    the commit records it as author and committer."""
+    root = _mcp_root(mcp_repo)
+    _git(root, "config", "--unset", "user.name")
+    _git(root, "config", "--unset", "user.email")
+    assert pygit2.Repository(str(root)).config["user.name"] == global_identity[0], "setup: no global identity"
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed by Gil."))
+
+    res = server.commit_changes("Commit as Gil")
+
+    assert res.get("ok") is True, res
+    _assert_identity(root, *global_identity)
+
+
+def test_ver_srs_117_commit_changes_refused_during_merge_without_conflict(mcp_repo):
+    """MELLON-VER-SRS-117: While a merge is in progress (here stopped by
+    `git merge --no-commit`, no conflicting file), Mellon refuses to commit."""
+    root = _mcp_root(mcp_repo)
+    _start_clean_merge(root)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited during the merge."))
+
+    res = server.commit_changes("Should be refused", paths=["CHILD/objects/CHILD-0.xml"])
+
+    assert res.get("ok") is not True, f"a commit was made during the merge: {res}"
+    assert _head(root) == old_head
+    assert (root / ".git/MERGE_HEAD").exists(), "the merge is no longer in progress"
+
+
+def test_ver_srs_117_commit_changes_accepted_once_the_merge_is_aborted(mcp_repo):
+    """MELLON-VER-SRS-117, other side: once the merge is aborted, nothing is
+    in progress and the same commit goes through."""
+    root = _mcp_root(mcp_repo)
+    _start_clean_merge(root)
+    _git(root, "merge", "--abort")
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited after the merge."))
+
+    res = server.commit_changes("Accepted", paths=["CHILD/objects/CHILD-0.xml"])
+
+    assert res.get("ok") is True, res
+    assert _parents(root) == [old_head]
+
+
+@pytest.mark.parametrize("op", GIT_OPERATIONS)
+def test_ver_srs_118_commit_changes_refused_while_git_operation_in_progress(mcp_repo, op):
+    """MELLON-VER-SRS-118: While a rebase, cherry-pick or revert is in
+    progress, Mellon refuses to commit (stopped on a conflict and marked
+    resolved, or a revert / cherry-pick range run with --no-commit)."""
+    root = _mcp_root(mcp_repo)
+    _stop_git_operation(root, op)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", f"Edited during {op}."))
+
+    res = server.commit_changes("Should be refused", paths=["CHILD/objects/CHILD-0.xml"])
+
+    assert res.get("ok") is not True, f"a commit was made during {op}: {res}"
+    assert _head(root) == old_head
+
+
+def test_ver_srs_121_commit_changes_with_index_lock_says_commit_again(mcp_repo):
+    """MELLON-VER-SRS-121: If another program holds git's index lock, Mellon
+    makes no commit and reports that the user can commit again."""
+    root = _mcp_root(mcp_repo)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited under a lock."))
+    _write(root / ".git/index.lock", "")
+    try:
+        res = server.commit_changes("Should not commit", paths=["CHILD/objects/CHILD-0.xml"])
+    finally:
+        (root / ".git/index.lock").unlink()
+
+    assert res.get("ok") is not True, res
+    assert _head(root) == old_head
+    assert re.search(r"\bagain\b", json.dumps(res).lower()), f"the result doesn't say to commit again: {res}"
+
+
+def test_ver_srs_131_commit_changes_runs_no_git_hook(mcp_repo, tmp_path_factory):
+    """MELLON-VER-SRS-131: `commit_changes` runs no git hook."""
+    root = _mcp_root(mcp_repo)
+    markers = tmp_path_factory.mktemp("hooks") / "markers"
+    _install_hooks(root, markers)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed past the hooks."))
+
+    res = server.commit_changes("Commit past hooks")
+
+    assert res.get("ok") is True, res
+    assert _parents(root) == [old_head]
+    assert sorted(p.name for p in markers.iterdir()) == [], "a git hook ran"
+    _assert_hooks_live(root, markers)
+
+
+def test_ver_srs_131_commit_changes_runs_no_hook_from_core_hookspath(mcp_repo, tmp_path_factory):
+    """MELLON-VER-SRS-131, with the hooks in a folder that `core.hooksPath`
+    names: `commit_changes` runs none of them."""
+    root = _mcp_root(mcp_repo)
+    base = tmp_path_factory.mktemp("hookspath")
+    markers = base / "markers"
+    _install_hooks(root, markers, base / "hooks")
+    _git(root, "config", "core.hooksPath", (base / "hooks").as_posix())
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed past the hooks."))
+
+    res = server.commit_changes("Commit past hooksPath hooks")
+
+    assert res.get("ok") is True, res
+    assert _parents(root) == [old_head]
+    assert sorted(p.name for p in markers.iterdir()) == [], "a git hook ran"
+    _assert_hooks_live(root, markers)
+
+
+# ==========================================================================
+# History and an object at a commit
+# ==========================================================================
+
+
+def _history_repo(root: Path) -> dict[str, str]:
+    commits = {"seed": _head(root)}
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "First revision."))
+    commits["c1"] = _commit(root, "c1 edits CHILD-0", tick=2)
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Not CHILD-0."))
+    commits["c2"] = _commit(root, "c2 edits CHILD-1", tick=3)
+    _write(root / "CHILD/figures/CHILD-0.svg", SVG_RED)
+    commits["c3"] = _commit(root, "c3 adds CHILD-0's figure", tick=4)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Second revision."))
+    commits["c4"] = _commit(root, "c4 edits CHILD-0", tick=5)
+    return commits
+
+
+@pytest.mark.parametrize(
+    "limit,expected",
+    [(1, ["c4"]), (2, ["c4", "c3"]), (4, ["c4", "c3", "c1", "seed"]), (10, ["c4", "c3", "c1", "seed"])],
+)
+def test_ver_srs_222_git_history_returns_newest_max_entries_commits(mcp_repo, limit, expected):
+    """MELLON-VER-SRS-222: `git_history` returns, newest first, up to
+    `max_entries` commits on the latest commit's history that changed the
+    object's file or figure (a commit to another object isn't one)."""
+    root = _mcp_root(mcp_repo)
+    commits = _history_repo(root)
+
+    res = server.git_history("CHILD", "CHILD-0", max_entries=limit)
+
+    assert [_which(e, commits) for e in res] == expected
+
+
+def test_ver_srs_222_git_history_over_stdio(tmp_path):
+    """MELLON-VER-SRS-222, over stdio: `git_history` with `max_entries` 2
+    returns the two newest commits that changed the object, newest first."""
+    root = _make_repo(tmp_path / "repo")
+    commits = _history_repo(root)
+
+    async def work(session):
+        return _tool_json(await session.call_tool("git_history", {"doc_id": "CHILD", "obj_id": "CHILD-0", "max_entries": 2}))
+
+    res = _stdio(root, work, tmp_path)
+
+    assert [_which(e, commits) for e in res] == ["c4", "c3"]
+
+
+def test_ver_srs_230_show_object_at_returns_values_from_that_commit(mcp_repo):
+    """MELLON-VER-SRS-230: When Mellon shows an object at a commit, Mellon
+    shows the object's attribute values and description from the object's
+    file at that commit."""
+    root = _mcp_root(mcp_repo)
+    first, second = _two_status_commits(root)
+
+    old = server.show_object_at("CHILD", "CHILD-0", first)
+    new = server.show_object_at("CHILD", "CHILD-0", second)
+
+    assert (old["attrs"].get("status"), old["description"]) == ("Draft", "Text of CHILD-0.")
+    assert (new["attrs"].get("status"), new["description"]) == ("Approved", "Approved text.")
+
+
+def test_ver_srs_265_tag_issue_tags_the_latest_commit(mcp_repo):
+    """MELLON-VER-SRS-265: `tag_issue` tags the latest commit as the given
+    issue of the given document: CHILD-issue-5 resolves to HEAD."""
+    root = _mcp_root(mcp_repo)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Ready for issue 5."))
+    assert server.commit_changes("Prepare issue 5").get("ok") is True
+    head = _head(root)
+
+    res = server.tag_issue("CHILD", "5")
+
+    assert res.get("ok") is True, res
+    assert _rev(root, "refs/tags/CHILD-issue-5^{commit}") == head
+
+
+def _mcp_operations(root: Path) -> None:
+    """Commit, commit through a write tool, cut an issue, compare and read history over MCP."""
+    first = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed over MCP."))
+    assert server.commit_changes("MCP commit").get("ok") is True
+    assert "commit" in server.set_attribute("CHILD", "CHILD-1", "status", "Approved", commit_message="MCP write commit")
+    assert server.tag_issue("CHILD", "1").get("ok") is True
+    server.compare_document("CHILD", from_ref=first, to_ref=_head(root))
+    server.git_history("CHILD", "CHILD-0", max_entries=5)
+    server.show_object_at("CHILD", "CHILD-0", first)
+
+
+def test_ver_srs_373_mcp_operations_dont_fetch_pull_or_push(mcp_repo, tmp_path_factory):
+    """MELLON-VER-SRS-373: the MCP server's commit, write commit, issue,
+    compare and history tools don't fetch, pull or push."""
+    root = _mcp_root(mcp_repo)
+    bare, marker = _remote(root, tmp_path_factory.mktemp("remote"))
+    before = _remote_state(root, bare)
+
+    _mcp_operations(root)
+
+    assert _remote_state(root, bare) == before
+    assert not marker.exists(), "a credential helper ran"
+
+
+def test_ver_srs_374_mcp_operations_change_only_the_current_branch_and_their_own_tags(mcp_repo, tmp_path_factory):
+    """MELLON-VER-SRS-374: the MCP server's commits move only the current
+    branch, and `tag_issue` adds only its issue tag."""
+    root = _mcp_root(mcp_repo)
+    _many_refs(root, tmp_path_factory.mktemp("remote"))
+    before = _refs(root)
+
+    _mcp_operations(root)
+
+    _assert_only_branch_and_tags_moved(before, _refs(root), 2, {"CHILD-issue-1"}, root)

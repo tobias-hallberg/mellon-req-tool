@@ -2049,3 +2049,112 @@ def test_trace_srs_200_coverage_report_defaults(tmp_path, mcp):
     assert out["total"] == 4, out
     assert entry_ids(out["covered_objects"]) == {"REQ-1", "REQ-2"}, out
     assert entry_ids(out["uncovered"]) == {"REQ-3", "REQ-4"}, out
+
+
+# MELLON-VER-SRS blind tests
+from tests.ver_support import (  # noqa: E402
+    _branch,
+    _commit,
+    _git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _mcp_root,
+    _obj,
+    _write,
+)
+
+
+# ==========================================================================
+# Issues and tags
+# ==========================================================================
+
+
+def _issue_repo(root: Path, reachable: tuple[str, ...], elsewhere: str) -> None:
+    for i, issue in enumerate(reachable):
+        _write(root / "PARENT/objects/PARENT-1.xml", _obj("PARENT-1", f"Issue {issue} text."))
+        _commit(root, f"PARENT for issue {issue}", tick=10 + i)
+        _git(root, "tag", f"PARENT-issue-{issue}")
+    _git(root, "checkout", "-q", "-b", "side")
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Only on side."))
+    _commit(root, "side only", tick=30)
+    _git(root, "tag", f"PARENT-issue-{elsewhere}")
+    _git(root, "checkout", "-q", "main")
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "After the issues."))
+    _commit(root, "after the issues", tick=31)
+
+
+def _by_doc(rows) -> dict[str, dict]:
+    return {r["doc_id"]: r for r in rows}
+
+
+def test_ver_srs_250_list_documents_returns_the_current_issue(mcp_repo):
+    """MELLON-VER-SRS-250: `list_documents` returns each document's current
+    issue (issues 1 and 2 reachable, 3 on another branch only: 2), or an empty
+    value when the document has no issue."""
+    root = _mcp_root(mcp_repo)
+    _issue_repo(root, ("1", "2"), "3")
+
+    rows = _by_doc(server.list_documents())
+
+    assert rows["PARENT"]["current_issue"] == "2"
+    assert rows["CHILD"]["current_issue"] == ""
+
+
+def test_ver_srs_250_list_documents_current_issue_follows_issue_order(mcp_repo):
+    """MELLON-VER-SRS-250 with the term Current issue: issue order compares
+    parts as whole numbers, so 2.10 is above 2.9; 3 on another branch doesn't count."""
+    root = _mcp_root(mcp_repo)
+    _issue_repo(root, ("2.10", "2.9"), "3")
+
+    rows = _by_doc(server.list_documents())
+
+    assert rows["PARENT"]["current_issue"] == "2.10"
+
+
+def _issue_key(issue: str) -> tuple[int, ...]:
+    """Issue order (definitions): parts compared as whole numbers, a prefix first."""
+    return tuple(int(part) for part in issue.split("."))
+
+
+def test_ver_srs_250_current_issue_over_generated_issue_tags(mcp_repo):
+    """MELLON-VER-SRS-250 over generated issue tags (seeded, 12 rounds): the
+    current issue is the highest in issue order of the tags on the latest
+    commit or its ancestors, ignoring a tag on another branch, or empty."""
+    import random
+
+    rng = random.Random(250)
+    root = _mcp_root(mcp_repo)
+    on_main = []
+    for i in range(4):
+        _write(root / "PARENT/objects/PARENT-1.xml", _obj("PARENT-1", f"Revision {i}."))
+        on_main.append(_commit(root, f"main {i}", tick=10 + i))
+    _branch(root, "side", on_main[1])
+    _write(root / "PARENT/objects/PARENT-2.xml", _obj("PARENT-2", "Only on side."))
+    side = _commit(root, "side", tick=20)
+    _git(root, "checkout", "-q", "main")
+
+    for rnd in range(12):
+        tags: dict[str, str] = {}
+        wanted = rng.randint(1, 5)
+        while len(tags) < wanted:
+            issue = ".".join(str(rng.randint(0, 12)) for _ in range(rng.randint(1, 3)))
+            tags[issue] = rng.choice(on_main + [side])
+        for issue, target in tags.items():
+            _git(root, "tag", f"PARENT-issue-{issue}", target)
+        reachable = [i for i, target in tags.items() if target != side]
+        expected = max(reachable, key=_issue_key) if reachable else ""
+
+        got = _by_doc(server.list_documents())["PARENT"]["current_issue"]
+
+        assert got == expected, f"round {rnd}: tags {tags} (side is {side[:7]}) gave {got!r}, expected {expected!r}"
+        for issue in tags:
+            _git(root, "tag", "-d", f"PARENT-issue-{issue}")
+
+
+def test_ver_srs_251_show_document_returns_the_current_issue(mcp_repo):
+    """MELLON-VER-SRS-251: `show_document` returns the document's current
+    issue, or an empty value when the document has no issue."""
+    root = _mcp_root(mcp_repo)
+    _issue_repo(root, ("1", "2"), "3")
+
+    assert server.show_document("PARENT")["current_issue"] == "2"
+    assert server.show_document("CHILD")["current_issue"] == ""

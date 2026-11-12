@@ -3359,3 +3359,75 @@ def test_73_two_commit_comparison_keeps_pending_text(qtbot, tmp_path):
     assert in_editor == TYPED_LINE or on_disk == TYPED_LINE, (
         f"the typed text is gone: editor holds {in_editor!r}, the file holds {on_disk!r}"
     )
+
+
+# MELLON-VER-SRS blind tests
+from PySide6.QtWidgets import QComboBox  # noqa: E402
+
+from tests.ver_support import (  # noqa: E402
+    _activate,
+    _description,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _grid_index,
+    _head,
+    _inspector_description,
+    _make_repo,
+    _obj,
+    _open_editor as ver_open_editor,
+    _texts,
+    _type_into,
+    _write,
+    ui,  # noqa: F401, F811 -- fixture
+)
+
+
+# ==========================================================================
+# Compare with pending edits that can't be saved (accepted, not built)
+# ==========================================================================
+
+
+def ver_pick(combo: QComboBox, *needles: str) -> bool:
+    for i in range(combo.count()):
+        text = combo.itemText(i).lower()
+        if any(n.lower() in text for n in needles):
+            combo.setCurrentIndex(i)
+            return True
+    return False
+
+
+@pytest.mark.parametrize("where", ["grid", "inspector"])
+def test_ver_srs_88_compare_says_pending_edits_arent_in_the_comparison(tmp_path, qtbot, ui, where):
+    """MELLON-VER-SRS-88: If the Document Editor can't save its pending edits
+    when the Compare dialog compares with the working copy (the Changed on
+    disk banner is up), the Compare dialog shows that the pending edits
+    aren't in the comparison, and the typed text isn't shown as the To value."""
+    root = _make_repo(tmp_path / "repo")
+    w = ver_open_editor(qtbot, root)
+    typed = "Typed but not saved."
+    if where == "grid":
+        idx = _grid_index(w, "CHILD-0", "Description")
+        w.grid_pane.table.setCurrentIndex(idx)
+        w.grid_pane.table.edit(idx)
+        qtbot.wait(20)
+        field = QApplication.focusWidget()
+    else:
+        w.grid_pane.table.setCurrentIndex(_grid_index(w, "CHILD-0", "Description"))
+        qtbot.wait(20)
+        field = _inspector_description(w)
+    _type_into(qtbot, field, typed)
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Changed outside Mellon."))
+    _activate(qtbot, w)
+    assert w.grid_pane.is_stale(), "the Changed on disk banner didn't show"
+    assert field.toPlainText() == typed, "setup: the typed text is no longer pending"
+    assert _description((root / "CHILD/objects/CHILD-0.xml").read_bytes()) == "Text of CHILD-0."
+
+    dlg = w.open_compare()
+    qtbot.waitUntil(lambda: not dlg.is_busy(), timeout=15000)
+    assert ver_pick(dlg.to_combo, "working copy"), "the Compare dialog offers no working copy"
+    assert ver_pick(dlg.from_combo, "latest") or ver_pick(dlg.from_combo, _head(root)[:7])
+    dlg.compare()
+    qtbot.waitUntil(lambda: not dlg.is_busy(), timeout=15000)
+
+    shown = "\n".join(_texts(dlg))
+    assert re.search(r"pending|unsaved|not saved|not in the comparison", shown.lower()), shown
+    assert typed not in shown, "the typed text is shown as the To value"

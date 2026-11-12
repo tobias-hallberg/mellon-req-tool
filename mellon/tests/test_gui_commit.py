@@ -1286,3 +1286,803 @@ def test_store_srs_167_commit_dialog_put_back_failing_partway(gui, tmp_path, git
     )
     now = manifest.read_bytes()
     assert now in (original, inj.content_before), f"manifest left cut: {now!r}"
+
+
+# MELLON-VER-SRS blind tests
+import hashlib  # noqa: E402
+import re  # noqa: E402
+import stat  # noqa: E402
+import warnings  # noqa: E402
+
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtGui import QAction, QKeySequence  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
+from PySide6.QtWidgets import (  # noqa: E402
+    QApplication,
+    QDialog,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPlainTextEdit,
+    QTextEdit,
+    QWidget,
+)
+
+from mellon.gui.dialogs.commit_dialog import CommitDialog  # noqa: E402
+from mellon.gui.main_window import DocumentEditorWindow  # noqa: E402
+from mellon.service.document import DocumentService  # noqa: E402
+from tests.edit_b_support import _plain  # noqa: E402
+from tests.ver_support import (  # noqa: E402
+    ANN,
+    GIT_OPERATIONS,
+    SVG_RED,
+    _action,
+    _activate,
+    _assert_hooks_live,
+    _assert_identity,
+    _assert_only_branch_and_tags_moved,
+    _branch,
+    _button,
+    _changed,
+    _commit,
+    _dates,
+    _description,
+    _git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _grid_index,
+    _head,
+    _index_entries,
+    _init,
+    _inspector_description,
+    _install_hooks,
+    _make_repo,
+    _manifest,
+    _many_refs,
+    _merge_dialog,
+    _obj,
+    _open_editor,
+    _parents,
+    _refs,
+    _remote,
+    _remote_state,
+    _rev,
+    _start_clean_merge,
+    _status,
+    _status_labels,
+    _stop_git_operation,
+    _texts,
+    _tree,
+    _type_into,
+    _unborn_doc,
+    _unmerged,
+    _work_files,
+    _write,
+    _xml,
+    only_repo_git_config,  # noqa: F401, F811 -- fixture
+    ui,  # noqa: F401, F811 -- fixture
+)
+
+
+def _refresh_menu(action: QAction) -> None:
+    """Emit aboutToShow on each menu holding `action`, as opening it would."""
+    from PySide6.QtWidgets import QMenu
+
+    for obj in action.associatedObjects():
+        if isinstance(obj, QMenu):
+            obj.aboutToShow.emit()
+
+
+def _make_active(qtbot, window: QWidget) -> None:
+    window.raise_()
+    window.activateWindow()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        QApplication.setActiveWindow(window)
+    qtbot.wait(20)
+
+
+def _status_all(window) -> str:
+    return " | ".join([window.statusBar().currentMessage(), *_status_labels(window)])
+
+
+def _form_field(dialog: QWidget, label: str) -> QLineEdit:
+    """The line edit in the form row whose label reads `label`."""
+    for fl in dialog.findChildren(QFormLayout):
+        for r in range(fl.rowCount()):
+            li = fl.itemAt(r, QFormLayout.ItemRole.LabelRole)
+            fi = fl.itemAt(r, QFormLayout.ItemRole.FieldRole)
+            if not li or not li.widget() or not isinstance(li.widget(), QLabel):
+                continue
+            if _plain(li.widget().text()).rstrip(":") != label:
+                continue
+            if fi.widget() and isinstance(fi.widget(), QLineEdit):
+                return fi.widget()
+            lay = fi.layout()
+            if lay is not None:
+                for i in range(lay.count()):
+                    w = lay.itemAt(i).widget()
+                    if isinstance(w, QLineEdit):
+                        return w
+    raise AssertionError(f"no form field labelled {label!r}")
+
+
+def _accept(dlg) -> QDialog.DialogCode:
+    return QDialog.DialogCode.Accepted
+
+
+def _gui_commit(qtbot, ui, root: Path, doc: str = "CHILD", on_dialog=_accept) -> DocumentEditorWindow:
+    """Open `doc` writable and choose Commit, accepting the commit dialog."""
+    w = _open_editor(qtbot, root, doc)
+    ui.on_commit_dialog = on_dialog
+    _action(w, "Commit").trigger()
+    qtbot.wait(20)
+    return w
+
+
+def test_ver_srs_91_commit_dialog_leaves_side_files_out_of_the_commit(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-91: a commit from the commit dialog holds the latest
+    commit's files with the document's changed files, and no editor side file."""
+    root = _make_repo(tmp_path / "repo")
+    before = _tree(root)
+    edited = _obj("CHILD-0", "Edited in the working copy.")
+    _write(root / "CHILD/objects/CHILD-0.xml", edited)
+    _write(root / "CHILD/figures/.$CHILD-0.svg.bkp", SVG_RED)
+    _write(root / "CHILD/~$CHILD.xml", "lock file")
+    old_head = _head(root)
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _head(root) != old_head, f"no commit was made; messages: {ui.message_text()}"
+    expected = dict(before)
+    expected["CHILD/objects/CHILD-0.xml"] = edited.encode()
+    assert _tree(root) == expected, "a side file, or another file, went into the commit"
+
+
+def test_ver_srs_93_first_commit_from_commit_dialog_holds_only_the_documents_files(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-93: the first commit from the commit dialog holds only
+    the selected paths, the document's files, as the working copy holds them."""
+    root = tmp_path / "repo"
+    _init(root)
+    files = _unborn_doc(root)
+
+    _gui_commit(qtbot, ui, root, "DOC")
+
+    assert _head(root) is not None, f"no first commit was made; messages: {ui.message_text()}"
+    assert _parents(root) == [], "the first commit has a parent"
+    assert _tree(root) == {
+        "DOC/DOC.xml": files["DOC/DOC.xml"].encode(),
+        "DOC/objects/DOC-0.xml": files["DOC/objects/DOC-0.xml"].encode(),
+    }
+
+
+@pytest.mark.parametrize("missing", ["user.email", "user.name"])
+def test_ver_srs_112_document_editor_commit_refused_when_one_identity_setting_is_missing(
+    tmp_path, qtbot, ui, only_repo_git_config, missing
+):
+    """MELLON-VER-SRS-112: a commit from the Document Editor is refused when
+    `user.name` or `user.email` isn't set."""
+    root = _make_repo(tmp_path / "repo")
+    _git(root, "config", "--unset", missing)
+    assert missing not in pygit2.Repository(str(root)).config
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Waiting for an identity."))
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _head(root) == old_head, f"the commit was made without {missing}"
+    assert any(line.endswith("CHILD/objects/CHILD-0.xml") for line in _status(root))
+
+
+def test_ver_srs_115_commit_dialog_records_git_identity_as_author_and_committer(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-115: When Mellon commits, Mellon records git's
+    `user.name` and `user.email` as the commit's author and committer."""
+    root = _make_repo(tmp_path / "repo", ANN)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed by Ann."))
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _head(root) != old_head, f"no commit; messages: {ui.message_text()}"
+    _assert_identity(root, *ANN)
+
+
+def test_ver_srs_117_commit_dialog_refused_during_merge_without_conflict(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-117: a commit from the commit dialog is refused while a
+    merge stopped without a conflict is in progress."""
+    root = _make_repo(tmp_path / "repo")
+    _start_clean_merge(root)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited during the merge."))
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _head(root) == old_head, "a commit was made during the merge"
+    assert (root / ".git/MERGE_HEAD").exists(), "the merge is no longer in progress"
+
+
+@pytest.mark.parametrize("op", GIT_OPERATIONS)
+def test_ver_srs_118_commit_dialog_refused_while_git_operation_in_progress(tmp_path, qtbot, ui, op):
+    """MELLON-VER-SRS-118: a commit from the commit dialog is refused while a
+    rebase, cherry-pick or revert is in progress."""
+    root = _make_repo(tmp_path / "repo")
+    _stop_git_operation(root, op)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", f"Edited during {op}."))
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _head(root) == old_head, f"a commit was made during {op}"
+
+
+def test_ver_srs_121_commit_dialog_with_index_lock_says_commit_again(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-121: a commit from the commit dialog while another
+    program holds the index lock makes no commit and says to commit again."""
+    root = _make_repo(tmp_path / "repo")
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited under a lock."))
+    lock = root / ".git/index.lock"
+
+    def take_lock(dlg):
+        _write(lock, "")
+        return QDialog.DialogCode.Accepted
+
+    try:
+        w = _gui_commit(qtbot, ui, root, on_dialog=take_lock)
+        shown = ui.message_text() + "\n" + _status_all(w)
+    finally:
+        if lock.exists():
+            lock.unlink()
+
+    assert _head(root) == old_head
+    assert re.search(r"\bagain\b", shown.lower()), f"nothing says to commit again: {shown}"
+
+
+def test_ver_srs_131_commit_dialog_runs_no_git_hook(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-131: When Mellon commits, Mellon runs no git hook. A
+    failing pre-commit hook doesn't stop the commit dialog's commit, and no
+    hook leaves its marker."""
+    root = _make_repo(tmp_path / "repo")
+    markers = tmp_path / "markers"
+    _install_hooks(root, markers)
+    old_head = _head(root)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Committed past the hooks."))
+
+    _gui_commit(qtbot, ui, root)
+
+    assert _parents(root) == [old_head], f"no commit was made; messages: {ui.message_text()}"
+    assert sorted(p.name for p in markers.iterdir()) == [], "a git hook ran"
+    _assert_hooks_live(root, markers)
+
+
+# ==========================================================================
+# The commit dialog
+# ==========================================================================
+
+
+def test_ver_srs_141_commit_action_opens_commit_dialog_for_the_open_document(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-141: The Document Editor has a Commit action that opens
+    the commit dialog for the open document, listing its changed file."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed for the dialog."))
+    _write(root / "PARENT/objects/PARENT-1.xml", _obj("PARENT-1", "Another document's change."))
+    w = _open_editor(qtbot, root)
+
+    _action(w, "Commit").trigger()
+
+    assert len(ui.commit_dialogs) == 1, "the Commit action didn't open the commit dialog"
+    files = [i for i in ui.commit_dialog_items[0] if re.search(r"\.(xml|svg)$", i)]
+    assert files == ["CHILD/objects/CHILD-0.xml"], f"listed files: {ui.commit_dialog_items[0]}"
+    assert any("CHILD" in t for t in ui.commit_dialog_texts[0])
+
+
+def test_ver_srs_142_commit_action_shortcuts_are_exactly_ctrl_s_and_ctrl_k(tmp_path, qtbot):
+    """MELLON-VER-SRS-142: The Commit action has the shortcuts Ctrl+S and Ctrl+K."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root, writable=False)
+
+    keys = {s.toString(QKeySequence.SequenceFormat.PortableText) for s in _action(w, "Commit").shortcuts()}
+
+    assert keys == {"Ctrl+S", "Ctrl+K"}
+
+
+@pytest.mark.parametrize("key", ["S", "K"])
+def test_ver_srs_142_shortcut_opens_the_commit_dialog(tmp_path, qtbot, ui, key):
+    """MELLON-VER-SRS-142: pressing Ctrl+S, or Ctrl+K, opens the commit dialog."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed."))
+    w = _open_editor(qtbot, root)
+    _make_active(qtbot, w)
+
+    QTest.keyClick(w.windowHandle(), getattr(Qt.Key, f"Key_{key}"), Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(20)
+
+    assert len(ui.commit_dialogs) == 1, f"Ctrl+{key} didn't open the commit dialog"
+
+
+def test_ver_srs_143_commit_dialog_lists_the_file_of_text_typed_in_a_grid_cell(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-143: When the user commits from a Document Editor,
+    Mellon first saves the pending edits: text typed in a grid cell without
+    leaving the cell is saved before the commit dialog lists the files, so
+    the object file is listed (there was no other change)."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root)
+    table = w.grid_pane.table
+    idx = _grid_index(w, "CHILD-0", "Description")
+    table.setCurrentIndex(idx)
+    table.edit(idx)
+    qtbot.wait(20)
+    editor = QApplication.focusWidget()
+    assert isinstance(editor, (QTextEdit, QPlainTextEdit, QLineEdit)), f"no cell editor opened: {editor}"
+    _type_into(qtbot, editor, "Typed in the grid.")
+
+    _action(w, "Commit").trigger()
+
+    assert ui.commit_dialogs, "the commit dialog didn't open"
+    assert any("CHILD/objects/CHILD-0.xml" in i for i in ui.commit_dialog_items[0]), ui.commit_dialog_items[0]
+
+
+def test_ver_srs_143_committed_text_typed_in_a_grid_cell(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-143: the new commit holds the text typed in a grid cell
+    that was still open when the user chose Commit."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root)
+    ui.on_commit_dialog = _accept
+    table = w.grid_pane.table
+    idx = _grid_index(w, "CHILD-0", "Description")
+    table.setCurrentIndex(idx)
+    table.edit(idx)
+    qtbot.wait(20)
+    editor = QApplication.focusWidget()
+    assert isinstance(editor, (QTextEdit, QPlainTextEdit, QLineEdit)), f"no cell editor opened: {editor}"
+    _type_into(qtbot, editor, "Typed in the grid.")
+    old_head = _head(root)
+
+    _action(w, "Commit").trigger()
+    qtbot.wait(20)
+
+    assert _head(root) != old_head, f"no commit; messages: {ui.message_text()}"
+    assert _description(_tree(root)["CHILD/objects/CHILD-0.xml"]) == "Typed in the grid."
+
+
+def test_ver_srs_143_committed_text_typed_in_the_inspector(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-143: the commit dialog lists, and the new commit holds,
+    description text typed in the Inspector and not yet saved."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root)
+    ui.on_commit_dialog = _accept
+    w.grid_pane.table.setCurrentIndex(_grid_index(w, "CHILD-0", "Description"))
+    qtbot.wait(20)
+    field = _inspector_description(w)
+    assert field.toPlainText() == "Text of CHILD-0.", "the Inspector doesn't show CHILD-0"
+    _type_into(qtbot, field, "Typed in the Inspector.")
+    old_head = _head(root)
+
+    _action(w, "Commit").trigger()
+    qtbot.wait(20)
+
+    assert ui.commit_dialogs, "the commit dialog didn't open"
+    assert any("CHILD/objects/CHILD-0.xml" in i for i in ui.commit_dialog_items[0]), ui.commit_dialog_items[0]
+    assert _head(root) != old_head, f"no commit; messages: {ui.message_text()}"
+    assert _description(_tree(root)["CHILD/objects/CHILD-0.xml"]) == "Typed in the Inspector."
+
+
+def test_ver_srs_144_commit_refused_while_changed_on_disk_banner_shows(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-144: While the Document Editor shows the Changed on disk
+    banner, the Document Editor refuses to commit: no dialog, no commit."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root)
+    ui.on_commit_dialog = _accept
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Changed outside Mellon."))
+    _make_active(qtbot, w)
+    _activate(qtbot, w)
+    assert w.grid_pane.is_stale(), "the Changed on disk banner didn't show"
+    old_head = _head(root)
+
+    _action(w, "Commit").trigger()
+    QTest.keyClick(w.windowHandle(), Qt.Key.Key_S, Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(20)
+
+    assert ui.commit_dialogs == [], "the commit dialog opened under the banner"
+    assert _head(root) == old_head
+
+
+def test_ver_srs_144_commit_opens_again_after_reload(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-144, other side: once the window reloads and the banner
+    is gone, Commit opens the commit dialog again."""
+    root = _make_repo(tmp_path / "repo")
+    w = _open_editor(qtbot, root)
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Changed outside Mellon."))
+    _activate(qtbot, w)
+    assert w.grid_pane.is_stale()
+    _action(w, "Reload from disk").trigger()
+    qtbot.wait(20)
+    assert not w.grid_pane.is_stale()
+    ro = _action(w, "Read-only")
+    if ro.isChecked():
+        ro.trigger()
+
+    _action(w, "Commit").trigger()
+
+    assert len(ui.commit_dialogs) == 1
+
+
+def test_ver_srs_145_commit_refused_in_read_only_mode(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-145: While the Document Editor is in read-only mode, it
+    refuses to commit: neither the menu's Commit nor Ctrl+S opens the dialog.
+    Control: out of read-only mode, Ctrl+S opens it."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "An uncommitted change."))
+    w = _open_editor(qtbot, root, writable=False)
+    ro = _action(w, "Read-only")
+    if not ro.isChecked():
+        ro.trigger()
+    assert ro.isChecked()
+    ui.on_commit_dialog = _accept
+    _make_active(qtbot, w)
+    old_head = _head(root)
+
+    _action(w, "Commit").trigger()
+    QTest.keyClick(w.windowHandle(), Qt.Key.Key_S, Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(20)
+
+    assert ui.commit_dialogs == [], "the commit dialog opened in read-only mode"
+    assert _head(root) == old_head
+    ui.on_commit_dialog = lambda dlg: QDialog.DialogCode.Rejected
+    ro.trigger()
+    _make_active(qtbot, w)
+    QTest.keyClick(w.windowHandle(), Qt.Key.Key_S, Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(20)
+    assert len(ui.commit_dialogs) == 1, "control: Ctrl+S doesn't open the dialog out of read-only mode"
+
+
+def test_ver_srs_146_commit_dialog_leaves_out_a_file_git_ignores(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-146: The commit dialog lists each uncommitted change in
+    the open document's folder. A file git ignores isn't an uncommitted change."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / ".gitignore", "*.tmp\n")
+    _commit(root, "ignore tmp files", tick=2)
+    _write(root / "CHILD/scratch.tmp", "ignored\n")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed."))
+    w = _open_editor(qtbot, root)
+
+    _action(w, "Commit").trigger()
+
+    assert ui.commit_dialogs, "the commit dialog didn't open"
+    items = ui.commit_dialog_items[0]
+    assert any("CHILD/objects/CHILD-0.xml" in i for i in items), items
+    assert not any("scratch.tmp" in i for i in items), f"an ignored file is listed: {items}"
+
+
+def test_ver_srs_146_commit_dialog_leaves_out_editor_side_files(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-146: an editor side file isn't an uncommitted change, so
+    the commit dialog doesn't list it."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/figures/.$CHILD-0.svg.bkp", SVG_RED)
+    _write(root / "CHILD/~$CHILD.xml", "lock file")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed."))
+    w = _open_editor(qtbot, root)
+
+    _action(w, "Commit").trigger()
+
+    assert ui.commit_dialogs, "the commit dialog didn't open"
+    items = ui.commit_dialog_items[0]
+    assert any("CHILD/objects/CHILD-0.xml" in i for i in items), items
+    assert not any("$" in i for i in items), f"a side file is listed: {items}"
+
+
+def test_ver_srs_149_commit_dialog_lists_a_broken_link(tmp_path, qtbot):
+    """MELLON-VER-SRS-149: The commit dialog lists the open document's broken
+    outgoing links: CHILD-0's link to PARENT-1, whose object file is gone."""
+    root = _make_repo(tmp_path / "repo")
+    (root / "PARENT/objects/PARENT-1.xml").unlink()
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "A change to commit."))
+    preview = DocumentService(root).prepare_document_commit("CHILD")
+    dlg = CommitDialog(preview)
+    qtbot.addWidget(dlg)
+    dlg.show()
+
+    lines = [t for t in _texts(dlg) if "PARENT-1" in t]
+
+    assert lines, f"the dialog doesn't show the link to PARENT-1: {_texts(dlg)}"
+    assert any("CHILD-0" in t and "broken" in t.lower() for t in lines) or (
+        any("CHILD-0" in t for t in lines) and any("broken" in t.lower() for t in _texts(dlg))
+    ), f"the link isn't listed as broken: {lines}"
+
+
+def test_ver_srs_161_commit_dialog_refuses_an_empty_author(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-161: If the commit dialog's author is empty, the commit
+    dialog refuses the commit: no commit, and the manifest keeps its author."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed."))
+    old_head = _head(root)
+    seen = {}
+
+    def clear_author(dlg):
+        field = _form_field(dlg, "Author")
+        field.setText("")
+        seen["author"] = dlg.author()
+        button = _button(dlg, "Commit")
+        seen["enabled"] = button.isEnabled()
+        button.click()
+        seen["result"] = dlg.result()
+        return dlg.result()
+
+    _gui_commit(qtbot, ui, root, on_dialog=clear_author)
+
+    assert seen.get("author") == "", "the author field wasn't cleared"
+    assert seen.get("result") != QDialog.DialogCode.Accepted, "the dialog accepted an empty author"
+    assert _head(root) == old_head, "a commit was made with an empty author"
+    assert _xml((root / "CHILD/CHILD.xml").read_bytes()).findtext("metadata/author") == "Ann Author"
+
+
+def _commit_elsewhere(root: Path) -> str:
+    """A git client's commit on the current branch, without touching the index."""
+    new = _git(root, "commit-tree", "HEAD^{tree}", "-p", "HEAD", "-m", "git client commit", env=_dates(5)).stdout.strip()
+    _git(root, "update-ref", "HEAD", new)
+    return new
+
+
+@pytest.mark.parametrize(
+    "cause",
+    [
+        "head_moved_while_recording",
+        "index_lock",
+    ],
+)
+def test_ver_srs_168_failed_dialog_commit_restores_manifest_author_and_date(tmp_path, qtbot, ui, monkeypatch, cause):
+    """MELLON-VER-SRS-168: If a commit from the commit dialog fails, Mellon
+    restores the manifest's author and date to their values before the
+    dialog's edit. Failures: a git client commits while Mellon records the
+    commit (MELLON-VER-SRS-123 refuses it), and a held index lock.
+
+    The git client's commit is injected at libgit2's commit creation, the
+    moment Mellon records; a commit made while the dialog is open isn't
+    refused by 0.3.0 (MELLON-VER-SRS-124 is only Proposed)."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Changed."))
+    old_head = _head(root)
+    lock = root / ".git/index.lock"
+    moved = {}
+
+    def edit_then_fail(dlg):
+        _form_field(dlg, "Author").setText("bob")
+        _form_field(dlg, "Date").setText("2026-02-02")
+        assert dlg.author() == "bob"
+        if cause == "head_moved_while_recording":
+            original = pygit2.Repository.create_commit
+
+            def racing(self, *args, **kwargs):
+                if "head" not in moved:
+                    moved["head"] = _commit_elsewhere(root)
+                return original(self, *args, **kwargs)
+
+            monkeypatch.setattr(pygit2.Repository, "create_commit", racing)
+        else:
+            _write(lock, "")
+        return QDialog.DialogCode.Accepted
+
+    try:
+        _gui_commit(qtbot, ui, root, on_dialog=edit_then_fail)
+    finally:
+        if lock.exists():
+            lock.unlink()
+
+    if cause == "head_moved_while_recording":
+        assert "head" in moved, "setup: the git client's commit wasn't injected while Mellon recorded"
+    expected_head = moved.get("head", old_head)
+    assert _head(root) == expected_head, (
+        f"the commit didn't fail ({cause}), so the test can't check the restore; messages: {ui.message_text()}"
+    )
+    meta = _xml((root / "CHILD/CHILD.xml").read_bytes())
+    assert (meta.findtext("metadata/author"), meta.findtext("metadata/date")) == ("Ann Author", "2026-01-01"), (
+        f"the manifest keeps the dialog's edit after the failure: {ui.message_text()}"
+    )
+
+
+def _discard(qtbot, ui, w, answer) -> None:
+    action = _action(w, "Discard uncommitted changes to this document")
+    _refresh_menu(action)
+    ui.answer = answer
+    action.trigger()
+    qtbot.wait(20)
+
+
+def _assert_folder_is_head(root: Path, folder: str) -> None:
+    head = {p: hashlib.sha256(b).hexdigest() for p, b in _tree(root).items() if p.startswith(folder + "/")}
+    assert _work_files(root, folder) == head, "the folder isn't as the latest commit holds it"
+    assert _status(root, folder) == []
+
+
+def test_ver_srs_196_cancelled_discard_changes_no_file_and_no_index_entry(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-196: If the user cancels the discard confirmation,
+    Mellon changes no file and no git index entry (a staged change stays
+    staged with the same content)."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Staged change."))
+    _git(root, "add", "CHILD/objects/CHILD-0.xml")
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Unstaged change."))
+    w = _open_editor(qtbot, root)
+    files = _work_files(root, include_git=True)
+    index = _index_entries(root)
+
+    _discard(qtbot, ui, w, QMessageBox.StandardButton.Cancel)
+
+    assert any(k in ("question", "exec") for k, _, _ in ui.messages), "no confirmation was asked"
+    assert _index_entries(root) == index, "a git index entry changed"
+    assert sorted(_changed(files, _work_files(root, include_git=True))) == []
+    staged = _git(root, "diff", "--cached", "--name-only").stdout.split()
+    assert staged == ["CHILD/objects/CHILD-0.xml"]
+
+
+def test_ver_srs_204_discard_enabled_and_works_while_changed_on_disk_banner_shows(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-204: The Document Editor enables the Discard action
+    without regard to the Changed on disk banner; confirming it under the
+    banner puts the folder back as the latest commit holds it."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "An uncommitted change."))
+    w = _open_editor(qtbot, root)
+    action = _action(w, "Discard uncommitted changes to this document")
+    _refresh_menu(action)
+    before_banner = action.isEnabled()
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Changed outside Mellon."))
+    _activate(qtbot, w)
+    assert w.grid_pane.is_stale(), "the Changed on disk banner didn't show"
+    _refresh_menu(action)
+    under_banner = action.isEnabled()
+
+    _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
+
+    assert (before_banner, under_banner) == (True, True)
+    _assert_folder_is_head(root, "CHILD")
+
+
+def test_ver_srs_209_discard_refused_when_latest_commit_holds_a_submodule_in_the_folder(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-209: If the latest commit holds a submodule in the
+    document's folder, Mellon refuses to discard: no file in the folder
+    changes. The submodule is a gitlink entry with its .gitmodules record,
+    not checked out (as after `git submodule deinit`)."""
+    root = _make_repo(tmp_path / "repo")
+    _git(root, "update-index", "--add", "--cacheinfo", f"160000,{_head(root)},CHILD/vendor")
+    _write(root / ".gitmodules", '[submodule "vendor"]\n\tpath = CHILD/vendor\n\turl = ../vendor.git\n')
+    _git(root, "add", ".gitmodules")
+    _git(root, "commit", "-q", "-m", "add a submodule", env=_dates(2))
+    assert _tree(root)["CHILD/vendor"] == b"<commit>", "the submodule entry isn't committed"
+    assert "CHILD/vendor" in _git(root, "submodule", "status").stdout
+    (root / "CHILD/vendor").mkdir(exist_ok=True)
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "An uncommitted change."))
+    w = _open_editor(qtbot, root)
+    before = _work_files(root, "CHILD")
+
+    _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
+
+    assert _work_files(root, "CHILD") == before, "the discard changed a file in the folder"
+    assert (root / "CHILD/vendor").is_dir()
+
+
+def test_ver_srs_211_discard_completes_when_run_again_after_failing_partway(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-211: If a discard fails partway, Mellon completes the
+    discard when the user discards again. The folder has one edited object,
+    one added and one deleted; a read-only added file makes the first discard fail."""
+    root = _make_repo(tmp_path / "repo")
+    head_files = {p: b for p, b in _tree(root).items() if p.startswith("CHILD/")}
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Edited."))
+    _write(root / "CHILD/objects/CHILD-2.xml", _obj("CHILD-2", "Added."))
+    (root / "CHILD/objects/CHILD-1.xml").unlink()
+    _write(root / "CHILD/CHILD.xml", _manifest("CHILD", ["CHILD-0", "CHILD-2"], parents=("PARENT",), title="Child", next_number=3))
+    stuck = root / "CHILD/objects/CHILD-2.xml"
+    stuck.chmod(stat.S_IREAD)
+    w = _open_editor(qtbot, root)
+    try:
+        _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
+        assert stuck.exists(), "the first discard didn't fail"
+        restored = [p for p in ("CHILD/CHILD.xml", "CHILD/objects/CHILD-0.xml", "CHILD/objects/CHILD-1.xml")
+                    if (root / p).exists() and (root / p).read_bytes() == head_files[p]]
+        partway = bool(restored)
+    finally:
+        stuck.chmod(stat.S_IREAD | stat.S_IWRITE)
+
+    _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
+
+    _assert_folder_is_head(root, "CHILD")
+    assert partway, "the first discard restored nothing, so it didn't fail partway (setup)"
+
+
+def test_ver_srs_292_failed_tag_after_commit_keeps_commit_and_names_the_tag(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-292: If tagging fails after Mellon made the commit,
+    Mellon keeps the commit and reports which tag failed and why. Another
+    program created the tag name CDR-1.0 after the dialog opened; the raised
+    issue's tag is made."""
+    root = _make_repo(tmp_path / "repo")
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "Release text."))
+    old_head = _head(root)
+
+    def raise_and_tag(dlg):
+        _form_field(dlg, "Issue").setText("1")
+        _form_field(dlg, "Name").setText("CDR-1.0")
+        assert (dlg.issue(), dlg.tag()) == ("1", "CDR-1.0")
+        _git(root, "tag", "-a", "CDR-1.0", "-m", "made elsewhere", old_head)
+        return QDialog.DialogCode.Accepted
+
+    w = _gui_commit(qtbot, ui, root, on_dialog=raise_and_tag)
+
+    new_head = _head(root)
+    assert _parents(root) == [old_head], f"the commit wasn't kept; messages: {ui.message_text()}"
+    assert _rev(root, "refs/tags/CHILD-issue-1^{commit}") == new_head
+    assert _rev(root, "refs/tags/CDR-1.0^{commit}") == old_head, "the existing tag moved"
+    report = [t for t in (ui.message_text() + "\n" + _status_all(w)).splitlines() if "CDR-1.0" in t]
+    assert report, f"no report names CDR-1.0: {ui.message_text()} {_status_all(w)}"
+    assert any("exist" in t.lower() for t in report), f"the report doesn't say the tag exists: {report}"
+
+
+def _gui_operations(qtbot, ui, root: Path) -> None:
+    """Commit with a raised issue and a tag, discard, compare and resolve a
+    merge, all through the GUI. The caller has made branch `side`, which
+    changes CHILD-1."""
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Mine."))
+
+    def issue_and_tag(dlg):
+        _form_field(dlg, "Issue").setText("1")
+        _form_field(dlg, "Name").setText("M1")
+        return QDialog.DialogCode.Accepted
+
+    old_head = _head(root)
+    w = _gui_commit(qtbot, ui, root, on_dialog=issue_and_tag)
+    assert _parents(root) == [old_head], f"the GUI commit failed: {ui.message_text()}"
+    assert _rev(root, "refs/tags/M1^{commit}") == _head(root), "the GUI tag failed"
+
+    _write(root / "CHILD/objects/CHILD-0.xml", _obj("CHILD-0", "To be discarded."))
+    _action(w, "Reload from disk").trigger()
+    ro = _action(w, "Read-only")
+    if ro.isChecked():
+        ro.trigger()
+    _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
+    assert _status(root, "CHILD") == [], f"the GUI discard failed: {ui.message_text()}"
+
+    dlg = w.open_compare()
+    qtbot.waitUntil(lambda: not dlg.is_busy(), timeout=15000)
+
+    _git(root, "merge", "side", check=False)
+    assert _unmerged(root), "the merge didn't stop on a conflict"
+    md = _merge_dialog(qtbot, root)
+    _button(md, "Resolve").click()
+    qtbot.wait(20)
+    assert _unmerged(root) == [], f"the GUI resolve failed: {ui.message_text()}"
+
+
+def _side_branch(root: Path) -> None:
+    _branch(root, "side")
+    _write(root / "CHILD/objects/CHILD-1.xml", _obj("CHILD-1", "Theirs."))
+    _commit(root, "side changes CHILD-1", tick=3)
+    _git(root, "checkout", "-q", "main")
+
+
+def test_ver_srs_373_gui_operations_dont_fetch_pull_or_push(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-373: Mellon doesn't fetch from, pull from or push to a
+    git remote. After a GUI commit with an issue and a tag, a discard, a
+    compare and a merge resolve: the remote's references are unchanged, no
+    FETCH_HEAD is written, the remote-tracking branches don't move, and no
+    credential helper ran."""
+    root = _make_repo(tmp_path / "repo")
+    _side_branch(root)
+    bare, marker = _remote(root, tmp_path)
+    before = _remote_state(root, bare)
+
+    _gui_operations(qtbot, ui, root)
+
+    assert _remote_state(root, bare) == before
+    assert not marker.exists(), "a credential helper ran"
+
+
+def test_ver_srs_374_gui_operations_change_only_the_current_branch_and_their_own_tags(tmp_path, qtbot, ui):
+    """MELLON-VER-SRS-374: Mellon changes no git reference other than the
+    current branch, by adding a commit, and the tags Mellon creates (GUI
+    commit with issue and tag, discard, compare, merge resolve)."""
+    root = _make_repo(tmp_path / "repo")
+    _side_branch(root)
+    _many_refs(root, tmp_path)
+    before = _refs(root)
+
+    _gui_operations(qtbot, ui, root)
+
+    _assert_only_branch_and_tags_moved(before, _refs(root), 1, {"CHILD-issue-1", "M1"}, root)

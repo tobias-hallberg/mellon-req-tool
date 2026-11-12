@@ -738,3 +738,263 @@ def test_object_id_without_a_number_leaves_the_merged_number(tmp_path):
     assert UNNUMBERED in stems, f"setup: {UNNUMBERED} should be kept: {stems}"
     highest = max(number_of(s) for s in stems if s != UNNUMBERED)
     assert read_next(root / DOC) == str(max(BASE_COUNT + 1, highest + 1))
+
+
+# MELLON-VER-SRS blind tests
+import stat  # noqa: E402
+
+from tests.ver_support import (  # noqa: E402
+    SVG_BLUE,
+    _attr,
+    _branch as ver_branch,
+    _changed,
+    _commit as ver_commit,
+    _description,
+    _git as ver_git,
+    _git_cli_home,  # noqa: F401, F811 -- fixture
+    _index_entries,
+    _links,
+    _make_doc_repo,
+    _manifest,
+    _merge_stops,
+    _obj,
+    _tree,
+    _unmerged,
+    _work_files,
+    _write,
+    _xml,
+)
+
+
+def test_ver_srs_310_criss_cross_merge_uses_the_base_git_merge_base_prints(tmp_path):
+    """MELLON-VER-SRS-310: When ours and theirs have more than one merge base,
+    Mellon merges from the one that `git merge-base` reports. Two fields are
+    built so that, from either base, one takes ours and the other theirs."""
+    root = _make_doc_repo(tmp_path / "repo")
+    f = root / "DOC/objects/DOC-1.xml"
+    ver_branch(root, "other")
+    _write(f, _obj("DOC-1", "From X.", priority="High"))
+    x1 = ver_commit(root, "X1", tick=10)
+    ver_git(root, "checkout", "-q", "main")
+    _write(f, _obj("DOC-1", "From Y.", priority="Low"))
+    y1 = ver_commit(root, "Y1", tick=11)
+    ver_git(root, "merge", "--no-commit", x1, check=False)
+    _write(f, _obj("DOC-1", "From X.", priority="Low"))
+    ver_commit(root, "Y2 merges X1", tick=12)
+    ver_git(root, "checkout", "-q", "other")
+    ver_git(root, "merge", "--no-commit", y1, check=False)
+    _write(f, _obj("DOC-1", "From Y.", priority="High"))
+    ver_commit(root, "X2 merges Y1", tick=13)
+    _merge_stops(root, "other", "DOC/objects/DOC-1.xml")
+    bases = ver_git(root, "merge-base", "--all", "HEAD", "MERGE_HEAD").stdout.split()
+    assert sorted(bases) == sorted([x1, y1]), "the history doesn't have two merge bases"
+    base = ver_git(root, "merge-base", "HEAD", "MERGE_HEAD").stdout.strip()
+    base_file = _tree(root, base)["DOC/objects/DOC-1.xml"]
+    ours = {"priority": "Low", "description": "From X."}
+    theirs = {"priority": "High", "description": "From Y."}
+    at_base = {"priority": _attr(base_file, "priority"), "description": _description(base_file)}
+    expected = {k: theirs[k] if ours[k] == at_base[k] else ours[k] for k in ours}
+
+    merge.resolve(root)
+
+    merged = f.read_bytes()
+    assert {"priority": _attr(merged, "priority"), "description": _description(merged)} == expected, (
+        f"merged from a base other than {base[:7]}"
+    )
+
+
+@pytest.mark.parametrize("deleting", ["ours", "theirs"])
+def test_ver_srs_313_object_deleted_on_one_side_stays_deleted(tmp_path, deleting):
+    """MELLON-VER-SRS-313: When only one side of a merge deleted an object,
+    Mellon takes that side's version: the object stays deleted, with no
+    object file and no place in the outline. Both sides changed the title,
+    so the manifest conflicts and Mellon merges it."""
+    root = _make_doc_repo(tmp_path / "repo")
+
+    def delete_side(title):
+        (root / "DOC/objects/DOC-2.xml").unlink()
+        _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1", "DOC-3"], title=title))
+
+    def change_side(title):
+        _write(root / "DOC/objects/DOC-1.xml", _obj("DOC-1", "One, changed."))
+        _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1", "DOC-2", "DOC-3"], title=title))
+
+    ver_branch(root, "side")
+    (delete_side if deleting == "theirs" else change_side)("Theirs title")
+    ver_commit(root, "side", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    (delete_side if deleting == "ours" else change_side)("Ours title")
+    ver_commit(root, "main", tick=4)
+    _merge_stops(root, "side", "DOC/DOC.xml")
+
+    merge.resolve(root)
+
+    refs = [r.get("id") for r in _xml((root / "DOC/DOC.xml").read_bytes()).iter("ref")]
+    assert "DOC-2" not in refs, f"DOC-2 is back in the outline: {refs}"
+    assert not (root / "DOC/objects/DOC-2.xml").exists(), "DOC-2's object file is back"
+    assert refs == ["DOC-1", "DOC-3"]
+
+
+def _link_set(path: Path) -> dict[str, tuple[str, str | None]]:
+    return {l.get("target-id"): (l.get("type"), l.get("ack")) for l in _xml(path.read_bytes()).iter("link")}
+
+
+def test_ver_srs_316_link_removed_on_one_side_is_removed(tmp_path):
+    """MELLON-VER-SRS-316: When one side removed a link and the other side
+    left it unchanged, Mellon removes the link. Ours removes DOC-1 -> DOC-3,
+    theirs adds DOC-1 -> DOC-4, so the links file conflicts."""
+    objects = {f"DOC-{i}": _obj(f"DOC-{i}", f"Object {i}.") for i in range(1, 5)}
+    lf = "DOC/links/DOC-1.xml"
+    base_links = [("DOC", "DOC-2", "refines", None), ("DOC", "DOC-3", "refines", None)]
+    root = _make_doc_repo(tmp_path / "repo", objects, extra={lf: _links("DOC-1", base_links)})
+    ver_branch(root, "side")
+    _write(root / lf, _links("DOC-1", base_links + [("DOC", "DOC-4", "refines", None)]))
+    ver_commit(root, "theirs adds DOC-4", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    _write(root / lf, _links("DOC-1", base_links[:1]))
+    ver_commit(root, "ours removes DOC-3", tick=4)
+    _merge_stops(root, "side", lf)
+
+    merge.resolve(root)
+
+    assert sorted(_link_set(root / lf)) == ["DOC-2", "DOC-4"]
+
+
+@pytest.mark.parametrize("field", ["ack", "type"])
+def test_ver_srs_317_link_changed_on_both_sides_keeps_ours(tmp_path, field):
+    """MELLON-VER-SRS-317: When both sides changed the link type, or the
+    acknowledged commit, of one link to different values, Mellon keeps the
+    link as ours has it."""
+    objects = {f"DOC-{i}": _obj(f"DOC-{i}", f"Object {i}.") for i in range(1, 3)}
+    lf = "DOC/links/DOC-1.xml"
+
+    def link(ltype="refines", ack="1111111"):
+        return _links("DOC-1", [("DOC", "DOC-2", ltype, ack)])
+
+    root = _make_doc_repo(tmp_path / "repo", objects, extra={lf: link()})
+    ours, theirs = (("refines", "2222222"), ("refines", "3333333")) if field == "ack" else (
+        ("satisfies", "1111111"), ("verifies", "1111111"))
+    ver_branch(root, "side")
+    _write(root / lf, link(*theirs))
+    ver_commit(root, "theirs", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    _write(root / lf, link(*ours))
+    ver_commit(root, "ours", tick=4)
+    _merge_stops(root, "side", lf)
+
+    merge.resolve(root)
+
+    assert _link_set(root / lf) == {"DOC-2": ours}
+
+
+def test_ver_srs_321_parent_documents_added_on_both_sides_are_all_kept(tmp_path):
+    """MELLON-VER-SRS-321: When both sides changed a document's parent
+    documents, Mellon keeps each parent document that either side declares:
+    the base parent, ours' P1 and theirs' P2."""
+    extra = {}
+    for p in ("BASEP", "PA", "PB"):
+        extra[f"{p}/{p}.xml"] = _manifest(p, [f"{p}-1"])
+        extra[f"{p}/objects/{p}-1.xml"] = _obj(f"{p}-1", f"{p} object.")
+    objects = {"DOC-1": _obj("DOC-1", "One.")}
+    root = _make_doc_repo(tmp_path / "repo", objects, extra=extra, parents=("BASEP",))
+    ver_branch(root, "side")
+    _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1"], title="Base title", parents=("BASEP", "PB")))
+    ver_commit(root, "theirs adds PB", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1"], title="Base title", parents=("BASEP", "PA")))
+    ver_commit(root, "ours adds PA", tick=4)
+    _merge_stops(root, "side", "DOC/DOC.xml")
+
+    merge.resolve(root)
+
+    parents = sorted(p.get("doc") for p in _xml((root / "DOC/DOC.xml").read_bytes()).iter("parent"))
+    assert parents == ["BASEP", "PA", "PB"]
+
+
+def test_ver_srs_337_renumbered_object_takes_its_files_with_the_new_id(tmp_path):
+    """MELLON-VER-SRS-337: When Mellon renumbers an object in a merge, Mellon
+    gives the object's object file, links file and figure the new object ID.
+    Theirs' DOC-3, created later, has a figure and a links file; the figure's
+    content is unchanged."""
+    objects = {"DOC-1": _obj("DOC-1", "One."), "DOC-2": _obj("DOC-2", "Two.")}
+    root = _make_doc_repo(tmp_path / "repo", objects, next_number=3)
+    ver_git(root, "checkout", "-q", "main")
+    _write(root / "DOC/objects/DOC-3.xml", _obj("DOC-3", "Ours' new object."))
+    _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1", "DOC-2", "DOC-3"], title="Base title", next_number=4))
+    ver_commit(root, "ours creates DOC-3", tick=3)
+    ver_branch(root, "side", "main~1")
+    _write(root / "DOC/objects/DOC-3.xml", _obj("DOC-3", "Theirs' new object."))
+    _write(root / "DOC/figures/DOC-3.svg", SVG_BLUE)
+    _write(root / "DOC/links/DOC-3.xml", _links("DOC-3", [("DOC", "DOC-1", "refines", None)]))
+    _write(root / "DOC/DOC.xml", _manifest("DOC", ["DOC-1", "DOC-2", "DOC-3"], title="Base title", next_number=4))
+    ver_commit(root, "theirs creates DOC-3, later", tick=9)
+    _merge_stops(root, "side", "DOC/objects/DOC-3.xml")
+    plan = merge.plan(root)
+    assert len(plan.renumbered) == 1, plan.renumbered
+    new_id = plan.renumbered[0].new_id
+    assert new_id not in ("DOC-1", "DOC-2", "DOC-3")
+
+    merge.resolve(root)
+
+    doc = root / "DOC"
+    assert _description((doc / "objects/DOC-3.xml").read_bytes()) == "Ours' new object."
+    moved = _xml((doc / f"objects/{new_id}.xml").read_bytes())
+    assert (moved.get("id"), moved.findtext("description")) == (new_id, "Theirs' new object.")
+    assert _xml((doc / f"links/{new_id}.xml").read_bytes()).get("source") == new_id
+    assert (doc / f"figures/{new_id}.svg").read_bytes() == SVG_BLUE.encode(), "the figure's content changed"
+    assert not (doc / "figures/DOC-3.svg").exists(), "the figure stayed under the old ID"
+    assert not (doc / "links/DOC-3.xml").exists(), "the links file stayed under the old ID"
+
+
+def _resolve_fails_partway(tmp_path: Path) -> tuple[Path, Path, list[str]]:
+    """Two conflicting object files; a clean resolution in a copy, then a
+    resolution of the original that fails on the read-only second file after
+    writing other files, and a second resolution once the file is writable."""
+    root = _make_doc_repo(tmp_path / "repo")
+    files = ["DOC/objects/DOC-1.xml", "DOC/objects/DOC-2.xml"]
+    ver_branch(root, "side")
+    for rel in files:
+        _write(root / rel, _obj(Path(rel).stem, f"Theirs {Path(rel).stem}."))
+    ver_commit(root, "theirs", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    for rel in files:
+        _write(root / rel, _obj(Path(rel).stem, f"Ours {Path(rel).stem}."))
+    ver_commit(root, "ours", tick=4)
+    _merge_stops(root, "side", *files)
+    edits = {rel: {"description": f"Merged {Path(rel).stem}."} for rel in files}
+    reference = tmp_path / "reference"
+    shutil.copytree(root, reference)
+    merge.resolve(reference, edits=edits)
+
+    before = _work_files(root, "DOC")
+    stuck = root / files[1]
+    stuck.chmod(stat.S_IREAD)
+    try:
+        with pytest.raises(Exception):
+            merge.resolve(root, edits=edits)
+        written = sorted(_changed(before, _work_files(root, "DOC")))
+    finally:
+        stuck.chmod(stat.S_IREAD | stat.S_IWRITE)
+    assert written and files[1] not in written, f"setup: the first resolution didn't fail partway ({written})"
+
+    merge.resolve(root, edits=edits)
+    return root, reference, files
+
+
+def test_ver_srs_366_resolving_again_after_a_partial_failure_writes_the_merged_files(tmp_path):
+    """MELLON-VER-SRS-366: If resolving a merge fails partway, Mellon completes
+    the resolution when the user resolves again: every file in the document
+    folder is as a resolution that never failed wrote it, and no file is unmerged."""
+    root, reference, _ = _resolve_fails_partway(tmp_path)
+
+    assert _work_files(root, "DOC") == _work_files(reference, "DOC"), "the files differ from a clean resolution"
+    assert _unmerged(root) == [], "a file is still unmerged"
+
+
+def test_ver_srs_366_resolving_again_after_a_partial_failure_records_the_same_index(tmp_path):
+    """MELLON-VER-SRS-366: once resolved again, the git index holds what a
+    resolution that never failed records, so the git client's merge commit
+    is the same."""
+    root, reference, _ = _resolve_fails_partway(tmp_path)
+
+    assert _index_entries(root) == _index_entries(reference), "the git index differs from a clean resolution"
