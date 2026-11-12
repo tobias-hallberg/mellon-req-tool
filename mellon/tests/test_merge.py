@@ -673,3 +673,68 @@ def test_a_side_without_a_number_counts_as_0(repo: Path):
     merge.resolve(repo)
     assert read_next(srs) == "37"
     assert load_document(srs).objects["VCU3-SRS-36"].description == "B only"
+
+
+# An object ID whose part after the document ID isn't a whole number of ASCII
+# digits has no object number, as git clients and hand edits can make.
+UNNUMBERED = f"{DOC}-²"
+
+
+def _write_unnumbered(folder: Path, text: str) -> None:
+    (folder / "objects" / f"{UNNUMBERED}.xml").write_text(
+        f'<?xml version="1.0" encoding="UTF-8"?>\n<object id="{UNNUMBERED}">\n'
+        f"  <description>{text}</description>\n</object>\n",
+        encoding="utf-8",
+    )
+
+
+def unnumbered_merge(tmp_path: Path, *, in_base: bool) -> Path:
+    """Base DOC-0..2 (number 3); each side creates DOC-3 (number 4), and the merge
+    stops on that conflict. DOC-² is in the base (`in_base`), or written by hand on
+    each side with different text."""
+    root = make_repo(tmp_path)
+    folder = new_document(root, DOC)
+    populate(folder, BASE_COUNT, label="base")
+    write_next(folder, str(BASE_COUNT))
+    if in_base:
+        _write_unnumbered(folder, "base")
+    git_ops.commit(root, "base")
+    main = git(root, "rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
+    git(root, "branch", "theirs")
+    for side, branch in (("ours", main), ("theirs", "theirs")):
+        git(root, "checkout", branch)
+        if not in_base:
+            _write_unnumbered(folder, side)
+        assert editor.create_object(folder, description=f"{side}: three") == f"{DOC}-3", "setup"
+        write_next(folder, str(BASE_COUNT + 1))
+        git_ops.commit(root, f"{side} final")
+    git(root, "checkout", main)
+    result = git(root, "merge", "--no-edit", "theirs", check=False)
+    assert result.returncode != 0, f"setup: the merge should stop with conflicts:\n{result.stdout}"
+    return root
+
+
+@needs_git
+@pytest.mark.parametrize("in_base", [True, False], ids=["in-base", "on-both-sides"])
+def test_object_id_without_a_number_is_renumbered_past_both_numbers(tmp_path, in_base):
+    """MELLON-VER-SRS-65: with DOC-² in the merge, the plan still renumbers the
+    objects created under one ID on both sides, each to at least 4, both sides' next
+    object number. DOC-² has no object number, so it can't lower or raise one."""
+    root = unnumbered_merge(tmp_path, in_base=in_base)
+    renumbered = [r for r in merge.plan(root).renumbered if r.doc_id == DOC]
+    assert renumbered, "setup: expected the plan to renumber one of the two objects created as DOC-3"
+    low = [r.new_id for r in renumbered if number_of(r.new_id) < BASE_COUNT + 1]
+    assert not low, f"renumbered to {low}, below both sides' next object number {BASE_COUNT + 1}"
+
+
+@needs_git
+def test_object_id_without_a_number_leaves_the_merged_number(tmp_path):
+    """MELLON-VER-SRS-64: with DOC-² in the base, resolving sets the merged next
+    object number to max(4, 4, one more than the highest object number among the
+    merged objects), DOC-² having none."""
+    root = unnumbered_merge(tmp_path, in_base=True)
+    merge.resolve(root)
+    stems = [p.stem for p in (root / DOC / "objects").glob("*.xml")]
+    assert UNNUMBERED in stems, f"setup: {UNNUMBERED} should be kept: {stems}"
+    highest = max(number_of(s) for s in stems if s != UNNUMBERED)
+    assert read_next(root / DOC) == str(max(BASE_COUNT + 1, highest + 1))

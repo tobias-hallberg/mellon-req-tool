@@ -761,7 +761,8 @@ def test_document_versions(tmp_git: Path, spec: Path) -> None:
     assert versions[1].ref == LATEST
     assert versions[2].ref == "SPEC-issue-1"
     assert versions[2].label.startswith("Issue 1 (")
-    assert "feature" in [v.ref for v in versions if v.kind == "branch"]
+    assert "refs/heads/feature" in [v.ref for v in versions if v.kind == "branch"]
+    assert "Branch feature" in [v.label for v in versions if v.kind == "branch"]
     # Only commits that changed the document, newest first.
     commits = [v.label.split("  ", 1)[1] for v in versions if v.kind == "commit"]
     assert commits == ["change spec", "seed"]
@@ -797,6 +798,23 @@ def test_default_versions_at_an_issue_compare_it_with_the_one_before(
 def test_default_versions_at_the_only_issue_has_no_from(tmp_git: Path, spec: Path) -> None:
     _tag(tmp_git, "1")
     assert default_versions(tmp_git, "SPEC") == (None, LATEST)
+
+
+@pytest.mark.parametrize("branch, label", [("refs/heads/shared", "Branch shared"),
+                                           ("refs/remotes/origin/shared", "Branch origin/shared")])
+def test_branch_offered_beside_a_tag_of_its_name_is_the_branch(tmp_path, branch, label):
+    """MELLON-VER-SRS-7: each local and remote-tracking branch is offered. A tag with
+    the branch's name, on another commit, doesn't change which commit the branch's
+    entry names: comparing at it compares the branch's commit."""
+    root = tmp_path / "r"
+    _build(root)
+    seed, edits = _oid(root, "HEAD~1"), _oid(root, "HEAD")
+    repo = pygit2.Repository(str(root))
+    repo.references.create(branch, pygit2.Oid(hex=seed))
+    repo.references.create(f"refs/tags/{label.removeprefix('Branch ')}", pygit2.Oid(hex=edits))
+    entries = [v for v in document_versions(root, "SPEC") if v.label == label]
+    assert [v.kind for v in entries] == ["branch"], f"setup: one entry {label!r} expected: {entries}"
+    assert compare_document(root, "SPEC", entries[0].ref, LATEST).commit_a == seed
 
 
 # --- files the loader accepts or rejects ------------------------------------
@@ -1129,6 +1147,19 @@ def test_ver19_outline_entry_without_object_file_is_not_added(tmp_path):
     assert change is None or Change.ADDED not in change.kinds, (
         f"SPEC-10 has no object file at To and mustn't be Added, got {change.kinds}"
     )
+
+
+@pytest.mark.parametrize("tail", ["²", "1" * 4301], ids=["superscript-two", "4301-digits"])
+def test_object_id_without_a_number_is_added(tmp_path, tail):
+    """MELLON-VER-SRS-19: an object file committed with no outline entry, whose ID
+    ends in something that isn't a whole number of ASCII digits (a superscript two,
+    or more digits than a number is read from), exists at To only: it is Added."""
+    r, _, c1 = build_spec(tmp_path)
+    obj_id = f"SPEC-{tail}"
+    data = (DECL + f'<object id="{obj_id}">\n  <attr name="type">Requirement</attr>\n'
+                   f"  <description>No number.</description>\n</object>\n".encode("utf-8"))
+    c2 = r.side_commit("odd-id", c1, f"SPEC/objects/{obj_id}.xml", data, "object ID without a number")
+    assert kinds_by_object(compare(r, c1, c2)) == {obj_id: (Change.ADDED,)}
 
 
 # --------------------------------------------------------------------------
@@ -1588,6 +1619,21 @@ def test_ver24_two_links_reacknowledged_is_one_link_reviewed_change(tmp_path):
                     ("SPEC", "SPEC-4", "refines", "2222222", c2[:7])}, f"reviewed links listed: {acks}"
 
 
+def test_ack_change_beside_an_unchanged_unreadable_object_file_is_link_reviewed(tmp_path):
+    """MELLON-VER-SRS-24 with -27: SPEC-1's object file is broken with the same bytes at
+    both versions, so it isn't a change; its link's acknowledged commit changes. That
+    is SPEC-1's only change: exactly Link reviewed, and not reported unreadable."""
+    r, _, _ = build_spec(tmp_path)
+    r.write("SPEC/links/SPEC-1.xml", links_xml("SPEC-1", [("SPEC", "SPEC-2", "satisfies", "1111111")]))
+    r.write("SPEC/objects/SPEC-1.xml", BROKEN_OBJECT_1)
+    c2 = r.commit("ack 1, SPEC-1 broken")
+    r.write("SPEC/links/SPEC-1.xml", links_xml("SPEC-1", [("SPEC", "SPEC-2", "satisfies", c2[:7])]))
+    c3 = r.commit("ack 2")
+    change = change_for(compare(r, c2, c3), "SPEC-1")
+    got = (tuple(change.kinds), change.errors) if change else None
+    assert got == ((Change.LINK_REVIEWED,), (None, None)), f"SPEC-1 (kinds, errors): {got}"
+
+
 # --------------------------------------------------------------------------
 # MELLON-VER-SRS-26: document at neither version
 # --------------------------------------------------------------------------
@@ -1767,6 +1813,26 @@ def test_ver28_merge_in_progress_other_objects_still_reported(tmp_path):
     got = (tuple(change.kinds), change.delta.description and
            (change.delta.description.text_a, change.delta.description.text_b)) if change else None
     assert got == ((Change.MODIFIED,), ("Requirement 2.", "Side two.")), f"SPEC-2's change not reported: {got}"
+
+
+def test_links_file_unreadable_the_same_at_both_isnt_reported(tmp_path):
+    """MELLON-VER-SRS-27: '... and its content isn't the same at both, Mellon shall
+    report the object as unreadable at that version.' SPEC-1's links file is broken
+    with the same bytes at both versions, and its description changes: SPEC-1 is
+    exactly Modified (-21), with the description at both, and unreadable at neither."""
+    r, _, _ = build_spec(tmp_path)
+    r.write("SPEC/links/SPEC-1.xml", DECL + b'<links source="SPEC-1">\n  <link target-doc="SPEC"\n')
+    c2 = r.commit("break SPEC-1's links")
+    # By hand: the editor can't load SPEC while SPEC-1's links file is broken.
+    data = r.read("SPEC/objects/SPEC-1.xml")
+    old = b"<description>The VCU shall stop.</description>"
+    assert old in data, "setup: SPEC-1 description not found"
+    r.write("SPEC/objects/SPEC-1.xml", data.replace(old, b"<description>The VCU must stop.</description>"))
+    c3 = r.commit("change SPEC-1's text only")
+    change = change_for(compare(r, c2, c3), "SPEC-1")
+    got = (tuple(change.kinds), change.errors, change.delta and change.delta.description) if change else None
+    assert got == ((Change.MODIFIED,), (None, None),
+                   DescriptionChange("The VCU shall stop.", "The VCU must stop.")), f"SPEC-1: {got}"
 
 
 # --------------------------------------------------------------------------
@@ -2060,6 +2126,60 @@ def test_srs10_ambiguous_prefix_refused_below_dialog(tmp_path):
     with pytest.raises(Exception) as err:
         compare_document(root, "SPEC", prefix, LATEST)
     assert prefix in str(err.value), f"the error should name {prefix!r}: {err.value!r}"
+
+
+def _shared_name_repo(root: Path, *, same_commit: bool = False) -> tuple[str, str]:
+    """The standard repository with a tag and a branch both named `shared`: the tag
+    on seed, the branch on edits (or on seed too). Returns (seed, edits)."""
+    _build(root)
+    seed, edits = _oid(root, "HEAD~1"), _oid(root, "HEAD")
+    repo = pygit2.Repository(str(root))
+    repo.references.create("refs/tags/shared", pygit2.Oid(hex=seed))
+    repo.references.create("refs/heads/shared", pygit2.Oid(hex=seed if same_commit else edits))
+    return seed, edits
+
+
+@pytest.mark.parametrize("typed", ["shared", "shared~0", "shared^{commit}"])
+def test_name_of_two_refs_at_different_commits_is_refused(tmp_path, typed):
+    """MELLON-VER-SRS-10: 'If a typed name resolves to no commit or to more than one,
+    ... an error message naming the typed name.' `shared` is a tag on seed and a
+    branch on edits, so it resolves to two commits, also inside an expression."""
+    root = tmp_path / "r"
+    _shared_name_repo(root)
+    with pytest.raises(GitError) as err:
+        compare_document(root, "SPEC", typed, LATEST)
+    assert repr(typed) in str(err.value), f"the error should name {typed!r}: {err.value}"
+
+
+def test_name_of_a_ref_and_a_hash_prefix_is_refused(tmp_path):
+    """MELLON-VER-SRS-10: a typed name that is a branch on edits and also the hash prefix
+    of seed resolves to two commits: an error naming it."""
+    root = tmp_path / "r"
+    _build(root)
+    seed, edits = _oid(root, "HEAD~1"), _oid(root, "HEAD")
+    pygit2.Repository(str(root)).references.create(f"refs/heads/{seed[:7]}", pygit2.Oid(hex=edits))
+    with pytest.raises(GitError) as err:
+        compare_document(root, "SPEC", seed[:7], LATEST)
+    assert repr(seed[:7]) in str(err.value), f"the error should name {seed[:7]!r}: {err.value}"
+
+
+def test_name_of_two_refs_at_one_commit_is_accepted(tmp_path):
+    """MELLON-VER-SRS-9, -10: a tag and a branch both named `shared`, both on seed:
+    the name resolves to one commit, so it is compared as seed."""
+    root = tmp_path / "r"
+    seed, _ = _shared_name_repo(root, same_commit=True)
+    assert compare_document(root, "SPEC", "shared", LATEST).commit_a == seed
+
+
+@pytest.mark.parametrize("typed, side", [("refs/tags/shared", "seed"), ("refs/heads/shared", "edits"),
+                                         ("refs/heads/shared~1", "seed"), ("@~1", "seed")])
+def test_full_ref_names_beside_a_shared_name_resolve(tmp_path, typed, side):
+    """MELLON-VER-SRS-9: with `shared` both a tag (seed) and a branch (edits), the full
+    ref names, an expression on one, and @~1 each resolve to their one commit."""
+    root = tmp_path / "r"
+    seed, edits = _shared_name_repo(root)
+    expected = {"seed": seed, "edits": edits}[side]
+    assert compare_document(root, "SPEC", typed, LATEST).commit_a == expected
 
 
 # ==========================================================================

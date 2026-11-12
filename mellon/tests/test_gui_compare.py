@@ -774,6 +774,42 @@ def _error_text(dlg) -> str:
     return lbl.text() if lbl.isVisibleTo(dlg) else ""
 
 
+def _rendered(text: str, fmt=Qt.TextFormat.AutoText) -> str:
+    """What a label or tooltip holding `text` in text format `fmt` shows: text that
+    is rich text, or that Qt takes for it, is rendered as HTML."""
+    from PySide6 import QtGui
+
+    rich = fmt == Qt.TextFormat.RichText or (
+        fmt == Qt.TextFormat.AutoText and QtGui.Qt.mightBeRichText(text)
+    )
+    if not rich:
+        return text
+    doc = QTextDocument()
+    doc.setHtml(text)
+    return doc.toPlainText()
+
+
+def _label_shows(label) -> str:
+    return _rendered(label.text(), label.textFormat())
+
+
+# Commit messages and typed text that Qt would take for HTML.
+MARKUP = ["Move <title> into the manifest", "Make <b>stop</b> binding"]
+
+
+def _markup_commit_repo(root: Path, message: str) -> None:
+    """The standard repository, then a commit with `message` that rewords SPEC-1."""
+    folder = _build(root)
+    editor.set_description(folder, "SPEC-1", "The VCU must halt.")
+    _commit(root, message)
+
+
+def _entry_index(combo, label_end: str) -> int:
+    found = [i for i in range(combo.count()) if combo.itemText(i).endswith(label_end)]
+    assert len(found) == 1, f"setup: one entry should end with {label_end!r}: {_entries(combo)}"
+    return found[0]
+
+
 _COUNT_RE = re.compile(r"(\d+)\s+(added|deleted|modified|moved|link reviewed)\b", re.I)
 
 
@@ -1207,6 +1243,25 @@ def test_srs7_offers_each_issue_including_off_branch(qtbot, tmp_path, side):
         assert match, f"{side} doesn't offer issue {issue}; entries: {entries}"
 
 
+def test_branch_picked_beside_a_tag_of_its_name_compares_the_branch(qtbot, tmp_path):
+    """MELLON-VER-SRS-7: the branch `shared` is on seed and a tag `shared` on the latest
+    commit. Picking 'Branch shared' as From compares seed with the latest commit, so
+    the rows are the standard repository's changes."""
+    root = tmp_path / "r"
+    _std_repo(root)
+    repo = pygit2.Repository(str(root))
+    repo.references.create("refs/heads/shared", pygit2.Oid(hex=_oid(root, "HEAD~1")))
+    repo.references.create("refs/tags/shared", pygit2.Oid(hex=_oid(root, "HEAD")))
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    dlg.from_combo.setCurrentIndex(dlg.from_combo.findText("Branch shared"))
+    _choose(dlg, dlg.to_combo, LATEST)
+    _compare(qtbot, dlg)
+    assert _error_text(dlg) == "", f"picking 'Branch shared' gave an error: {_error_text(dlg)!r}"
+    assert _row_map(dlg) == STD_DICT, f"'Branch shared' as From: rows {_rows(dlg)}"
+
+
 # ==========================================================================
 # MELLON-VER-SRS-8: the working copy as a version
 # ==========================================================================
@@ -1368,6 +1423,42 @@ def test_srs10_unknown_name_error_names_it(qtbot, tmp_path):
     assert _rows(dlg) == rows_before, "the previous rows should stay"
 
 
+def test_name_of_two_refs_error_names_it(qtbot, tmp_path):
+    """MELLON-VER-SRS-10 (with -11): 'shared-name', a tag on seed and a branch on the
+    latest commit, resolves to more than one commit: typed as From it gives an error
+    naming it, and the previous rows stay."""
+    root = tmp_path / "r"
+    _build(root)
+    repo = pygit2.Repository(str(root))
+    repo.references.create("refs/tags/shared-name", pygit2.Oid(hex=_oid(root, "HEAD~1")))
+    repo.references.create("refs/heads/shared-name", pygit2.Oid(hex=_oid(root, "HEAD")))
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    rows_before = _rows(dlg)
+    assert rows_before, "setup: the default comparison should show rows"
+    _type(dlg.from_combo, "shared-name")
+    _compare(qtbot, dlg)
+    assert "shared-name" in _error_text(dlg), f"error should name 'shared-name': {_error_text(dlg)!r}"
+    assert _rows(dlg) == rows_before, f"'shared-name' was compared as one of its commits: {_rows(dlg)}"
+
+
+@pytest.mark.parametrize("typed", ["<title>no-such-version", "<b>no-such</b>-version"])
+def test_typed_name_in_an_error_shows_as_written(qtbot, tmp_path, typed):
+    """MELLON-VER-SRS-10: typed text that reads like HTML and names no commit: the error
+    message shows the typed name as written."""
+    root = tmp_path / "r"
+    _build(root)
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    _type(dlg.from_combo, typed)
+    _compare(qtbot, dlg)
+    assert dlg.message_label.isVisibleTo(dlg), "setup: an error should be shown"
+    shown = _label_shows(dlg.message_label)
+    assert typed in shown, f"the error should show {typed!r}; it shows {shown!r}"
+
+
 # ==========================================================================
 # MELLON-VER-SRS-11: a failed comparison keeps the previous result
 # ==========================================================================
@@ -1401,6 +1492,34 @@ def test_srs11_failed_comparison_keeps_previous_result(qtbot, tmp_path):
     assert dlg.summary_label.text() == summary_before, (
         f"the previous versions and counts should stay: {dlg.summary_label.text()!r}"
     )
+
+
+def test_crashed_comparison_keeps_previous_result(qtbot, tmp_path, monkeypatch):
+    """MELLON-VER-SRS-11: 'If a comparison fails, the Compare dialog shall keep showing
+    the previous result with the versions that result was found for.' The next
+    comparison fails with an unexpected error: the rows and the summary naming the
+    previous versions stay, an error is shown, and the dialog isn't left comparing."""
+    root = tmp_path / "r"
+    _build(root)
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    rows_before, summary_before = _rows(dlg), dlg.summary_label.text()
+    assert rows_before, "setup: the default comparison should show rows"
+
+    def crash(*_args, **_kwargs):
+        raise ZeroDivisionError("comparison went wrong")
+
+    monkeypatch.setattr(_service(win), "compare_document", crash)
+    _choose(dlg, dlg.from_combo, LATEST)
+    with qtbot.capture_exceptions():  # the unexpected error also goes to the excepthook
+        _compare(qtbot, dlg)
+    assert dlg.summary_label.text() == summary_before, (
+        f"the previous versions and counts should stay: {dlg.summary_label.text()!r}"
+    )
+    assert _rows(dlg) == rows_before, f"the previous rows should stay: {_rows(dlg)}"
+    assert "comparison went wrong" in _error_text(dlg), f"the error should be shown: {_error_text(dlg)!r}"
+    assert dlg.compare_button.isEnabled(), "Compare should be free again"
 
 
 # ==========================================================================
@@ -1642,6 +1761,22 @@ def test_srs33_modified_and_moved_counts_once_each(qtbot, tmp_path):
     assert _counts(dlg.summary_label.text()) == {"modified": 1, "moved": 1}, (
         f"counts: {dlg.summary_label.text()!r}"
     )
+
+
+@pytest.mark.parametrize("text", ["Keep <title> in the manifest.", "Make <b>stop</b> binding."])
+def test_row_text_tooltip_shows_the_description_as_written(qtbot, tmp_path, text):
+    """MELLON-VER-SRS-32: SPEC-1's description reads like HTML; its row's Text, and the
+    Text's tooltip, show the first line as written."""
+    root = tmp_path / "r"
+    folder = _build(root)
+    editor.set_description(folder, "SPEC-1", text)
+    _commit(root, "markup in a description")
+    win = _window(qtbot, root)
+    dlg = win.open_compare(from_ref=_oid(root, "HEAD~1"), to_ref=LATEST)
+    _wait(qtbot, dlg)
+    item = _select(dlg, "SPEC-1")
+    shown = (item.text(2), _rendered(item.toolTip(2)))
+    assert shown == (text, text), f"SPEC-1's Text and tooltip show {shown}"
 
 
 # ==========================================================================
@@ -1928,6 +2063,39 @@ def test_srs41_copied_list_names_its_versions(qtbot, tmp_path):
     qtbot.mouseClick(dlg.copy_button, Qt.MouseButton.LeftButton)
     first = (QApplication.clipboard().text().splitlines() or [""])[0]
     assert _named_versions_ok(first, seed[:7], seed), f"first copied line: {first!r}"
+
+
+@pytest.mark.parametrize("message", MARKUP)
+def test_version_named_by_a_commit_message_shows_as_written(qtbot, tmp_path, message):
+    """MELLON-VER-SRS-41 (with -33): To is the commit entry whose message reads like
+    HTML. The summary shows that version as written, with the counts after it
+    (SPEC-1 reworded again, so 1 modified), rather than rendering the message."""
+    root = tmp_path / "r"
+    _markup_commit_repo(root, message)
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    dlg.to_combo.setCurrentIndex(_entry_index(dlg.to_combo, message))
+    _compare(qtbot, dlg)
+    shown = _label_shows(dlg.summary_label)
+    assert message in shown and "2 modified" in shown, f"the summary shows {shown!r}"
+
+
+@pytest.mark.parametrize("message", MARKUP)
+def test_no_change_names_a_commit_message_as_written(qtbot, tmp_path, message):
+    """MELLON-VER-SRS-34 (with -41): From and To are both the commit entry whose message
+    reads like HTML; no object changed, and saying so names that version as written."""
+    root = tmp_path / "r"
+    _markup_commit_repo(root, message)
+    win = _window(qtbot, root)
+    dlg = win.open_compare()
+    _wait(qtbot, dlg)
+    for combo in (dlg.from_combo, dlg.to_combo):
+        combo.setCurrentIndex(_entry_index(combo, message))
+    _compare(qtbot, dlg)
+    assert dlg._stack.currentWidget() is dlg.empty_label, f"setup: rows {_rows(dlg)}"
+    shown = _label_shows(dlg.empty_label)
+    assert "no object changed" in shown.lower() and shown.count(message) == 2, f"shows {shown!r}"
 
 
 # ==========================================================================

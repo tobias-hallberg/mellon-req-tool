@@ -31,7 +31,7 @@ import bisect
 import difflib
 import os
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from enum import StrEnum
 from pathlib import Path
 
@@ -58,6 +58,7 @@ from .schema import (
     RequirementObject,
     Table,
     attribute_display_name,
+    whole_number,
 )
 
 # The version that stands for the files on disk. Not a valid git ref name
@@ -415,12 +416,14 @@ def document_versions(
     out.append(Version(LATEST, f"Latest commit ({_short_oid(head.id)})", "latest"))
     for issue, tag, oid in issue_tags(repo, doc_id):
         out.append(Version(tag, f"Issue {issue} ({_short_oid(oid)})", "issue"))
+    # MELLON-VER-SRS-7: each branch by its full ref name, which names the
+    # branch even when a tag or another ref has its short name.
     for name in sorted(repo.branches.local):
-        out.append(Version(name, f"Branch {name}", "branch"))
+        out.append(Version(f"refs/heads/{name}", f"Branch {name}", "branch"))
     for name in sorted(repo.branches.remote):
         if name.endswith("/HEAD"):
             continue
-        out.append(Version(name, f"Branch {name}", "branch"))
+        out.append(Version(f"refs/remotes/{name}", f"Branch {name}", "branch"))
     # MELLON-VER-SRS-7, -62: the commits on HEAD's history whose document
     # folder differs from each parent's, and no others; only the newest
     # `max_commits` of them.
@@ -514,12 +517,64 @@ _SUBFOLDERS = (("objects", ".xml"), ("links", ".xml"), ("figures", ".svg"))
 # be named @, so nothing else is meant.
 _LONE_AT = re.compile(r"@(?=[~^:]|@\{)")
 
+# Where git looks for a name, in its order (git's ref_rev_parse_rules).
+_REF_RULES = (
+    "{}", "refs/{}", "refs/tags/{}", "refs/heads/{}", "refs/remotes/{}", "refs/remotes/{}/HEAD"
+)
+# The name a revision expression starts with ends at its first ~, ^, : or
+# @{, none of which a ref name may hold.
+_NAME_END = re.compile(r"[~^:]|@\{")
+_HEX = re.compile(r"[0-9a-fA-F]{4,40}")
+
+
+def _commit_hash(obj: pygit2.Object | pygit2.Reference) -> str | None:
+    try:
+        return str(obj.peel(pygit2.Commit).id)
+    except (pygit2.GitError, KeyError, ValueError):
+        return None
+
+
+def _clashing_names(repo: pygit2.Repository, spec: str) -> list[str]:
+    """What the name `spec` starts with names, when that is more than one
+    commit, as git warns "ambiguous": each ref the name matches by git's
+    rules, and the commit it is a hash or hash prefix of. Empty when the
+    name names one commit, however many refs point there."""
+    end = _NAME_END.search(spec)
+    name = spec[: end.start()] if end else spec
+    if not name:
+        return []
+    found: dict[str, str | None] = {}  # what names a commit -> its hash
+    for rule in _REF_RULES:
+        try:
+            reference = repo.references.get(rule.format(name))
+        except (ValueError, pygit2.GitError):
+            continue  # not a valid ref name
+        if reference is not None:
+            commit = _commit_hash(reference)
+            found[f"{reference.name} at {(commit or 'no commit')[:SHORT_HASH_LEN]}"] = commit
+    if found and _HEX.fullmatch(name):
+        try:
+            obj = repo.get(name)
+        except (ValueError, KeyError, pygit2.GitError):
+            obj = None  # objects share the prefix: git takes the ref
+        commit = _commit_hash(obj) if obj is not None else None
+        if commit is not None:
+            found[f"commit {commit[:SHORT_HASH_LEN]}"] = commit
+    return list(found) if len(set(found.values())) > 1 else []
+
 
 def _resolve_commit(repo: pygit2.Repository, ref: str) -> pygit2.Commit:
     """The commit git's revision syntax resolves `ref` to. Raises
-    ``GitError`` naming `ref` when it resolves to nothing, or to something
-    other than a commit (a tree or a file)."""
+    ``GitError`` naming `ref` when it resolves to nothing, to something
+    other than a commit (a tree or a file), or to more than one commit."""
     spec = "HEAD" + ref[1:] if _LONE_AT.match(ref) else ref
+    # MELLON-VER-SRS-10: a name that resolves to more than one commit is an
+    # error naming the version as given, not one of the commits.
+    clash = _clashing_names(repo, spec)
+    if clash:
+        raise GitError(
+            f"cannot resolve {ref!r}: it names more than one commit ({', '.join(clash)})"
+        )
     try:
         # MELLON-VER-SRS-9: git's revision syntax, peeled to the commit it names.
         return repo.revparse_single(spec).peel(pygit2.Commit)
@@ -823,9 +878,12 @@ def _in_place(kept_a: list[str], kept_b: list[str]) -> set[str]:
     return keep
 
 
-def _id_sort_key(obj_id: str) -> tuple[int, str]:
-    tail = obj_id.rsplit("-", 1)[-1]
-    return (int(tail), obj_id) if tail.isdigit() else (-1, obj_id)
+def _id_sort_key(obj_id: str) -> tuple[int, int, str]:
+    # MELLON-VER-SRS-19, -20: any object ID sorts, so none stops the
+    # comparison. A number is ASCII digits only, as in an object number; an
+    # ID without one comes after those with one, by its text.
+    number = whole_number(obj_id.rsplit("-", 1)[-1])
+    return (0, number, obj_id) if number is not None else (1, 0, obj_id)
 
 
 def _display_order(
@@ -924,15 +982,27 @@ def compare_document(
     for obj_id in common:
         # MELLON-VER-SRS-57: files with the same content key (blob id) are
         # skipped unparsed; only objects whose files differ are read.
+        same_object = side_a.objects[obj_id] == side_b.objects[obj_id]
+        same_links = side_a.links.get(obj_id) == side_b.links.get(obj_id)
         same_files = (
-            side_a.objects[obj_id] == side_b.objects[obj_id]
-            and side_a.links.get(obj_id) == side_b.links.get(obj_id)
+            same_object
+            and same_links
             and side_a.figures.get(obj_id) == side_b.figures.get(obj_id)
         )
         if same_files and obj_id not in moved:
             continue
         before = read_a.state(obj_id, pos(outline_a, obj_id))
         after = read_b.state(obj_id, pos(outline_b, obj_id))
+        # MELLON-VER-SRS-27: a file with the same content at both versions is
+        # no change, so it isn't reported unreadable, even when it can't be
+        # read; that leaves an ack-only change Link reviewed (-24).
+        cleared: dict[str, None] = {}
+        if same_object:
+            cleared["error"] = None
+        if same_links:
+            cleared["links_error"] = None
+        if cleared:
+            before, after = replace(before, **cleared), replace(after, **cleared)
         kinds: list[Change] = []
         delta = None
         if not same_files:

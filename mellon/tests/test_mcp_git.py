@@ -39,6 +39,7 @@ from tests.compare_support import (
     _snapshot,
     build_other_only,
     build_snapshot_repo,
+    build_spec,
     links_xml,
     snapshot,
     snapshot_difference,
@@ -523,6 +524,30 @@ def test_compare_document_works_read_only(
 ) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
     assert server.compare_document("VCU3-SRS")["total_changes"] > 0
+
+
+@pytest.mark.usefixtures("served")
+@pytest.mark.parametrize("change, side", [("Added", "to"), ("Deleted", "from")])
+def test_compare_document_reports_an_unreadable_links_file_of_a_whole_object(tmp_path, change, side):
+    """MELLON-VER-SRS-27 (with -59): SPEC-9 exists at one version only, and its links
+    file there isn't well-formed. The MCP result reports SPEC-9 as unreadable at that
+    version, naming the links file, rather than as an object with no links."""
+    r, _, c1 = build_spec(tmp_path)
+    r.write("SPEC/objects/SPEC-9.xml", b'<?xml version="1.0" encoding="UTF-8"?>\n'
+            b'<object id="SPEC-9">\n  <description>New.</description>\n</object>\n')
+    r.write("SPEC/links/SPEC-9.xml", b'<?xml version="1.0" encoding="UTF-8"?>\n'
+            b'<links source="SPEC-9">\n  <link target-doc="SPEC"\n')
+    c2 = r.commit("SPEC-9 with a broken links file")
+    assert mcp_server.main(["--repo-root", str(r.root)]) == 0, "setup: MCP server didn't start"
+    from_ref, to_ref = (c1, c2) if change == "Added" else (c2, c1)
+    out = mcp_server.compare_document("SPEC", from_ref=from_ref, to_ref=to_ref)
+    (row,) = [c for c in out["changes"] if c["obj_id"] == "SPEC-9"]
+    assert row["changes"] == [change], f"setup: SPEC-9 should be {change}: {row}"
+    unreadable = row.get("unreadable") or {}
+    other = "from" if side == "to" else "to"
+    assert "SPEC/links/SPEC-9.xml" in (unreadable.get(side) or "") and unreadable.get(other) is None, (
+        f"SPEC-9 should be unreadable at {side} only, naming its links file: {row}"
+    )
 
 
 # --- written blind from MELLON-VER-SRS (round 1) -----------------------------

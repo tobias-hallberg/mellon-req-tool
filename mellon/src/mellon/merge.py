@@ -306,9 +306,12 @@ def _find_renumbered(st: _State) -> list[Renumbered]:
     return out
 
 
-def _id_sort_key(obj_id: str) -> tuple[int, str]:
-    tail = obj_id.rsplit("-", 1)[-1]
-    return (int(tail), obj_id) if tail.isdigit() else (-1, obj_id)
+def _id_sort_key(obj_id: str) -> tuple[int, int, str]:
+    # MELLON-VER-SRS-65: any object ID sorts, so none stops the renumbering.
+    # A number is ASCII digits only, as in an object number; an ID without
+    # one comes after those with one, by its text.
+    number = whole_number(obj_id.rsplit("-", 1)[-1])
+    return (0, number, obj_id) if number is not None else (1, 0, obj_id)
 
 
 def _recorded_number(files: Files, doc: str) -> int:
@@ -324,14 +327,10 @@ def _recorded_number(files: Files, doc: str) -> int:
 
 
 def _max_number(doc: str, *id_maps: Mapping[str, str]) -> int:
-    prefix = f"{doc}-"
-    numbers = [
-        int(i[len(prefix):])
-        for ids in id_maps
-        for i in ids
-        if i.startswith(prefix) and i[len(prefix):].isdigit()
-    ]
-    return max(numbers, default=-1)
+    # MELLON-VER-SRS-65: the highest object number; an ID without one (not
+    # ASCII digits, or too long to read) has none and is passed over.
+    numbers = (object_number(i, doc) for ids in id_maps for i in ids)
+    return max((n for n in numbers if n is not None), default=-1)
 
 
 def _added_time(st: _State, tip: pygit2.Commit, path: str) -> int:

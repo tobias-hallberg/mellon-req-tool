@@ -23,6 +23,7 @@ from typing import Callable
 
 from PySide6.QtCore import QByteArray, QObject, QRunnable, QSignalBlocker, Qt, QThreadPool, QUrl, Signal
 from PySide6.QtGui import QColor, QGuiApplication, QImage, QPainter, QTextDocument
+from PySide6.QtGui import Qt as QtGuiNamespace
 from PySide6.QtSvg import QSvgRenderer
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -482,12 +483,16 @@ class CompareDialog(QDialog):
         pick.addWidget(self.compare_button)
 
         # Errors (and the jump hint); the previous result stays below.
+        # MELLON-VER-SRS-10, -41, -34: the labels show typed text, version
+        # names and commit messages as written, never as HTML.
         self.message_label = QLabel()
+        self.message_label.setTextFormat(Qt.TextFormat.PlainText)
         self.message_label.setWordWrap(True)
         self.message_label.setVisible(False)
 
         # --- summary, filters, copy ------------------------------------------
         self.summary_label = QLabel()
+        self.summary_label.setTextFormat(Qt.TextFormat.PlainText)
         self.summary_label.setWordWrap(True)
         self.summary_label.setStyleSheet("font-weight: 600;")
         # MELLON-VER-SRS-37: one Show box per change, to hide rows by change.
@@ -528,6 +533,7 @@ class CompareDialog(QDialog):
         split.setStretchFactor(1, 4)
 
         self.empty_label = QLabel(self.PROMPT)
+        self.empty_label.setTextFormat(Qt.TextFormat.PlainText)
         self.empty_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.empty_label.setWordWrap(True)
         self.empty_label.setStyleSheet("color: palette(mid); padding: 24px;")
@@ -729,8 +735,9 @@ class CompareDialog(QDialog):
             self.summary_label.clear()
 
     def _on_crashed(self, request: int, error: object) -> None:
-        if request == self._request:
-            self._end_busy()
+        # MELLON-VER-SRS-11: an unexpected error fails the comparison like any
+        # other: the previous result stays, with the versions it was found for.
+        self._on_failed(request, f"{type(error).__name__}: {error}")
         raise error  # type: ignore[misc]  # the excepthook logs and reports it
 
     def _end_busy(self) -> None:
@@ -754,7 +761,12 @@ class CompareDialog(QDialog):
         for index, change in enumerate(diff.changes):
             item = QTreeWidgetItem([change.obj_id, change_label(change), change.text])
             item.setData(0, _CHANGE_ROLE, index)
-            item.setToolTip(2, change.text)
+            # MELLON-VER-SRS-32: a tooltip takes text that looks like HTML for
+            # HTML, so the first line goes in as escaped rich text.
+            if change.text:
+                item.setToolTip(2, QtGuiNamespace.convertFromPlainText(
+                    change.text, Qt.WhiteSpaceMode.WhiteSpaceNormal
+                ))
             item.setForeground(1, QColor(tokens[_CHANGE_TOKENS[change.kinds[0]]]))
             self.list.addTopLevelItem(item)
         self.list.resizeColumnToContents(0)

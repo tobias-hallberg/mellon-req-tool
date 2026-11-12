@@ -17,7 +17,9 @@ All notable changes to Mellon. The format follows
   copy to clipboard, double-click to jump; works in read-only mode and
   compares in the background. Any version git's revision syntax names can
   be typed (`HEAD~2`, `@~2`, a tag, a hash prefix), and each result names the
-  commit each version resolved to. Comparing with the working copy first
+  commit each version resolved to; a name that names more than one commit,
+  such as a tag and a branch of the same name, is an error, and branches are
+  listed by their full ref names. Comparing with the working copy first
   saves text still being typed. The History tab has **Compare with latest…**.
   Specified first, in `MELLON-VER-SRS`, Mellon's own requirements, kept in
   this repo next to its test cases in `MELLON-VER-STS`.

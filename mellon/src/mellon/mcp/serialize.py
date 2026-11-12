@@ -280,14 +280,17 @@ def object_change_to_dict(change, labels) -> dict:
         "text": change.text,
     }
     err_a, err_b = change.errors
+    # MELLON-VER-SRS-27: the object or links file that can't be read, at its
+    # version; for an added or deleted object too, whose links would
+    # otherwise read as none.
+    if err_a or err_b:
+        out["unreadable"] = {"from": err_a, "to": err_b}
     # MELLON-VER-SRS-50: an added or deleted object whole, at the version
     # where it exists.
     if change.before is None or change.after is None:
         state = change.after if change.before is None else change.before
         out["object"] = _state_to_dict(state)
         return out
-    if err_a or err_b:
-        out["unreadable"] = {"from": err_a, "to": err_b}
     delta = change.delta
     # MELLON-VER-SRS-59: each changed field with its value at From and To
     # (a figure only as whether it is there).
