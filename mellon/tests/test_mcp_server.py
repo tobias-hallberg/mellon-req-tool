@@ -1346,3 +1346,212 @@ def test_mcp_srs_112_refuses_paths_outside_the_repository(case, outside_case):
     finally:
         if other_drive_folder is not None and other_drive_folder.exists():
             shutil.rmtree(other_drive_folder, ignore_errors=True)
+
+
+# MELLON-MCP-SRS blind tests
+from tests.mcp_stdio_support import fold, rel_paths  # noqa: E402
+
+
+# ---------------------------------------------------------------------------
+# Committing: MELLON-MCP-SRS-79, -81, -87, -91, -94
+# ---------------------------------------------------------------------------
+
+
+def _index_state(root: Path, env) -> tuple[str, str, str]:
+    return (
+        ref_state(root, env),
+        git(root, "ls-files", "--stage", env=env),
+        git(root, "diff-index", "--cached", "--name-status", "HEAD", env=env),
+    )
+
+
+def test_mcp_srs_79_no_commit_message_leaves_commits_branches_and_index(
+    tmp_path, rich_template, ident_home, neutral_dir
+):
+    """MELLON-MCP-SRS-79: when a write tool call gives no commit_message, or gives null,
+    the MCP server shall leave the commits, branches and git index unchanged.
+
+    With VCU3-STS-1 staged beforehand: the refs, HEAD, the index entries and what is
+    staged are the same after each call, and VCU3-STS-1 is still staged.
+    """
+    env = child_env(ident_home)
+    root = clone_of(rich_template, tmp_path / "repo")
+    append_to_description(root / "VCU3-STS" / "objects" / "VCU3-STS-1.xml", "Staged by hand.")
+    git(root, "add", "VCU3-STS/objects/VCU3-STS-1.xml", env=env)
+    before = _index_state(root, env)
+    assert "VCU3-STS/objects/VCU3-STS-1.xml" in before[2], "setup: nothing staged"
+    base_text = "The VCU shall sample the coolant temperature at a rate of at least {} Hz."
+    with mcp_server(["--repo-root", root], env=env, cwd=neutral_dir, stderr_path=tmp_path / "stderr.txt") as srv:
+        omitted = srv.call("edit_description", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2",
+                                                "text": base_text.format(30)})
+        after_omitted = _index_state(root, env)
+        null = srv.call("edit_description", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2",
+                                             "text": base_text.format(40), "commit_message": None})
+        after_null = _index_state(root, env)
+    assert succeeded(omitted) and succeeded(null), f"precondition: {show(omitted)} / {show(null)}"
+    assert after_omitted == before, "commits, branches or index changed without commit_message"
+    assert after_null == before, "commits, branches or index changed with commit_message null"
+
+
+@pytest.fixture(scope="module")
+def commit_run(tmp_path_factory, rich_template, ident_home, neutral_dir):
+    """edit_description with commit_message, while VCU3-STS-1 is modified and VCU3-SyRS-42
+    staged by someone else."""
+    base = tmp_path_factory.mktemp("commit")
+    env = child_env(ident_home)
+    root = clone_of(rich_template, base / "repo")
+    append_to_description(root / "VCU3-STS" / "objects" / "VCU3-STS-1.xml", "Modified by hand.")
+    append_to_description(root / "VCU3-SyRS" / "objects" / "VCU3-SyRS-42.xml", "Staged by hand.")
+    git(root, "add", "VCU3-SyRS/objects/VCU3-SyRS-42.xml", env=env)
+    head_before = git(root, "rev-parse", "HEAD", env=env).strip()
+    with mcp_server(["--repo-root", root], env=env, cwd=neutral_dir, stderr_path=base / "stderr.txt") as srv:
+        res = srv.call(
+            "edit_description",
+            {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2", "commit_message": "Tighten SRS-2",
+             "text": "The VCU shall sample the coolant temperature at a rate of at least 50 Hz."},
+        )
+    head_after = git(root, "rev-parse", "HEAD", env=env).strip()
+    raw_commit = git(root, "cat-file", "commit", "HEAD", env=env)
+    return {
+        "root": root,
+        "env": env,
+        "res": res,
+        "head_before": head_before,
+        "head_after": head_after,
+        "parent": git(root, "rev-parse", "HEAD^", env=env).strip(),
+        "files": set(git(root, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", env=env).split()),
+        "message": raw_commit.split("\n\n", 1)[1],
+        "unstaged": set(git(root, "diff-files", "--name-only", env=env).split()),
+        "staged": set(git(root, "diff-index", "--cached", "--name-only", "HEAD", env=env).split()),
+    }
+
+
+def test_mcp_srs_81_commits_exactly_affected_files_with_the_message(commit_run):
+    """MELLON-MCP-SRS-81: when a write tool call with a commit_message succeeds, the MCP
+    server shall commit exactly the files in affected_files, with commit_message as the
+    message.
+
+    Another file modified and another staged stay out of the commit and keep their
+    states.
+    """
+    run = commit_run
+    assert succeeded(run["res"]), f"precondition: {show(run['res'])}"
+    assert run["parent"] == run["head_before"], "the new commit isn't on top of the old HEAD"
+    affected = rel_paths(run["root"], payload(run["res"])["affected_files"])
+    assert {fold(f) for f in run["files"]} == affected, f"committed {run['files']}, affected {affected}"
+    assert run["message"].startswith("Tighten SRS-2"), f"message {run['message']!r}"
+    assert "VCU3-STS/objects/VCU3-STS-1.xml" in run["unstaged"], "the modified file isn't modified any more"
+    assert "VCU3-STS/objects/VCU3-STS-1.xml" not in run["staged"], "the modified file got staged"
+    assert "VCU3-SyRS/objects/VCU3-SyRS-42.xml" in run["staged"], "the staged file isn't staged any more"
+    assert "VCU3-SyRS/objects/VCU3-SyRS-42.xml" not in run["files"], "the staged file went into the commit"
+
+
+def test_mcp_srs_81_commits_with_no_git_program_installed(tmp_path, rich_template, ident_home, neutral_dir):
+    """MELLON-MCP-SRS-81: when a write tool call with a commit_message succeeds, the MCP
+    server shall commit exactly the files in affected_files, with commit_message as the
+    message.
+
+    Started with no git program on PATH: the commit is still made, with exactly the
+    affected files.
+    """
+    root = clone_of(rich_template, tmp_path / "repo")
+    full_env = child_env(ident_home)
+    folders = [str(Path(sys.executable).parent)]
+    if WINDOWS:
+        system_root = os.environ.get("SYSTEMROOT", r"C:\Windows")
+        folders += [str(Path(system_root) / "System32"), system_root]
+    path = os.pathsep.join(folders)
+    assert shutil.which("git", path=path) is None, "setup: git is still on the reduced PATH"
+    head_before = git(root, "rev-parse", "HEAD", env=full_env).strip()
+    with mcp_server(
+        ["--repo-root", root], env={**full_env, "PATH": path}, cwd=neutral_dir, stderr_path=tmp_path / "stderr.txt"
+    ) as srv:
+        res = srv.call("set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2", "name": "status",
+                                         "value": "Reviewed", "commit_message": "Review SRS-2 without git"})
+    assert succeeded(res), show(res)
+    assert git(root, "rev-parse", "HEAD^", env=full_env).strip() == head_before, f"no new commit: {show(res)}"
+    files = set(git(root, "diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD", env=full_env).split())
+    assert {fold(f) for f in files} == rel_paths(root, payload(res)["affected_files"]), files
+
+
+def test_mcp_srs_87_returns_commit_short_hash_and_message(commit_run):
+    """MELLON-MCP-SRS-87: when the MCP server commits for a commit_message, it shall
+    return commit with the commit's short_hash and commit_message."""
+    run = commit_run
+    commit = payload(run["res"]).get("commit")
+    assert isinstance(commit, dict), f"no commit in {show(run['res'])}"
+    short = commit.get("short_hash")
+    assert isinstance(short, str) and short and run["head_after"].startswith(short), (
+        f"short_hash {short!r}, HEAD {run['head_after']}"
+    )
+    assert commit.get("commit_message") == run["message"], (
+        f"commit_message {commit.get('commit_message')!r}, the commit's {run['message']!r}"
+    )
+
+
+@pytest.fixture(scope="module")
+def commit_failure_runs(tmp_path_factory, rich_template, ident_home, neutral_dir):
+    """edit_description with commit_message while git refuses the commit: during a merge
+    in progress, with no git identity, and with user.email but no user.name."""
+    runs = {}
+    text = "The VCU shall generate a FAULT_OVERTEMP signal within 150 ms of the coolant temperature exceeding 106 degC."
+    for kind in ("merge_in_progress", "no_identity", "no_user_name"):
+        base = tmp_path_factory.mktemp(kind)
+        root = clone_of(rich_template, base / "repo")
+        if kind == "merge_in_progress":
+            env = child_env(ident_home)
+            other = git(root, "rev-parse", "HEAD~1", env=env).strip()
+            write_lf(root / ".git" / "MERGE_HEAD", other + "\n")
+        else:
+            home = base / "home"
+            home.mkdir()
+            if kind == "no_user_name":
+                write_lf(home / ".gitconfig", "[user]\n\temail = blind@example.invalid\n")
+            extra = {"APPDATA": str(home / "AppData"), "LOCALAPPDATA": str(home / "Local")} if WINDOWS else {}
+            env = child_env(home, **extra)
+        head_before = git(root, "rev-parse", "HEAD", env=env).strip()
+        with mcp_server(["--repo-root", root], env=env, cwd=neutral_dir, stderr_path=base / "stderr.txt") as srv:
+            res = srv.call("edit_description", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1", "text": text,
+                                                "commit_message": "Blind commit that git refuses"})
+        runs[kind] = {
+            "res": res,
+            "head_before": head_before,
+            "head_after": git(root, "rev-parse", "HEAD", env=env).strip(),
+            "object": (root / "VCU3-SRS" / "objects" / "VCU3-SRS-1.xml").read_text(encoding="utf-8"),
+            "text": text,
+        }
+    return runs
+
+
+COMMIT_REASONS = {
+    "merge_in_progress": re.compile(r"(?i)merg"),
+    "no_identity": re.compile(r"(?i)user\.name|user\.email|identity|signature|author|committer"),
+    "no_user_name": re.compile(r"(?i)user\.name|identity|signature|author|committer"),
+}
+
+
+@pytest.mark.parametrize("kind", list(COMMIT_REASONS))
+def test_mcp_srs_91_failed_commit_returns_commit_error_with_reason(kind, commit_failure_runs):
+    """MELLON-MCP-SRS-91: if the commit for a commit_message fails, the MCP server shall
+    return commit_error with the reason.
+
+    git refuses the commit during a merge in progress, with no git identity, and with
+    no user.name; the reason names the merge, or the missing identity.
+    """
+    res = commit_failure_runs[kind]["res"]
+    p = payload(res)
+    assert isinstance(p, dict) and "commit_error" in p, f"no commit_error: {show(res)}"
+    reason = json.dumps(p["commit_error"]) if not isinstance(p["commit_error"], str) else p["commit_error"]
+    assert COMMIT_REASONS[kind].search(reason), f"commit_error doesn't give the reason: {reason!r}"
+
+
+@pytest.mark.parametrize("kind", list(COMMIT_REASONS))
+def test_mcp_srs_94_failed_commit_keeps_the_change_in_the_working_copy(kind, commit_failure_runs):
+    """MELLON-MCP-SRS-94: if the commit for a commit_message fails, the MCP server shall
+    keep the call's changes in the working copy.
+
+    The object file holds the new text and HEAD hasn't moved.
+    """
+    run = commit_failure_runs[kind]
+    assert run["head_after"] == run["head_before"], "HEAD moved although git refused the commit"
+    assert run["text"] in run["object"], "the edited text isn't in the working copy"

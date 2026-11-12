@@ -662,3 +662,84 @@ def reversed_outline(srv: Client, doc_id: str) -> list:
 def append_to_description(path: Path, words: str) -> None:
     text = path.read_text(encoding="utf-8")
     write_lf(path, text.replace("</description>", f" {words}</description>", 1))
+
+
+# Helpers for the MELLON-MCP-SRS blind tests of the write tools
+
+
+def _new_id(created: set[str]) -> str:
+    for path in sorted(created):
+        m = re.fullmatch(r"VCU3-SRS/objects/(VCU3-SRS-\d+)\.xml", path)
+        if m:
+            return m.group(1)
+    raise AssertionError(f"setup: no new object file among {sorted(created)}")
+
+
+def write_calls(figure_source: Path) -> list[tuple[str, object]]:
+    """One valid call of each of the 27 write tools, in an order where each is valid.
+
+    An argument set may be a function of (client, created files by tool) for values
+    that come from an earlier call.
+    """
+    return [
+        ("new_object", {"doc_id": "VCU3-SRS", "parent_id": "VCU3-SRS-0", "description": "Blind new object.",
+                        "attrs": {"type": "Requirement", "status": "Draft"}}),
+        ("set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2", "name": "status", "value": "Reviewed"}),
+        ("edit_description", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2",
+                              "text": "The VCU shall sample the coolant temperature at a rate of at least 25 Hz."}),
+        ("update_object", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-11", "description": "Updated by a blind test.",
+                           "attrs": {"priority": "Should"}}),
+        ("copy_object", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-12"}),
+        ("bulk_set_attribute", {"doc_id": "VCU3-SRS", "obj_ids": ["VCU3-SRS-12", "VCU3-SRS-15"],
+                                "name": "priority", "value": "Could"}),
+        ("set_figure", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-2", "source_path": str(figure_source)}),
+        ("clear_figure", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-13"}),
+        ("set_table", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-17", "table": TABLE}),
+        ("clear_table", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-16"}),
+        ("edit_metadata", {"doc_id": "VCU3-SRS", "field": "title", "value": "Blind title"}),
+        ("tag_issue", {"doc_id": "VCU3-SRS", "issue": "2"}),
+        ("create_document", {"doc_id": "BLIND-DOC", "title": "Blind document"}),
+        ("add_parent_doc", {"doc_id": "BLIND-DOC", "parent_doc": "VCU3-SRS"}),
+        ("remove_parent_doc", {"doc_id": "BLIND-DOC", "parent_doc": "VCU3-SRS"}),
+        ("define_attribute", {"doc_id": "VCU3-SRS", "name": "blind-attr", "kind": "enum", "options": ["A", "B"],
+                              "default_value": "A"}),
+        ("add_attr_option", {"doc_id": "VCU3-SRS", "attr_name": "blind-attr", "option": "C"}),
+        ("remove_attr_option", {"doc_id": "VCU3-SRS", "attr_name": "blind-attr", "option": "A"}),
+        ("change_attribute_required", {"doc_id": "VCU3-SRS", "name": "blind-attr", "required": True}),
+        ("delete_attribute", {"doc_id": "VCU3-SRS", "name": "blind-attr"}),
+        ("manage_view", {"doc_id": "VCU3-SRS", "action": "create", "name": "Blind view", "visible_attrs": ["status"]}),
+        ("move_object", lambda srv, created: {"doc_id": "VCU3-SRS", "obj_id": _new_id(created["new_object"]),
+                                              "to_top": True}),
+        ("reorder_outline", lambda srv, created: {"doc_id": "VCU3-SRS",
+                                                  "ordering": reversed_outline(srv, "VCU3-SRS")}),
+        ("add_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-10", "target_doc": "VCU3-SyRS",
+                      "target_id": "VCU3-SyRS-42", "link_type": "satisfies"}),
+        ("remove_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-10", "target_doc": "VCU3-SyRS",
+                         "target_id": "VCU3-SyRS-42"}),
+        ("delete_object", lambda srv, created: {"doc_id": "VCU3-SRS", "obj_id": _new_id(created["copy_object"])}),
+        ("ack_suspects", {"doc_id": "VCU3-SRS", "link_keys": [
+            {"source_id": "VCU3-SRS-15", "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-47"}]}),
+    ]
+
+
+@pytest.fixture(scope="module")
+def write_run(tmp_path_factory, rich_template, ident_home, neutral_dir):
+    """The 27 write calls on one server, with each file's hash before and after each."""
+    base = tmp_path_factory.mktemp("writes")
+    root = clone_of(rich_template, base / "repo")
+    figure_source = base / "figure.svg"
+    write_lf(figure_source, SVG)
+    runs: dict[str, dict] = {}
+    created: dict[str, set[str]] = {}
+    with mcp_server(
+        ["--repo-root", root], env=child_env(ident_home), cwd=neutral_dir, stderr_path=base / "stderr.txt"
+    ) as srv:
+        for tool, args in write_calls(figure_source):
+            if callable(args):
+                args = args(srv, created)
+            before = tree_hashes(root, include_git=False)
+            res = srv.call(tool, args)
+            after = tree_hashes(root, include_git=False)
+            created[tool] = set(after) - set(before)
+            runs[tool] = {"res": res, "changed": changed(before, after), "args": args}
+    return {"root": root, "runs": runs}

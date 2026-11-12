@@ -2242,3 +2242,301 @@ def test_edit_srs_162_object_without_sub_objects_is_deleted(tmp_path, mcp_at, co
     assert srv.delete_object("SRS", "SRS-1", force=True).get("ok") is True
     assert srv.delete_object("SRS", "SRS-0", force=True).get("ok") is True
     assert not obj_file(root, "SRS", "SRS-0").exists()
+
+
+# MELLON-MCP-SRS blind tests
+import contextlib  # noqa: E402
+
+from tests.mcp_stdio_support import (  # noqa: E402
+    SVG,
+    TABLE,
+    WINDOWS,
+    child_env,
+    clone_of,
+    failed,
+    fold,
+    ident_home,  # noqa: F401, F811 -- fixture
+    mcp_server,
+    neutral_dir,  # noqa: F401, F811 -- fixture
+    payload,
+    plain_template,  # noqa: F401, F811 -- fixture
+    rel_paths,
+    requires_mellon_mcp,
+    rich_template,  # noqa: F401, F811 -- fixture
+    show,
+    succeeded,
+    write_calls,
+    write_lf,
+    write_run,  # noqa: F401, F811 -- fixture
+)
+
+
+# ---------------------------------------------------------------------------
+# Successful writes: MELLON-MCP-SRS-44, -67
+# ---------------------------------------------------------------------------
+
+
+WRITE_TOOLS = [name for name, _ in write_calls(Path("x.svg"))]
+
+
+@requires_mellon_mcp
+@pytest.mark.parametrize("tool", WRITE_TOOLS)
+def test_mcp_srs_44_successful_write_returns_ok_affected_files_and_message(tool, write_run):
+    """MELLON-MCP-SRS-44: when a write tool call succeeds, the MCP server shall return
+    ok true, affected_files and message.
+
+    One valid call of each write tool: ok is true, affected_files is a list of strings
+    and message a non-empty string.
+    """
+    res = write_run["runs"][tool]["res"]
+    p = payload(res)
+    assert not res.isError and isinstance(p, dict), show(res)
+    assert p.get("ok") is True, show(res)
+    files = p.get("affected_files")
+    assert isinstance(files, list) and all(isinstance(f, str) for f in files), f"affected_files: {files!r}"
+    assert isinstance(p.get("message"), str) and p["message"].strip(), f"message: {p.get('message')!r}"
+
+
+@requires_mellon_mcp
+@pytest.mark.parametrize("tool", WRITE_TOOLS)
+def test_mcp_srs_67_affected_files_are_exactly_the_files_changed(tool, write_run):
+    """MELLON-MCP-SRS-67: when a write tool call succeeds, the MCP server shall list in
+    affected_files exactly the files under the root, outside .git, that the call
+    created, changed or deleted.
+
+    Each file's SHA-256 before and after the call, ignored files included, compared with
+    affected_files both ways.
+    """
+    run = write_run["runs"][tool]
+    p = payload(run["res"])
+    assert succeeded(run["res"]), f"precondition: the call failed: {show(run['res'])}"
+    listed = rel_paths(write_run["root"], p["affected_files"])
+    actual = {fold(c) for c in run["changed"]}
+    assert listed == actual, (
+        f"listed but not changed: {sorted(listed - actual)}; changed but not listed: {sorted(actual - listed)}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Failed writes: MELLON-MCP-SRS-45, -52, -53, -54
+# ---------------------------------------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def fail_server(tmp_path_factory, rich_template, ident_home, neutral_dir):
+    """One server on a rich req-test copy, for calls that fail."""
+    base = tmp_path_factory.mktemp("fail")
+    root = clone_of(rich_template, base / "repo")
+    figure_source = base / "figure.svg"
+    write_lf(figure_source, SVG)
+    with mcp_server(
+        ["--repo-root", root], env=child_env(ident_home), cwd=neutral_dir, stderr_path=base / "stderr.txt"
+    ) as srv:
+        yield {"client": srv, "root": root, "figure": figure_source}
+
+
+def missing_doc_calls(figure: str) -> dict[str, dict]:
+    """Each write tool but create_document, naming the document NOPE that doesn't exist."""
+    d, o = "NOPE", "NOPE-1"
+    return {
+        "new_object": {"doc_id": d},
+        "set_attribute": {"doc_id": d, "obj_id": o, "name": "status", "value": "Draft"},
+        "edit_description": {"doc_id": d, "obj_id": o, "text": "x"},
+        "update_object": {"doc_id": d, "obj_id": o, "description": "x"},
+        "copy_object": {"doc_id": d, "obj_id": o},
+        "bulk_set_attribute": {"doc_id": d, "obj_ids": [o], "name": "status", "value": "Draft"},
+        "set_figure": {"doc_id": d, "obj_id": o, "source_path": figure},
+        "clear_figure": {"doc_id": d, "obj_id": o},
+        "set_table": {"doc_id": d, "obj_id": o, "table": TABLE},
+        "clear_table": {"doc_id": d, "obj_id": o},
+        "edit_metadata": {"doc_id": d, "field": "title", "value": "x"},
+        "tag_issue": {"doc_id": d, "issue": "1"},
+        "add_parent_doc": {"doc_id": d, "parent_doc": "VCU3-SyRS"},
+        "remove_parent_doc": {"doc_id": d, "parent_doc": "VCU3-SyRS"},
+        "add_attr_option": {"doc_id": d, "attr_name": "status", "option": "X"},
+        "define_attribute": {"doc_id": d, "name": "blind-attr", "kind": "text"},
+        "change_attribute_required": {"doc_id": d, "name": "status", "required": False},
+        "delete_attribute": {"doc_id": d, "name": "status"},
+        "remove_attr_option": {"doc_id": d, "attr_name": "status", "option": "Draft"},
+        "manage_view": {"doc_id": d, "action": "create", "name": "View"},
+        "move_object": {"doc_id": d, "obj_id": o, "to_top": True},
+        "reorder_outline": {"doc_id": d, "ordering": [{"id": o, "children": []}]},
+        "add_link": {"source_doc": d, "source_id": o, "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-42",
+                     "link_type": "satisfies"},
+        "remove_link": {"source_doc": d, "source_id": o, "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-42"},
+        "delete_object": {"doc_id": d, "obj_id": o},
+        "ack_suspects": {"doc_id": d},
+    }
+
+
+MISSING_DOC_TOOLS = list(missing_doc_calls("x.svg"))
+
+
+@requires_mellon_mcp
+@pytest.mark.parametrize("tool", MISSING_DOC_TOOLS)
+def test_mcp_srs_45_failed_write_returns_ok_false_error_and_error_type(tool, fail_server):
+    """MELLON-MCP-SRS-45: if a write tool call fails, the MCP server shall return ok false,
+    an error message and an error_type.
+
+    Each write tool given the document NOPE, which doesn't exist (create_document would
+    create it, so it is left out).
+    """
+    args = missing_doc_calls(str(fail_server["figure"]))[tool]
+    res = fail_server["client"].call(tool, args)
+    p = payload(res)
+    assert isinstance(p, dict), f"no JSON result: {show(res)}"
+    assert p.get("ok") is False, show(res)
+    assert isinstance(p.get("error"), str) and p["error"].strip(), show(res)
+    assert isinstance(p.get("error_type"), str) and p["error_type"].strip(), show(res)
+
+
+ALREADY_EXISTS = {
+    "create_document": ("create_document", {"doc_id": "VCU3-SRS"}),
+    "add_parent_doc": ("add_parent_doc", {"doc_id": "VCU3-SRS", "parent_doc": "VCU3-SyRS"}),
+    "define_attribute": ("define_attribute", {"doc_id": "VCU3-SRS", "name": "status", "kind": "text"}),
+    "add_attr_option": ("add_attr_option", {"doc_id": "VCU3-SRS", "attr_name": "status", "option": "Draft"}),
+    "add_link_same_type": ("add_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-1",
+                                        "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-42",
+                                        "link_type": "satisfies"}),
+    "add_link_other_type": ("add_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-1",
+                                         "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-42",
+                                         "link_type": "refines"}),
+}
+
+
+@requires_mellon_mcp
+@pytest.mark.parametrize("case", list(ALREADY_EXISTS))
+def test_mcp_srs_52_adding_an_existing_item_returns_already_exists(case, fail_server):
+    """MELLON-MCP-SRS-52: if a write tool call asks to add a document, parent document,
+    attribute or option that already exists, or a second link from one source to one
+    target, the MCP server shall return error_type AlreadyExists.
+
+    A second link to the same target counts whatever its link type.
+    """
+    tool, args = ALREADY_EXISTS[case]
+    res = fail_server["client"].call(tool, args)
+    p = payload(res)
+    assert isinstance(p, dict) and p.get("ok") is False, f"precondition: the call didn't fail: {show(res)}"
+    assert p.get("error_type") == "AlreadyExists", show(res)
+
+
+EDITOR_ERRORS = {
+    "missing_document": ("set_attribute", {"doc_id": "NOPE", "obj_id": "NOPE-1", "name": "status",
+                                           "value": "Draft"}),
+    "missing_object": ("set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-999", "name": "status",
+                                         "value": "Draft"}),
+    "unknown_attribute": ("set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1",
+                                            "name": "no-such-attr", "value": "x"}),
+    "option_not_defined": ("set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1", "name": "status",
+                                             "value": "Bogus"}),
+    "link_target_document_not_a_parent": ("add_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-1",
+                                                       "target_doc": "VCU3-STS", "target_id": "VCU3-STS-1",
+                                                       "link_type": "satisfies"}),
+    "attribute_kind_unknown": ("define_attribute", {"doc_id": "VCU3-SRS", "name": "blind-attr",
+                                                    "kind": "bogus"}),
+    "parent_not_declared": ("remove_parent_doc", {"doc_id": "VCU3-SRS", "parent_doc": "VCU3-STS"}),
+    "link_missing": ("remove_link", {"source_doc": "VCU3-SRS", "source_id": "VCU3-SRS-10",
+                                     "target_doc": "VCU3-SyRS", "target_id": "VCU3-SyRS-42"}),
+    "figure_missing": ("clear_figure", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1"}),
+    "table_missing": ("clear_table", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1"}),
+}
+
+
+NOT_FOUND = (
+    "defect: MELLON-MCP-SRS-53: {what} returns error_type NotFound, not EditorError; NotFound is in "
+    "no requirement's table (MELLON-MCP-SRS-55), so a person decides whether the code or the "
+    "requirement changes"
+)
+
+
+def _editor_error_case(case: str):
+    marks = {
+        "parent_not_declared": pytest.mark.xfail(
+            strict=True, reason=NOT_FOUND.format(what="remove_parent_doc with a parent that isn't declared")
+        ),
+        "link_missing": pytest.mark.xfail(
+            strict=True, reason=NOT_FOUND.format(what="remove_link for a link that doesn't exist")
+        ),
+        "figure_missing": pytest.mark.xfail(
+            strict=True, reason=NOT_FOUND.format(what="clear_figure on an object without a figure")
+        ),
+        "table_missing": pytest.mark.xfail(
+            strict=True, reason=NOT_FOUND.format(what="clear_table on an object without a table")
+        ),
+    }
+    return pytest.param(case, marks=marks[case]) if case in marks else case
+
+
+@requires_mellon_mcp
+@pytest.mark.parametrize("case", [_editor_error_case(c) for c in EDITOR_ERRORS])
+def test_mcp_srs_53_missing_item_or_refused_value_returns_editor_error(case, fail_server):
+    """MELLON-MCP-SRS-53: if a write tool call fails because a parameter names a missing
+    item or gives a value that the tool or the document's attribute definitions refuse,
+    the MCP server shall return error_type EditorError.
+
+    Missing: a document, an object, an attribute, a parent declaration, a link, a figure,
+    a table. Refused: an option that isn't defined, a link target document that isn't a
+    parent, an unknown attribute kind.
+    """
+    tool, args = EDITOR_ERRORS[case]
+    res = fail_server["client"].call(tool, args)
+    p = payload(res)
+    assert failed(res), f"precondition: the call didn't fail: {show(res)}"
+    assert isinstance(p, dict) and p.get("error_type") == "EditorError", show(res)
+
+
+@contextlib.contextmanager
+def write_refused(path: Path):
+    """Keep the operating system from replacing or writing ``path`` while the block runs."""
+    if WINDOWS:
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.CreateFileW.restype = wintypes.HANDLE
+        kernel32.CreateFileW.argtypes = [
+            wintypes.LPCWSTR, wintypes.DWORD, wintypes.DWORD, wintypes.LPVOID,
+            wintypes.DWORD, wintypes.DWORD, wintypes.HANDLE,
+        ]
+        generic_read, share_read, open_existing, normal = 0x80000000, 0x1, 3, 0x80
+        handle = kernel32.CreateFileW(str(path), generic_read, share_read, None, open_existing, normal, None)
+        if handle in (None, wintypes.HANDLE(-1).value):
+            raise AssertionError(f"setup: can't hold {path} open: {ctypes.get_last_error()}")
+        try:
+            yield
+        finally:
+            kernel32.CloseHandle(handle)
+    else:
+        if os.geteuid() == 0:
+            pytest.skip("root writes any file, so the case can't be built")
+        folder_mode, file_mode = path.parent.stat().st_mode, path.stat().st_mode
+        path.chmod(0o444)
+        path.parent.chmod(0o555)
+        try:
+            yield
+        finally:
+            path.parent.chmod(folder_mode)
+            path.chmod(file_mode)
+
+
+@requires_mellon_mcp
+def test_mcp_srs_54_operating_system_refusal_returns_os_error(tmp_path, rich_template, ident_home, neutral_dir):
+    """MELLON-MCP-SRS-54: if a write tool call fails because the operating system refuses
+    to read or write a file, the MCP server shall return error_type OSError.
+
+    VCU3-SRS-1's object file is held open without write or delete sharing (Windows) or
+    made read-only in a read-only folder (elsewhere) while set_attribute writes it.
+    """
+    root = clone_of(rich_template, tmp_path / "repo")
+    target = root / "VCU3-SRS" / "objects" / "VCU3-SRS-1.xml"
+    with mcp_server(
+        ["--repo-root", root], env=child_env(ident_home), cwd=neutral_dir, stderr_path=tmp_path / "stderr.txt"
+    ) as srv:
+        srv.call("show_object", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1"})
+        with write_refused(target):
+            res = srv.call(
+                "set_attribute", {"doc_id": "VCU3-SRS", "obj_id": "VCU3-SRS-1", "name": "status", "value": "Reviewed"}
+            )
+    p = payload(res)
+    assert failed(res), f"precondition: the write didn't fail: {show(res)}"
+    assert isinstance(p, dict) and p.get("error_type") == "OSError", show(res)
