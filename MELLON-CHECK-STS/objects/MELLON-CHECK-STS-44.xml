@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_validate_repo_not_ok_when_a_document_fails_to_load
+tests/test_mcp_read.py::test_load_errors_with_an_unresolved_repo_root</attr>
+  <description>In a repository of PARENT and CHILD, leave CHILD's only object file as a conflicted git merge leaves it, with markers from line 3. Call validate_repo, once with the repository root given directly and once given as a path through CHILD/.. . Expected: both times, one load error with the document ID CHILD, the file CHILD/objects/CHILD-0.xml relative to the repository root, line 3 and a reason ending with '(unresolved merge conflict?)'.</description>
+</object>

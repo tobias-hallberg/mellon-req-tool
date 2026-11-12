@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-51">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_clean_repo_passes
+tests/test_check.py::test_validation_error_fails</attr>
+  <description>Make a git repository with two committed documents, PARENT and CHILD, CHILD-1 linking to PARENT-1 with its acknowledged commit recorded. From a folder that isn't that repository's root, run mellon-check with --repo-root naming it; then set PARENT-1's status to a value that isn't an option and run it again. Expected: exit status 0 and 2 documents checked the first time; exit status 1 and a line naming PARENT and ATTR_BAD_ENUM the second time.</description>
+</object>

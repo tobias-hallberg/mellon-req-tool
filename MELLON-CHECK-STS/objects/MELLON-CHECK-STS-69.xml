@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-69">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_108_repo_health_parent_objects_linked_by_document</attr>
+  <description>With the documents of the MELLON-CHECK-SRS-107 gap, expected for PARENT's objects linked to directly by CHILD: 1 (PARENT-1) out of 2 (PARENT-0, a heading, is left out; PARENT-2 is linked only from a heading). Add a third document GRAND as PARENT's parent and a link from PARENT-1 to it: CHILD's numbers don't change (direct links only).</description>
+</object>

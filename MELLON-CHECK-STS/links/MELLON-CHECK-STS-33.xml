@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-CHECK-STS-33">
+  <link target-doc="MELLON-CHECK-SRS" target-id="MELLON-CHECK-SRS-42" type="verifies" ack="db84d0d"/>
+</links>

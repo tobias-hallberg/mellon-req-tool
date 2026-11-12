@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_rule_required_missing_when_no_outgoing_link
+tests/test_validator.py::test_rule_required_satisfied_when_outgoing_link_present
+tests/test_validator.py::test_check_srs_52_rule_applies_only_when_each_name_matches
+tests/test_validator.py::test_check_srs_52_rule_applies_per_object_iff_all_names_match</attr>
+  <description>With the document and three-rule file of the previous test case (the second and third rules each name type Requirement and has-outgoing-link): (a) remove the requirement's link and rationale, and validate; (b) starting again, keep the link, remove the requirement's rationale, and validate. In (b) the heading, which has no rationale and no outgoing link, matches the second rule's has-outgoing-link but not its type. Expected: (a) RULE_REQUIRED_MISSING, since both names of the second rule match; (b) neither RULE_REQUIRED_MISSING nor RULE_FORBIDDEN_PRESENT, since the second rule doesn't apply to the heading.</description>
+</object>

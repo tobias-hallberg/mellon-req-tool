@@ -8,6 +8,7 @@ Covers everything from PLAN.md § Verification that doesn't require git:
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date as _date
@@ -16,11 +17,33 @@ from .schema import (
     NEXT_OBJECT_NUMBER_ATTR,
     TABLE_ALIGNMENTS,
     Document,
+    Link,
     RequirementObject,
     Rule,
     table_geometry_errors,
     whole_number,
 )
+
+# Ten ASCII characters YYYY-MM-DD; `[0-9]` takes no other script's digits.
+_DATE_FORM = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
+
+
+def is_date(text: str) -> bool:
+    """True when `text` is ten ASCII characters YYYY-MM-DD naming a Gregorian
+    date from 0001-01-01 to 9999-12-31.
+
+    MELLON-CHECK-SRS-21, MELLON-CHECK-SRS-42: one check for attribute values
+    and the metadata date. `date.fromisoformat` alone isn't enough: since
+    Python 3.11 it also takes other ISO 8601 forms, such as 20260210 and the
+    week date 2026-W06-2, so the form is matched first.
+    """
+    if _DATE_FORM.fullmatch(text) is None:
+        return False
+    try:
+        _date.fromisoformat(text)
+    except ValueError:
+        return False
+    return True
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,9 +73,8 @@ def _check_metadata(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     date_value = doc.metadata.date
     if date_value:
-        try:
-            _date.fromisoformat(date_value)
-        except ValueError:
+        # MELLON-CHECK-SRS-42: the same date check as an attribute value's.
+        if not is_date(date_value):
             errors.append(
                 ValidationError(
                     "META_BAD_DATE",
@@ -182,9 +204,8 @@ def _check_attr_value(obj_id, attr, value: str) -> "ValidationError | None":
                 f"'true' or 'false'",
             )
     elif attr.kind == "date":
-        try:
-            _date.fromisoformat(value)
-        except ValueError:
+        # MELLON-CHECK-SRS-21: only YYYY-MM-DD, not other ISO 8601 forms.
+        if not is_date(value):
             return ValidationError(
                 "ATTR_BAD_DATE",
                 f"object {obj_id!r}: attribute {attr.name!r}={value!r} is not "
@@ -240,6 +261,16 @@ def _check_tables(doc: Document) -> list[ValidationError]:
     return errors
 
 
+def link_target_missing(doc: Document, link: Link) -> bool:
+    """True when `link`, an outgoing link of `doc`, is reported as
+    LINK_TARGET_MISSING: its target is in `doc` and isn't one of its objects.
+
+    `mellon-check` uses this to print such a broken link once
+    (MELLON-CHECK-SRS-134).
+    """
+    return link.target_doc == doc.id and link.target_id not in doc.objects
+
+
 def _check_links(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     for source, link_list in doc.links.items():
@@ -251,7 +282,7 @@ def _check_links(doc: Document) -> list[ValidationError]:
                 )
             )
         for link in link_list:
-            if link.target_doc == doc.id and link.target_id not in doc.objects:
+            if link_target_missing(doc, link):
                 errors.append(
                     ValidationError(
                         "LINK_TARGET_MISSING",
@@ -280,21 +311,25 @@ def _check_link_policy(doc: Document) -> list[ValidationError]:
     return errors
 
 
+def _attr_has_value(obj: RequirementObject, name: str, expected: str) -> bool:
+    # MELLON-CHECK-SRS-54: an attribute that isn't set has no value, so it
+    # matches no value, not even "". One set to an empty value matches "".
+    return name in obj.attrs and obj.attrs[name] == expected
+
+
 def _rule_matches(rule: Rule, obj: RequirementObject, has_link: bool) -> bool:
     for key, expected in rule.conditions.items():
-        if key == "type":
-            if obj.attrs.get("type", "") != expected:
-                return False
-        elif key == "requirement-type":
-            if obj.attrs.get("RequirementType", "") != expected:
+        if key == "requirement-type":
+            # MELLON-CHECK-SRS-55: an alias, so it matches as the name does.
+            if not _attr_has_value(obj, "RequirementType", expected):
                 return False
         elif key == "has-outgoing-link":
             actual = "true" if has_link else "false"
             if actual != expected.lower():
                 return False
         else:
-            # Fallback: any unrecognised predicate matches `obj.attrs[key]`.
-            if obj.attrs.get(key, "") != expected:
+            # Any other name, `type` among them, is an attribute's name.
+            if not _attr_has_value(obj, key, expected):
                 return False
     return True
 

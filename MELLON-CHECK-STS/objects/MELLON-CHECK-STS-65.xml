@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_check_srs_79_validate_action_shows_each_validation_error</attr>
+  <description>No GUI test of the Validate action. Offscreen: open a Document Editor on a copy of req-test's VCU3-SRS after giving it three validation errors by hand (one object's status not an option, one object's file deleted while its outline entry stays, one attribute the manifest doesn't define on another object). Choose the Validate action. Expected: the result shown lists exactly three validation errors, each with its code (ATTR_BAD_ENUM, OUTLINE_MISSING_OBJECT, ATTR_UNKNOWN). Try it in read-only mode and with read-only mode off.</description>
+</object>

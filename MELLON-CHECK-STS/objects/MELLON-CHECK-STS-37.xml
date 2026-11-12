@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_rule_required_missing_when_no_outgoing_link
+tests/test_validator.py::test_check_srs_56_has_outgoing_link_true_matches_object_with_link
+tests/test_validator.py::test_check_srs_57_has_outgoing_link_false_matches_object_without_link</attr>
+  <description>With the three-rule file of the test case for MELLON-CHECK-SRS-51 (a requirement with has-outgoing-link false requires rationale; a later rule, a requirement with has-outgoing-link true, makes it optional), remove the requirement's only outgoing link and its rationale, and validate. Expected: RULE_REQUIRED_MISSING. The object matches has-outgoing-link false; it doesn't match has-outgoing-link true, which would have made rationale optional as the later rule.</description>
+</object>

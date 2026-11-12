@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_validate_clean_document
+tests/test_mcp_read.py::test_validate_returns_structured_errors
+tests/test_mcp_read.py::test_check_srs_86_validate_document_returns_each_error_with_code_and_message
+tests/test_mcp_read.py::test_check_srs_86_mcp_stdio_results_match_in_process
+tests/test_mcp_read.py::test_check_srs_87_validate_document_not_ok_for_load_error
+tests/test_mcp_read.py::test_check_srs_87_validate_document_not_ok_when_validation_stops</attr>
+  <description>In a repository of PARENT and CHILD, where neither document has a validation error, call validate_document for PARENT. Then define on CHILD a required text attribute rationale, which CHILD's one object CHILD-0 doesn't set, and call validate_document for CHILD. Expected: for PARENT, ok true and no errors; for CHILD, ok false and an error with the code ATTR_MISSING_REQUIRED whose message names CHILD-0, each error holding a code and a message.</description>
+</object>

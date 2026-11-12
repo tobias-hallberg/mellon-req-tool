@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-19">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_unknown_attribute
+tests/test_validator.py::test_missing_required_attribute
+tests/test_validator.py::test_bad_enum_value
+tests/test_validator.py::test_non_string_kind_value_checks[integer-42-abc-ATTR_BAD_INTEGER]
+tests/test_validator.py::test_non_string_kind_value_checks[integer--7-3.14-ATTR_BAD_INTEGER]
+tests/test_validator.py::test_non_string_kind_value_checks[real-3.14-abc-ATTR_BAD_REAL]
+tests/test_validator.py::test_non_string_kind_value_checks[real--2-1.2.3-ATTR_BAD_REAL]
+tests/test_validator.py::test_non_string_kind_value_checks[boolean-true-yes-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_non_string_kind_value_checks[boolean-false-True-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_non_string_kind_value_checks[date-2026-04-25-25/04/2026-ATTR_BAD_DATE]
+tests/test_validator.py::test_non_string_kind_value_checks[date-2026-12-31-not-a-date-ATTR_BAD_DATE]
+tests/test_validator.py::test_duplicate_ref_in_outline
+tests/test_validator.py::test_outline_missing_object
+tests/test_validator.py::test_object_not_in_outline
+tests/test_validator.py::test_link_to_non_parent_doc_rejected
+tests/test_validator.py::test_intra_doc_link_target_missing
+tests/test_validator.py::test_validate_flags_bad_metadata_date
+tests/test_validator.py::test_rule_required_missing_when_no_outgoing_link
+tests/test_validator.py::test_rule_forbidden_present_flagged
+tests/test_validator.py::test_rule_link_required_missing_flagged</attr>
+  <description>For each kind of validation error that release 0.3.0 reported, make a document with a problem of that kind, validate it and read the codes: an attribute the manifest doesn't define (ATTR_UNKNOWN); a required attribute not set (ATTR_MISSING_REQUIRED); an enumeration value that isn't an option (ATTR_BAD_ENUM); integer values abc and 3.14 (ATTR_BAD_INTEGER); real values abc and 1.2.3 (ATTR_BAD_REAL); boolean values yes and True (ATTR_BAD_BOOLEAN); date values 25/04/2026 and not-a-date (ATTR_BAD_DATE); an outline that names one object twice (OUTLINE_DUP); an outline entry whose object doesn't exist (OUTLINE_MISSING_OBJECT); an object that isn't in the outline (OBJECT_NOT_IN_OUTLINE); a link to a document that isn't a parent document (LINK_NOT_ALLOWED); a link to an object ID of the same document that no object has (LINK_TARGET_MISSING); the metadata date 2026-04-215 (META_BAD_DATE); a rule that requires an attribute the object lacks (RULE_REQUIRED_MISSING), one that forbids an attribute the object has (RULE_FORBIDDEN_PRESENT), and one that requires a link to a parent document the object doesn't have (RULE_LINK_REQUIRED_MISSING). Expected: each document reports the code in brackets, which is the code release 0.3.0 used for that kind, and the two values tried for one kind give the same code.</description>
+</object>

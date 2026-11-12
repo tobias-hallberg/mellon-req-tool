@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[validate_document]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[validate_repo]
+tests/test_mcp_write.py::test_read_only_refuses_every_write_tool[repo_health]
+tests/test_gui_smoke.py::test_check_srs_9_validate_action_changes_no_working_copy_file
+tests/test_mcp_read.py::test_check_srs_9_mcp_validate_tools_change_no_working_copy_file
+tests/test_mcp_read.py::test_check_srs_9_mcp_stdio_validate_tools_change_no_working_copy_file</attr>
+  <description>Copy the req-test fixture repository, reset its working copy to the latest commit, and start the MCP server in read-only mode on it. Call validate_document for VCU3-SRS, then validate_repo, then repo_health. Expected: each call returns a result, and afterwards git reports no modified, deleted or new file in the working copy.</description>
+</object>

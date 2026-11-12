@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_rule_forbidden_present_flagged
+tests/test_validator.py::test_rule_required_satisfied_when_outgoing_link_present</attr>
+  <description>With a rule that forbids rationale on a heading: (a) add a rationale to the heading and validate; (b) leave the heading without a rationale and validate. Expected: (a) RULE_FORBIDDEN_PRESENT; (b) no RULE_FORBIDDEN_PRESENT.</description>
+</object>

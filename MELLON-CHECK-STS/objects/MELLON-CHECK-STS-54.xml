@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_link_index.py::test_gate_ignores_the_index_file_and_kept_answers
+tests/test_check.py::test_check_srs_127_mellon_check_writes_nothing</attr>
+  <description>In a git repository of PARENT and CHILD, acknowledge CHILD-1's link to PARENT-1, then change PARENT-1 and commit, so the link is a suspect link. In the repository's .git folder, store a record of link states, as an earlier run of the GUI or MCP server stores it, that says PARENT-1 last changed at the acknowledged commit, so the link would read OK. Run mellon-check. Expected: exit status 1 and a line for the suspect link CHILD-1 -&gt; PARENT/PARENT-1; the stored record is byte for byte as it was.</description>
+</object>

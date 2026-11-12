@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_repo_health_validation_count_reflects_errors
+tests/test_mcp_read.py::test_check_srs_96_repo_health_validation_count_per_document
+tests/test_mcp_read.py::test_check_srs_96_repo_health_validation_count_zero_when_clean
+tests/test_mcp_read.py::test_check_srs_96_repo_health_counts_same_document_broken_link_once
+tests/test_mcp_read.py::test_check_srs_100_repo_health_total_validation_errors
+tests/test_mcp_read.py::test_check_srs_100_repo_health_total_validation_errors_zero_when_clean</attr>
+  <description>In a repository of PARENT and CHILD, define on CHILD a required attribute that its one object doesn't set, and call repo_health. Expected: CHILD's number of validation errors is 1, and the total number of validation errors is 1.</description>
+</object>

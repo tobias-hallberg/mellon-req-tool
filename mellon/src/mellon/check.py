@@ -19,6 +19,7 @@ from .link_index import from_scratch
 from .repo import DocLoadError
 from .service import DocumentService, ServiceError
 from .suspects import LinkState
+from .validator import link_target_missing
 
 
 def _problems(svc: DocumentService) -> tuple[list[str], int]:
@@ -28,12 +29,25 @@ def _problems(svc: DocumentService) -> tuple[list[str], int]:
     lines = [f"{e.doc_id}: LOAD_ERROR {e.message}" for e in load_errors]
     for doc_id in sorted(validation):
         lines += [f"{doc_id}: {e.code} {e.message}" for e in validation[doc_id]]
+    docs = svc.get_all_documents()
     scan = svc.scan_suspects(None)
     for doc_id in sorted(scan):
+        doc = docs[doc_id].document if doc_id in docs else None
         for s in scan[doc_id]:
-            if s.state is not LinkState.OK:
-                link = f"{s.source_id} -> {s.link.target_doc}/{s.link.target_id}"
-                lines.append(f"{doc_id}: {s.state.name} {link} ({s.reason})")
+            if s.state is LinkState.OK:
+                continue
+            # MELLON-CHECK-SRS-134: one line per check problem. A broken link
+            # the validation already printed as LINK_TARGET_MISSING (a target
+            # in its own document) gets no second BROKEN line; one into
+            # another document has only the BROKEN line.
+            if (
+                s.state is LinkState.BROKEN
+                and doc is not None
+                and link_target_missing(doc, s.link)
+            ):
+                continue
+            link = f"{s.source_id} -> {s.link.target_doc}/{s.link.target_id}"
+            lines.append(f"{doc_id}: {s.state.name} {link} ({s.reason})")
     return lines, len(validation)
 
 

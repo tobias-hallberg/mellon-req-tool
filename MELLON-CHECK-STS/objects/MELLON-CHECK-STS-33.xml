@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_validate_passes_iso_metadata_date
+tests/test_validator.py::test_validate_flags_bad_metadata_date
+tests/test_validator.py::test_check_srs_42_metadata_date_not_gregorian_yyyy_mm_dd_is_meta_bad_date
+tests/test_validator.py::test_check_srs_42_metadata_gregorian_date_in_range_is_accepted
+tests/test_validator.py::test_check_srs_42_metadata_date_with_surrounding_space_is_meta_bad_date
+tests/test_validator.py::test_check_srs_42_generated_metadata_dates_bad_iff_not_gregorian_yyyy_mm_dd</attr>
+  <description>Set a document's metadata date to 2026-04-25 and validate; then set it to 2026-04-215 and validate again. Expected: no META_BAD_DATE the first time; META_BAD_DATE the second time.</description>
+</object>

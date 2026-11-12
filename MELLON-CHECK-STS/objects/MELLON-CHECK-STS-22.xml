@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_missing_required_attribute
+tests/test_validator.py::test_non_string_kind_empty_value_only_triggers_missing_required
+tests/test_validator.py::test_check_srs_13_required_attribute_missing_whatever_rule_directive</attr>
+  <description>In a document whose manifest makes the enumeration attribute status required, remove status from an object's file and validate. Separately, in a document that validates clean, define a new required integer attribute weight, which no object sets, and validate. Expected: ATTR_MISSING_REQUIRED both times, and no ATTR_BAD_INTEGER the second time.</description>
+</object>

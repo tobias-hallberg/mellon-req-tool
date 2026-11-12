@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_valid_document_has_no_errors
+tests/test_validator.py::test_bad_enum_value
+tests/test_validator.py::test_check_srs_16_enum_near_miss_is_bad_enum
+tests/test_validator.py::test_check_srs_16_enum_value_with_surrounding_space_is_bad_enum
+tests/test_validator.py::test_check_srs_16_generated_values_bad_enum_iff_not_exact_option
+tests/test_validator.py::test_check_srs_16_enum_exact_option_is_not_bad_enum</attr>
+  <description>Take a document whose type attribute is an enumeration with the options Heading, Information, Note and Requirement, each object's type being one of them, and validate it. Then set an object's type to Nonsense and validate again. Expected: no validation error the first time; ATTR_BAD_ENUM the second time.</description>
+</object>

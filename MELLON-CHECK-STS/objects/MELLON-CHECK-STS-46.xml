@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_validate_repo_clean_returns_empty
+tests/test_mcp_read.py::test_validate_repo_surfaces_errors_per_doc
+tests/test_mcp_read.py::test_check_srs_94_validate_repo_total_errors_is_exact</attr>
+  <description>In a repository of PARENT and CHILD, call validate_repo with no validation error; then define on CHILD a required attribute that its one object doesn't set, and call it again. Expected: total_errors 0 the first time and 1 the second time, the number of errors listed.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-67">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_105_repo_health_current_issue_or_empty</attr>
+  <description>Git repository with PARENT and CHILD: tag PARENT-issue-1 and later PARENT-issue-2 on ancestors of the latest commit, and PARENT-issue-3 on a commit of another branch that isn't an ancestor; CHILD has no issue tag. Expected: repo_health gives PARENT the current issue 2 and CHILD an empty value (not null).</description>
+</object>

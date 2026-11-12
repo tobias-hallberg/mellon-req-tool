@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-70">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_check_srs_116_without_repo_root_checks_current_folder
+tests/test_check.py::test_check_srs_116_without_repo_root_from_document_folder_exits_2</attr>
+  <description>Unset CLAUDE_PROJECT_DIR, make the clean two-document repository's root the current folder and run mellon-check without --repo-root: exit status 0 and 2 documents checked. From a document folder inside it: exit status 2.</description>
+</object>

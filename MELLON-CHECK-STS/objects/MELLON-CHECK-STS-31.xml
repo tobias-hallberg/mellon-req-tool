@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_valid_document_has_no_errors
+tests/test_validator.py::test_link_to_non_parent_doc_rejected
+tests/test_validator.py::test_self_link_allowed_without_being_in_parents
+tests/test_validator.py::test_top_level_doc_cannot_have_outgoing_cross_doc_links</attr>
+  <description>In a document DOC whose only declared parent document is PARENT, validate with: (a) an object's outgoing link to PARENT-42 in PARENT; (b) instead, a link to STRANGER-1 in STRANGER, which isn't a parent document; (c) instead, a link to another object of DOC; (d) the link to PARENT-42 kept and PARENT removed from DOC's parent documents. Expected: (a) no validation error; (b) LINK_NOT_ALLOWED; (c) no LINK_NOT_ALLOWED; (d) LINK_NOT_ALLOWED.</description>
+</object>

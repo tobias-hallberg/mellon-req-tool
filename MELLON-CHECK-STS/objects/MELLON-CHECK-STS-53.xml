@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-53">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_root_outside_git_is_refused
+tests/test_check.py::test_missing_root_is_refused
+tests/test_check.py::test_subfolder_of_a_clone_is_refused
+tests/test_check.py::test_shallow_clone_is_refused
+tests/test_check.py::test_check_srs_117_not_complete_clone_root_exits_2</attr>
+  <description>Run mellon-check with --repo-root naming, in turn: a folder outside any git repository; a folder that doesn't exist; a document folder inside a clone; the root of a clone made with depth 1 from a repository of two commits. Expected: exit status 2 each time.</description>
+</object>

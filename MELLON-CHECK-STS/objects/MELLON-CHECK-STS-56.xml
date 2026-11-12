@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_clean_repo_passes
+tests/test_check.py::test_check_srs_146_clean_repository_exits_0
+tests/test_check.py::test_check_srs_146_clean_repository_exits_0_without_git_identity</attr>
+  <description>Run mellon-check on a git repository of two committed documents with no check problem. Expected: exit status 0.</description>
+</object>

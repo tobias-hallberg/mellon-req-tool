@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-18">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_document_that_fails_to_load_fails
+tests/test_check.py::test_check_srs_137_load_error_line_has_document_file_line_and_reason
+tests/test_check.py::test_check_srs_147_load_error_exits_1</attr>
+  <description>Make a git repository with two committed documents, PARENT and CHILD, where CHILD-1 links to PARENT-1 and the link records its acknowledged commit. Overwrite CHILD's manifest with the single line '&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD', so CHILD can't be read. Run mellon-check with --repo-root naming the repository. Expected: exit status 1; a line holding LOAD_ERROR, the document ID CHILD, the file CHILD/CHILD.xml, line 1 and the reason; no validation error line for CHILD; PARENT is still checked.</description>
+</object>

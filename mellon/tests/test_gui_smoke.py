@@ -316,3 +316,223 @@ def test_explorer_explains_refused_repo_in_a_message_box(
     assert w.open_repo(tmp_path / "reqs") is False
     assert len(texts) == 1 and f"Open {tmp_path.resolve()} instead." in texts[0]
     assert w._project_model.rowCount() == 0
+
+
+# --- written blind from MELLON-CHECK-SRS ---
+# Imports for this block (the helpers below are prefixed _blind_).
+import datetime
+import hashlib
+import json
+import os
+import random
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+from xml.sax.saxutils import escape, quoteattr
+
+import pytest
+
+from mellon.loader import load_document
+from mellon.validator import validate
+from tests.conftest import _ensure_req_test_fixture
+
+
+_BLIND_REQ_TEST = Path(__file__).resolve().parents[2] / "req-test"
+
+
+def _blind_write(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(text.encode("utf-8"))
+
+
+def _blind_snapshot(root: Path, *, include_git: bool) -> dict[str, tuple[str, int]]:
+    """Each file's sha256 and modified time (ns), keyed by its path relative to `root`."""
+    out: dict[str, tuple[str, int]] = {}
+    for dirpath, dirnames, filenames in os.walk(root):
+        if not include_git and Path(dirpath) == Path(root) and ".git" in dirnames:
+            dirnames.remove(".git")
+        for name in filenames:
+            p = Path(dirpath, name)
+            out[p.relative_to(root).as_posix()] = (
+                hashlib.sha256(p.read_bytes()).hexdigest(), p.stat().st_mtime_ns)
+    return out
+
+
+def _blind_assert_unchanged(before, after, what: str) -> None:
+    added = sorted(set(after) - set(before))
+    removed = sorted(set(before) - set(after))
+    changed = sorted(k for k in set(before) & set(after) if before[k] != after[k])
+    assert not (added or removed or changed), (
+        f"{what} changed files: added={added} removed={removed} changed={changed}")
+
+
+def _blind_req_test_copy(dest: Path, clean_worktree) -> Path:
+    _ensure_req_test_fixture()
+    shutil.copytree(_BLIND_REQ_TEST, dest, dirs_exist_ok=True)
+    clean_worktree(dest)
+    return dest
+
+
+def _blind_dirty_req_test(root: Path) -> None:
+    """Uncommitted change in VCU3-SRS: an edited description, an object deleted with its
+    outline entry, an untracked file and an ignored file in the document folder."""
+    srs = root / "VCU3-SRS"
+    obj = srs / "objects" / "VCU3-SRS-1.xml"
+    text = obj.read_text(encoding="utf-8")
+    new = re.sub(r"<description>(.*?)</description>",
+                 r"<description>\1 Edited, not committed.</description>", text, flags=re.S)
+    assert new != text
+    _blind_write(obj, new)
+    (srs / "objects" / "VCU3-SRS-33.xml").unlink()
+    manifest = srs / "VCU3-SRS.xml"
+    mtext = manifest.read_text(encoding="utf-8")
+    assert '<ref id="VCU3-SRS-33"/>' in mtext
+    _blind_write(manifest, mtext.replace('      <ref id="VCU3-SRS-33"/>\n', ""))
+    _blind_write(srs / "notes.txt", "untracked note\n")
+    exclude = root / ".git" / "info" / "exclude"
+    exclude.parent.mkdir(parents=True, exist_ok=True)
+    with exclude.open("a", encoding="utf-8") as fh:
+        fh.write("\n*.ignored\n")
+    _blind_write(srs / "scratch.ignored", "ignored file\n")
+
+
+def _blind_action(win, text: str):
+    from PySide6.QtGui import QAction
+
+    acts = [a for a in win.findChildren(QAction) if a.text().replace("&", "") == text]
+    assert len(acts) == 1, f"expected one {text!r} action, found {len(acts)}"
+    return acts[0]
+
+
+def _blind_set_read_only(win, on: bool) -> None:
+    act = _blind_action(win, "Read-only")
+    if act.isChecked() != on:
+        act.trigger()
+    assert act.isChecked() == on, f"read-only mode should be {on}"
+
+
+def _blind_widget_text(w) -> str:
+    from PySide6.QtWidgets import (QAbstractItemView, QLabel, QMessageBox, QPlainTextEdit,
+                                   QTextEdit)
+
+    if isinstance(w, QMessageBox):
+        return "\n".join([w.text(), w.informativeText(), w.detailedText()])
+    parts = [c.text() for c in w.findChildren(QLabel)]
+    parts += [c.toPlainText() for c in w.findChildren(QTextEdit)]
+    parts += [c.toPlainText() for c in w.findChildren(QPlainTextEdit)]
+    for view in w.findChildren(QAbstractItemView):
+        model = view.model()
+        if model is None:
+            continue
+        for r in range(model.rowCount()):
+            for k in range(model.columnCount()):
+                data = model.index(r, k).data()
+                if data is not None:
+                    parts.append(str(data))
+    return "\n".join(parts)
+
+
+def _blind_trigger_validate(qtbot, win, *, expect_window=True) -> list[tuple[str, str]]:
+    """Choose the Validate action; return (title, text) of each window it shows. Without
+    expect_window, wait for the status bar to change instead (a clean document shows no
+    window) and close any window that does show."""
+    from PySide6.QtCore import QTimer
+    from PySide6.QtWidgets import QApplication, QDialog
+
+    act = _blind_action(win, "Validate")
+    assert act.isEnabled(), "the Validate action is disabled"
+    before = list(QApplication.topLevelWidgets())
+    status_before = win.statusBar().currentMessage()
+    shown: list[tuple[str, str]] = []
+    state = {"tries": 0, "stop": False}
+
+    def grab():
+        if state["stop"]:
+            return
+        found = []
+        modal = QApplication.activeModalWidget()
+        if modal is not None:
+            found.append(modal)
+        for w in QApplication.topLevelWidgets():
+            if (w.isVisible() and isinstance(w, QDialog) and w not in before
+                    and w not in found):
+                found.append(w)
+        if found:
+            for w in found:
+                shown.append((w.windowTitle(), _blind_widget_text(w)))
+                w.close()
+            return
+        state["tries"] += 1
+        if state["tries"] < 200:
+            QTimer.singleShot(25, grab)
+
+    QTimer.singleShot(0, grab)
+    act.trigger()
+    try:
+        if expect_window:
+            qtbot.waitUntil(lambda: bool(shown) or state["tries"] >= 200, timeout=15000)
+        else:
+            qtbot.waitUntil(
+                lambda: bool(shown) or win.statusBar().currentMessage() != status_before,
+                timeout=15000)
+    finally:
+        state["stop"] = True
+    return shown
+
+
+_BLIND_CODE = re.compile(r"\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b")
+
+
+@pytest.mark.parametrize("read_only", [True, False], ids=["read-only", "editing"])
+def test_check_srs_79_validate_action_shows_each_validation_error(qtbot, tmp_path,
+                                                                  clean_worktree, read_only):
+    """MELLON-CHECK-SRS-79: "The Document Editor shall have a Validate action that shows each
+    validation error of the open document." Condition: VCU3-SRS with three validation
+    errors made by hand (a status that isn't an option, an object file deleted while its
+    outline entry stays, an attribute the manifest doesn't define), in read-only mode and
+    with read-only mode off."""
+    from mellon.gui.main_window import DocumentEditorWindow
+    from mellon.service import DocumentService
+
+    root = _blind_req_test_copy(tmp_path / "rt", clean_worktree)
+    objs = root / "VCU3-SRS" / "objects"
+    p10 = objs / "VCU3-SRS-10.xml"
+    _blind_write(p10, p10.read_text(encoding="utf-8").replace(
+        '<attr name="status">Draft</attr>', '<attr name="status">Bogus</attr>'))
+    (objs / "VCU3-SRS-33.xml").unlink()
+    p32 = objs / "VCU3-SRS-32.xml"
+    _blind_write(p32, p32.read_text(encoding="utf-8").replace(
+        "<description>", '<attr name="colour">red</attr>\n  <description>'))
+
+    win = DocumentEditorWindow("VCU3-SRS", DocumentService(root))
+    qtbot.addWidget(win)
+    win.show()
+    _blind_set_read_only(win, read_only)
+    shown = _blind_trigger_validate(qtbot, win)
+    assert len(shown) == 1, f"expected one result window, got {shown}"
+    codes = sorted(_BLIND_CODE.findall(shown[0][1]))
+    assert codes == ["ATTR_BAD_ENUM", "ATTR_UNKNOWN", "OUTLINE_MISSING_OBJECT"], shown[0]
+
+
+@pytest.mark.parametrize("read_only", [True, False], ids=["read-only", "editing"])
+def test_check_srs_9_validate_action_changes_no_working_copy_file(qtbot, tmp_path,
+                                                                  clean_worktree, read_only):
+    """MELLON-CHECK-SRS-9: "While Mellon validates a document, Mellon shall not change a file
+    in the working copy." Condition: the Validate action of a Document Editor on VCU3-SRS
+    with an uncommitted change (edited description, deleted object, untracked and ignored
+    files), in read-only mode and with read-only mode off."""
+    from mellon.gui.main_window import DocumentEditorWindow
+    from mellon.service import DocumentService
+
+    root = _blind_req_test_copy(tmp_path / "rt", clean_worktree)
+    _blind_dirty_req_test(root)
+    before = _blind_snapshot(root, include_git=False)
+    win = DocumentEditorWindow("VCU3-SRS", DocumentService(root))
+    qtbot.addWidget(win)
+    win.show()
+    _blind_set_read_only(win, read_only)
+    _blind_trigger_validate(qtbot, win, expect_window=False)
+    _blind_assert_unchanged(before, _blind_snapshot(root, include_git=False),
+                            "the Validate action")

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-59">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_check_srs_22_empty_value_fits_kind_of_optional_attribute
+tests/test_validator.py::test_check_srs_22_empty_required_value_is_only_missing_required</attr>
+  <description>No test sets an empty value: the test named for it defines a required integer attribute that no object sets, so the attribute is not set rather than empty. Test: for each kind enumeration, integer, real, boolean and date, define an optional attribute and write it on an object with an empty value (an empty attribute element in the object file): no validation error for that object. Repeat with the attribute required: exactly one ATTR_MISSING_REQUIRED for the object and no ATTR_BAD_ENUM, ATTR_BAD_INTEGER, ATTR_BAD_REAL, ATTR_BAD_BOOLEAN or ATTR_BAD_DATE.</description>
+</object>

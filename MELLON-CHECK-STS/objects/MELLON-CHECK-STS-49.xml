@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_repo_health_reports_load_errors
+tests/test_mcp_read.py::test_load_errors_with_an_unresolved_repo_root</attr>
+  <description>In a repository of PARENT and CHILD, leave CHILD's only object file with merge conflict markers from line 3, and call repo_health, once with the repository root given directly and once through CHILD/.. . Expected: the documents listed are PARENT alone, and there is one load error with the document ID CHILD, the file CHILD/objects/CHILD-0.xml, line 3 and a reason ending with '(unresolved merge conflict?)'.</description>
+</object>

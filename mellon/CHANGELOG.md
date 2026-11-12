@@ -119,6 +119,24 @@ All notable changes to Mellon. The format follows
   docstring said, not only paths below it.
 - `DocumentService.ack_all` raises `ServiceError` for a links file that became
   malformed after the scan, instead of a raw XML error.
+- **A date is valid only as YYYY-MM-DD.** On Python 3.11 and later, validation
+  also took other ISO 8601 forms, such as `20260210` and the week date
+  `2026-W06-2`, as a date attribute value or the manifest's metadata date.
+  They are now `ATTR_BAD_DATE` and `META_BAD_DATE`, from one check
+  (`MELLON-CHECK-SRS-21`, `-42`). A document holding such a date reports it
+  after upgrading.
+- **A rule condition `name=""` no longer matches an object on which the
+  attribute isn't set.** An attribute that isn't set has no value, so it
+  matches no value; one set to an empty value still matches `""`. Before,
+  such a rule also applied to every object without the attribute, and
+  reported `RULE_REQUIRED_MISSING` or `RULE_FORBIDDEN_PRESENT` for them. The
+  same holds for `requirement-type` (`MELLON-CHECK-SRS-54`, `-55`). The
+  Inspector's required and forbidden markers follow the same rule.
+- **`mellon-check` prints a broken link once.** A link to a missing object of
+  its own document printed two lines, `LINK_TARGET_MISSING` and `BROKEN`, and
+  counted two problems. It now prints only the `LINK_TARGET_MISSING` line. A
+  broken link into another document still prints its `BROKEN` line
+  (`MELLON-CHECK-SRS-134`).
 
 ### Security
 

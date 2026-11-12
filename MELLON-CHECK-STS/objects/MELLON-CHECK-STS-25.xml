@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_non_string_kind_value_checks[boolean-true-yes-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_non_string_kind_value_checks[boolean-false-True-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_check_srs_20_boolean_not_lower_case_true_false_is_bad_boolean
+tests/test_validator.py::test_check_srs_20_boolean_with_surrounding_space_is_bad_boolean
+tests/test_validator.py::test_check_srs_20_generated_values_bad_boolean_iff_not_true_or_false
+tests/test_validator.py::test_check_srs_20_boolean_true_false_is_not_bad_boolean</attr>
+  <description>Define an optional boolean attribute. Set it on an object to true and validate, then to yes and validate; set it to false and validate, then to True and validate. Expected: no ATTR_BAD_BOOLEAN for true or false; ATTR_BAD_BOOLEAN for yes and for True.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_validate_repo_clean_returns_empty
+tests/test_mcp_read.py::test_validate_repo_surfaces_errors_per_doc
+tests/test_mcp_read.py::test_validate_repo_not_ok_when_a_document_fails_to_load
+tests/test_mcp_read.py::test_check_srs_89_validate_repo_returns_each_error_under_its_document</attr>
+  <description>In a repository of PARENT and CHILD, call validate_repo: (a) with no validation error; (b) after defining on CHILD a required attribute that its one object doesn't set; (c) with CHILD's object file left with merge conflict markers instead. Expected: (a) an entry per document, PARENT and CHILD, each with its document ID and no errors; (b) CHILD's entry holds an ATTR_MISSING_REQUIRED error with a code and a message, and PARENT's entry holds none; (c) an entry for PARENT alone.</description>
+</object>

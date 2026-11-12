@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_rule_forbidden_present_flagged
+tests/test_validator.py::test_rule_required_missing_when_no_outgoing_link
+tests/test_validator.py::test_check_srs_51_each_rule_checked_against_each_object</attr>
+  <description>Take a document with a heading and a requirement below it; the requirement has a rationale and an outgoing link. Give it a rules file of three rules, in this order: a heading forbids rationale; a requirement without outgoing links requires rationale; a requirement with outgoing links makes rationale optional. (a) Add a rationale to the heading and validate. (b) Starting again, remove the requirement's link and its rationale, and validate. Expected: (a) RULE_FORBIDDEN_PRESENT, from the first rule on the heading; (b) RULE_REQUIRED_MISSING, from the second rule on the requirement.</description>
+</object>

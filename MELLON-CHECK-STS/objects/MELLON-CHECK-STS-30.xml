@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_suspect_link_fails
+tests/test_mcp_read.py::test_check_srs_32_suspect_links_are_not_validation_errors</attr>
+  <description>Make a git repository with two committed documents, PARENT and CHILD, where CHILD-1's link to PARENT-1 records the commit that last changed PARENT-1 as its acknowledged commit. Change PARENT-1's description and commit, so the link is a suspect link and the repository has no other problem. Run mellon-check. Expected: exactly one check problem, the suspect link; no validation error is reported for it.</description>
+</object>

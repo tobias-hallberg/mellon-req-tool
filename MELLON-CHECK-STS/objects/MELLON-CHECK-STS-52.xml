@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-CHECK-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_root_defaults_to_claude_project_dir</attr>
+  <description>Set CLAUDE_PROJECT_DIR to the root of the clean two-document repository, and run mellon-check without --repo-root from a folder that isn't a repository root. Expected: exit status 0 and 2 documents checked.</description>
+</object>
