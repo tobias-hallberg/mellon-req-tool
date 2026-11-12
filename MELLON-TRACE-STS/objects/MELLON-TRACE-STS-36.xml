@@ -7,6 +7,7 @@
   <attr name="rung">3 GUI and MCP</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_mcp_read.py::test_real_repo_suspects_match_fixture
-tests/test_mcp_git.py::test_review_never_reviewed_suspect</attr>
+tests/test_mcp_git.py::test_review_never_reviewed_suspect
+tests/test_mcp_write.py::test_ack_suspects_skips_a_link_whose_target_was_never_committed</attr>
   <description>Over MCP, call suspects on the fixture repository, and review a link that was never acknowledged. Expected: the two never-acknowledged links are suspect with the reason never reviewed; the review reports state suspect, reason never reviewed and no acknowledged commit.</description>
 </object>

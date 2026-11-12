@@ -17,6 +17,8 @@ tests/test_editor.py::test_trace_srs_7_second_link_to_same_target_with_other_typ
 tests/test_mcp_write.py::test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused
 tests/test_mcp_write.py::test_trace_srs_7_link_to_another_target_is_not_refused
 tests/test_mcp_write.py::test_trace_srs_24_new_object_with_refused_link_changes_no_file
-tests/test_mcp_write.py::test_trace_srs_24_update_object_with_refused_link_changes_no_file</attr>
+tests/test_mcp_write.py::test_trace_srs_24_update_object_with_refused_link_changes_no_file
+tests/test_editor.py::test_trace_srs_6_link_into_missing_document_is_refused
+tests/test_gui_links.py::test_trace_srs_6_link_picker_leaves_out_a_target_deleted_on_disk</attr>
   <description>Over MCP, call new_object with (a) a link to an object of a document that isn't a parent, (b) the same link twice, (c) a link to an object that doesn't exist; and call add_link for a pair of objects already linked. Expected: each call reports a failure naming the cause; the new_object calls under (b) and (c) leave the document's object files as they were.</description>
 </object>

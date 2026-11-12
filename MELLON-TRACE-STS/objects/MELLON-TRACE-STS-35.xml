@@ -9,6 +9,7 @@
   <attr name="automated-tests">tests/test_suspects.py::test_never_reviewed_is_suspect
 tests/test_service.py::test_scan_suspects_with_git
 tests/test_mcp_read.py::test_trace_srs_45_link_with_no_acknowledged_commit_is_suspect
-tests/test_suspects.py::test_trace_srs_45_link_with_no_acknowledged_commit_is_suspect</attr>
+tests/test_suspects.py::test_trace_srs_45_link_with_no_acknowledged_commit_is_suspect
+tests/test_suspects.py::test_target_on_disk_but_never_committed_is_suspect_and_not_acked</attr>
   <description>In a repository, give a link to a committed target no acknowledged commit and read its state. Expected: the link reads suspect, with the reason never reviewed.</description>
 </object>
