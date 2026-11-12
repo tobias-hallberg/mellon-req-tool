@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-77">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_document_without_rules_file
+tests/test_loader.py::test_load_document_with_rules_file
+tests/test_loader.py::test_load_rules_file_accepts_attr_equality_predicate
+tests/test_loader.py::test_load_rules_file_parses_link_directive
+tests/test_loader.py::test_load_rules_file_rejects_link_without_target
+tests/test_editor.py::test_create_document_writes_default_rules
+tests/test_loader.py::test_store_srs_164_link_directive_without_status_is_required</attr>
+  <description>Read a document without DOC.rules.xml. Read one whose rules file holds a rule when type='Heading' then attr rationale forbidden, and a rule when type='Functional' has-outgoing-link='false' then attr rationale required; one whose rule tests status='Approved'; one with a link directive to PARENT with status required; one with a link directive without target-doc. Create a document with the default schema. Expected: no rules without the file; each rule reads with its conditions and directives as written; the link directive reads with its target document and status required; the one without target-doc is a load error; the new document has &lt;document ID&gt;.rules.xml beside its manifest, holding rules.</description>
+</object>

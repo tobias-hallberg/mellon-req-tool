@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-73">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_filter.py::test_integer_between_inclusive
+tests/test_filter.py::test_integer_comparisons
+tests/test_filter.py::test_real_lt
+tests/test_filter.py::test_date_before_after_between</attr>
+  <description>Apply filters with an integer between 3|10, integer comparisons, a real lt, and date before, after and between 2026-04-01|2026-05-31, to objects holding values in the object file's form. Expected: each bound of between is included, and each comparison matches the objects its values select.</description>
+</object>

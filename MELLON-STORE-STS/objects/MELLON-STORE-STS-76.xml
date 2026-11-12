@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-76">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_manage_view_rejects_path_traversal_slug</attr>
+  <description>Through the MCP server's manage_view tool, delete the view with slug ../objects/PARENT-1. Expected: the call fails with 'invalid slug' and objects/PARENT-1.xml still exists.</description>
+</object>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-74">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_view_writes_file_and_round_trips
+tests/test_editor.py::test_create_view_collision_appends_suffix
+tests/test_editor.py::test_create_filter_writes_file_and_round_trips
+tests/test_editor.py::test_create_filter_collision_appends_suffix
+tests/test_editor.py::test_rename_view_changes_name_only
+tests/test_editor.py::test_rename_view_changes_slug
+tests/test_editor.py::test_rename_view_handles_slug_collision
+tests/test_editor.py::test_rename_filter_changes_slug
+tests/test_editor.py::test_rename_filter_handles_collision
+tests/test_editor.py::test_store_srs_153_slug_from_ascii_letters_only</attr>
+  <description>Create views named 'Main View', 'Main View!' and 'main view', and filters named 'High priority', 'Approved' and 'approved'. Rename a view 'Main View' to 'Main View', to 'QA View', and to a name whose slug another view has; do the same for filters. Expected: slugs main-view, main-view-2, main-view-3, high-priority, approved, approved-2; renaming to the same name keeps main-view; renaming to 'QA View' moves the file to qa-view.xml; a taken slug gets -2.</description>
+</object>

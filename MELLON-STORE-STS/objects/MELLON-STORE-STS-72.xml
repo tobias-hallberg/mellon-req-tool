@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-72">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_filter_attr_rule_unknown_op_rejected
+tests/test_loader.py::test_filter_link_rule_op_must_be_present_or_absent</attr>
+  <description>Read a filter file whose attr rule has op strange, and one whose has-outgoing rule has op contains. Expected: each is a load error, the first saying the operator isn't recognised.</description>
+</object>

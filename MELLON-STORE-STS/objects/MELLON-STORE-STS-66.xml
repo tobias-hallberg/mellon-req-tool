@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-66">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_figure_rejects_wrong_extension
+tests/test_editor.py::test_set_figure_rejects_invalid_xml
+tests/test_editor.py::test_set_figure_rejects_non_svg_root
+tests/test_editor.py::test_store_srs_131_svg_without_namespace_is_refused
+tests/test_editor.py::test_store_srs_131_svg_in_svg_namespace_is_accepted</attr>
+  <description>Attach as a figure a .png file, a file that isn't well-formed XML, and an XML file whose root element is html. Expected: each is refused and no figure file is written.</description>
+</object>

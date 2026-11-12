@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_main_refuses_root_outside_git
+tests/test_mcp_git.py::test_main_refuses_root_below_git_root
+tests/test_mcp_git.py::test_main_refuses_unopenable_repo</attr>
+  <description>Start the MCP server with --repo-root set in turn to a folder outside any git work tree, a document folder inside a clone, and a repository whose repository format version is 99. Expected: the server exits with status 2 each time, without serving.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_list_documents_lists_a_document_that_fails_to_load
+tests/test_mcp_read.py::test_validate_repo_not_ok_when_a_document_fails_to_load
+tests/test_mcp_read.py::test_repo_health_reports_load_errors
+tests/test_mcp_read.py::test_load_errors_with_an_unresolved_repo_root</attr>
+  <description>With the MCP server on a repository of PARENT and CHILD, leave conflict markers in CHILD's only object file, starting on line 3. Call list_documents, validate_repo and repo_health, then validate_repo and repo_health again with the repository root given as a path through CHILD/... Expected: list_documents returns CHILD with exactly doc_id, folder and load_error, and no counts; the load error holds exactly doc_id CHILD, file CHILD/objects/CHILD-0.xml, line 3 and a message ending '(unresolved merge conflict?)'. PARENT is listed without a load error. validate_repo isn't ok, reports PARENT's results and CHILD's load error; repo_health reports the same load error; each file is given relative to the repository root.</description>
+</object>

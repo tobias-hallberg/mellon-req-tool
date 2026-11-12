@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-STORE-STS-59">
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-109" type="verifies" ack="acb8dfe"/>
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-110" type="verifies" ack="acb8dfe"/>
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-111" type="verifies" ack="acb8dfe"/>
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-112" type="verifies" ack="acb8dfe"/>
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-113" type="verifies" ack="acb8dfe"/>
+</links>

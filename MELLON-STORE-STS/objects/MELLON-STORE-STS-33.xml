@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_repo.py::test_discover_documents_keeps_a_document_that_fails_to_load
+tests/test_repo.py::test_load_all_records_merge_conflict_as_load_error
+tests/test_repo.py::test_load_all_records_unreadable_file_as_load_error
+tests/test_loader.py::test_unreadable_file_is_loader_error
+tests/test_loader.py::test_folder_named_like_an_object_stays_an_error
+tests/test_service.py::test_get_all_documents_reports_load_errors</attr>
+  <description>In a repository holding documents DOC and PARENT, leave conflict markers in one of DOC's object files and list the repository's documents. Separately, put a folder named like an object file (objects/DOC-9.xml) in DOC, standing for a file that can't be opened, and read the repository, then read DOC twice. Expected: DOC is still listed, with a load error, and PARENT reads normally; reading DOC itself fails with a message saying the file can't be read, on each read.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_grid_survives_its_document_breaking_on_disk
+tests/test_gui_reload.py::test_read_only_toggles_cleanly_on_a_doc_that_no_longer_loads
+tests/test_gui_reload.py::test_store_srs_39_edits_refused_while_document_cant_be_read
+tests/test_gui_reload.py::test_store_srs_39_same_edit_is_written_while_document_reads</attr>
+  <description>With DOC open in a Document Editor and read-only mode off, break its object file with conflict markers. Read the document again and paint the grid. Then select DOC-1, press F5, and switch read-only mode on and off. Expected: the grid keeps showing the copy read before (DOC-1's status Draft, DOC-1 in the Inspector); no grid cell offers an editor; after read-only mode is switched off the outline actions stay disabled.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-108">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_store_srs_238_read_and_edit_5000_object_document</attr>
+  <description>No automated test: SCALING.md's figures come from mellon/benchmarks/, which CI doesn't run. Generate a reference document of 5,000 objects, then read it, set an attribute on one object, create an object and delete one. Expected: each completes without error, and the document reads with 5,000 objects, then 5,001 after the create and 5,000 after the delete.</description>
+</object>

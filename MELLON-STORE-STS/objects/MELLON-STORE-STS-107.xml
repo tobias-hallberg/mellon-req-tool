@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-107">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_217_whitespace_at_ends_removed_on_read</attr>
+  <description>Hand-write an object file whose description, one attr element and one cell each hold '\n    text\n  '. Read it. Expected: each reads as 'text'.</description>
+</object>

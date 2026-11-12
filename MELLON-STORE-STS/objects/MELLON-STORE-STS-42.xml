@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_editor.py::test_set_metadata_updates_existing
+tests/test_editor.py::test_set_metadata_creates_missing_field
+tests/test_editor.py::test_set_metadata_accepts_iso_date
+tests/test_editor.py::test_set_metadata_accepts_empty_date
+tests/test_editor.py::test_store_srs_61_author_written_inside_metadata
+tests/test_loader.py::test_store_srs_61_hand_written_metadata_is_read</attr>
+  <description>Read a manifest whose metadata holds the title 'Test doc'. Set the title; add an author to a manifest whose metadata holds only a title; set the date to 2026-04-25 and then to empty. Expected: each value reads back as set.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-91">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_store_srs_34_warning_icon_only_on_document_with_load_error</attr>
+  <description>No test checks the icon (the existing test checks an internal flag and the entry's text). Open a repository in the Project Explorer with conflict markers in one document's object file. Expected: that document's entry shows a warning icon, and the other documents' entries show none.</description>
+</object>

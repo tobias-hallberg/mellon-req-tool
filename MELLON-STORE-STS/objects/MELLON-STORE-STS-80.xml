@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-80">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_object_maps_page_break_and_writes_lf
+tests/test_editor.py::test_add_link_first_link_escapes_link_type
+tests/test_editor.py::test_set_description_normalises_crlf_and_cr</attr>
+  <description>Create an object whose description holds a form feed, add a first link, and set a description holding CR LF and CR; look at the bytes of the object and links files. Expected: neither file holds CR LF, and the object file holds no &amp;#13;.</description>
+</object>

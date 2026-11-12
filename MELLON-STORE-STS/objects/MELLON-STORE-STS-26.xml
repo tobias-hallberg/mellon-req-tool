@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-26">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_check_repo_root_rejects_non_git_dir
+tests/test_git_ops.py::test_check_repo_root_rejects_subfolder
+tests/test_git_ops.py::test_check_repo_root_rejects_shallow_clone
+tests/test_git_ops.py::test_check_repo_root_reports_unopenable_repo
+tests/test_mcp_read.py::test_store_srs_8_mcp_refuses_shallow_clone
+tests/test_check.py::test_store_srs_9_check_refuses_repo_git_cant_open
+tests/test_gui_smoke.py::test_store_srs_9_project_explorer_refuses_repo_git_cant_open
+tests/test_check.py::test_store_srs_12_each_refusal_gives_its_own_reason
+tests/test_mcp_read.py::test_store_srs_12_each_refusal_gives_its_own_reason</attr>
+  <description>Ask Mellon to check each of these folders as a repository root: a folder outside any git work tree; a subfolder of a git work tree; the root of a repository with one commit that git records as shallow; the root of a repository whose repository format version is 99, which git can't open. Expected: each folder is refused, with a reason that says, in turn, that the folder is not inside a git repository, is not the root of its git work tree, is a shallow clone, and is a repository git can't open.</description>
+</object>

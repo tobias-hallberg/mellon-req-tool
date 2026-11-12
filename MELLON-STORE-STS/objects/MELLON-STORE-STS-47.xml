@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_add_attribute_label_round_trips
+tests/test_editor.py::test_store_srs_75_label_written_as_label_attribute
+tests/test_loader.py::test_store_srs_75_hand_written_label_is_read</attr>
+  <description>Through the MCP server, define the text attribute req-type with the label 'Requirement Type', then show the document's attributes. Expected: req-type has the label 'Requirement Type'.</description>
+</object>

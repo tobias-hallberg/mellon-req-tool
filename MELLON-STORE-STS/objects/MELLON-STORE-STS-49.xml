@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_store_srs_1_other_manifest_edits_keep_the_number[add_attribute]
+tests/test_editor.py::test_store_srs_1_other_manifest_edits_keep_the_number[delete_highest_object]
+tests/test_editor.py::test_store_srs_1_other_manifest_edits_keep_the_number[delete_lowest_object]
+tests/test_editor.py::test_store_srs_1_other_manifest_edits_keep_the_number[move_object]
+tests/test_editor.py::test_store_srs_1_other_manifest_edits_keep_the_number[set_metadata]
+tests/test_editor.py::test_allocate_next_id_takes_the_recorded_number
+tests/test_editor.py::test_create_object_records_ref_and_number_in_one_manifest_write</attr>
+  <description>Create an object in a new document and look at the manifest's document element. Remove the next-object-number attribute from a manifest (as an older Mellon leaves it): read a document of 3 objects, and create the first object of an empty document. With the number set by hand to 42, set the title, move an object, add an attribute, delete the lowest and the highest object. With the number 7, and then 1, in a document holding objects 0 and 1, ask for the next object ID; in the same document with no number recorded, create an object. Expected: the document element carries next-object-number; the document without it reads all 3 objects, and an empty one's first object gets number 0; each other edit leaves 42; the next object ID is DOC-7, then DOC-2; after the create the manifest records 3, written in the same write as the new outline ref.</description>
+</object>

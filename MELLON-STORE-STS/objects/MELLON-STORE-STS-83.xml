@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-83">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_diff.py::test_comparing_changes_nothing
+tests/test_check.py::test_store_srs_210_check_changes_no_file
+tests/test_gui_reload.py::test_store_srs_210_gui_open_and_reload_change_no_file
+tests/test_mcp_read.py::test_store_srs_210_mcp_read_tools_change_no_file
+tests/test_mcp_write.py::test_store_srs_210_export_changes_no_file</attr>
+  <description>In a git repository with an uncommitted edit, compare a document's latest commit with the working copy, and the working copy with the latest commit. Expected: every working-copy file, the git index, each reference and HEAD are unchanged.</description>
+</object>

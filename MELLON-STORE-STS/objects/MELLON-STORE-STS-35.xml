@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_broken_file_is_not_kept
+tests/test_service.py::test_load_error_wrapped_as_load
+tests/test_loader.py::test_parse_bytes_errors_name_the_path
+tests/test_repo.py::test_store_srs_31_truncated_object_file_is_load_error
+tests/test_repo.py::test_store_srs_31_zero_filled_object_file_is_load_error</attr>
+  <description>Read a document whose object file has lost its closing &lt;/object&gt; tag, twice, then restore the file and read again. Read a document whose manifest holds the text 'not xml at all'. Read the object file content '&lt;object id=' as stored at a version. Expected: each is a load error; the object file's reports an XML parse error on each read, and the stored content's names the file and an XML parse error; the document reads normally once its file is restored.</description>
+</object>

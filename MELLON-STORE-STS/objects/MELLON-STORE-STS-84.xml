@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-84">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_56_mcp_compare_changes_nothing</attr>
+  <description>With the MCP server running over stdio on a repository with uncommitted edits, run five comparisons through its compare tool, two of them with the working copy. Expected: the working copy, the git index and the references are unchanged between server start and stop.</description>
+</object>

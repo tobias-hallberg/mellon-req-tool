@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-78">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_failed_write_keeps_original_and_cleans_temp
+tests/test_editor.py::test_store_srs_167_write_failing_partway_keeps_old_or_new_content
+tests/test_editor.py::test_store_srs_167_stop_before_replace_keeps_old_content
+tests/test_gui_commit.py::test_store_srs_167_commit_dialog_put_back_failing_partway</attr>
+  <description>Set an object's description while the final replace of its file fails as if another program held it. Expected: the write fails; the object file keeps its old bytes and no temporary file is left in objects/.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-29">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_root_outside_git_is_refused
+tests/test_check.py::test_subfolder_of_a_clone_is_refused
+tests/test_check.py::test_shallow_clone_is_refused</attr>
+  <description>Run mellon-check with --repo-root set in turn to a folder outside any git work tree, a document folder inside a clone, and a clone made with git clone --depth 1. Expected: exit status 2 each time; for the shallow clone the error output says shallow.</description>
+</object>

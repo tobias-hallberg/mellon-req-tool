@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_explorer_lists_doc_that_fails_to_load
+tests/test_gui_reload.py::test_explorer_f5_relists_documents_from_disk</attr>
+  <description>Leave conflict markers in DOC's object file and open the repository in the Project Explorer; rest the pointer on DOC. Then, with the repository open and DOC readable, break the file again and press F5; restore it and press F5 again. Expected: DOC and PARENT are both listed; DOC's entry says it failed to load and its tooltip gives the file with its line and '(unresolved merge conflict?)'; the status bar says 1 failed to load; PARENT has no load error. F5 shows the new load error, and after the file is restored F5 clears it.</description>
+</object>

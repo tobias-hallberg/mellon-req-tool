@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-103">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_store_srs_189_data_files_begin_with_declaration</attr>
+  <description>Create through Mellon a document, an object with a table, a link, a view and a filter. Expected: each data file's first line is exactly &lt;?xml version="1.0" encoding="UTF-8"?&gt;.</description>
+</object>

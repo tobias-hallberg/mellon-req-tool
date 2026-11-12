@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-90">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_check.py::test_store_srs_15_check_accepts_detached_head
+tests/test_gui_smoke.py::test_store_srs_15_project_explorer_accepts_detached_head
+tests/test_mcp_read.py::test_store_srs_15_mcp_accepts_detached_head</attr>
+  <description>Make a repository with two commits holding a document, check out the first commit by its hash (HEAD detached), then open the root in the Project Explorer, start the MCP server on it and run mellon-check on it. Expected: none refuses the root, and the document is read as at the first commit.</description>
+</object>

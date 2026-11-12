@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_editor.py::test_add_parent_adds_new
+tests/test_editor.py::test_remove_parent_removes_existing</attr>
+  <description>Read a manifest declaring the parent document PARENT; add the parent ANOTHER; remove PARENT. Expected: the parents read as PARENT, then PARENT and ANOTHER, then none.</description>
+</object>

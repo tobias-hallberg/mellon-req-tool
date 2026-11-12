@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_repo.py::test_discover_documents
+tests/test_repo.py::test_doc_folder_names
+tests/test_repo.py::test_load_all_returns_keyed_docs
+tests/test_repo.py::test_store_srs_18_dot_folder_isnt_a_document
+tests/test_repo.py::test_store_srs_18_manifest_name_letter_case_counts
+tests/test_repo.py::test_store_srs_18_matching_non_document_is_listed_with_load_error
+tests/test_repo.py::test_store_srs_18_valid_document_beside_them_loads</attr>
+  <description>In a repository holding documents DOC and PARENT, add a dot folder and a folder holding only README.txt. List the repository's documents. Expected: DOC and PARENT are listed and read; neither other folder is listed.</description>
+</object>

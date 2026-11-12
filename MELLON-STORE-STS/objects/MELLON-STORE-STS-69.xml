@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-69">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_figure_creates_file
+tests/test_editor.py::test_set_figure_overwrites_existing</attr>
+  <description>Attach an SVG file as DOC-1's figure; attach a second SVG differing in one byte. Expected: figures/DOC-1.svg holds exactly the bytes of the file attached each time.</description>
+</object>

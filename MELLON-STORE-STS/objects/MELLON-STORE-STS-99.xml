@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-99">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_repo.py::test_store_srs_119_links_source_must_match_file_name</attr>
+  <description>Write links/DOC-1.xml whose links element has source DOC-2, with DOC-1 and DOC-2 both existing. Read the document. Expected: a load error naming the links file; no link is read as coming from DOC-1 or DOC-2.</description>
+</object>

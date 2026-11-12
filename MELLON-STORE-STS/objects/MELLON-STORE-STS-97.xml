@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-97">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_store_srs_107_row_span_written
+tests/test_loader.py::test_store_srs_107_row_span_read_from_file</attr>
+  <description>No test reads or writes a row span. Hand-write a 2-column, 2-row table whose first cell has rowspan="2" and whose second row holds one cell; read it. Set the same table through Mellon and read the file. Expected: the first cell spans two rows, and the second row's cell sits in column 2; the written cell carries rowspan="2".</description>
+</object>

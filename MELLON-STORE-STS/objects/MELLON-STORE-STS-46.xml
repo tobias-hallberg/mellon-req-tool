@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_loader.py::test_load_non_string_attribute_kinds[integer]
+tests/test_loader.py::test_load_non_string_attribute_kinds[real]
+tests/test_loader.py::test_load_non_string_attribute_kinds[boolean]
+tests/test_loader.py::test_load_non_string_attribute_kinds[date]
+tests/test_loader.py::test_reject_unknown_attribute_kind
+tests/test_loader.py::test_reject_options_on_non_enum
+tests/test_editor.py::test_add_attribute_enum
+tests/test_editor.py::test_add_attribute_text
+tests/test_editor.py::test_add_attribute_non_string_kinds[integer]
+tests/test_editor.py::test_add_attribute_non_string_kinds[real]
+tests/test_editor.py::test_add_attribute_non_string_kinds[boolean]
+tests/test_editor.py::test_add_attribute_non_string_kinds[date]
+tests/test_editor.py::test_change_required_false_to_true
+tests/test_editor.py::test_change_required_true_to_false
+tests/test_editor.py::test_add_attribute_rejects_options_on_text
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[integer]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[real]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[boolean]
+tests/test_editor.py::test_add_attribute_rejects_options_on_non_enum[date]
+tests/test_service.py::test_store_srs_74_required_only_when_true</attr>
+  <description>Read a manifest declaring type (enum, required true, options Heading, Information, Note, Requirement), status (enum, required true) and rationale (text, required false). Change rationale's kind by hand to integer, real, boolean and date in turn; then to weird; then to integer with an option element. Through Mellon, add an enum attribute with options Must and Should and required true, a text attribute with required false, and one attribute of each other kind; flip required both ways; try to add options to a text, integer, real, boolean and date attribute. Expected: names, kinds, required flags and options read as written; the four other kinds read with no options; kind weird and an option on an integer attribute are each a load error; added attributes and flipped flags read back as set; options on a kind other than enum are refused.</description>
+</object>

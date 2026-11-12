@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-70">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_document_with_views
+tests/test_editor.py::test_create_view_writes_file_and_round_trips
+tests/test_editor.py::test_set_view_visible_replaces_order
+tests/test_loader.py::test_view_missing_name_attribute_rejected</attr>
+  <description>Read views/main-view.xml (name 'Main View', attributes status, type) and views/qa-view.xml; create the view 'Main View' with columns status, type; reorder its columns to type, status; read a view file whose view element has no name. Expected: each view reads with its slug, name and columns in file order; the created view is views/main-view.xml; the reorder reads back type, status with the name kept; the view without a name is a load error.</description>
+</object>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-32">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_create_object_recreates_missing_objects_dir
+tests/test_loader.py::test_load_document_without_rules_file
+tests/test_loader.py::test_load_document_without_views
+tests/test_loader.py::test_load_document_without_filters
+tests/test_loader.py::test_figure_path_none_when_no_figures
+tests/test_repo.py::test_store_srs_25_document_with_manifest_only</attr>
+  <description>Read documents that each lack one optional part: no objects folder (then create an object), no rules file, no views folder, no filters folder, no figures folder. Expected: each reads without a load error, with no rules, views, filters or figures; creating an object makes the objects folder and the object reads back.</description>
+</object>

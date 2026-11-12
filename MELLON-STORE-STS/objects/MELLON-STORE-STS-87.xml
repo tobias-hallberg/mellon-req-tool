@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-87">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_doc_id_cannot_reach_a_document_outside_the_repo</attr>
+  <description>Make a document X in a folder beside the repository root, then ask the document service to set the title of document ../X/X. Expected: refused as no such document; X's manifest keeps its bytes.</description>
+</object>

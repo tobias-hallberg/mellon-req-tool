@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_editor.py::test_set_attribute_existing
+tests/test_editor.py::test_set_attribute_new
+tests/test_editor.py::test_set_attribute_empty_clears_enum
+tests/test_editor.py::test_remove_attr_option_blanks_matching_values</attr>
+  <description>Read an object file holding attr name='rationale' with text 'because'. Set an attribute already present, and one not yet set. Set an enumeration attribute to the empty value; remove an option used by an object. Expected: each value reads back as written; an attribute set to empty, or whose option was removed, reads as set with an empty value, not as not set.</description>
+</object>

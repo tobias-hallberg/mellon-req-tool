@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-68">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_figure.py::test_figure_menu_drawio_edit_disabled_for_plain_svg
+tests/test_gui_figure.py::test_figure_menu_drawio_edit_enabled_for_drawio_svg</attr>
+  <description>In a Document Editor, attach a plain SVG to an object and open the figure menu; then attach an SVG whose content attribute holds an mxfile diagram and open the menu. Expected: Edit in draw.io is disabled for the plain SVG, with a tooltip saying it wasn't made with draw.io, and enabled for the draw.io figure.</description>
+</object>

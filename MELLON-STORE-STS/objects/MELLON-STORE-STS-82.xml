@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-82">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_journal_figure_round_trip_and_unchanged_files
+tests/test_editor.py::test_store_srs_208_unchanged_canonical_form_keeps_bytes</attr>
+  <description>Write DOC-0's description through Mellon, then in one step attach a figure to DOC-1, set DOC-0's description to 'Temporary' and back to its earlier text. Expected: the step's only changed file is the figure file: DOC-0's object file has its earlier bytes.</description>
+</object>

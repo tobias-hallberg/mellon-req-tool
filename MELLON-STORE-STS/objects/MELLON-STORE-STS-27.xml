@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_open_repo_refuses_folder_outside_git
+tests/test_gui_smoke.py::test_open_repo_refuses_subfolder_of_git_clone
+tests/test_gui_smoke.py::test_open_repo_refuses_shallow_clone_with_only_its_remedy
+tests/test_gui_smoke.py::test_explorer_explains_refused_repo_in_a_message_box
+tests/test_gui_reload.py::test_refused_folder_keeps_the_open_repo
+tests/test_check.py::test_store_srs_7_subfolder_refusal_names_the_root
+tests/test_mcp_read.py::test_store_srs_7_subfolder_refusal_names_the_root</attr>
+  <description>In the Project Explorer, open in turn: a folder holding a document but no git repository; a document folder inside a git work tree; the root of a repository with one commit that git records as shallow. Then, with a repository open, open one of its document folders. Expected: each folder is refused and no document is listed. The first reason says the folder is not inside a git repository and how to clone or create one. The second says the folder is not the root of its git work tree and 'Open &lt;work tree root&gt; instead.', naming the root, with no advice to run git init. The third gives git fetch --unshallow as the only remedy. The last shows in a message box naming the root, and the repository that was open stays listed.</description>
+</object>

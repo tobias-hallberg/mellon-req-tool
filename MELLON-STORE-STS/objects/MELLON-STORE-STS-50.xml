@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[-1]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[-7]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[abc]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[1.5]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error[NaN]
+tests/test_validator.py::test_store_srs_2_invalid_number_is_a_validation_error
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid[0]
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid[1]
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid[3]
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid[9223372036854775808]
+tests/test_validator.py::test_store_srs_2_whole_number_of_0_or_more_is_valid[123456789012345678901234567890]
+tests/test_validator.py::test_validate_flags_bad_next_number[+3]
+tests/test_validator.py::test_validate_flags_bad_next_number
+tests/test_validator.py::test_validate_flags_bad_next_number[1_000]
+tests/test_validator.py::test_validate_flags_bad_next_number[\u0663]
+tests/test_validator.py::test_validate_flags_bad_next_number[0x10]</attr>
+  <description>In a document with objects 0 to 2 that validates clean, set the manifest's next object number by hand to each of -1, -7, abc, 1.5, empty, NaN, a space, +3, ' 3', '3 ', 1_000, 0x10 and the Arabic-Indic digit three, and validate; then to 0, 1, 3, 007, 2^63 and a 30-digit number; then remove it. Expected: each value in the first list gives a validation error (one naming the value for the second group); each in the second list, and the absent number, gives none.</description>
+</object>

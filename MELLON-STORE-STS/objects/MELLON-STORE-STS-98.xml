@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-98">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_store_srs_115_cells_stored_only_in_the_object_file</attr>
+  <description>Weak. Snapshot every file of the repository, set a table on DOC-1 through Mellon, and compare. Expected: only objects/DOC-1.xml changed, and no other file holds the cell texts.</description>
+</object>

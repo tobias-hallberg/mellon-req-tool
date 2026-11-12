@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-92">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_store_srs_40_reload_without_load_error_allows_edits
+tests/test_gui_reload.py::test_store_srs_40_read_only_mode_still_applies_after_reload</attr>
+  <description>After the steps of STORE-39, restore DOC-1.xml and press F5. Expected: the load error and the Changed on disk banner are gone; with read-only mode off an edit in a grid cell is written to the object file; with read-only mode on edits stay refused.</description>
+</object>

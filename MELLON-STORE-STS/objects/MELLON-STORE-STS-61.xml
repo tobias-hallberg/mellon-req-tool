@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-61">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_loader.py::test_link_without_ack_is_accepted
+tests/test_editor.py::test_add_link_without_git</attr>
+  <description>Read a link with ack='abc1234' and one with no ack. Outside git, add a link. Expected: the first reads with acknowledged commit abc1234, the second with none; the link added outside git is written with no ack.</description>
+</object>

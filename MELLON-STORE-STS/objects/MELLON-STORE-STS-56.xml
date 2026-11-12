@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_non_string_kind_value_checks[boolean-true-yes-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_non_string_kind_value_checks[boolean-false-True-ATTR_BAD_BOOLEAN]
+tests/test_validator.py::test_non_string_kind_value_checks[date-2026-04-25-25/04/2026-ATTR_BAD_DATE]
+tests/test_validator.py::test_non_string_kind_value_checks[date-2026-12-31-not-a-date-ATTR_BAD_DATE]
+tests/test_editor.py::test_store_srs_97_boolean_written_lower_case
+tests/test_editor.py::test_store_srs_97_boolean_not_written_in_other_case
+tests/test_service.py::test_store_srs_98_date_value_calendar_range</attr>
+  <description>Add a boolean attribute, set it to true and to false and validate; then to yes and to True. Add a date attribute, set it to 2026-04-25 and 2026-12-31, then to 25/04/2026 and not-a-date. Expected: true, false and the two ISO dates give no validation error; yes, True, 25/04/2026 and not-a-date each give one for the attribute's kind.</description>
+</object>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-86">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_control_characters_rejected_before_any_write[create_object]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[set_description]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[set_attribute]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[set_metadata]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[add_link]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[set_table]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[create_view]
+tests/test_editor.py::test_control_characters_rejected_before_any_write[create_filter]
+tests/test_service.py::test_control_char_in_description_is_validation
+tests/test_service.py::test_composite_rejects_control_char_attr_before_write
+tests/test_service.py::test_create_object_full_rejects_bad_links_before_write[control-char-type]</attr>
+  <description>Give text holding U+001B to each of: create an object, set a description, set an attribute, set the title, add a link (as its type), set a table cell, create a view, create a filter. Through the document service, give U+0000 in a description, U+0000 in an attribute value of a new or updated object, and U+0000 in a link type. Expected: each is refused and no file changes; each of the eight errors names U+001B, and the description's names U+0000.</description>
+</object>

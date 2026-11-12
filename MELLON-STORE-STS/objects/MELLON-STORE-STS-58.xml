@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_table_omits_default_spans
+tests/test_editor.py::test_set_table_emits_span_when_merged
+tests/test_editor.py::test_store_srs_108_span_attributes_only_above_one</attr>
+  <description>Set a table with no merged cells, and one with a cell spanning both of two columns; look at the object file. Expected: the first file holds no colspan or rowspan attribute; the second holds colspan='2'.</description>
+</object>

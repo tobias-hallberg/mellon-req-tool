@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_reload_of_broken_doc_shows_the_load_error
+tests/test_gui_commit.py::test_store_srs_37_reread_in_commit_dialog_names_file_and_line
+tests/test_gui_commit.py::test_store_srs_37_reread_in_commit_dialog_says_merge_conflict
+tests/test_gui_reload.py::test_store_srs_37_reread_after_edit_names_file_and_line
+tests/test_gui_reload.py::test_store_srs_37_reread_after_edit_says_merge_conflict</attr>
+  <description>With DOC open in a Document Editor, leave conflict markers in its object file and press F5. Expected: one message shows the load error, giving the file with its line and '(unresolved merge conflict?)'; the status bar doesn't say the document no longer exists; the Changed on disk banner shows.</description>
+</object>

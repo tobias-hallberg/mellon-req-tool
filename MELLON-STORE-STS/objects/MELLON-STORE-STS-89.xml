@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-89">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_clear_figure_requires_known_object
+tests/test_editor.py::test_remove_link_source_id_cannot_escape_links_folder
+tests/test_editor.py::test_child_path_refuses_names_outside_folder[../x.xml]
+tests/test_editor.py::test_child_path_refuses_names_outside_folder[sub/x.xml]
+tests/test_editor.py::test_child_path_refuses_names_outside_folder[..]</attr>
+  <description>Clear the figure of object ../../outside where outside.svg exists beside the repository; remove a link from source ../../OTHER/links/OTHER-1 where that file exists outside the document; name a file in a document's links folder ../x.xml, sub/x.xml and '..'. Expected: each is refused (no object, or an invalid file name), and the outside files still exist.</description>
+</object>

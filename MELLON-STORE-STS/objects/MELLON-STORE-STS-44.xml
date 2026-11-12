@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_metadata_rejects_issue_field
+tests/test_service.py::test_set_metadata_rejects_issue_field
+tests/test_mcp_write.py::test_store_srs_65_mcp_issue_tag_keeps_issue_out_of_manifest
+tests/test_service.py::test_store_srs_65_commit_with_issue_keeps_issue_out_of_manifest</attr>
+  <description>Ask Mellon to set the metadata field issue to 2, directly and through the document service. Expected: refused as an unknown metadata field.</description>
+</object>

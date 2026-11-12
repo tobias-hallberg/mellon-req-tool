@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-105">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_207_crlf_reads_as_lf</attr>
+  <description>No direct test (the Compare test of CRLF files may never read the text; see weak). Write a manifest, an object file with a two-line description, a links file and a view file with CR LF line endings and read the document; do the same with LF. Expected: the two reads are equal, and the description's line break reads as one LF.</description>
+</object>

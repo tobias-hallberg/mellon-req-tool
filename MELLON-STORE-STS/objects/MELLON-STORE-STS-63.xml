@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-63">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_add_link_first_link_escapes_link_type
+tests/test_loader.py::test_changed_links_and_manifest_are_read</attr>
+  <description>Add a first link with the link type 'refines &amp; "clarifies" &lt;x&gt;'; change a link's type by hand to xsatisfies and read the document. Expected: each link type reads back exactly, and the links file holds no CR LF.</description>
+</object>

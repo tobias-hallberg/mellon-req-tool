@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-57">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_parse_table_basic
+tests/test_loader.py::test_parse_table_header_and_spans
+tests/test_loader.py::test_parse_table_default_align
+tests/test_loader.py::test_parse_table_bad_align_raises
+tests/test_loader.py::test_parse_table_non_integer_span_raises
+tests/test_editor.py::test_set_table_round_trips_via_loader
+tests/test_editor.py::test_store_srs_101_center_alignment_written
+tests/test_loader.py::test_store_srs_101_center_alignment_read_from_file</attr>
+  <description>Read object files whose table holds: columns aligned left and right and one row of cells Signal and Latency; a header row and a row with one cell of colspan 2; a col with no align; a col with align middle; a cell with colspan two. Set a two-column table with a header row through Mellon and read it back. Expected: alignments, cell texts, the header row and the span read as written; no align reads as left; align middle and colspan two are each a load error; the table set reads back equal.</description>
+</object>

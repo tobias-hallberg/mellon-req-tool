@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-STORE-STS-42">
+  <link target-doc="MELLON-STORE-SRS" target-id="MELLON-STORE-SRS-61" type="verifies" ack="acb8dfe"/>
+</links>

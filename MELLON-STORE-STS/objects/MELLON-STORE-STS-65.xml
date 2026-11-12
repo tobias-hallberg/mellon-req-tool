@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_figure_path_none_when_no_figures
+tests/test_loader.py::test_figure_path_populated_when_file_present
+tests/test_loader.py::test_figure_path_ignores_orphan_svgs
+tests/test_loader.py::test_figure_path_follows_the_disk_not_the_kept_object
+tests/test_editor.py::test_set_figure_creates_file
+tests/test_editor.py::test_set_figure_populates_loader_field
+tests/test_editor.py::test_journal_figure_round_trip_and_unchanged_files</attr>
+  <description>Read a document without figures; put figures/DOC-1.svg in place by hand and read; put figures/DOC-99.svg for an object that doesn't exist; add and then remove figures/DOC-0.svg between reads. Attach a figure to DOC-1 through Mellon, and, from a description already written by Mellon, attach a figure and change and restore a description in one step. Expected: an object has a figure exactly while figures/&lt;object ID&gt;.svg exists; the orphan file gives no object a figure; attaching writes figures/DOC-1.svg; the step's only changed file is the figure file, so the object file is unchanged.</description>
+</object>

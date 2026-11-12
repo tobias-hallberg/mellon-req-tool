@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-64">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_remove_link_last_link_deletes_file
+tests/test_editor.py::test_remove_link_keeps_file_when_other_links_remain
+tests/test_editor.py::test_delete_force_strips_same_doc_incoming</attr>
+  <description>Remove an object's only outgoing link; remove one of two; force-delete an object whose only incoming link comes from DOC-0. Expected: the links file is deleted when its last link goes, kept with the other link otherwise, and DOC-0's links file is deleted with its stripped link.</description>
+</object>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-71">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_document_with_filters
+tests/test_loader.py::test_filter_keep_ancestors_defaults_true
+tests/test_editor.py::test_create_filter_writes_file_and_round_trips
+tests/test_editor.py::test_set_filter_rules_replaces_rules
+tests/test_loader.py::test_filter_unknown_combinator_rejected
+tests/test_loader.py::test_filter_unknown_kind_rejected
+tests/test_loader.py::test_filter_missing_name_rejected
+tests/test_loader.py::test_filter_attr_rule_missing_attr_rejected
+tests/test_loader.py::test_filter_link_rule_op_must_be_present_or_absent</attr>
+  <description>Read filters/high-pri.xml (name 'High priority', combinator all, keep-ancestors true, an attr rule status eq Approved, a has-outgoing rule with attr PARENT and op present) and filters/broken.xml (combinator any, keep-ancestors false, an attr rule is-empty with no value, a has-incoming rule absent with no attr); read a filter holding only a name. Create the filter 'High priority' through Mellon and replace its rules. Read filter files with combinator maybe, rule kind weird, no name, an attr rule with no attr, and a has-outgoing rule with op contains. Expected: each filter reads with its slug, name, combinator, keep-ancestors and rules as written; the filter with only a name reads with combinator all, keep-ancestors true and no rules; the created filter is filters/high-priority.xml and reads back as set; each of the five broken files is a load error.</description>
+</object>

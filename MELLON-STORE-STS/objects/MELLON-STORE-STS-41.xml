@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_loader.py::test_missing_manifest
+tests/test_loader.py::test_folder_name_mismatch
+tests/test_loader.py::test_copied_folder_checks_its_own_manifest_id
+tests/test_loader.py::test_parse_bytes_errors_name_the_path</attr>
+  <description>Read a document whose folder DOC holds DOC.xml with root element document and id DOC. Read a folder holding no manifest. Read folder WRONG whose WRONG.xml has id DIFFERENT. Copy a document folder that was read to OTHER, rename its manifest OTHER.xml, and read the copy. Read a manifest with id X as stored at a version under folder DOC. Create an object and look at the manifest's root element. Expected: the first reads as document DOC; the folder without a manifest is an error saying the manifest wasn't found; each id that differs from its folder's name is a load error saying so; the root element is document.</description>
+</object>

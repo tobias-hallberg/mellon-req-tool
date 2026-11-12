@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-95">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_store_srs_66_issue_element_is_ignored</attr>
+  <description>Add &lt;issue&gt;3&lt;/issue&gt; to a manifest's metadata element by hand and read and validate the document. Expected: no load error and no validation error for it; the metadata reads as without the element.</description>
+</object>

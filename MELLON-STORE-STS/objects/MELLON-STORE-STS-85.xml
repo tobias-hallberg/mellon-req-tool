@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-85">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_set_description_normalises_crlf_and_cr
+tests/test_editor.py::test_set_description_maps_vertical_tab_to_newline
+tests/test_editor.py::test_create_object_maps_page_break_and_writes_lf
+tests/test_editor.py::test_store_srs_212_cr_and_crlf_become_lf</attr>
+  <description>Set a description to 'one\r\ntwo\rthree', to 'Line one\x0bLine two', and create an object with the description 'Page 1 &amp; &lt;2&gt;\x0cPage 2'. Expected: they read back as 'one\ntwo\nthree', 'Line one\nLine two' and 'Page 1 &amp; &lt;2&gt;\nPage 2'.</description>
+</object>

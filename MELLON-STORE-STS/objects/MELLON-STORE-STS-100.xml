@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-100">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_149_operator_not_fitting_kind_still_loads</attr>
+  <description>Write a filter file whose attr rule uses op before on an integer attribute, and one using lt on an enumeration attribute. Read the document. Expected: no load error; both filters are listed.</description>
+</object>

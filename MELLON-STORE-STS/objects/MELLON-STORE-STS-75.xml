@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-75">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[delete_view]
+tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[rename_view]
+tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[set_view_visible]
+tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[delete_filter]
+tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[rename_filter]
+tests/test_editor.py::test_view_and_filter_slugs_cannot_escape_their_folder[set_filter_rules]
+tests/test_editor.py::test_store_srs_155_bad_slug_refused
+tests/test_mcp_write.py::test_store_srs_155_bad_slug_refused_by_manage_view
+tests/test_mcp_write.py::test_store_srs_155_good_slug_accepted_by_manage_view</attr>
+  <description>Ask to delete, rename and set the columns of a view, and to delete, rename and set the rules of a filter, giving the slug ../objects/DOC-1. Expected: each request is refused as an invalid slug, and objects/DOC-1.xml keeps its bytes.</description>
+</object>

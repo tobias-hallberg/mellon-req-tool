@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_check_repo_root_accepts_work_tree_root
+tests/test_check.py::test_repo_without_documents_passes
+tests/test_gui_smoke.py::test_store_srs_13_project_explorer_opens_root_without_documents
+tests/test_mcp_read.py::test_store_srs_13_mcp_starts_on_root_without_documents
+tests/test_check.py::test_store_srs_14_check_accepts_root_without_commit
+tests/test_gui_smoke.py::test_store_srs_14_project_explorer_accepts_root_without_commit
+tests/test_mcp_read.py::test_store_srs_14_mcp_starts_on_root_without_commit</attr>
+  <description>Check as a repository root a folder just made with git init: no commit and no document. Then run mellon-check on a repository whose one commit holds a source code folder and no document. Expected: the root is accepted; mellon-check exits 0 and reports 0 documents checked.</description>
+</object>

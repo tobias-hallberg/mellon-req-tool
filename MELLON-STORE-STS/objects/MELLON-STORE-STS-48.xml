@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
+tests/test_editor.py::test_emptied_outline_parent_has_no_whitespace_residue[move_object]
+tests/test_editor.py::test_emptied_outline_parent_has_no_whitespace_residue[delete_object]
+tests/test_editor.py::test_set_outline_flat_swap
+tests/test_editor.py::test_set_outline_nest_under_sibling
+tests/test_editor.py::test_set_outline_deep_three_levels
+tests/test_loader.py::test_changed_links_and_manifest_are_read</attr>
+  <description>Read a manifest whose outline holds ref DOC-0 with ref DOC-1 nested inside it. Remove DOC-1 by moving it to the top level, and separately by deleting it, and look at DOC-0's ref. Set the outline flat with DOC-1 before DOC-0; nest DOC-1 under DOC-0; nest three levels deep; append a ref by hand. Expected: the outline reads DOC-0 then DOC-1; DOC-0's ref is written as an empty element once its only child is gone; each outline set reads back with the same order and nesting; the appended ref comes last.</description>
+</object>
