@@ -1068,3 +1068,562 @@ def test_store_srs_174_gui_delete_attribute_with_failing_second_write_restores_a
     assert changed(before, snapshot(root)) == []
     shown = " ".join(shown_in_dialog + [t for _, _, t in gui.messages] + [gui.status(ed)])
     assert "fail" in shown.lower() or "error" in shown.lower(), f"no error shown: {shown!r}"
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+import pytest  # noqa: E402
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
+from PySide6.QtWidgets import QApplication, QComboBox, QListWidget, QMessageBox, QTreeWidget  # noqa: E402
+
+from mellon.loader import load_document  # noqa: E402
+from tests.edit_support import (  # noqa: E402
+    BOOL,
+    KIND_CASES,
+    add_attribute_handler,
+    assert_link_kept,
+    attr_tree_item,
+    basic_repo,
+    button,
+    child_parent_repo,
+    choose_in_combo,
+    combo_items,
+    commit_all,  # noqa: F401, F811 -- fixture
+    current_id,
+    delete_repo,
+    edit_repo,
+    field_for_label,
+    grid_delete_key,
+    grid_enter,
+    grid_headers,
+    grid_index,
+    inspector_enter,
+    inspector_fields,
+    kind_window,
+    labelled_repo,
+    long_repo,
+    manifest_attr,
+    manifest_options,
+    middle_row,
+    modals,  # noqa: F401, F811 -- fixture
+    obj_file,
+    open_cell_editor,
+    open_editor_window,
+    open_properties,
+    outline_delete,
+    props_attributes,
+    read_obj,
+    required_control,
+    select,
+    type_into,
+    us_locale,  # noqa: F401, F811 -- fixture
+    widget_text,
+    write_doc,
+)
+from tests.store_support import changed, git_env, mcp_at, snapshot  # noqa: E402,F401,F811
+
+
+# --- Metadata, parents and attributes in the Properties dialog --------------------------
+
+
+@pytest.mark.parametrize("field,label,value", [
+    ("date", "Date", "2026-11-11"),
+    ("title", "Title", "New title"),
+    ("author", "Author", "A. Person"),
+])
+def test_edit_srs_35_properties_dialog_edits_metadata(qtbot, tmp_path, modals, commit_all, field, label, value):
+    """MELLON-EDIT-SRS-35: the Properties dialog edits the title, author and date; typing a
+    value and applying writes it to the manifest."""
+    from mellon.gui.dialogs.document_properties import MetadataTab
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    w = open_editor_window(qtbot, root, "SRS")
+    d = open_properties(qtbot, w, "SRS")
+    tab = d.findChild(MetadataTab)
+    type_into(qtbot, field_for_label(tab, label), value)
+    button(tab, "Apply").click()
+    qtbot.wait(50)
+    assert getattr(load_document(root / "SRS").metadata, field) == value
+
+
+def test_edit_srs_43_properties_dialog_adds_parent_document(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-43: the Properties dialog's parents tab adds a parent document; the
+    manifest declares it and the tab lists it."""
+    from mellon.gui.dialogs.document_properties import ParentsTab
+    root = tmp_path
+    write_doc(root, "SYS", objects={"SYS-0": ({"type": "Requirement"}, "S")}, outline=["SYS-0"])
+    write_doc(root, "SRS", objects={"SRS-0": ({"type": "Requirement"}, "R")}, outline=["SRS-0"])
+    commit_all(root)
+    w = open_editor_window(qtbot, root, "SRS")
+    d = open_properties(qtbot, w, "SRS")
+    tab = d.findChild(ParentsTab)
+    modals.inputs = [("SYS", True)]
+    button(tab, "Add").click()
+    qtbot.wait(50)
+    assert load_document(root / "SRS").parents == ("SYS",)
+    lw = tab.findChild(QListWidget)
+    assert [lw.item(i).text() for i in range(lw.count())] == ["SYS"]
+
+
+def test_edit_srs_51_properties_dialog_remove_parent_keeps_links(qtbot, tmp_path, modals, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-51 through the Properties dialog's Remove: the link stays,
+    byte-identical."""
+    from mellon.gui.dialogs.document_properties import ParentsTab
+    root = child_parent_repo(tmp_path, commit_all)
+    before = (root / "CHILD" / "links" / "CHILD-0.xml").read_bytes()
+    w = open_editor_window(qtbot, root, "CHILD")
+    d = open_properties(qtbot, w, "CHILD")
+    tab = d.findChild(ParentsTab)
+    lw = tab.findChild(QListWidget)
+    lw.setCurrentRow([lw.item(i).text() for i in range(lw.count())].index("PARENT"))
+    modals.question = QMessageBox.StandardButton.Yes
+    modals.box_button = "accept"
+    button(tab, "Remove").click()
+    qtbot.wait(50)
+    assert_link_kept(root, before, mcp_at)
+
+
+def test_edit_srs_59_properties_dialog_defines_attribute(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-59: the Properties dialog's add form defines `prio`, an enumeration
+    with the options High and Low; the manifest defines it and the attributes tab lists it."""
+    from mellon.gui.dialogs.document_properties import AddAttributeDialog
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    _, _, tab, tree = props_attributes(qtbot, root)
+    modals.handlers[AddAttributeDialog] = add_attribute_handler(modals, "prio", "enum", ("High", "Low"))
+    button(tab, "Add attribute").click()
+    qtbot.wait(50)
+    a = manifest_attr(root, "SRS", "prio")
+    assert a is not None, "the manifest doesn't define prio"
+    assert a.get("kind") == "enum"
+    assert manifest_options(root, "SRS", "prio") == ("High", "Low")
+    attr_tree_item(tab.findChild(QTreeWidget), "prio")
+
+
+def test_edit_srs_73_grid_headers_use_labels(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-73: the grid names each attribute by its label: the manifest's label
+    (Requirement Type), else Type for `type`, else the name (rationale)."""
+    root = labelled_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    headers = grid_headers(w)
+    assert "Requirement Type" in headers
+    assert "Type" in headers
+    assert "rationale" in headers
+    assert "req-type" not in headers and "type" not in headers
+
+
+@pytest.mark.parametrize("editable", [True, False], ids=["editable", "read-only"])
+def test_edit_srs_73_inspector_uses_labels(qtbot, tmp_path, modals, commit_all, editable):
+    """MELLON-EDIT-SRS-73: the Inspector names each attribute by its label."""
+    root = labelled_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS", editable=editable)
+    select(qtbot, w, "SRS-0")
+    names = set(inspector_fields(w))
+    assert {"Requirement Type", "Type", "rationale"} <= names, names
+    assert "req-type" not in names and "type" not in names
+
+
+def test_edit_srs_77_properties_dialog_adds_option(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-77: the Properties dialog adds the option Rejected to status, and the
+    manifest lists it last."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    _, _, tab, tree = props_attributes(qtbot, root)
+    tree.setCurrentItem(attr_tree_item(tree, "status"))
+    modals.inputs = [("Rejected", True)]
+    button(tab, "Add option").click()
+    qtbot.wait(50)
+    assert manifest_options(root, "SRS", "status") == ("Draft", "Approved", "Rejected")
+
+
+def test_edit_srs_82_properties_dialog_removes_option(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-82: the Properties dialog removes the option Draft from status; the
+    manifest no longer lists it and SRS-1, which had it, keeps status with an empty value."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    _, _, tab, tree = props_attributes(qtbot, root)
+    status = attr_tree_item(tree, "status")
+    status.setExpanded(True)
+    draft = [status.child(i) for i in range(status.childCount())
+             if "Draft" in [status.child(i).text(c) for c in range(tree.columnCount())]]
+    assert draft, "the dialog doesn't list the option Draft under status"
+    tree.setCurrentItem(draft[0])
+    modals.question = QMessageBox.StandardButton.Yes
+    modals.box_button = "accept"
+    button(tab, "Remove option").click()
+    qtbot.wait(50)
+    assert manifest_options(root, "SRS", "status") == ("Approved",)
+    attrs, _ = read_obj(root, "SRS", "SRS-1")
+    assert attrs.get("status") == "", f"SRS-1 attributes after removal: {attrs}"
+
+
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-92: the Properties dialog's attributes tab "
+                   "offers no control that changes whether an existing attribute is required")
+def test_edit_srs_92_properties_dialog_changes_required(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-92: the Properties dialog makes the optional status required, then
+    optional again; the manifest follows each change."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    _, _, tab, tree = props_attributes(qtbot, root)
+    item = attr_tree_item(tree, "status")
+    tree.setCurrentItem(item)
+    modals.question = QMessageBox.StandardButton.Yes
+    modals.box_button = "accept"
+    toggle = required_control(tab, tree, item)
+    assert toggle is not None, "no control in the Properties dialog changes whether status is required"
+    toggle()
+    qtbot.wait(50)
+    assert manifest_attr(root, "SRS", "status").get("required") == "true"
+    toggle = required_control(tab, tree, attr_tree_item(tree, "status"))
+    toggle()
+    qtbot.wait(50)
+    assert manifest_attr(root, "SRS", "status").get("required") in ("false", None)
+
+
+def test_edit_srs_97_properties_dialog_deletes_attribute(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-97: the Properties dialog's delete control, confirmed, deletes
+    rationale: the manifest no longer defines it and no object holds it."""
+    root = tmp_path
+    write_doc(root, "SRS", objects={"SRS-0": ({"type": "Heading"}, "H"),
+                                    "SRS-1": ({"type": "Requirement", "rationale": "why"}, "R")},
+              outline=[("SRS-0", ["SRS-1"])], next_number=2)
+    commit_all(root)
+    _, _, tab, tree = props_attributes(qtbot, root)
+    tree.setCurrentItem(attr_tree_item(tree, "rationale"))
+    modals.question = QMessageBox.StandardButton.Yes
+    modals.box_button = "accept"
+    button(tab, "Delete attribute").click()
+    qtbot.wait(50)
+    assert manifest_attr(root, "SRS", "rationale") is None
+    for oid in ("SRS-0", "SRS-1"):
+        assert "rationale" not in read_obj(root, "SRS", oid)[0]
+
+
+# --- The grid and the Inspector ----------------------------------------------------------
+
+
+@pytest.mark.parametrize("editable", [True, False], ids=["editable", "read-only"])
+def test_edit_srs_124_inspector_shows_values_and_description(qtbot, tmp_path, modals, commit_all, editable):
+    """MELLON-EDIT-SRS-124: selecting an object with type Requirement, status Draft and a
+    rationale shows each attribute with its value, and the description, in the Inspector."""
+    root = tmp_path
+    write_doc(root, "SRS", objects={
+        "SRS-0": ({"type": "Heading"}, "H"),
+        "SRS-1": ({"type": "Requirement", "status": "Draft", "rationale": "Asked for by the plant"},
+                  "The VCU shall stop."),
+    }, outline=[("SRS-0", ["SRS-1"])], next_number=2)
+    commit_all(root)
+    w = open_editor_window(qtbot, root, "SRS", editable=editable)
+    select(qtbot, w, "SRS-1")
+    got = {k: widget_text(v) for k, v in inspector_fields(w).items()}
+    assert got.get("Type") == "Requirement", got
+    assert got.get("status") == "Draft", got
+    assert got.get("rationale") == "Asked for by the plant", got
+    assert got.get("Description") == "The VCU shall stop.", got
+
+
+def test_edit_srs_126_grid_description_editor_keeps_line_break(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-126: a line break typed with the keyboard (Enter) in the grid's
+    description editor is kept in the saved description."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    ed = open_cell_editor(qtbot, w, "SRS-1", "Description")
+    type_into(qtbot, ed, "first")
+    QTest.keyClick(ed, Qt.Key.Key_Return)
+    QTest.keyClicks(ed, "second")
+    QTest.keyClick(ed, Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+    qtbot.wait(50)
+    assert read_obj(root, "SRS", "SRS-1")[1] == "first\nsecond"
+
+
+def test_edit_srs_126_inspector_description_keeps_line_break(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-126: a line break typed with Enter in the Inspector's description is
+    kept in the saved description."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-1")
+    ed = inspector_fields(w)["Description"]
+    type_into(qtbot, ed, "first")
+    QTest.keyClick(ed, Qt.Key.Key_Return)
+    QTest.keyClicks(ed, "second")
+    w.inspector.commit_pending()
+    qtbot.wait(50)
+    assert read_obj(root, "SRS", "SRS-1")[1] == "first\nsecond"
+
+
+def test_edit_srs_127_escape_cancels_description_edit(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-127: typing in the grid's description editor and pressing Escape
+    leaves the object file byte-identical and the grid showing the old description."""
+    root = edit_repo(tmp_path, commit_all)
+    path = obj_file(root, "SRS", "SRS-1")
+    before = path.read_bytes()
+    w = open_editor_window(qtbot, root, "SRS")
+    ed = open_cell_editor(qtbot, w, "SRS-1", "Description")
+    type_into(qtbot, ed, "Typed by mistake")
+    QTest.keyClick(ed, Qt.Key.Key_Escape)
+    qtbot.wait(50)
+    w.flush_pending_edits()
+    qtbot.wait(30)
+    assert path.read_bytes() == before
+    assert grid_index(w, "SRS-1", "Description").data() == "Old text"
+
+
+def test_edit_srs_130_grid_enum_editor_offers_options_and_empty_entry(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-130: the grid's enumeration editor offers exactly an empty entry and
+    each option, and choosing the empty entry stores an empty value."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    combo = open_cell_editor(qtbot, w, "SRS-1", "status")
+    assert isinstance(combo, QComboBox)
+    assert sorted(combo_items(combo)) == ["", "Approved", "Draft"]
+    choose_in_combo(qtbot, combo, "")
+    w.grid_pane.commit_open_editor()
+    qtbot.wait(30)
+    assert read_obj(root, "SRS", "SRS-1")[0].get("status", "") == ""
+
+
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-130: the Inspector's enumeration field "
+                   "offers only the options, with no empty entry")
+def test_edit_srs_130_inspector_enum_field_offers_empty_entry(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-130: the Inspector's enumeration field on an object with a value
+    offers an empty entry and each option; choosing the empty entry stores an empty value."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-1")
+    combo = inspector_fields(w)["status"]
+    assert isinstance(combo, QComboBox), type(combo).__name__
+    assert sorted(combo_items(combo)) == ["", "Approved", "Draft"]
+    choose_in_combo(qtbot, combo, "")
+    w.inspector.commit_pending()
+    qtbot.wait(30)
+    assert read_obj(root, "SRS", "SRS-1")[0].get("status", "") == ""
+
+
+def test_edit_srs_131_grid_boolean_editor_offers_true_false_empty(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-131: the grid's boolean editor offers exactly an empty entry, true
+    and false."""
+    root = edit_repo(tmp_path, commit_all, BOOL, {"flag": "true"})
+    w = open_editor_window(qtbot, root, "SRS")
+    combo = open_cell_editor(qtbot, w, "SRS-1", "flag")
+    assert isinstance(combo, QComboBox), type(combo).__name__
+    assert sorted(combo_items(combo)) == ["", "false", "true"]
+
+
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-131: the Inspector shows a boolean attribute "
+                   "as a free text field, not a choice of true, false and an empty entry")
+def test_edit_srs_131_inspector_boolean_field_offers_true_false_empty(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-131: the Inspector's boolean field offers exactly an empty entry,
+    true and false."""
+    root = edit_repo(tmp_path, commit_all, BOOL, {"flag": "true"})
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-1")
+    field = inspector_fields(w)["flag"]
+    assert isinstance(field, QComboBox), f"the Inspector's boolean field is a {type(field).__name__}"
+    assert sorted(combo_items(field)) == ["", "false", "true"]
+
+
+@pytest.mark.parametrize("kind,text", [("integer", "42"), ("integer", "-7"),
+                                       ("real", "3.14"), ("real", "-2")])
+def test_edit_srs_132_133_grid_number_editor_stores_fitting_value(qtbot, tmp_path, modals, us_locale, commit_all,
+                                                                  kind, text):
+    """MELLON-EDIT-SRS-132 and -133: a fitting integer (42, -7) or real (3.14, -2) typed in
+    the grid's editor is stored, as the same number."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, kind)
+    grid_enter(qtbot, w, name, text)
+    stored = read_obj(tmp_path, "SRS", "SRS-1")[0].get(name)
+    assert KIND_CASES[kind][2](stored), f"stored {stored!r} doesn't fit {kind}"
+    assert float(stored) == float(text)
+
+
+@pytest.mark.parametrize("kind,text", [("integer", "3.14"), ("integer", "abc"),
+                                       ("real", "abc"), ("real", "1.2.3"),
+                                       ("date", "0000-12-31"), ("date", "10000-01-01")])
+def test_edit_srs_132_133_134_grid_editor_stores_no_misfit(qtbot, tmp_path, modals, us_locale, commit_all, kind, text):
+    """MELLON-EDIT-SRS-132, -133 and -134: a value that doesn't fit the kind, typed in the
+    grid's editor, can't be entered: what is stored afterwards is empty or fits the kind,
+    and isn't the typed text."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, kind)
+    grid_enter(qtbot, w, name, text)
+    stored = read_obj(tmp_path, "SRS", "SRS-1")[0].get(name, "")
+    assert stored != text
+    assert stored == "" or KIND_CASES[kind][2](stored), f"stored {stored!r} doesn't fit {kind}"
+
+
+@pytest.mark.parametrize("kind", ["integer", "real", "date"])
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-132/-133/-134: the grid's integer, real and "
+                   "date editors can't be emptied; clearing the text stores the previous value")
+def test_edit_srs_132_133_134_grid_editor_accepts_empty_value(qtbot, tmp_path, modals, us_locale, commit_all, kind):
+    """MELLON-EDIT-SRS-132, -133 and -134: the grid's integer, real and date editors accept
+    an empty value: clearing the text and leaving the cell stores an empty value."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, kind)
+    grid_enter(qtbot, w, name, "")
+    assert read_obj(tmp_path, "SRS", "SRS-1")[0].get(name, "") == ""
+
+
+@pytest.mark.parametrize("text", [
+    pytest.param("0001-01-01", marks=pytest.mark.xfail(strict=True, reason=(
+        "defect: MELLON-EDIT-SRS-134: the grid's date editor can't go below 1752-09-14; typing "
+        "0001-01-01 stores 2026-01-01 instead"))),
+    "9999-12-31",
+])
+def test_edit_srs_134_grid_date_editor_stores_range_ends(qtbot, tmp_path, modals, us_locale, commit_all, text):
+    """MELLON-EDIT-SRS-134: the grid's date editor accepts the first and last day of the
+    range, 0001-01-01 and 9999-12-31, and stores the typed date."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, "date")
+    grid_enter(qtbot, w, name, text)
+    assert read_obj(tmp_path, "SRS", "SRS-1")[0].get(name) == text
+
+
+@pytest.mark.parametrize("kind,text", [("integer", "42"), ("integer", "-7"), ("integer", ""),
+                                       ("real", "3.14"), ("real", "-2"), ("real", ""),
+                                       ("date", "0001-01-01"), ("date", "9999-12-31"), ("date", "")])
+def test_edit_srs_132_133_134_inspector_stores_fitting_value(qtbot, tmp_path, modals, us_locale, commit_all,
+                                                             kind, text):
+    """MELLON-EDIT-SRS-132, -133 and -134: in the Inspector, an empty value or a value that
+    fits the kind is accepted and stored."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, kind)
+    inspector_enter(qtbot, w, name, text)
+    stored = read_obj(tmp_path, "SRS", "SRS-1")[0].get(name, "")
+    if text == "":
+        assert stored == ""
+    else:
+        assert KIND_CASES[kind][2](stored), f"stored {stored!r}"
+        assert stored == text if kind == "date" else float(stored) == float(text)
+
+
+@pytest.mark.parametrize("kind,text", [("integer", "3.14"), ("integer", "abc"),
+                                       ("real", "abc"), ("real", "1.2.3"),
+                                       ("date", "0000-12-31"), ("date", "10000-01-01")])
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-132/-133/-134: the Inspector's integer, real "
+                   "and date fields take any text and store it")
+def test_edit_srs_132_133_134_inspector_refuses_misfit(qtbot, tmp_path, modals, us_locale, commit_all, kind, text):
+    """MELLON-EDIT-SRS-132, -133 and -134: in the Inspector, a value that doesn't fit the
+    kind can't be entered or is refused, and the object file keeps its bytes."""
+    w, name = kind_window(qtbot, tmp_path, commit_all, kind)
+    path = obj_file(tmp_path, "SRS", "SRS-1")
+    before = path.read_bytes()
+    inspector_enter(qtbot, w, name, text)
+    stored = read_obj(tmp_path, "SRS", "SRS-1")[0].get(name, "")
+    assert stored == "" or KIND_CASES[kind][2](stored), f"stored {stored!r} doesn't fit {kind}"
+    assert path.read_bytes() == before
+
+
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-135: choosing an option from the grid's "
+                   "enumeration list writes nothing until the cell is left")
+def test_edit_srs_135_grid_enum_choice_saved_at_once(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-135: choosing Approved from the grid's enumeration list writes it to
+    the object file at once, while the cell's editor is still open."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    combo = open_cell_editor(qtbot, w, "SRS-1", "status")
+    choose_in_combo(qtbot, combo, "Approved")
+    assert read_obj(root, "SRS", "SRS-1")[0].get("status") == "Approved"
+
+
+def test_edit_srs_135_inspector_enum_choice_saved_at_once(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-135: choosing Approved from the Inspector's enumeration list writes
+    it to the object file at once."""
+    root = edit_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-1")
+    choose_in_combo(qtbot, inspector_fields(w)["status"], "Approved")
+    assert read_obj(root, "SRS", "SRS-1")[0].get("status") == "Approved"
+
+
+@pytest.mark.parametrize("what", ["description", "attribute", "table"])
+def test_edit_srs_137_edit_keeps_scroll_and_selection(qtbot, tmp_path, modals, commit_all, what):
+    """MELLON-EDIT-SRS-137: with the grid scrolled halfway down a long document, editing the
+    selected object's description, an attribute value or a table cell keeps the grid's
+    scroll position and the selection."""
+    root = long_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "L")
+    t = w.grid_pane.table
+    obj = "L-80" if what == "table" else None
+    if obj:
+        t.verticalScrollBar().setValue(t.verticalScrollBar().maximum() // 2)
+        qtbot.wait(30)
+        t.scrollTo(grid_index(w, obj, "ID"))
+        qtbot.wait(30)
+    else:
+        obj = middle_row(qtbot, w)
+        assert obj != "L-80", "precondition: the middle row has no table"
+    select(qtbot, w, obj)
+    bar = t.verticalScrollBar()
+    pos = bar.value()
+    assert pos > 0
+    if what == "description":
+        ed = open_cell_editor(qtbot, w, obj, "Description")
+        ed.setFocus()
+        QTest.keyClick(ed, Qt.Key.Key_End, Qt.KeyboardModifier.ControlModifier)
+        QTest.keyClicks(ed, "x")
+        QTest.keyClick(ed, Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+    elif what == "attribute":
+        combo = open_cell_editor(qtbot, w, obj, "status")
+        choose_in_combo(qtbot, combo, "Approved")
+        w.grid_pane.commit_open_editor()
+    else:
+        from mellon.gui.widgets.inline_table import InlineTableWidget
+        w.grid_pane.begin_table_edit(obj)
+        qtbot.wait(50)
+        tw = [x for x in w.findChildren(InlineTableWidget) if x.isVisible()]
+        assert tw, "no table editor opened"
+        grid = tw[0].table
+        grid.setCurrentCell(0, 0)
+        grid.editItem(grid.item(0, 0))
+        qtbot.wait(20)
+        cell = QApplication.focusWidget()
+        type_into(qtbot, cell, "z")
+        QTest.keyClick(cell, Qt.Key.Key_Tab)
+        w.grid_pane.commit_open_editor()
+    qtbot.wait(100)
+    attrs, desc = read_obj(root, "L", obj)
+    if what == "description":
+        assert desc.endswith("x"), "precondition: the description edit was saved"
+    elif what == "attribute":
+        assert attrs.get("status") == "Approved", "precondition: the attribute edit was saved"
+    else:
+        tbl = load_document(root / "L").objects[obj].table
+        assert tbl.rows[0].cells[0].text == "z", "precondition: the table edit was saved"
+    assert current_id(w) == obj, "the selection moved"
+    assert bar.value() == pos, f"the scroll position moved from {pos} to {bar.value()}"
+
+
+# --- Deleting objects --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("path", ["outline-pane", "grid-key"])
+def test_edit_srs_160_delete_asks_and_declining_changes_nothing(qtbot, tmp_path, modals, commit_all, path):
+    """MELLON-EDIT-SRS-160: the outline pane's Delete and the grid's Delete key each ask the
+    user to confirm before deleting; at the question no file has changed, and declining
+    leaves every file unchanged."""
+    root = delete_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-2")
+    before = snapshot(root)
+    at_ask = []
+    modals.on_call = lambda kind: at_ask.append(changed(before, snapshot(root)))
+    modals.question = QMessageBox.StandardButton.No
+    modals.box_button = "cancel"
+    (outline_delete(w) if path == "outline-pane" else grid_delete_key(w))()
+    qtbot.wait(50)
+    assert at_ask, "no confirmation was asked"
+    assert at_ask[0] == [], f"files changed before the question: {at_ask[0]}"
+    assert changed(before, snapshot(root)) == []
+
+
+@pytest.mark.parametrize("path", ["outline-pane", "grid-key"])
+def test_edit_srs_160_delete_confirmed_deletes(qtbot, tmp_path, modals, commit_all, path):
+    """MELLON-EDIT-SRS-160 (other side): confirming the question deletes the object."""
+    root = delete_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, "SRS")
+    select(qtbot, w, "SRS-2")
+    modals.question = QMessageBox.StandardButton.Yes
+    modals.box_button = "accept"
+    (outline_delete(w) if path == "outline-pane" else grid_delete_key(w))()
+    qtbot.wait(50)
+    assert modals.calls, "no confirmation was asked"
+    assert not obj_file(root, "SRS", "SRS-2").exists()

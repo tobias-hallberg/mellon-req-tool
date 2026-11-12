@@ -164,3 +164,31 @@ def test_apply_view_applies_column_order_from_xml(window):
     # Apply the view (as the view menu would).
     w.grid_pane.apply_view(slug, reversed_visible)
     assert _user_attr_visual_order(w.grid_pane) == list(reversed_visible)
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+from tests.edit_support import (  # noqa: E402
+    commit_all,  # noqa: F401, F811 -- fixture
+    grid_ids,
+    modals,  # noqa: F401, F811 -- fixture
+    open_editor_window,
+    write_doc,
+)
+from tests.store_support import git_env  # noqa: E402,F401,F811
+
+
+def test_edit_srs_122_grid_rows_follow_outline_preorder(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-122: the grid lists the objects in outline order (pre-order), one row
+    each, for a nested outline whose order differs from the numbers."""
+    root = tmp_path
+    outline = [("D-5", [("D-2", ["D-9", "D-1"]), "D-3"]), "D-0", ("D-4", ["D-8"])]
+    ids = ["D-5", "D-2", "D-9", "D-1", "D-3", "D-0", "D-4", "D-8"]
+    write_doc(root, "D", objects={i: ({"type": "Requirement"}, f"text {i}") for i in ids},
+              outline=outline, next_number=10)
+    commit_all(root)
+    w = open_editor_window(qtbot, root, "D")
+    assert grid_ids(w) == ids

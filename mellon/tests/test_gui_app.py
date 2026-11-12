@@ -125,3 +125,60 @@ def test_main_waits_for_a_running_export_before_returning(qtbot, monkeypatch):
 
     assert gui_app.main([]) == 0
     assert finished.is_set()
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+from PySide6.QtGui import QAction  # noqa: E402
+
+from mellon.loader import load_document  # noqa: E402
+from tests.edit_support import (  # noqa: E402
+    basic_repo,
+    commit_all,  # noqa: F401, F811 -- fixture
+    explorer,
+    explorer_doc_ids,
+    manifest_root,
+    modals,  # noqa: F401, F811 -- fixture
+    new_document_handler,
+)
+from tests.store_support import git_env  # noqa: E402,F401,F811
+
+
+def test_edit_srs_18_project_explorer_new_document_creates_it(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-18: the Project Explorer's New document action, given NEWDOC,
+    creates the folder NEWDOC with a manifest whose document ID is NEWDOC and no objects,
+    and the Project Explorer then lists NEWDOC."""
+    from mellon.gui.dialogs.new_document import NewDocumentDialog
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    pe = explorer(qtbot, root)
+    handler = modals.handlers[NewDocumentDialog] = new_document_handler("NEWDOC")
+    action = [a for a in pe.findChildren(QAction) if a.shortcut().toString() == "Ctrl+N"]
+    assert action, "the Project Explorer has no New document action (Ctrl+N)"
+    action[0].trigger()
+    qtbot.wait(100)
+    assert handler.ran, "the New document dialog wasn't filled in"
+    manifest = root / "NEWDOC" / "NEWDOC.xml"
+    assert manifest.is_file()
+    assert manifest_root(root, "NEWDOC").get("id") == "NEWDOC"
+    assert load_document(root / "NEWDOC").objects == {}
+    assert "NEWDOC" in explorer_doc_ids(pe)
+
+
+def test_edit_srs_18_project_explorer_refuses_document_id_with_space(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-18 with MELLON-EDIT-SRS-21: entering `bad id` creates no document
+    and no folder."""
+    from mellon.gui.dialogs.new_document import NewDocumentDialog
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    pe = explorer(qtbot, root)
+    entries = sorted(p.name for p in root.iterdir())
+    handler = modals.handlers[NewDocumentDialog] = new_document_handler("bad id")
+    [a for a in pe.findChildren(QAction) if a.shortcut().toString() == "Ctrl+N"][0].trigger()
+    qtbot.wait(100)
+    assert handler.ran, "the New document dialog wasn't filled in"
+    assert sorted(p.name for p in root.iterdir()) == entries
+    assert "bad" not in explorer_doc_ids(pe)

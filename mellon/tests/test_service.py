@@ -1628,3 +1628,63 @@ def test_store_srs_238_read_and_edit_5000_object_document(tmp_path, git_env):
     svc.delete_object("CHILD", new_id)
     doc = svc.get_document("CHILD")
     assert len(doc.objects) == n and new_id not in doc.objects
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+import pytest  # noqa: E402
+
+from mellon.loader import load_document  # noqa: E402
+from mellon.schema import object_number  # noqa: E402
+from tests.edit_support import (  # noqa: E402
+    TABLE,
+    commit_all,  # noqa: F401, F811 -- fixture
+    copy_of,
+    copy_repo,
+    sub_objects,
+)
+from tests.store_support import git_env, mcp_at  # noqa: E402,F401,F811
+
+
+@pytest.mark.parametrize("path_kind", ["service", "mcp"])
+def test_edit_srs_145_copy_has_new_id_description_and_attributes(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-145: a copy has an object ID never used in the document (number 7 or
+    more, as the next object number is 7) and the object's description and attribute values."""
+    root = copy_repo(tmp_path, commit_all)
+    new_id = copy_of(root, mcp_at, path_kind)
+    assert object_number(new_id, "SRS") is not None and object_number(new_id, "SRS") >= 7, new_id
+    doc = load_document(root / "SRS")
+    src, cp = doc.objects["SRS-1"], doc.objects[new_id]
+    assert cp.description == src.description == "Limits"
+    assert cp.attrs == src.attrs == {"type": "Requirement", "status": "Draft", "rationale": "why"}
+
+
+@pytest.mark.parametrize("path_kind", ["service", "mcp"])
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-145: copy_object gives the copy no table; "
+                   "the source's table is dropped")
+def test_edit_srs_145_copy_has_the_table(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-145: a copy of an object with a table (a header row, two alignments,
+    a merged cell) has the same table."""
+    root = copy_repo(tmp_path, commit_all)
+    new_id = copy_of(root, mcp_at, path_kind)
+    doc = load_document(root / "SRS")
+    assert doc.objects["SRS-1"].table == TABLE, "precondition: the source has the table"
+    assert doc.objects[new_id].table == TABLE
+
+
+@pytest.mark.parametrize("source,parent_id,expected_parent", [
+    ("SRS-3", None, None),
+    ("SRS-2", None, "SRS-0"),
+    ("SRS-3", "SRS-0", "SRS-0"),
+], ids=["top-level-sibling", "sub-object-sibling", "given-parent"])
+@pytest.mark.parametrize("path_kind", ["service", "mcp"])
+def test_edit_srs_147_copy_placed_as_sibling_or_under_given_parent(tmp_path, mcp_at, commit_all, path_kind,
+                                                                    source, parent_id, expected_parent):
+    """MELLON-EDIT-SRS-147: without a parent object the copy is a sibling of the object (top
+    level for a top-level object, under H for a sub-object of H); with one, it is under it."""
+    root = copy_repo(tmp_path, commit_all)
+    new_id = copy_of(root, mcp_at, path_kind, source, parent_id=parent_id)
+    assert new_id in sub_objects(root, "SRS", expected_parent)

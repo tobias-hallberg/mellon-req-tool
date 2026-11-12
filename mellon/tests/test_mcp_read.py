@@ -1336,3 +1336,75 @@ def test_check_srs_86_mcp_stdio_results_match_in_process(blind_mcp_root, clean_w
     assert rh(local[2]) == rh(remote[2]) == (
         1, 6, {"VCU3-SRS": 1, "VCU3-STS": 0, "VCU3-SyRS": 0},
         {"VCU3-SRS": 6, "VCU3-STS": 0, "VCU3-SyRS": 0})
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+import json  # noqa: E402
+
+from tests.edit_support import counted_repo, commit_all, parts_repo, tools  # noqa: E402,F401 -- commit_all is a fixture
+from tests.store_support import git_env, mcp_at  # noqa: E402,F401,F811 -- fixtures
+
+BASE_KEYS = {"doc_id", "folder", "object_count", "link_count", "current_issue"}
+PARTS = {"metadata", "parents", "attributes", "outline", "views", "filters"}
+
+
+def _check_compact(entry, doc_id, objects, links, issue):
+    assert set(entry) == BASE_KEYS, f"{doc_id}: keys {sorted(entry)}"
+    assert entry["doc_id"] == doc_id
+    assert Path(entry["folder"]).name == doc_id
+    assert entry["object_count"] == objects
+    assert entry["link_count"] == links
+    assert entry["current_issue"] == issue
+
+
+def test_edit_srs_55_compact_reads_with_issue_tag(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-55: without include, list_documents and show_document return for each
+    document exactly the document ID, folder, object count, link count and current issue."""
+    root = counted_repo(tmp_path, commit_all, tag=True)
+    srv = tools(mcp_at, root)
+    listed = {e["doc_id"]: e for e in srv.list_documents()}
+    assert sorted(listed) == ["SRS", "SYS"]
+    _check_compact(listed["SRS"], "SRS", 3, 3, "2")
+    _check_compact(listed["SYS"], "SYS", 2, 0, "")
+    _check_compact(srv.show_document("SRS"), "SRS", 3, 3, "2")
+
+
+def test_edit_srs_55_compact_reads_without_issue_tag(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-55: a document without an issue tag has an empty current issue."""
+    root = counted_repo(tmp_path, commit_all, tag=False)
+    srv = tools(mcp_at, root)
+    _check_compact(srv.show_document("SRS"), "SRS", 3, 3, "")
+    _check_compact({e["doc_id"]: e for e in srv.list_documents()}["SRS"], "SRS", 3, 3, "")
+
+
+def test_edit_srs_56_include_star_and_all_return_every_part(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-56: include `*` and include `all` each return the compact fields and
+    every part: metadata, parents, attributes, outline, views and filters, the same each way."""
+    root = parts_repo(tmp_path, commit_all)
+    srv = tools(mcp_at, root)
+    star = srv.show_document("SRS", include=["*"])
+    every = srv.show_document("SRS", include=["all"])
+    assert set(star) == BASE_KEYS | PARTS
+    assert star == every
+    assert star["metadata"]["title"] == "T"
+    assert star["parents"] == ["SYS"]
+    assert {a["name"] for a in star["attributes"]} == {"type", "status", "rationale"}
+    assert "SRS-0" in json.dumps(star["outline"]) and "SRS-2" in json.dumps(star["outline"])
+    assert "Dev" in json.dumps(star["views"])
+    assert "Only headings" in json.dumps(star["filters"])
+    listed = {e["doc_id"]: e for e in srv.list_documents(include=["*"])}
+    assert set(listed["SRS"]) == BASE_KEYS | PARTS
+
+
+@pytest.mark.parametrize("tool", ["show_document", "list_documents"])
+def test_edit_srs_56_include_filters_returns_filters_only(tmp_path, mcp_at, commit_all, tool):
+    """MELLON-EDIT-SRS-56: include ['filters'] adds the document's filters and no other part."""
+    root = parts_repo(tmp_path, commit_all)
+    srv = tools(mcp_at, root)
+    if tool == "show_document":
+        entry = srv.show_document("SRS", include=["filters"])
+    else:
+        entry = {e["doc_id"]: e for e in srv.list_documents(include=["filters"])}["SRS"]
+    assert set(entry) == BASE_KEYS | {"filters"}
+    assert "Only headings" in json.dumps(entry["filters"])
+    assert len(entry["filters"]) == 1

@@ -1797,3 +1797,448 @@ def test_store_srs_210_export_changes_no_file(read_only_repo, tmp_path, mcp_at, 
     result = server.export_document("PARENT", str(out))
     assert result.get("ok") and out.is_file(), result
     assert changed(before, snapshot(root, include_git=False)) == []
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+from pathlib import Path  # noqa: E402
+
+import pygit2  # noqa: E402
+import pytest  # noqa: E402
+
+from mellon import editor, git_ops  # noqa: E402
+from mellon.loader import load_document  # noqa: E402
+from mellon.service import DocumentService  # noqa: E402
+from tests.edit_support import (  # noqa: E402
+    all_object_ids,
+    assert_link_kept,
+    basic_repo,
+    child_parent_repo,
+    commit_all,  # noqa: F401, F811 -- fixture
+    copy_repo,
+    delete_repo,
+    manifest_attr,
+    manifest_options,
+    mcp_refused,
+    no_git_user,  # noqa: F401, F811 -- fixture
+    obj_file,
+    order_repo,
+    read_obj,
+    sub_objects,
+    tools,
+    with_figure,
+    write_doc,
+)
+from tests.store_support import changed, git_env, mcp_at, mcp_stdio, snapshot  # noqa: E402,F401,F811
+
+
+@pytest.mark.parametrize("value", ["draft", "APPROVED"])
+@pytest.mark.parametrize("tool", ["set_attribute", "new_object", "update_object", "bulk_set_attribute"])
+def test_edit_srs_10_enum_value_in_other_letter_case_refused(tmp_path, mcp_at, commit_all, tool, value):
+    """MELLON-EDIT-SRS-10: an enumeration value that matches an option only when letter
+    case is ignored is refused, through each MCP tool that sets values, and no file changes."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    call = {
+        "set_attribute": lambda: srv.set_attribute("SRS", "SRS-1", "status", value),
+        "new_object": lambda: srv.new_object("SRS", parent_id="SRS-0", description="x",
+                                             attrs={"type": "Requirement", "status": value}),
+        "update_object": lambda: srv.update_object("SRS", "SRS-1", attrs={"status": value}),
+        "bulk_set_attribute": lambda: srv.bulk_set_attribute("SRS", ["SRS-1", "SRS-2"], "status", value),
+    }[tool]
+    res = mcp_refused(call)
+    assert res.get("ok") is False, f"{tool} accepted status={value!r}: {res}"
+    assert changed(before, snapshot(root)) == [], f"{tool} changed files although refused"
+
+
+@pytest.mark.parametrize("tool", ["set_attribute", "new_object", "update_object", "bulk_set_attribute"])
+def test_edit_srs_10_enum_value_in_exact_case_accepted(tmp_path, mcp_at, commit_all, tool):
+    """MELLON-EDIT-SRS-10 (other side of the boundary): exactly an option, letter case
+    included, is accepted and stored."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    if tool == "set_attribute":
+        res = srv.set_attribute("SRS", "SRS-1", "status", "Approved")
+        target = "SRS-1"
+    elif tool == "new_object":
+        res = srv.new_object("SRS", parent_id="SRS-0", description="x",
+                             attrs={"type": "Requirement", "status": "Approved"})
+        target = res.get("new_id")
+    elif tool == "update_object":
+        res = srv.update_object("SRS", "SRS-1", attrs={"status": "Approved"})
+        target = "SRS-1"
+    else:
+        res = srv.bulk_set_attribute("SRS", ["SRS-1"], "status", "Approved")
+        target = "SRS-1"
+    assert res.get("ok") is True, res
+    assert read_obj(root, "SRS", target)[0]["status"] == "Approved"
+
+
+def test_edit_srs_12_update_object_with_bad_enum_value_refused_whole(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-12: update_object holding a new description, a valid status and an
+    enumeration value that isn't an option is refused whole: no file of the repository
+    changes, not even the description or the valid attribute."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.update_object, "SRS", "SRS-1", description="New text",
+                      attrs={"status": "Approved", "type": "Banana"})
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_12_update_object_with_undefined_attribute_refused_whole(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-12: update_object naming an attribute the document doesn't define,
+    next to a valid one and a new description, is refused whole with no file written."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.update_object, "SRS", "SRS-1", description="New text",
+                      attrs={"status": "Approved", "frobnitz": "x"})
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+@pytest.mark.parametrize("attrs", [
+    {"type": "Requirement", "frobnitz": "x"},
+    {"type": "Banana"},
+], ids=["undefined-attribute", "bad-enum-value"])
+def test_edit_srs_12_new_object_refused_whole(tmp_path, mcp_at, commit_all, attrs):
+    """MELLON-EDIT-SRS-12: new_object with a refused attribute name or value, a description
+    and a valid link is refused whole: no object file, no links file, and the manifest
+    (its next object number included) keeps its bytes."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.new_object, "SRS", parent_id="SRS-0", description="x", attrs=attrs,
+                      links=[{"target_doc": "SYS", "target_id": "SYS-0", "link_type": "satisfies"}])
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+@pytest.mark.parametrize("name,value", [("frobnitz", "x"), ("status", "Banana")],
+                         ids=["undefined-attribute", "bad-enum-value"])
+def test_edit_srs_12_bulk_set_attribute_refused_whole(tmp_path, mcp_at, commit_all, name, value):
+    """MELLON-EDIT-SRS-12: bulk_set_attribute on two objects with a refused attribute name
+    or value is refused before any file is written."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.bulk_set_attribute, "SRS", ["SRS-1", "SRS-2"], name, value)
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_12_refusal_holds_while_another_document_fails_to_load(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-12 (startup with a bad input): with another document that fails to
+    load, update_object holding a refused value is still refused whole."""
+    root = basic_repo(tmp_path)
+    write_doc(root, "BROKEN", objects={}, outline=[])
+    (root / "BROKEN" / "BROKEN.xml").write_text("<document id='BROKEN'>", encoding="utf-8", newline="\n")
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.update_object, "SRS", "SRS-1", description="New text",
+                      attrs={"status": "Approved", "type": "Banana"})
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_12_refused_calls_write_nothing_over_stdio(tmp_path, commit_all):
+    """MELLON-EDIT-SRS-12, over the MCP server's stdio interface: update_object and
+    new_object holding a refused value are refused whole, and no file changes."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    before = snapshot(root)
+    results = mcp_stdio(root, [
+        ("update_object", {"doc_id": "SRS", "obj_id": "SRS-1", "description": "New text",
+                           "attrs": {"status": "Approved", "type": "Banana"}}),
+        ("new_object", {"doc_id": "SRS", "parent_id": "SRS-0", "description": "x",
+                        "attrs": {"type": "Requirement", "frobnitz": "x"},
+                        "links": [{"target_doc": "SYS", "target_id": "SYS-0", "link_type": "satisfies"}]}),
+    ])
+    for body in results:
+        assert isinstance(body, dict) and body.get("ok") is False, body
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_20_mcp_create_document_has_no_objects(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-20: create_document makes the folder and manifest with no objects:
+    object count 0, an empty outline, and no object file."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    res = srv.create_document("EMPTYDOC")
+    assert res.get("ok") is True, res
+    folder = root / "EMPTYDOC"
+    assert (folder / "EMPTYDOC.xml").is_file()
+    shown = srv.show_document("EMPTYDOC", include=["outline"])
+    assert shown["object_count"] == 0
+    assert shown["outline"] == []
+    assert not list(folder.glob("objects/*"))
+
+
+def test_edit_srs_23_mcp_refuses_existing_plain_folder(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-23: a folder at the root named as the new document ID, even an empty
+    one that isn't a document, makes create_document refuse with AlreadyExists, and the
+    folder stays empty."""
+    root = basic_repo(tmp_path)
+    (root / "PLAIN").mkdir()
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    res = mcp_refused(srv.create_document, "PLAIN")
+    assert res.get("ok") is False, res
+    assert res.get("error_type") == "AlreadyExists", res
+    assert list((root / "PLAIN").iterdir()) == []
+
+
+@pytest.mark.parametrize("field,value", [("author", "A. Person"), ("date", "2026-11-11"), ("title", "A title")])
+def test_edit_srs_36_edit_metadata_sets_field(tmp_path, mcp_at, commit_all, field, value):
+    """MELLON-EDIT-SRS-36: edit_metadata sets the title, author or date, and show_document
+    returns the new value."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    res = srv.edit_metadata("SRS", field, value)
+    assert res.get("ok") is True, res
+    assert srv.show_document("SRS", include=["metadata"])["metadata"][field] == value
+    assert getattr(load_document(root / "SRS").metadata, field) == value
+
+
+def test_edit_srs_36_edit_metadata_over_stdio(tmp_path, commit_all):
+    """MELLON-EDIT-SRS-36 over stdio: edit_metadata sets the author and the date, and
+    show_document returns them."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    results = mcp_stdio(root, [
+        ("edit_metadata", {"doc_id": "SRS", "field": "author", "value": "A. Person"}),
+        ("edit_metadata", {"doc_id": "SRS", "field": "date", "value": "2026-11-11"}),
+        ("show_document", {"doc_id": "SRS", "include": ["metadata"]}),
+    ])
+    assert results[0].get("ok") is True and results[1].get("ok") is True, results
+    meta = results[2]["metadata"]
+    assert meta["author"] == "A. Person" and meta["date"] == "2026-11-11"
+
+
+def test_edit_srs_36_edit_metadata_without_git_user_name(tmp_path, mcp_at, commit_all, no_git_user):
+    """MELLON-EDIT-SRS-36 (no user.name): setting metadata needs no commit, so it works in a
+    repository whose git has no user.name."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    assert git_ops.git_user_name(pygit2.Repository(str(root))) is None, "precondition: no user.name"
+    res = tools(mcp_at, root).edit_metadata("SRS", "author", "A. Person")
+    assert res.get("ok") is True, res
+    assert load_document(root / "SRS").metadata.author == "A. Person"
+
+
+def test_edit_srs_51_mcp_remove_parent_doc_keeps_links(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-51 through remove_parent_doc: the link stays, byte-identical."""
+    root = child_parent_repo(tmp_path, commit_all)
+    before = (root / "CHILD" / "links" / "CHILD-0.xml").read_bytes()
+    res = tools(mcp_at, root).remove_parent_doc("CHILD", "PARENT")
+    assert res.get("ok") is True, res
+    assert_link_kept(root, before, mcp_at)
+
+
+@pytest.mark.parametrize("options", [None, []], ids=["no-options", "empty-options"])
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-65: define_attribute accepts an enumeration "
+                   "without options and writes a manifest that no longer loads")
+def test_edit_srs_65_mcp_refuses_enum_without_options(tmp_path, mcp_at, commit_all, options):
+    """MELLON-EDIT-SRS-65: define_attribute for an enumeration with no option is refused and
+    no file changes."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    before = snapshot(root)
+    res = mcp_refused(srv.define_attribute, "SRS", "prio", "enum", options=options)
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_65_enum_with_one_option_accepted(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-65 (other side of the boundary): an enumeration with one option is
+    defined."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    res = tools(mcp_at, root).define_attribute("SRS", "prio", "enum", options=["High"])
+    assert res.get("ok") is True, res
+    assert manifest_options(root, "SRS", "prio") == ("High",)
+
+
+def test_edit_srs_67_attribute_defined_not_required_by_default(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-67: define_attribute without the required flag defines the attribute
+    as not required, so objects without it raise no validation error."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    assert DocumentService(root).validate_document("SRS") == [], "precondition: SRS validates clean"
+    res = srv.define_attribute("SRS", "comment", "text")
+    assert res.get("ok") is True, res
+    shown = {a["name"]: a for a in srv.show_document("SRS", include=["attributes"])["attributes"]}
+    assert shown["comment"]["required"] is False
+    assert DocumentService(root).validate_document("SRS") == []
+
+
+def test_edit_srs_68_mcp_define_without_default_touches_manifest_only(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-68: define_attribute without a default value leaves every object file
+    byte-identical and reports only the manifest as affected."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    before = snapshot(root)
+    res = tools(mcp_at, root).define_attribute("SRS", "comment", "text")
+    assert res.get("ok") is True, res
+    assert changed(before, snapshot(root)) == ["SRS/SRS.xml"]
+    assert [Path(p).as_posix() for p in res["affected_files"]] == ["SRS/SRS.xml"]
+
+
+def test_edit_srs_93_mcp_change_required_leaves_objects_unchanged(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-93: change_attribute_required to true and back to false on rationale,
+    which some objects lack, leaves every object file byte-identical and reports only the
+    manifest as affected each time."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    for required in (True, False):
+        before = snapshot(root)
+        res = srv.change_attribute_required("SRS", "rationale", required)
+        assert res.get("ok") is True, res
+        assert changed(before, snapshot(root)) == ["SRS/SRS.xml"]
+        assert [Path(p).as_posix() for p in res["affected_files"]] == ["SRS/SRS.xml"]
+        assert manifest_attr(root, "SRS", "rationale").get("required") == ("true" if required else "false")
+
+
+def test_edit_srs_118_new_object_under_parent_goes_last(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-118: new_object with parent_id SRS-4 (sub-objects SRS-5, SRS-2)
+    places the object last: SRS-5, SRS-2, <new>."""
+    root = order_repo(tmp_path, commit_all)
+    res = tools(mcp_at, root).new_object("SRS", parent_id="SRS-4", description="x")
+    assert res.get("ok") is True, res
+    assert sub_objects(root, "SRS", "SRS-4") == ["SRS-5", "SRS-2", res["new_id"]]
+    assert sub_objects(root, "SRS") == ["SRS-4", "SRS-1", "SRS-3"]
+
+
+def test_edit_srs_118_new_object_without_parent_goes_last_at_top(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-118: new_object without a parent places the object last at the top
+    level: SRS-4, SRS-1, SRS-3, <new>."""
+    root = order_repo(tmp_path, commit_all)
+    res = tools(mcp_at, root).new_object("SRS", description="x")
+    assert res.get("ok") is True, res
+    assert sub_objects(root, "SRS") == ["SRS-4", "SRS-1", "SRS-3", res["new_id"]]
+    assert sub_objects(root, "SRS", "SRS-4") == ["SRS-5", "SRS-2"]
+
+
+def test_edit_srs_119_default_value_not_applied_to_new_object(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-119: after rationale is defined with the default TBD, a new object
+    created with no attribute values has none, and one created with status Draft has
+    exactly that."""
+    root = tmp_path
+    attrs = (("type", "enum", False, ("Heading", "Requirement")), ("status", "enum", False, ("Draft", "Approved")))
+    write_doc(root, "SRS", attrs=attrs, objects={"SRS-0": ({"type": "Requirement"}, "R")},
+              outline=["SRS-0"], next_number=1)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    res = srv.define_attribute("SRS", "rationale", "text", default_value="TBD")
+    assert res.get("ok") is True, res
+    assert read_obj(root, "SRS", "SRS-0")[0].get("rationale") == "TBD", "precondition: default set on SRS-0"
+    bare = srv.new_object("SRS", description="x")
+    assert bare.get("ok") is True, bare
+    assert read_obj(root, "SRS", bare["new_id"])[0] == {}
+    given = srv.new_object("SRS", description="y", attrs={"status": "Draft"})
+    assert given.get("ok") is True, given
+    assert read_obj(root, "SRS", given["new_id"])[0] == {"status": "Draft"}
+
+
+def test_edit_srs_141_update_object_without_description_keeps_it(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-141: update_object with attributes and no description leaves the
+    description unchanged; an empty description given on purpose blanks it."""
+    root = basic_repo(tmp_path)
+    commit_all(root)
+    srv = tools(mcp_at, root)
+    res = srv.update_object("SRS", "SRS-1", attrs={"status": "Approved"})
+    assert res.get("ok") is True, res
+    attrs, desc = read_obj(root, "SRS", "SRS-1")
+    assert desc == "First" and attrs["status"] == "Approved"
+    res = srv.update_object("SRS", "SRS-1", description="")
+    assert res.get("ok") is True, res
+    attrs, desc = read_obj(root, "SRS", "SRS-1")
+    assert desc == "" and attrs["status"] == "Approved"
+
+
+def test_edit_srs_146_copy_of_heading_takes_no_sub_objects(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-146: copying a heading with two sub-objects adds exactly one object
+    to the outline, and it has no sub-objects."""
+    root = copy_repo(tmp_path, commit_all)
+    before_ids = all_object_ids(root, "SRS")
+    before_outline = load_document(root / "SRS").iter_outline_ids()
+    res = tools(mcp_at, root).copy_object("SRS", "SRS-0")
+    assert res.get("ok") is True, res
+    (new_id,) = res["new_ids"]
+    assert all_object_ids(root, "SRS") - before_ids == {new_id}
+    after_outline = load_document(root / "SRS").iter_outline_ids()
+    assert sorted(after_outline) == sorted(before_outline + [new_id])
+    assert sub_objects(root, "SRS", new_id) == []
+    assert sub_objects(root, "SRS", "SRS-0") == ["SRS-1", "SRS-2"]
+
+
+@pytest.mark.parametrize("copy_figure", [True, False])
+def test_edit_srs_151_copy_figure_flag(tmp_path, mcp_at, commit_all, copy_figure):
+    """MELLON-EDIT-SRS-151: copy_figure true gives the copy a figure byte-identical to the
+    object's; false gives it none."""
+    root = tmp_path / "repo"
+    root.mkdir()
+    copy_repo(root, commit_all)
+    fig = with_figure(root, commit_all)
+    res = tools(mcp_at, root).copy_object("SRS", "SRS-1", copy_figure=copy_figure)
+    assert res.get("ok") is True, res
+    (new_id,) = res["new_ids"]
+    path = editor.figure_path(root / "SRS", new_id)
+    if copy_figure:
+        assert path.is_file() and path.read_bytes() == fig
+    else:
+        assert not path.exists()
+    assert editor.figure_path(root / "SRS", "SRS-1").read_bytes() == fig
+
+
+def test_edit_srs_152_copy_defaults_take_links_and_figure(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-152: copy_object without copy_links or copy_figure gives the copy the
+    object's outgoing link and its figure."""
+    root = tmp_path / "repo"
+    root.mkdir()
+    copy_repo(root, commit_all)
+    fig = with_figure(root, commit_all)
+    res = tools(mcp_at, root).copy_object("SRS", "SRS-1")
+    assert res.get("ok") is True, res
+    (new_id,) = res["new_ids"]
+    assert editor.figure_path(root / "SRS", new_id).read_bytes() == fig
+    links = load_document(root / "SRS").links.get(new_id, ())
+    assert [(lk.target_doc, lk.target_id, lk.type) for lk in links] == [("SYS", "SYS-0", "satisfies")]
+
+
+def test_edit_srs_162_mcp_refuses_delete_with_sub_object_even_forced(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-162 through delete_object: refused with force set, every file
+    byte-identical."""
+    root = delete_repo(tmp_path, commit_all)
+    before = snapshot(root)
+    res = mcp_refused(tools(mcp_at, root).delete_object, "SRS", "SRS-0", force=True)
+    assert res.get("ok") is False, res
+    assert changed(before, snapshot(root)) == []
+
+
+def test_edit_srs_162_object_without_sub_objects_is_deleted(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-162 (other side): once the sub-object is gone, the former parent
+    deletes."""
+    root = delete_repo(tmp_path, commit_all)
+    srv = tools(mcp_at, root)
+    assert srv.delete_object("SRS", "SRS-1", force=True).get("ok") is True
+    assert srv.delete_object("SRS", "SRS-0", force=True).get("ok") is True
+    assert not obj_file(root, "SRS", "SRS-0").exists()

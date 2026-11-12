@@ -349,3 +349,57 @@ def test_empty_state_button_triggers_new_top_level(qtbot, tmp_path: Path):
     assert len(w.controller.document("EMPTY").objects) == 1
     # Empty state is replaced by the table now.
     assert w.grid_pane._stack.currentWidget() is w.grid_pane.table
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+import pytest  # noqa: E402
+
+from tests.edit_support import (  # noqa: E402
+    V,
+    all_object_ids,
+    commit_all,  # noqa: F401, F811 -- fixture
+    find_action,
+    modals,  # noqa: F401, F811 -- fixture
+    open_editor_window,
+    select,
+    sub_objects,
+    vcu_repo,
+)
+from tests.store_support import git_env  # noqa: E402,F401,F811
+
+
+def test_edit_srs_113_new_sibling_goes_directly_after_selected(qtbot, tmp_path, modals, commit_all):
+    """MELLON-EDIT-SRS-113: New sibling on VCU3-SRS-1 (sub-objects 1, 2, 11, 12, 13) creates
+    the object as the next sibling: 1, <new>, 2, 11, 12, 13."""
+    root = vcu_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, V)
+    select(qtbot, w, f"{V}-1")
+    before_ids = all_object_ids(root, V)
+    find_action(w, "New").trigger()
+    qtbot.wait(100)
+    new = all_object_ids(root, V) - before_ids
+    assert len(new) == 1, new
+    (new_id,) = new
+    assert sub_objects(root, V, f"{V}-0") == [f"{V}-1", new_id, f"{V}-2", f"{V}-11", f"{V}-12", f"{V}-13"]
+
+
+@pytest.mark.parametrize("parent,expected_before", [
+    (f"{V}-0", [f"{V}-1", f"{V}-2", f"{V}-11", f"{V}-12", f"{V}-13"]),
+    (f"{V}-12", []),
+], ids=["with-sub-objects", "without-sub-objects"])
+def test_edit_srs_115_new_child_goes_last(qtbot, tmp_path, modals, commit_all, parent, expected_before):
+    """MELLON-EDIT-SRS-115: New child places the new object last among the selected
+    object's sub-objects (and as the only one when it had none)."""
+    root = vcu_repo(tmp_path, commit_all)
+    w = open_editor_window(qtbot, root, V)
+    select(qtbot, w, parent)
+    before_ids = all_object_ids(root, V)
+    find_action(w, "Child").trigger()
+    qtbot.wait(100)
+    new = all_object_ids(root, V) - before_ids
+    assert len(new) == 1, new
+    assert sub_objects(root, V, parent) == expected_before + [new.pop()]

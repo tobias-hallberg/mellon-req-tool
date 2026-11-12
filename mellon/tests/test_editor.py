@@ -2746,3 +2746,197 @@ def test_store_srs_215_tab_is_kept(tmp_path, where):
     folder = make_doc(tmp_path / "r")
     _write_text(folder, where, "a\tb")
     assert _read_text(folder, where) == "a\tb"
+
+
+# MELLON-EDIT-SRS blind tests (1-175)
+#
+# Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
+# step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
+
+import itertools  # noqa: E402
+import re  # noqa: E402
+
+import pytest  # noqa: E402
+
+from mellon import editor, validate  # noqa: E402
+from mellon.loader import load_document  # noqa: E402
+from mellon.service import DocumentService  # noqa: E402
+from mellon.service.errors import ErrorCode, ServiceError  # noqa: E402
+from tests.edit_support import (  # noqa: E402
+    assert_link_kept,
+    basic_repo,
+    child_parent_repo,
+    commit_all,  # noqa: F401, F811 -- fixture
+    commit_new_repo,
+    create_default_doc,
+    delete_repo,
+    manifest_options,
+    obj_file,
+    tools,
+)
+from tests.store_support import changed, git_env, mcp_at, snapshot  # noqa: E402,F401,F811
+
+
+def test_edit_srs_10_every_other_letter_case_refused_by_the_library(tmp_path):
+    """MELLON-EDIT-SRS-10 (generated inputs): each spelling of an option that differs from
+    it only in letter case is refused, and the object file keeps its bytes."""
+    root = basic_repo(tmp_path)
+    folder = root / "SRS"
+    path = obj_file(root, "SRS", "SRS-1")
+    before = path.read_bytes()
+    for option in ("Draft", "Approved"):
+        for combo in itertools.product(*[(ch.lower(), ch.upper()) for ch in option]):
+            spelling = "".join(combo)
+            if spelling == option:
+                continue
+            with pytest.raises(Exception):
+                editor.set_attribute(folder, "SRS-1", "status", spelling)
+            assert path.read_bytes() == before, f"{spelling!r} changed the object file"
+
+
+def test_edit_srs_20_library_create_document_outside_git_has_no_objects(tmp_path):
+    """MELLON-EDIT-SRS-20 (no git): creating a document through the library in a folder
+    that isn't a git repository writes the manifest and no object."""
+    editor.create_document(tmp_path, "EMPTYDOC")
+    doc = load_document(tmp_path / "EMPTYDOC")
+    assert doc.id == "EMPTYDOC"
+    assert doc.objects == {}
+    assert doc.outline == ()
+    assert not list((tmp_path / "EMPTYDOC").glob("objects/*"))
+
+
+def test_edit_srs_23_library_refuses_existing_plain_folder(tmp_path):
+    """MELLON-EDIT-SRS-23 through the library and the service: refused, folder left empty;
+    the service reports AlreadyExists."""
+    (tmp_path / "PLAIN").mkdir()
+    with pytest.raises(Exception):
+        editor.create_document(tmp_path, "PLAIN")
+    assert list((tmp_path / "PLAIN").iterdir()) == []
+    with pytest.raises(ServiceError) as exc:
+        DocumentService(tmp_path).create_document("PLAIN")
+    assert exc.value.code is ErrorCode.ALREADY_EXISTS
+    assert list((tmp_path / "PLAIN").iterdir()) == []
+
+
+@pytest.mark.parametrize("path_kind", ["library", "mcp"])
+def test_edit_srs_25_default_attributes_are_type_and_rationale(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-25: a document created without attribute definitions defines exactly
+    `type`, a required enumeration with the options Heading, Information and Note, and
+    `rationale`, a text attribute."""
+    folder = create_default_doc(path_kind, tmp_path, mcp_at, commit_all)
+    attrs = {a.name: a for a in load_document(folder).attributes}
+    assert sorted(attrs) == ["rationale", "type"]
+    t = attrs["type"]
+    assert t.kind == "enum" and t.required is True
+    assert sorted(t.options) == ["Heading", "Information", "Note"] and len(t.options) == 3
+    assert attrs["rationale"].kind == "text"
+    if path_kind == "mcp":
+        shown = tools(mcp_at, tmp_path).show_document("D", include=["attributes"])
+        assert sorted(a["name"] for a in shown["attributes"]) == ["rationale", "type"]
+
+
+@pytest.mark.parametrize("path_kind", ["library", "mcp"])
+def test_edit_srs_26_default_rules_forbid_rationale_on_headings_only(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-26: in a document created without attribute definitions, a rationale
+    on a Heading is a rule violation and a rationale on an Information object isn't."""
+    folder = create_default_doc(path_kind, tmp_path, mcp_at, commit_all)
+    head = editor.create_object(folder, description="A heading")
+    info = editor.create_object(folder, description="Some information")
+    editor.set_attribute(folder, head, "type", "Heading")
+    editor.set_attribute(folder, info, "type", "Information")
+    errs_before = validate(load_document(folder))
+    assert errs_before == [], f"precondition: the new document validates clean, got {errs_before}"
+    editor.set_attribute(folder, head, "rationale", "why")
+    editor.set_attribute(folder, info, "rationale", "why")
+    errs = validate(load_document(folder))
+    on_head = [e for e in errs if re.search(rf"\b{re.escape(head)}\b", e.message)]
+    on_info = [e for e in errs if re.search(rf"\b{re.escape(info)}\b", e.message)]
+    assert on_head, f"no rule violation reported on the heading {head}: {errs}"
+    assert all("rationale" in e.message for e in on_head), on_head
+    assert on_info == [], f"rationale on an Information object was reported: {on_info}"
+
+
+@pytest.mark.parametrize("path_kind", ["library", "mcp"])
+def test_edit_srs_27_given_attribute_definitions_only_and_no_rules_file(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-27: with given attribute definitions the document defines exactly
+    those (no `type`, no `rationale`) and has no rules file."""
+    schema = [{"name": "status", "kind": "enum", "required": True, "options": ["Draft"]}]
+    if path_kind == "mcp":
+        commit_new_repo(tmp_path, commit_all)
+        res = tools(mcp_at, tmp_path).create_document("D", attr_schema=schema)
+        assert res.get("ok") is True, res
+    else:
+        editor.create_document(tmp_path, "D", attr_schema=schema)
+    attrs = load_document(tmp_path / "D").attributes
+    assert [a.name for a in attrs] == ["status"]
+    assert attrs[0].kind == "enum" and attrs[0].required is True and tuple(attrs[0].options) == ("Draft",)
+    assert not (tmp_path / "D" / "D.rules.xml").exists()
+    assert sorted(p.name for p in (tmp_path / "D").iterdir() if p.is_file()) == ["D.xml"]
+
+
+def test_edit_srs_51_library_remove_parent_keeps_links(tmp_path, mcp_at, commit_all):
+    """MELLON-EDIT-SRS-51 through the library: removing PARENT as CHILD's parent leaves
+    CHILD-0's link to PARENT-1 in place, its links file byte-identical."""
+    root = child_parent_repo(tmp_path, commit_all)
+    before = (root / "CHILD" / "links" / "CHILD-0.xml").read_bytes()
+    assert editor.remove_parent(root / "CHILD", "PARENT") is True
+    assert_link_kept(root, before, mcp_at)
+
+
+@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-65: the library's add_attribute accepts an "
+                   "enumeration without options and writes a manifest that no longer loads")
+def test_edit_srs_65_library_refuses_enum_without_options(tmp_path):
+    """MELLON-EDIT-SRS-65 through the library: add_attribute of an enumeration with no
+    option is refused and the manifest keeps its bytes."""
+    root = basic_repo(tmp_path)
+    manifest = root / "SRS" / "SRS.xml"
+    before = manifest.read_bytes()
+    try:
+        editor.add_attribute(root / "SRS", "prio", "enum", False, ())
+    except Exception:  # noqa: BLE001 - refused, as required
+        pass
+    assert manifest.read_bytes() == before
+
+
+def test_edit_srs_68_library_define_without_default_touches_manifest_only(tmp_path):
+    """MELLON-EDIT-SRS-68 through the library: only the manifest changes."""
+    root = basic_repo(tmp_path)
+    before = snapshot(root)
+    editor.add_attribute(root / "SRS", "comment", "text", False)
+    assert changed(before, snapshot(root)) == ["SRS/SRS.xml"]
+
+
+@pytest.mark.parametrize("path_kind", ["library", "mcp"])
+def test_edit_srs_75_new_option_goes_last(tmp_path, mcp_at, commit_all, path_kind):
+    """MELLON-EDIT-SRS-75: adding Rejected to status (Draft, Approved) gives exactly Draft,
+    Approved, Rejected in that order."""
+    root = basic_repo(tmp_path)
+    if path_kind == "mcp":
+        commit_all(root)
+        res = tools(mcp_at, root).add_attr_option("SRS", "status", "Rejected")
+        assert res.get("ok") is True, res
+    else:
+        editor.add_attr_option(root / "SRS", "status", "Rejected")
+    assert manifest_options(root, "SRS", "status") == ("Draft", "Approved", "Rejected")
+
+
+def test_edit_srs_93_library_change_required_leaves_objects_unchanged(tmp_path):
+    """MELLON-EDIT-SRS-93 through the library: only the manifest changes, each way."""
+    root = basic_repo(tmp_path)
+    for required in (True, False):
+        before = snapshot(root)
+        editor.change_attribute_required(root / "SRS", "status", required)
+        assert changed(before, snapshot(root)) == ["SRS/SRS.xml"]
+
+
+def test_edit_srs_162_library_refuses_delete_with_sub_object_even_forced(tmp_path, commit_all):
+    """MELLON-EDIT-SRS-162 through the library: delete_object with force on an object that
+    has a sub-object is refused and every file keeps its bytes."""
+    root = delete_repo(tmp_path, commit_all)
+    before = snapshot(root)
+    try:
+        report = editor.delete_object(root / "SRS", "SRS-0", force=True)
+    except Exception:  # noqa: BLE001 - refused by raising
+        report = None
+    assert report is None or report.performed is False
+    assert changed(before, snapshot(root)) == []
