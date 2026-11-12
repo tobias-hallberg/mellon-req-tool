@@ -258,13 +258,16 @@ panes, and pane sizes are saved per document:
 - **Grid cells use kind-aware editors:**
   - `QComboBox` for enum and boolean, with an empty entry so an empty cell
     stays empty
-  - spin boxes for integer and real
-  - `QDateEdit` for date
+  - a line edit for integer, real and date, which saves the text as typed
+    and refuses a value that doesn't fit the kind (validation's own check)
   - a multi-line editor for the description
   - a line edit for text
 
-  An unchanged value writes nothing.
-- Inspector fields commit on focus-out, or on change for combos.
+  An unchanged value writes nothing; a choice from a combo's list is saved at
+  once.
+- Inspector fields commit on focus-out, or on change for combos (enum and
+  boolean, each with an empty entry). A typed integer, real or date that
+  doesn't fit is refused with a status-bar message.
 - Before any action (New, Delete, Link, Commit, …), text that was typed but
   not committed is saved first (`flush_pending_edits`).
 - Description rows grow to fit (no ellipsis).
@@ -492,7 +495,9 @@ A table is structured content on one object: `<table>` inside
   - header row
   - column alignment
 
-  The editor commits on focus-out or `Ctrl+Enter`, and Esc cancels.
+  The editor commits on focus-out or `Ctrl+Enter`, and Esc cancels. In a
+  cell, Enter inserts a line break and `Ctrl+Enter` saves the cell's text and
+  the table, keeping the table editor open.
 - Cells are deliberately not objects (no DOORS "cells-as-objects").
 
 ### PDF export

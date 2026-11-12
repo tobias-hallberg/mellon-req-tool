@@ -164,6 +164,13 @@ def _check_attrs(doc: Document) -> list[ValidationError]:
     return errors
 
 
+def value_fits(attr, value: str) -> bool:
+    """True when `value` is empty or fits `attr`'s kind (and options): the
+    check validation makes, so an editor can refuse a misfit before saving it
+    (MELLON-EDIT-SRS-132 to -134)."""
+    return _check_attr_value("", attr, value) is None
+
+
 def _check_attr_value(obj_id, attr, value: str) -> "ValidationError | None":
     """Type-check a non-empty attribute value against its declared kind.
 

@@ -2,7 +2,9 @@
 
 Editable widgets are always shown when the window isn't read-only. Each field
 auto-commits as it loses focus (`editingFinished` for QLineEdit, focus-out
-event for the description QTextEdit) or when its value changes (QComboBox).
+event for the description QTextEdit) or when its value changes (QComboBox,
+for enum and boolean attributes). An integer, real or date that doesn't fit
+its kind is refused rather than saved.
 On read-only the same fields render as plain QLabels.
 
 The pane-header bar and collapsed rail live on the parent `RightPane` — this
@@ -36,6 +38,7 @@ from ...suspects import LinkState
 from ...validator import effective_directives
 from .. import icons
 from ..controller import RepoController
+from ..delegates import misfit_message
 from ..models.objects_grid import STALE_EDIT_MESSAGE
 from ..theme import ThemeManager
 
@@ -234,17 +237,22 @@ class Inspector(QWidget):
                 self._attrs_form.addRow(label_text, QLabel(value))
                 continue
 
-            if schema is not None and schema.kind == "enum":
+            if schema is not None and schema.kind in ("enum", "boolean"):
                 cb = QComboBox()
-                cb.addItems(list(schema.options))
-                # An empty value (or one not among the options) shows as no
-                # selection, not as the first option it doesn't hold — which
-                # also couldn't be picked then, as picking it is no change.
+                # MELLON-EDIT-SRS-130, -131: an empty entry first, as in the
+                # grid, so a value can be cleared and an empty one shows empty.
+                if schema.kind == "enum":
+                    cb.addItems(["", *schema.options])
+                else:
+                    cb.addItems(["", "true", "false"])
+                # A value not among the entries shows as no selection, not as
+                # an entry it doesn't hold.
                 cb.setCurrentIndex(cb.findText(value))
                 # Connect after setCurrentIndex so the initial population
-                # doesn't trigger a spurious commit.
-                cb.currentTextChanged.connect(
-                    lambda _text, n=name, w=cb: self._commit_attr(n, w)
+                # doesn't trigger a spurious commit. The index, not the text:
+                # from no selection to the empty entry is a change too.
+                cb.currentIndexChanged.connect(
+                    lambda _i, n=name, w=cb: self._commit_attr(n, w)
                 )
                 self._attrs_form.addRow(label_text, cb)
                 self._attr_widgets[name] = cb
@@ -493,6 +501,15 @@ class Inspector(QWidget):
             return
         doc_id = self._current_doc_id
         obj_id = self._current_obj_id
+        # MELLON-EDIT-SRS-132 to -134: a typed value that doesn't fit the
+        # attribute's kind is refused; the field shows the saved value again.
+        schema = self._controller.document(doc_id).attribute(name)
+        problem = misfit_message(schema, new_value) if schema is not None else None
+        if problem:
+            if isinstance(widget, QLineEdit):
+                widget.setText(self._original_attrs.get(name, ""))
+            self._controller.edit_failed.emit(doc_id, obj_id, name, problem)
+            return
         try:
             self._controller.require_service().set_attribute(
                 doc_id, obj_id, name, new_value

@@ -1,8 +1,8 @@
 """Item delegates for the objects grid.
 
 An `AttrDelegate` provides a kind-aware editor (combobox for enum/boolean,
-spinbox for integer/real, date picker for date) whose configuration comes
-from the document's manifest schema. A `MultiLineTextDelegate` provides a
+a checked line edit for integer/real/date) whose configuration comes from the
+document's manifest schema. A `MultiLineTextDelegate` provides a
 `QPlainTextEdit` editor for the description column so users can type
 multiple paragraphs inline. Other text columns fall through to the default
 `QLineEdit` editor.
@@ -12,8 +12,6 @@ from __future__ import annotations
 
 from PySide6.QtCore import (
     QByteArray,
-    QDate,
-    QEvent,
     QPersistentModelIndex,
     QPointF,
     QRect,
@@ -40,10 +38,8 @@ from PySide6.QtWidgets import (
     QAbstractItemDelegate,
     QApplication,
     QComboBox,
-    QDateEdit,
-    QDoubleSpinBox,
     QFrame,
-    QSpinBox,
+    QLineEdit,
     QStyle,
     QStyledItemDelegate,
     QStyleOptionViewItem,
@@ -55,19 +51,18 @@ import html as _html
 
 from ..drawio import qt_svg
 from ..schema import Table
+from ..validator import value_fits
 from .controller import RepoController
 from .models.objects_grid import (
     OBJ_DIRTY_ROLE,
     OBJ_FIGURE_PATH_ROLE,
+    OBJ_ID_ROLE,
     OBJ_LINK_STATES_ROLE,
     OBJ_TABLE_ROLE,
 )
 from .theme import ThemeManager
 from .widgets.inline_table import InlineTableWidget
 
-
-_INT_MIN = -(2**31)
-_INT_MAX = 2**31 - 1
 
 # QTableView::item { padding: 4px 8px } — kept as module-level constants so
 # the description editor and `MultiLineTextDelegate.sizeHint` agree on the
@@ -80,17 +75,17 @@ _GRID_CELL_PADDING_V = 4
 class AttrDelegate(QStyledItemDelegate):
     """Editor that adapts to the column attribute's `kind` in the current doc.
 
-    - `enum`     -> `QComboBox` populated from the attribute's options
-    - `boolean`  -> `QComboBox` with `true`/`false`
-    - `integer`  -> `QSpinBox`
-    - `real`     -> `QDoubleSpinBox`
-    - `date`     -> `QDateEdit` with calendar popup, ISO format
+    - `enum`     -> `QComboBox` with an empty entry and the attribute's options
+    - `boolean`  -> `QComboBox` with an empty entry, `true` and `false`
+    - `integer`, `real`, `date` -> a line edit that keeps the text as typed
     - anything else (text, missing schema) -> Qt default line-edit
 
     Opening an editor and leaving it must not write anything: combos carry an
-    empty entry so an empty cell stays empty, and the spin/date editors only
-    write once the user has changed the value or confirmed it with Enter (the
-    0 / today they show for an empty cell is just a starting point).
+    empty entry so an empty cell stays empty, and a line edit starts with the
+    cell's own text. A choice from a combo's list is saved at once
+    (MELLON-EDIT-SRS-135). An integer, real or date is saved as typed, or
+    refused when it doesn't fit its kind; an empty one clears the value
+    (MELLON-EDIT-SRS-132 to -134, -363).
     """
 
     def __init__(self, controller: RepoController, attr_name: str, parent=None):
@@ -102,40 +97,29 @@ class AttrDelegate(QStyledItemDelegate):
         attr = self._attribute_for_current_doc()
         if attr is None:
             return super().createEditor(parent, option, index)
-        if attr.kind == "enum":
+        if attr.kind in ("enum", "boolean"):
             cb = QComboBox(parent)
-            cb.addItems(["", *attr.options])
+            if attr.kind == "enum":
+                cb.addItems(["", *attr.options])
+            else:
+                cb.addItems(["", "true", "false"])
+            # MELLON-EDIT-SRS-135: a choice is complete when made; save it now,
+            # not when the cell is left.
+            cb.activated.connect(lambda _row, ed=cb: self.commitData.emit(ed))
             QTimer.singleShot(0, cb.showPopup)
             return cb
-        if attr.kind == "boolean":
-            cb = QComboBox(parent)
-            cb.addItems(["", "true", "false"])
-            QTimer.singleShot(0, cb.showPopup)
-            return cb
-        if attr.kind == "integer":
-            sp = QSpinBox(parent)
-            sp.setRange(_INT_MIN, _INT_MAX)
-            _track_touched(sp, sp.valueChanged)
-            return sp
-        if attr.kind == "real":
-            dsp = QDoubleSpinBox(parent)
-            dsp.setRange(-1e308, 1e308)
-            dsp.setDecimals(4)
-            _track_touched(dsp, dsp.valueChanged)
-            return dsp
-        if attr.kind == "date":
-            de = QDateEdit(parent)
-            de.setDisplayFormat("yyyy-MM-dd")
-            de.setCalendarPopup(True)
-            _track_touched(de, de.dateChanged)
-            # Picking the date already shown (e.g. today) counts as a choice.
-            _track_touched(de, de.calendarWidget().clicked)
-            return de
+        if attr.kind in _TYPED_KINDS:
+            # Not a spin box or date edit: those can't be emptied, round or
+            # reformat what is typed, and a date edit stops at year 100.
+            le = QLineEdit(parent)
+            if attr.kind == "date":
+                le.setPlaceholderText("YYYY-MM-DD")
+            return le
         return super().createEditor(parent, option, index)
 
     def setEditorData(self, editor, index):
-        value = index.data(Qt.ItemDataRole.DisplayRole) or ""
         if isinstance(editor, QComboBox):
+            value = index.data(Qt.ItemDataRole.DisplayRole) or ""
             i = editor.findText(value)
             if i < 0:
                 # A value outside the options (hand edit, merge): list it so
@@ -144,54 +128,25 @@ class AttrDelegate(QStyledItemDelegate):
                 i = editor.count() - 1
             editor.setCurrentIndex(i)
             return
-        if isinstance(editor, QSpinBox):
-            try:
-                editor.setValue(int(value, 10))
-            except (TypeError, ValueError):
-                editor.setValue(0)
-            editor._touched = False
-            return
-        if isinstance(editor, QDoubleSpinBox):
-            try:
-                editor.setValue(float(value))
-            except (TypeError, ValueError):
-                editor.setValue(0.0)
-            editor._touched = False
-            return
-        if isinstance(editor, QDateEdit):
-            qd = QDate.fromString(value, "yyyy-MM-dd") if value else QDate()
-            editor.setDate(qd if qd.isValid() else QDate.currentDate())
-            editor._touched = False
-            return
         super().setEditorData(editor, index)
-
-    def eventFilter(self, editor, event):  # noqa: N802 (Qt override)
-        # Enter confirms the shown value even when it wasn't changed.
-        if event.type() == QEvent.Type.KeyPress and event.key() in (
-            Qt.Key.Key_Return,
-            Qt.Key.Key_Enter,
-        ):
-            editor._touched = True
-        return super().eventFilter(editor, event)
 
     def setModelData(self, editor, model, index):
         if isinstance(editor, QComboBox):
             model.setData(index, editor.currentText(), Qt.ItemDataRole.EditRole)
             return
-        if not getattr(editor, "_touched", True):
-            return  # untouched spin/date editor: leave the cell as it was
-        if isinstance(editor, QSpinBox):
-            model.setData(index, str(editor.value()), Qt.ItemDataRole.EditRole)
-            return
-        if isinstance(editor, QDoubleSpinBox):
-            model.setData(index, str(editor.value()), Qt.ItemDataRole.EditRole)
-            return
-        if isinstance(editor, QDateEdit):
-            model.setData(
-                index,
-                editor.date().toString("yyyy-MM-dd"),
-                Qt.ItemDataRole.EditRole,
-            )
+        if isinstance(editor, QLineEdit):
+            text = editor.text()
+            attr = self._attribute_for_current_doc()
+            problem = misfit_message(attr, text) if attr is not None else None
+            if problem and text != (index.data(Qt.ItemDataRole.EditRole) or ""):
+                self._controller.edit_failed.emit(
+                    self._controller.current_doc_id() or "",
+                    index.data(OBJ_ID_ROLE) or "",
+                    self._attr_name,
+                    problem,
+                )
+                return
+            model.setData(index, text, Qt.ItemDataRole.EditRole)
             return
         super().setModelData(editor, model, index)
 
@@ -205,9 +160,26 @@ class AttrDelegate(QStyledItemDelegate):
         return doc.attribute(self._attr_name)
 
 
-def _track_touched(editor, signal) -> None:
-    """Mark `editor` as touched when `signal` fires (see `AttrDelegate`)."""
-    signal.connect(lambda *_: setattr(editor, "_touched", True))
+# Kinds edited as typed text, whose value must fit the kind.
+_TYPED_KINDS = ("integer", "real", "date")
+_KIND_FORMS = {
+    "integer": "an integer",
+    "real": "a real number",
+    "date": "a date from 0001-01-01 to 9999-12-31 (YYYY-MM-DD)",
+    "boolean": "true or false",
+    "enum": "one of the options",
+}
+
+
+def misfit_message(attr, value: str) -> str | None:
+    """Why `value` can't be saved in `attr`, or None when it is empty or fits.
+
+    MELLON-EDIT-SRS-132 to -134: the editors accept what validation counts as
+    fitting the kind, and no other value; shared by the grid and Inspector.
+    """
+    if value_fits(attr, value):
+        return None
+    return f"{value!r} is not {_KIND_FORMS.get(attr.kind, 'a valid value')}; not saved"
 
 
 # Back-compat alias: tests and any external callers that still import
@@ -773,6 +745,8 @@ class MultiLineTextDelegate(QStyledItemDelegate):
             ed.setFont(option.font)
             ed.table.setFont(option.font)
             ed.commit_requested.connect(lambda: self._commit_and_close(ed))
+            # MELLON-GUI-SRS-165: Ctrl+Enter in a cell saves the table now.
+            ed.save_requested.connect(lambda: self.commitData.emit(ed))
             ed.cancel_requested.connect(
                 lambda: self.closeEditor.emit(
                     ed, QAbstractItemDelegate.EndEditHint.RevertModelCache

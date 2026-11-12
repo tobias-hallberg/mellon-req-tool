@@ -228,8 +228,8 @@ def test_enum_editor_keeps_value_outside_options(window, monkeypatch):
     assert obj_file.read_bytes() == before
 
 
-def test_spin_and_date_editors_write_only_when_touched(window, monkeypatch, qtbot):
-    from PySide6.QtCore import QDate, Qt
+def test_typed_attribute_editors_write_only_when_changed(window, monkeypatch, qtbot):
+    from PySide6.QtCore import Qt
     from PySide6.QtTest import QTest
 
     w, root = window
@@ -240,25 +240,25 @@ def test_spin_and_date_editors_write_only_when_touched(window, monkeypatch, qtbo
     w.controller.reload_document("VCU3-SRS")
     calls = _record_writes(monkeypatch, svc)
 
-    # Untouched: the 0 / today shown for an empty cell is not written.
+    # Untouched: an empty cell opened and left stays empty.
     for col in ("effort", "reviewed-on"):
         _editor, idx = _open_cell_editor(w, "VCU3-SRS-2", col)
         _leave_cell(w, idx)
     assert calls == []
 
-    # A changed value is written.
+    # A typed value is written as typed.
     editor, idx = _open_cell_editor(w, "VCU3-SRS-2", "effort")
-    editor.setValue(5)
+    editor.setText("5")
     _leave_cell(w, idx)
     assert calls == [("set_attribute", "VCU3-SRS", "VCU3-SRS-2", "effort", "5")]
 
-    # Enter confirms the shown date even though it wasn't changed.
+    # Enter on an empty date cell writes nothing (no date of its own choosing).
     calls.clear()
-    editor, _idx = _open_cell_editor(w, "VCU3-SRS-2", "reviewed-on")
+    editor, idx = _open_cell_editor(w, "VCU3-SRS-2", "reviewed-on")
     QTest.keyClick(editor, Qt.Key.Key_Return)
-    qtbot.waitUntil(lambda: bool(calls))  # Qt commits on Enter via a queued call
-    today = QDate.currentDate().toString("yyyy-MM-dd")
-    assert calls == [("set_attribute", "VCU3-SRS", "VCU3-SRS-2", "reviewed-on", today)]
+    # Qt closes the editor on Enter via a queued call.
+    qtbot.waitUntil(lambda: w.grid_pane.table.indexWidget(idx) is None)
+    assert calls == []
 
 
 def test_grid_setdata_unchanged_value_is_a_noop(window, monkeypatch):
@@ -387,9 +387,10 @@ def test_inspector_combo_popup_click_commits_without_destroying_combo(window, qt
     assert w.inspector._attr_widgets["status"].currentText() == "Approved"
 
 
-def test_inspector_enum_combo_shows_empty_value_as_no_selection(window):
+def test_inspector_enum_combo_shows_empty_value_as_the_empty_entry(window):
     """An empty enum value must not show as the first option: that misstates
-    the object, and picking that option would then change nothing."""
+    the object, and picking that option would then change nothing. It shows
+    as the empty entry, which comes first (MELLON-EDIT-SRS-130)."""
     w, root = window
     obj_file = root / "VCU3-SRS" / "objects" / "VCU3-SRS-2.xml"
     text = obj_file.read_text(encoding="utf-8")
@@ -401,11 +402,11 @@ def test_inspector_enum_combo_shows_empty_value_as_no_selection(window):
     w.controller.reload_document("VCU3-SRS")
     w.controller.select_object("VCU3-SRS", "VCU3-SRS-2")
     cb = w.inspector._attr_widgets["status"]
-    assert cb.currentIndex() == -1
     assert cb.currentText() == ""
-    first = cb.itemText(0)
+    assert cb.itemText(0) == ""
+    first = cb.itemText(1)
 
-    cb.setCurrentIndex(0)  # picking the first option is now a real change
+    cb.setCurrentIndex(1)  # picking the first option is a real change
 
     assert f'<attr name="status">{first}</attr>' in obj_file.read_text(encoding="utf-8")
 
@@ -1261,8 +1262,6 @@ def test_edit_srs_82_properties_dialog_removes_option(qtbot, tmp_path, modals, c
     assert attrs.get("status") == "", f"SRS-1 attributes after removal: {attrs}"
 
 
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-92: the Properties dialog's attributes tab "
-                   "offers no control that changes whether an existing attribute is required")
 def test_edit_srs_92_properties_dialog_changes_required(qtbot, tmp_path, modals, commit_all):
     """MELLON-EDIT-SRS-92: the Properties dialog makes the optional status required, then
     optional again; the manifest follows each change."""
@@ -1386,8 +1385,6 @@ def test_edit_srs_130_grid_enum_editor_offers_options_and_empty_entry(qtbot, tmp
     assert read_obj(root, "SRS", "SRS-1")[0].get("status", "") == ""
 
 
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-130: the Inspector's enumeration field "
-                   "offers only the options, with no empty entry")
 def test_edit_srs_130_inspector_enum_field_offers_empty_entry(qtbot, tmp_path, modals, commit_all):
     """MELLON-EDIT-SRS-130: the Inspector's enumeration field on an object with a value
     offers an empty entry and each option; choosing the empty entry stores an empty value."""
@@ -1413,8 +1410,6 @@ def test_edit_srs_131_grid_boolean_editor_offers_true_false_empty(qtbot, tmp_pat
     assert sorted(combo_items(combo)) == ["", "false", "true"]
 
 
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-131: the Inspector shows a boolean attribute "
-                   "as a free text field, not a choice of true, false and an empty entry")
 def test_edit_srs_131_inspector_boolean_field_offers_true_false_empty(qtbot, tmp_path, modals, commit_all):
     """MELLON-EDIT-SRS-131: the Inspector's boolean field offers exactly an empty entry,
     true and false."""
@@ -1454,8 +1449,6 @@ def test_edit_srs_132_133_134_grid_editor_stores_no_misfit(qtbot, tmp_path, moda
 
 
 @pytest.mark.parametrize("kind", ["integer", "real", "date"])
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-132/-133/-134: the grid's integer, real and "
-                   "date editors can't be emptied; clearing the text stores the previous value")
 def test_edit_srs_132_133_134_grid_editor_accepts_empty_value(qtbot, tmp_path, modals, us_locale, commit_all, kind):
     """MELLON-EDIT-SRS-132, -133 and -134: the grid's integer, real and date editors accept
     an empty value: clearing the text and leaving the cell stores an empty value."""
@@ -1465,9 +1458,7 @@ def test_edit_srs_132_133_134_grid_editor_accepts_empty_value(qtbot, tmp_path, m
 
 
 @pytest.mark.parametrize("text", [
-    pytest.param("0001-01-01", marks=pytest.mark.xfail(strict=True, reason=(
-        "defect: MELLON-EDIT-SRS-134: the grid's date editor can't go below 1752-09-14; typing "
-        "0001-01-01 stores 2026-01-01 instead"))),
+    "0001-01-01",
     "9999-12-31",
 ])
 def test_edit_srs_134_grid_date_editor_stores_range_ends(qtbot, tmp_path, modals, us_locale, commit_all, text):
@@ -1498,8 +1489,6 @@ def test_edit_srs_132_133_134_inspector_stores_fitting_value(qtbot, tmp_path, mo
 @pytest.mark.parametrize("kind,text", [("integer", "3.14"), ("integer", "abc"),
                                        ("real", "abc"), ("real", "1.2.3"),
                                        ("date", "0000-12-31"), ("date", "10000-01-01")])
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-132/-133/-134: the Inspector's integer, real "
-                   "and date fields take any text and store it")
 def test_edit_srs_132_133_134_inspector_refuses_misfit(qtbot, tmp_path, modals, us_locale, commit_all, kind, text):
     """MELLON-EDIT-SRS-132, -133 and -134: in the Inspector, a value that doesn't fit the
     kind can't be entered or is refused, and the object file keeps its bytes."""
@@ -1512,8 +1501,6 @@ def test_edit_srs_132_133_134_inspector_refuses_misfit(qtbot, tmp_path, modals, 
     assert path.read_bytes() == before
 
 
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-135: choosing an option from the grid's "
-                   "enumeration list writes nothing until the cell is left")
 def test_edit_srs_135_grid_enum_choice_saved_at_once(qtbot, tmp_path, modals, commit_all):
     """MELLON-EDIT-SRS-135: choosing Approved from the grid's enumeration list writes it to
     the object file at once, while the cell's editor is still open."""

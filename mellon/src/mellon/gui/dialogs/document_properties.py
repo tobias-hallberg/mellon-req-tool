@@ -4,7 +4,8 @@ Three tabs:
     Metadata   — title / author / date. (Issue is tag-managed via the
                  commit dialog; it is intentionally not editable here.)
     Parents    — add or remove parent doc references.
-    Attributes — add or delete attributes; add or remove enum options.
+    Attributes — add or delete attributes; make one required or optional;
+                 add or remove enum options.
 
 Mutations apply immediately to the service. The bottom button is Close, not
 OK/Cancel: deferring cascades like delete-attribute until the dialog accepts
@@ -16,7 +17,7 @@ from __future__ import annotations
 
 import re
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -282,6 +283,8 @@ class AttributesTab(QWidget):
         self._tree.setHeaderLabels(["Name", "Kind", "Required", "Options"])
         self._tree.setRootIsDecorated(True)
         self._tree.itemSelectionChanged.connect(self._refresh_buttons)
+        self._tree.itemChanged.connect(self._on_item_changed)
+        self._loading = False
 
         self._add_attr_btn = QPushButton("Add attribute…")
         self._del_attr_btn = QPushButton("Delete attribute")
@@ -311,15 +314,22 @@ class AttributesTab(QWidget):
 
     def _reload(self) -> None:
         doc = self._controller.document(self._doc_id)
+        self._loading = True
         self._tree.clear()
         for attr in doc.attributes:
             top = QTreeWidgetItem([
                 attr.display_name,
                 attr.kind,
-                "yes" if attr.required else "no",
+                "",
                 ", ".join(attr.options) if attr.kind == "enum" else "",
             ])
             top.setData(0, Qt.ItemDataRole.UserRole, ("attr", attr.name))
+            # MELLON-EDIT-SRS-92: the check box makes the attribute required
+            # or optional (`_on_item_changed`).
+            top.setCheckState(
+                2, Qt.CheckState.Checked if attr.required else Qt.CheckState.Unchecked
+            )
+            top.setToolTip(2, "Required: every object must have a value")
             for opt in attr.options:
                 child = QTreeWidgetItem(["", "option", "", opt])
                 child.setData(0, Qt.ItemDataRole.UserRole, ("option", attr.name, opt))
@@ -328,6 +338,7 @@ class AttributesTab(QWidget):
         self._tree.expandAll()
         for col in range(4):
             self._tree.resizeColumnToContents(col)
+        self._loading = False
         self._refresh_buttons()
 
     def _selected_attr_name(self) -> str | None:
@@ -360,6 +371,51 @@ class AttributesTab(QWidget):
         self._del_attr_btn.setEnabled(attr is not None)
         self._add_opt_btn.setEnabled(is_enum)
         self._rm_opt_btn.setEnabled(self._selected_option() is not None)
+
+    def _on_item_changed(self, item: QTreeWidgetItem, column: int) -> None:
+        data = item.data(0, Qt.ItemDataRole.UserRole)
+        if self._loading or column != 2 or not data or data[0] != "attr":
+            return
+        required = item.checkState(2) == Qt.CheckState.Checked
+        # Rebuilding the tree deletes this item, so leave its signal first.
+        QTimer.singleShot(
+            0, self, lambda name=data[1]: self._set_required(name, required)
+        )
+
+    def _set_required(self, attr_name: str, required: bool) -> None:
+        doc = self._controller.document(self._doc_id)
+        attr = doc.attribute(attr_name)
+        if attr is None or attr.required == required:
+            self._reload()
+            return
+        missing = sum(
+            1 for o in doc.objects.values() if not o.attrs.get(attr_name, "").strip()
+        )
+        if required and missing:
+            confirm = QMessageBox.question(
+                self,
+                "Make attribute required",
+                f"{missing} object(s) have no value for {attr_name!r}; validation "
+                f"reports each one until it has a value.\n\n"
+                f"Make {attr_name!r} required?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            if confirm != QMessageBox.StandardButton.Yes:
+                self._reload()
+                return
+        try:
+            self._controller.require_service().change_attribute_required(
+                self._doc_id, attr_name, required
+            )
+        except ServiceError as e:
+            self._reload()
+            self._status.setText(f"Change failed: {e}")
+            return
+        self._controller.reload_document(self._doc_id)
+        self._reload()
+        state = "required" if required else "optional"
+        self._status.setText(f"{attr_name} is now {state}.")
 
     def _on_add_attribute(self) -> None:
         doc = self._controller.document(self._doc_id)
@@ -556,6 +612,11 @@ class AddAttributeDialog(QDialog):
             self._hint.setText(f"Attribute {name!r} already exists.")
             self._ok_btn.setEnabled(False)
             return
+        # MELLON-EDIT-SRS-65: Mellon refuses an enum without options.
+        if self.kind() == "enum" and self._options_list.count() == 0:
+            self._hint.setText("Add at least one option.")
+            self._ok_btn.setEnabled(False)
+            return
         self._hint.setText("")
         self._ok_btn.setEnabled(True)
 
@@ -570,12 +631,14 @@ class AddAttributeDialog(QDialog):
         if text in existing:
             return
         self._options_list.addItem(QListWidgetItem(text))
+        self._revalidate()
 
     def _on_remove_option(self) -> None:
         item = self._options_list.currentItem()
         if item is None:
             return
         self._options_list.takeItem(self._options_list.row(item))
+        self._revalidate()
 
     def name(self) -> str:
         return self._name_edit.text().strip()

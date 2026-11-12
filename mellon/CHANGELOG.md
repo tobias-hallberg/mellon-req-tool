@@ -194,6 +194,32 @@ All notable changes to Mellon. The format follows
 - **Resolving a merge again after a resolve failed partway stages the merged
   manifest,** so the merge commit is the same as after a resolve that never
   failed (`MELLON-VER-SRS-366`).
+- **An enumeration attribute with no options is refused,** by
+  `define_attribute`, the library and the Add attribute dialog. It used to be
+  written, and left a document that didn't load (`MELLON-EDIT-SRS-65`).
+- **The Properties dialog's Attributes tab makes an attribute required or
+  optional,** with a check box in the Required column (`MELLON-EDIT-SRS-92`).
+- **The Inspector's enumeration field offers an empty entry,** so a value can
+  be cleared, and a boolean attribute is a choice of empty, true and false
+  instead of free text (`MELLON-EDIT-SRS-130`, `-131`).
+- **The Inspector refuses an integer, real or date that doesn't fit the
+  attribute's kind** instead of saving it (`MELLON-EDIT-SRS-132` to `-134`).
+- **The grid's integer, real and date editors can be emptied,** save a value
+  exactly as typed and refuse one that doesn't fit. Dates from 0001-01-01 to
+  9999-12-31 can be entered. They used to round or reformat what was typed,
+  and saved today's date on Enter in an empty cell (`MELLON-EDIT-SRS-132` to
+  `-134`, `-363`).
+- **Choosing a value from the grid's enumeration or boolean list saves it at
+  once,** as the Inspector does (`MELLON-EDIT-SRS-135`).
+- **Copying an object copies its table too** (`MELLON-EDIT-SRS-145`).
+- **`move_object` with `before` or `after` an object in another section,** and
+  no `parent_id`, moves the object directly before or after that object
+  instead of refusing (`MELLON-EDIT-SRS-187`).
+- **A filter using is-not-empty on a boolean attribute is refused,** like any
+  other operator a boolean doesn't take (`MELLON-EDIT-SRS-295`).
+- **Enter in a table cell inserts a line break** (`MELLON-EDIT-SRS-211`), and
+  **Ctrl+Enter saves the cell's text** to the object and closes the cell's
+  editor (`MELLON-GUI-SRS-165`).
 
 ### Security
 

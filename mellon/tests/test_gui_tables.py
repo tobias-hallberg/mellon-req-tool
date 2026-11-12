@@ -664,10 +664,6 @@ def test_edit_srs_211_table_editor_keeps_pasted_line_break(tmp_path, qtbot, monk
     assert _saved_table(root).rows[1].cells[0].text == "first\nsecond"
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "defect: MELLON-EDIT-SRS-211: the cell editor is a one-line field; "
-    "typing first, Enter, second gives 'firstsecond', so a line break can't "
-    "be typed in a cell (USAGE: plain Enter inserts a newline)"))
 def test_edit_srs_211_table_editor_keeps_typed_line_break(tmp_path, qtbot, monkeypatch):
     """MELLON-EDIT-SRS-211: typing first, a line break (Enter, the key USAGE.md
     names for a newline in a table-cell editor) and second, then saving,

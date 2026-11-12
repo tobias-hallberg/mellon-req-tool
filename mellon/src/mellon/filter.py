@@ -150,12 +150,7 @@ def _match_attr(rule: FilterRule, obj, doc: Document) -> bool:
     if not rule.attr:
         raise FilterError("attr rule missing attribute name")
     raw = (obj.attrs.get(rule.attr) or "").strip()
-
     op = rule.op
-    if op == "is-empty":
-        return raw == ""
-    if op == "is-not-empty":
-        return raw != ""
 
     # Look up the attribute kind so coercion respects the schema. `type` is
     # a system enum-ish attribute that doesn't appear in `doc.attributes`;
@@ -163,8 +158,15 @@ def _match_attr(rule: FilterRule, obj, doc: Document) -> bool:
     spec = doc.attribute(rule.attr)
     kind = spec.kind if spec is not None else "text"
 
+    # MELLON-EDIT-SRS-295: checked before is-empty / is-not-empty too, which
+    # not every kind takes (a boolean has no is-not-empty).
     if op not in valid_ops_for_kind(kind):
         raise FilterError(f"operator {op!r} not valid for {kind} attribute")
+
+    if op == "is-empty":
+        return raw == ""
+    if op == "is-not-empty":
+        return raw != ""
 
     if kind == "boolean":
         truthy = raw.lower() in ("true", "yes", "1")

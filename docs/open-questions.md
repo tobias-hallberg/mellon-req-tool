@@ -387,6 +387,7 @@ Raised by the requirements view of the Compare section and answered the same day
   - `MELLON-PDF-SRS-82`: an empty title is left out of the cover; the document ID doesn't stand in. `MELLON-PDF-SRS-147`: the leading header rows are those before the first body row, and they repeat even when a later header row follows a body row. `MELLON-PDF-SRS-54`: the export result's suspect links carry the same fields as the suspects tool's, `doc_id` included.
   - `MELLON-TRACE-SRS-100`: a jump selects the target in the target document's own Document Editor, since a Document Editor is the window for one document.
   - `MELLON-VER-SRS-91`: an editor side file is never committed, even when a path names it.
+  - Table editor: one Ctrl+Enter in a cell saves the cell's text and the table, as USAGE.md says and `MELLON-GUI-SRS-165` requires; the table editor stays open for more edits.
 - **Still open, each with a recommendation:**
   - `MELLON-MCP-SRS-53`: for a missing parent declaration, link, figure or table, the server returns `error_type` `NotFound`, which no requirement lists, and existing tests expect it; the requirement says `EditorError`. Recommendation: keep `NotFound` and add it to `MELLON-MCP-SRS-55`'s table and to -53, since agents may already branch on it.
   - `MELLON-MCP-SRS-104`: a file rewritten with the same size and its modified time put back is answered from the old content, because parsed files are kept while their modified time and size stay the same. Recommendation: narrow -104 to changes that alter a file's size or modified time, and propose a content check separately if a case needs it.
@@ -394,7 +395,6 @@ Raised by the requirements view of the Compare section and answered the same day
   - `MELLON-TRACE-SRS-77`: a links file with an empty `target-id` is a load error for the whole file, not a broken link. Recommendation: keep the load error and say so in `MELLON-STORE-SRS`.
   - `MELLON-TRACE-SRS-17`: the link picker's link-type box is editable, so a user can type a type the document doesn't list. Recommendation: offer only the listed types.
   - `MELLON-EDIT-SRS-348`: with only a pending edit and no earlier step, Undo is disabled, so it can't be chosen. Recommendation: enable Undo while a pending edit exists.
-  - Table editor: a first Ctrl+Enter in a cell only ends the cell edit; a second saves the table. USAGE.md says one saves. Recommendation: one Ctrl+Enter saves.
   - The Views menu has no entry to go back to no view. Recommendation: add "(none)".
   - The Inspector shows no field for an attribute the object doesn't have set, so it can't set one (`MELLON-EDIT-SRS-125`). Recommendation: show every defined attribute.
   - Discard is disabled after F5 meets a load error, though the window is writable and the document has uncommitted changes. Recommendation: enable it; discarding is the way out of a broken file.

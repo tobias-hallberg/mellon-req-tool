@@ -2051,8 +2051,6 @@ def test_edit_srs_51_mcp_remove_parent_doc_keeps_links(tmp_path, mcp_at, commit_
 
 
 @pytest.mark.parametrize("options", [None, []], ids=["no-options", "empty-options"])
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-65: define_attribute accepts an enumeration "
-                   "without options and writes a manifest that no longer loads")
 def test_edit_srs_65_mcp_refuses_enum_without_options(tmp_path, mcp_at, commit_all, options):
     """MELLON-EDIT-SRS-65: define_attribute for an enumeration with no option is refused and
     no file changes."""
@@ -2617,10 +2615,6 @@ def test_edit_srs_187_move_object_to_top(mcp_root):
     assert mcp_children(outline, "S-3") == ["S-5"]
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "defect: MELLON-EDIT-SRS-187: move_object(before=S-4) without parent_id "
-    "is refused ('sibling not found under target parent') instead of placing "
-    "the object directly before S-4"))
 def test_edit_srs_187_move_object_directly_before_object_in_other_section(mcp_root):
     """MELLON-EDIT-SRS-187 (c): move_object with before = S-4 (in section H2),
     no parent_id, places S-1 directly before S-4, under S-4's parent."""
@@ -2632,10 +2626,6 @@ def test_edit_srs_187_move_object_directly_before_object_in_other_section(mcp_ro
     assert mcp_children(outline, "S-0") == ["S-2"]
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "defect: MELLON-EDIT-SRS-187: move_object(after=S-5) without parent_id "
-    "is refused ('sibling not found under target parent') instead of placing "
-    "the object directly after S-5"))
 def test_edit_srs_187_move_object_directly_after_object_in_other_section(mcp_root):
     """MELLON-EDIT-SRS-187 (d): move_object with after = S-5 (in section H2),
     no parent_id, places S-2 directly after S-5, under S-5's parent."""

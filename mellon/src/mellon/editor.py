@@ -945,6 +945,10 @@ def add_attribute(
     label = _sanitize_text(label, "attribute label")
     options = tuple(_sanitize_text(opt, "enum option") for opt in options)
     if kind == "enum":
+        # MELLON-EDIT-SRS-65: an enumeration without options can hold no value,
+        # and its manifest wouldn't load; refuse before anything is written.
+        if not options:
+            raise EditorError(f"enum attribute {name!r} needs at least one option")
         seen: set[str] = set()
         for opt in options:
             if not opt:
@@ -1169,7 +1173,9 @@ def move_object(
     exclusive, as are `before` and `after`.
 
     `before`/`after` position the ref adjacent to a sibling under the target
-    parent. Without either, the ref is appended as the last child. Moves
+    parent; with neither `parent_id` nor `to_top`, the target parent is the
+    anchor's own parent, wherever it is. Without `before`/`after`, the ref is
+    appended as the last child. Moves
     preserve the ref's subtree — children travel with their parent.
     """
     if parent_id is not None and to_top:
@@ -1215,6 +1221,18 @@ def move_object(
     anchor = None
     if before is not None or after is not None:
         anchor_id = before if before is not None else after
+        if parent_id is None and not to_top:
+            # MELLON-EDIT-SRS-187: with no parent named, the object goes
+            # directly before or after the anchor, under the anchor's parent.
+            if _find_ref(ref_el, anchor_id) is not None:
+                raise EditorError(
+                    f"cannot position {obj_id!r} relative to its own "
+                    f"descendant {anchor_id!r}"
+                )
+            found = _find_ref(outline, anchor_id)
+            if found is None:
+                raise EditorError(f"{anchor_id!r} not found in outline")
+            target_parent = found.getparent()
         for r in target_parent.findall("ref"):
             if r.get("id") == anchor_id:
                 anchor = r

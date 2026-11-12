@@ -2883,8 +2883,6 @@ def test_edit_srs_51_library_remove_parent_keeps_links(tmp_path, mcp_at, commit_
     assert_link_kept(root, before, mcp_at)
 
 
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-65: the library's add_attribute accepts an "
-                   "enumeration without options and writes a manifest that no longer loads")
 def test_edit_srs_65_library_refuses_enum_without_options(tmp_path):
     """MELLON-EDIT-SRS-65 through the library: add_attribute of an enumeration with no
     option is refused and the manifest keeps its bytes."""

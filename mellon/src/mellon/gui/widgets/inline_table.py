@@ -19,9 +19,12 @@ from __future__ import annotations
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
+    QAbstractItemDelegate,
     QApplication,
     QHeaderView,
     QMessageBox,
+    QPlainTextEdit,
+    QStyledItemDelegate,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -238,17 +241,61 @@ class _GridModel:
             self.M[rr][cc] = nid
 
 
+class _CellTextEdit(QPlainTextEdit):
+    """A cell's text editor. MELLON-EDIT-SRS-211: plain Enter inserts a line
+    break, as in the description editor. MELLON-GUI-SRS-165: Ctrl+Enter writes
+    the cell's text, saves the table and closes the cell's editor. Esc (caught
+    by the delegate) cancels the cell edit."""
+
+    finished = Signal()
+
+    def keyPressEvent(self, event) -> None:  # type: ignore[override]
+        if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter) and (
+            event.modifiers() & Qt.KeyboardModifier.ControlModifier
+        ):
+            self.finished.emit()
+            event.accept()
+            return
+        super().keyPressEvent(event)
+
+
+class _CellDelegate(QStyledItemDelegate):
+    """Gives each cell a `_CellTextEdit` instead of the one-line default."""
+
+    # Ctrl+Enter in a cell: the cell's text is in its item; save the table.
+    save_requested = Signal()
+
+    def createEditor(self, parent, option, index):  # noqa: N802 (Qt override)
+        ed = _CellTextEdit(parent)
+        ed.setTabChangesFocus(True)
+        ed.finished.connect(lambda: self._finish(ed))
+        return ed
+
+    def _finish(self, editor) -> None:
+        self.commitData.emit(editor)
+        self.closeEditor.emit(editor, QAbstractItemDelegate.EndEditHint.NoHint)
+        self.save_requested.emit()
+
+    def setEditorData(self, editor, index) -> None:  # noqa: N802 (Qt override)
+        editor.setPlainText(str(index.data(Qt.ItemDataRole.EditRole) or ""))
+
+    def setModelData(self, editor, model, index) -> None:  # noqa: N802 (Qt override)
+        model.setData(index, editor.toPlainText(), Qt.ItemDataRole.EditRole)
+
+
 class InlineTableWidget(QWidget):
     """Editable grid editor for a `Table`.
 
     Just the editable grid — structural controls live in the window's toolbar
     "Table" menu, which calls the public methods below on the active editor.
-    Emits `commit_requested` (Ctrl+Enter, or focusing away to a non-popup) and
+    Emits `commit_requested` (Ctrl+Enter, or focusing away to a non-popup),
+    `save_requested` (Ctrl+Enter in a cell's editor: save, keep editing) and
     `cancel_requested` (Esc); the hosting delegate wires these to the view's
     commit/close machinery. `to_table()` yields the edited `Table`.
     """
 
     commit_requested = Signal()
+    save_requested = Signal()
     cancel_requested = Signal()
     geometry_changed = Signal()
 
@@ -312,6 +359,11 @@ class InlineTableWidget(QWidget):
             self.table.setSelectionMode(
                 QTableWidget.SelectionMode.ContiguousSelection
             )
+            cells = _CellDelegate(self.table)
+            cells.save_requested.connect(self._save)
+            self.table.setItemDelegate(cells)
+            # A cell that gained a line re-fits the rows, so the new line shows.
+            self.table.itemChanged.connect(lambda *_: self.geometry_changed.emit())
             app = QApplication.instance()
             if app is not None:
                 app.focusChanged.connect(self._on_focus_changed)
@@ -541,18 +593,26 @@ class InlineTableWidget(QWidget):
 
     # --- commit / cancel ------------------------------------------------
 
-    def _commit(self) -> None:
-        if self._committing:
-            return
-        table = self.to_table()
-        problems = table_geometry_errors(table)
+    def _table_is_valid(self) -> bool:
+        problems = table_geometry_errors(self.to_table())
         if problems:
             QMessageBox.warning(
                 self, "Invalid table", "Cannot save table:\n" + "\n".join(problems)
             )
+        return not problems
+
+    def _commit(self) -> None:
+        if self._committing or not self._table_is_valid():
             return
         self._committing = True
         self.commit_requested.emit()
+
+    def _save(self) -> None:
+        """MELLON-GUI-SRS-165: Ctrl+Enter in a cell's editor saves the table
+        with the cell's text; the table editor stays open for more edits."""
+        if self._committing or not self._table_is_valid():
+            return
+        self.save_requested.emit()
 
     def _on_focus_changed(self, _old, now) -> None:
         if not self._armed or now is None or self._committing:

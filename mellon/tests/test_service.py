@@ -1663,8 +1663,6 @@ def test_edit_srs_145_copy_has_new_id_description_and_attributes(tmp_path, mcp_a
 
 
 @pytest.mark.parametrize("path_kind", ["service", "mcp"])
-@pytest.mark.xfail(strict=True, reason="defect: MELLON-EDIT-SRS-145: copy_object gives the copy no table; "
-                   "the source's table is dropped")
 def test_edit_srs_145_copy_has_the_table(tmp_path, mcp_at, commit_all, path_kind):
     """MELLON-EDIT-SRS-145: a copy of an object with a table (a header row, two alignments,
     a merged cell) has the same table."""

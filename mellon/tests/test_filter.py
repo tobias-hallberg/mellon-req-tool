@@ -483,15 +483,7 @@ def test_edit_srs_294_number_accepts_only_its_nine_operators(tmp_path, kind, op)
     _check_operator(tmp_path, kind, op)
 
 
-_BOOLEAN_OPS = [
-    pytest.param(op, marks=pytest.mark.xfail(strict=True, reason=(
-        "defect: MELLON-EDIT-SRS-295: is-not-empty on a boolean attribute is "
-        "applied instead of refused")))
-    if op == "is-not-empty" else op
-    for op in _ALL_ATTR_OPS]
-
-
-@pytest.mark.parametrize("op", _BOOLEAN_OPS)
+@pytest.mark.parametrize("op", _ALL_ATTR_OPS)
 def test_edit_srs_295_boolean_accepts_only_is_true_is_false_is_empty(tmp_path, op):
     """MELLON-EDIT-SRS-295: on a boolean attribute only is-true, is-false and
     is-empty are accepted."""

@@ -1781,7 +1781,14 @@ def move_object(
     after: str | None = None,
     commit_message: str | None = None,
 ) -> dict:
-    """Reparent and/or reorder an object in the outline."""
+    """Reparent and/or reorder an object, with its sub-objects, in the outline.
+
+    `parent_id` moves it under that object (as the last child, or before or
+    after the child named by `before`/`after`); `to_top` moves it to the top
+    level. `before` or `after` alone moves it directly before or after that
+    object, under that object's parent, wherever it is. `parent_id` and
+    `to_top` exclude each other, as do `before` and `after`.
+    """
     _guard_write()
     log.info(
         "move_object %s %s parent=%s to_top=%s before=%s after=%s",

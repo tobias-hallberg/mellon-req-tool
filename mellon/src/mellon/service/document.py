@@ -1138,6 +1138,9 @@ class DocumentService:
                 )
                 for name, value in source.attrs.items():
                     editor.set_attribute(folder, new_id, name, value)
+                # MELLON-EDIT-SRS-145: a copy keeps the source's table.
+                if source.table is not None:
+                    editor.set_table(folder, new_id, source.table)
                 if copy_links:
                     for link in source_links:
                         editor.add_link(
