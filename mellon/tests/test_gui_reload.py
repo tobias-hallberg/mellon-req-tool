@@ -662,31 +662,41 @@ def editor_repo(tmp_path, git_env):
     return root
 
 
+def _edit_refused_then_f5(gui, ed, root):
+    """Another program puts conflict markers in DOC-1.xml; an edit of DOC-2 is
+    then refused under the Changed on disk banner (MELLON-GUI-SRS-109), and F5
+    reads the document again. Returns what the window showed."""
+    _break_doc_1(root)
+    gui.grid_edit(ed, "DOC-2", "rationale", "edited after the break")
+    assert ed.grid_pane.is_stale(), "precondition: the edit is refused under the banner"
+    doc_2 = (root / "DOC" / "objects" / "DOC-2.xml").read_text(encoding="utf-8")
+    assert "edited after the break" not in doc_2, "precondition: the edit is refused"
+    gui.messages.clear()
+    gui.press_f5(ed)
+    return _shows_load_error(gui, ed)
+
+
 def test_store_srs_37_reread_after_edit_names_file_and_line(gui, editor_repo):
     """MELLON-STORE-SRS-37: when a Document Editor reads its document again and a
-    data file can't be read, it shall show the load error. After an edit to
-    DOC-2 while DOC-1.xml holds conflict markers, the window shows the file and
-    the line of the load error, not a general failure."""
+    data file can't be read, it shall show the load error. An edit to DOC-2
+    after DOC-1.xml got conflict markers is refused first (MELLON-GUI-SRS-109);
+    the re-read that follows, on F5, shows the file and the line of the load
+    error, not a general failure."""
     ed = gui.editor(editor_repo, "DOC")
     gui.set_read_only(ed, False)
-    _break_doc_1(editor_repo)
-    gui.messages.clear()
-    gui.grid_edit(ed, "DOC-2", "rationale", "edited after the break")
-    shown = _shows_load_error(gui, ed)
+    shown = _edit_refused_then_f5(gui, ed, editor_repo)
     assert "DOC-1.xml" in shown, f"load error file not shown: {shown!r}"
     assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
 
 
 def test_store_srs_37_reread_after_edit_says_merge_conflict(gui, editor_repo):
     """MELLON-STORE-SRS-37 with -30: the load error the Document Editor shows
-    after an edit-triggered re-read is the load error, so for a file holding
-    conflict markers it says the file looks like an unresolved merge conflict."""
+    when it reads the document again after a refused edit is the load error, so
+    for a file holding conflict markers it says the file looks like an
+    unresolved merge conflict."""
     ed = gui.editor(editor_repo, "DOC")
     gui.set_read_only(ed, False)
-    _break_doc_1(editor_repo)
-    gui.messages.clear()
-    gui.grid_edit(ed, "DOC-2", "rationale", "edited after the break")
-    shown = _shows_load_error(gui, ed)
+    shown = _edit_refused_then_f5(gui, ed, editor_repo)
     assert "DOC-1.xml" in shown, f"precondition: the load error was shown: {shown!r}"
     assert CONFLICT_HINT.search(shown), shown
 

@@ -7,8 +7,14 @@ no pane talks to another directly.
 
 from __future__ import annotations
 
+import functools
+import hashlib
+import os
+import time
+import weakref
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable, Iterable
 
 import pygit2
 from lxml import etree
@@ -16,7 +22,7 @@ from PySide6.QtCore import QObject, Signal
 
 from .. import git_ops
 from ..git_ops import GitError, discover_repo, dirty_paths_under, is_side_file
-from ..repo import DocLoadError, LoadedDoc, folders_fingerprint
+from ..repo import DocLoadError, LoadedDoc
 from ..schema import FilterRule, Link, RequirementObject, Document
 from ..service import DocCommitPreview, DocumentService, ErrorCode, ServiceError
 from ..suspects import LinkState, LinkStatus
@@ -57,6 +63,100 @@ def _repo_root_advice(path: Path) -> str:
         # A subfolder of a clone; `git init` here would nest a second repo.
         return f"Open {git_root} instead."
     return ""
+
+
+# --- disk contents ------------------------------------------------------------
+#
+# Changed on disk is decided by content (docs/definitions.md): a file holds
+# other content than the Document Editor last read or wrote there. Reading
+# every file at every check costs about 0.2 ms a file on Windows, a second at
+# 2,000 objects, so each file's digest is kept with the modified time and size
+# it was read at and read again only when either differs. As in git, a digest
+# read within 2 s of the file's modified time isn't trusted: another write in
+# the same clock tick could leave the same time and size behind.
+_RACY_NS = 2_000_000_000
+# Absolute path -> (st_mtime_ns, st_size, time read in ns, digest).
+_digests: dict[str, tuple[int, int, int, bytes]] = {}
+
+
+def _file_digest(path: str, st: os.stat_result) -> bytes | None:
+    """Digest of the file's content; None if it can't be read."""
+    hit = _digests.get(path)
+    same_stat = hit is not None and hit[0] == st.st_mtime_ns and hit[1] == st.st_size
+    if same_stat and hit[2] - hit[0] >= _RACY_NS:
+        return hit[3]
+    read_at = time.time_ns()
+    try:
+        with open(path, "rb") as fh:
+            digest = hashlib.blake2b(fh.read(), digest_size=16).digest()
+    except OSError:
+        # Held open by another program for a moment: unchanged if its time
+        # and size are.
+        return hit[3] if same_stat else None
+    _digests[path] = (st.st_mtime_ns, st.st_size, read_at, digest)
+    return digest
+
+
+def disk_contents(folders: Iterable[Path]) -> dict[str, bytes]:
+    """`<folder name>/<relative path>` -> content digest of each file under
+    `folders`. Editor side files (`.$*`, `~$*`) are left out: they aren't part
+    of a document (MELLON-GUI-SRS-99). Files or folders that vanish or can't
+    be read mid-walk are left out."""
+    out: dict[str, bytes] = {}
+    for folder in folders:
+        folder = Path(folder)
+        stack = [(str(folder), f"{folder.name}/")]
+        while stack:
+            path, prefix = stack.pop()
+            try:
+                with os.scandir(path) as entries:
+                    for entry in entries:
+                        if is_side_file(entry.name):
+                            continue
+                        key = f"{prefix}{entry.name}"
+                        try:
+                            if entry.is_dir(follow_symlinks=False):
+                                stack.append((entry.path, f"{key}/"))
+                            elif entry.is_file():
+                                digest = _file_digest(entry.path, entry.stat())
+                                if digest is not None:
+                                    out[key] = digest
+                        except OSError:
+                            continue
+            except OSError:
+                continue
+    return out
+
+
+class _EditorService:
+    """The shared `DocumentService` as one Document Editor's controller hands
+    it out: every write method first runs the controller's write check, which
+    refuses the write when a file the window read changed on disk since
+    (MELLON-GUI-SRS-109, MELLON-STORE-SRS-182). What the write leaves on disk
+    is then what the window last wrote. Everything else passes through."""
+
+    def __init__(self, controller: RepoController) -> None:
+        # Weak: the controller holds this, and a cycle would keep a closed
+        # window's Python objects alive.
+        self._controller_ref = weakref.ref(controller)
+
+    def __getattr__(self, name: str):
+        controller = self._controller_ref()
+        if controller is None or controller._service is None:
+            raise AttributeError(name)
+        attr = getattr(controller._service, name)
+        if not getattr(attr, "writes_files", False):
+            return attr
+
+        @functools.wraps(attr)
+        def checked(*args, **kwargs):
+            controller.check_before_write()
+            try:
+                return attr(*args, **kwargs)
+            finally:
+                controller.refresh_disk_snapshot()
+
+        return checked
 
 
 @dataclass(frozen=True)
@@ -111,10 +211,19 @@ class RepoController(QObject):
         self._service: DocumentService | None = None
         self._current_doc: str | None = None
         self._current_obj: str | None = None
-        # On-disk fingerprint of the current doc's folder (+ parent-doc
-        # folders) taken after the last load/reload. `is_doc_stale` compares
-        # against it to detect writes made by another process.
-        self._disk_snapshot: frozenset[tuple[str, int, int]] | None = None
+        # What the current doc's folder (+ parent-doc folders) held after the
+        # last load, reload or write of this controller's: one content digest
+        # per file (`disk_contents`). `is_doc_stale` compares against it to
+        # detect writes made by another process.
+        self._disk_snapshot: dict[str, bytes] | None = None
+        # Set by a Document Editor (`set_write_check`): runs before each write
+        # through `service` and raises `ServiceError` to refuse it. Held
+        # weakly, as the window holds this controller.
+        self._write_check: Callable[[], Callable[[], None] | None] | None = None
+        self._editor_service: _EditorService | None = None
+        # Set by the Project Explorer (`set_jump_handler`): shows an object of
+        # another document in that document's own Document Editor.
+        self._jump_handler: Callable[[str, str], None] | None = None
         # View/filter writes don't go through reload_document, so re-snapshot
         # on their signals to avoid a false "changed on disk" afterwards.
         self.views_changed.connect(lambda *_: self.refresh_disk_snapshot())
@@ -124,13 +233,38 @@ class RepoController(QObject):
 
     @property
     def service(self) -> DocumentService | None:
-        """Active service (cache-enabled). None when no repo is open."""
+        """Active service (cache-enabled). None when no repo is open.
+
+        With a write check set (a Document Editor's controller), the service
+        as `_EditorService` wraps it: each write is checked first.
+        """
+        if self._service is not None and self._editor_service is not None:
+            return self._editor_service  # type: ignore[return-value]
         return self._service
 
     def require_service(self) -> DocumentService:
-        if self._service is None:
+        service = self.service
+        if service is None:
             raise RuntimeError("no repo is open")
-        return self._service
+        return service
+
+    def set_write_check(self, check: Callable[[], None] | None) -> None:
+        """Run `check` before each write made through `service`; it raises
+        `ServiceError` to refuse the write. Each such write, done or not, is
+        then taken as what this controller last wrote (`refresh_disk_snapshot`).
+        """
+        if check is None:
+            self._write_check = None
+        elif hasattr(check, "__self__"):
+            self._write_check = weakref.WeakMethod(check)  # type: ignore[arg-type]
+        else:
+            self._write_check = lambda: check
+        self._editor_service = _EditorService(self) if check is not None else None
+
+    def set_jump_handler(self, handler: Callable[[str, str], None] | None) -> None:
+        """Have `select_object` of another document call `handler(doc_id,
+        obj_id)` instead of switching this controller to that document."""
+        self._jump_handler = handler
 
     # --- loading --------------------------------------------------------
 
@@ -299,9 +433,45 @@ class RepoController(QObject):
         return folders
 
     def refresh_disk_snapshot(self) -> None:
-        """Re-fingerprint the watched folders; future edits diff against this."""
+        """Take what the watched folders hold now as what this controller
+        last read or wrote; future checks diff against this."""
         folders = self._watched_folders()
-        self._disk_snapshot = folders_fingerprint(folders) if folders else None
+        self._disk_snapshot = disk_contents(folders) if folders else None
+
+    def note_written(self, paths: Iterable[Path]) -> None:
+        """Take what `paths` hold now as what this controller last wrote
+        there, leaving every other file's snapshot as it was."""
+        if self._disk_snapshot is None:
+            return
+        folders = [
+            (os.path.normcase(os.path.abspath(f)) + os.sep, f.name)
+            for f in self._watched_folders()
+        ]
+        for path in paths:
+            full = os.path.abspath(path)
+            norm = os.path.normcase(full)
+            for prefix, name in folders:
+                if not norm.startswith(prefix):
+                    continue
+                rel = full[len(prefix):].replace(os.sep, "/")
+                if any(is_side_file(part) for part in rel.split("/")):
+                    break
+                key = f"{name}/{rel}"
+                try:
+                    digest = _file_digest(full, os.stat(full))
+                except OSError:
+                    digest = None
+                if digest is None:
+                    self._disk_snapshot.pop(key, None)
+                else:
+                    self._disk_snapshot[key] = digest
+                break
+
+    def check_before_write(self) -> None:
+        """Run the write check, if one is set; it raises to refuse."""
+        check = self._write_check() if self._write_check is not None else None
+        if check is not None:
+            check()
 
     def is_doc_stale(self) -> bool:
         """True when the watched folders changed on disk since the snapshot.
@@ -312,7 +482,7 @@ class RepoController(QObject):
         """
         if self._disk_snapshot is None:
             return False
-        return folders_fingerprint(self._watched_folders()) != self._disk_snapshot
+        return disk_contents(self._watched_folders()) != self._disk_snapshot
 
     def changed_figures(self) -> frozenset[str] | None:
         """Disk check that lets in-place figure edits through.
@@ -326,30 +496,29 @@ class RepoController(QObject):
         Figure contents are never cached — the grid paints them from disk —
         so such an edit can't be overwritten by stale text and needn't block
         editing. A figure added or removed, any other file, or anything in a
-        parent document's folder still counts as stale. draw.io's `.$*`
-        backup and draft files beside a figure are ignored.
+        parent document's folder still counts as stale. Editor side files
+        (draw.io's `.$*` backups and drafts, Office's `~$*` lock files) are
+        never counted, wherever they are (MELLON-GUI-SRS-99). A file counts
+        by its content: one rewritten with the same bytes hasn't changed.
         """
         if self._disk_snapshot is None:
             return frozenset()
         folders = self._watched_folders()
         if not folders:
             return frozenset()
-        new = folders_fingerprint(folders)
-        changed = new ^ self._disk_snapshot
+        new = disk_contents(folders)
+        old = self._disk_snapshot
+        changed = {key for key in old.keys() | new.keys() if old.get(key) != new.get(key)}
         if not changed:
             return frozenset()
         # Trailing "/" so a sibling folder sharing a name prefix never matches.
         prefix = f"{folders[0].name}/figures/"
-        old_keys = {key for key, _, _ in self._disk_snapshot}
-        new_keys = {key for key, _, _ in new}
         ids: set[str] = set()
-        for key, _, _ in changed:
+        for key in changed:
             name = key[len(prefix):] if key.startswith(prefix) else None
             if name is None or "/" in name:
                 return None
-            if is_side_file(name):
-                continue
-            if not name.endswith(".svg") or key not in old_keys or key not in new_keys:
+            if not name.endswith(".svg") or key not in old or key not in new:
                 return None
             ids.add(name[: -len(".svg")])
         self._disk_snapshot = new
@@ -357,6 +526,15 @@ class RepoController(QObject):
 
     def select_object(self, doc_id: str, obj_id: str) -> None:
         if self._service is None:
+            return
+        if (
+            self._jump_handler is not None
+            and self._current_doc is not None
+            and doc_id != self._current_doc
+        ):
+            # MELLON-TRACE-SRS-100: a Document Editor is the window of one
+            # document; an object of another is shown in that one's window.
+            self._jump_handler(doc_id, obj_id)
             return
         try:
             doc = self._service.get_document(doc_id)
@@ -367,6 +545,8 @@ class RepoController(QObject):
         if doc_id != self._current_doc:
             self._current_doc = doc_id
             self.document_selected.emit(doc_id)
+            # As `select_document`: the watched folders are the new document's.
+            self.refresh_disk_snapshot()
         self._current_obj = obj_id
         self.object_selected.emit(doc_id, obj_id)
 

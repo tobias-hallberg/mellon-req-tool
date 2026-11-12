@@ -391,7 +391,7 @@ Acknowledging suspect links has no shortcut; see [the suspect-link workflow](#th
 | Banner | Shown when | Controls |
 |---|---|---|
 | Suspect (amber) | The document has suspect or broken outgoing links. | **Suspects only** narrows the grid to the affected rows. **Ack selected** acknowledges every suspect link on the selected object. |
-| Changed on disk (amber) | When the window is activated, Mellon finds that this document or one of its parents was changed on disk by another window, the MCP server, or a git pull. A figure of this document saved in place (by draw.io) is the exception: its thumbnail just refreshes. | **Reload** (F5). Until you reload, every edit is refused with "Reload first (F5)" so that cached text can't overwrite the change. Text you typed but didn't save is not written. |
+| Changed on disk (amber) | When the window is activated, and again before each edit and each commit, Mellon finds that a file of this document or of one of its parents holds other content than the window last read or wrote: changed by another window, the MCP server, a git client or another program. A file saved again with the same content isn't a change, and neither is an editor's lock or backup file (a name starting with `~$` or `.$`). A figure of this document saved in place (by draw.io) is the exception: its thumbnail just refreshes. | **Reload** (F5). Until you reload, every edit and commit is refused with "Reload first (F5)" so that cached text can't overwrite the change. Text you typed but didn't save is not written; it stays in its field, for you to copy. |
 | Read-only (blue) | Read-only mode is on (hamburger menu → View → Read-only). | **Enable editing**. |
 
 **Delete.** Del always asks for confirmation. Delete is refused in these cases:
@@ -436,7 +436,7 @@ Export needs the `tectonic` binary. Mellon looks for it in this order:
 3. `PATH`.
 4. `<project-root>/tools/` in a source checkout.
 
-**Error log.** Unexpected errors are shown in a dialog and appended to `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log`. That is Qt's per-user app-data folder; on other operating systems the log is under the equivalent folder. If that folder can't be determined, the log goes to `<temp>\logs\mellon-gui.log`.
+**Error log.** Unexpected errors are shown in a dialog and appended to `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log`, in the folder the `LOCALAPPDATA` variable names. If it is unset or isn't a folder, the log goes to `%TEMP%\logs\mellon-gui.log`. On other operating systems the log is under Qt's per-user app-data folder, or `<temp>/logs/` if that can't be determined.
 
 ### MCP: `mellon-mcp [--repo-root <path>] [--read-only]`
 

@@ -20,9 +20,9 @@ def _raise_into(hook, message: str) -> None:
 def test_excepthook_logs_to_file_and_rate_limits_dialog(qtbot, tmp_path: Path, monkeypatch):
     from mellon.gui import app as gui_app
 
-    monkeypatch.setattr(
-        gui_app.QStandardPaths, "writableLocation", lambda _location: str(tmp_path)
-    )
+    # Where the log goes is MELLON-GUI-SRS-21/-22's (test_gui_srs_21/22); here
+    # only that the hook logs and rate-limits, so never into the real folder.
+    monkeypatch.setattr(gui_app, "_log_folder", lambda: tmp_path)
     shown: list[tuple] = []
     monkeypatch.setattr(
         gui_app.QMessageBox, "critical", lambda *args, **_kwargs: shown.append(args)
@@ -51,11 +51,13 @@ def test_excepthook_logs_to_file_and_rate_limits_dialog(qtbot, tmp_path: Path, m
 
 
 def test_excepthook_log_falls_back_to_temp_dir(tmp_path: Path, monkeypatch):
-    """An undetermined app-data folder ("") must not put the log in the
-    current working directory."""
+    """An undetermined app-data folder (Qt's is "" elsewhere, %LOCALAPPDATA%
+    unset on Windows) must not put the log in the current working directory."""
     from mellon.gui import app as gui_app
 
     monkeypatch.setattr(gui_app.QStandardPaths, "writableLocation", lambda _location: "")
+    monkeypatch.delenv("LOCALAPPDATA", raising=False)
+    monkeypatch.setenv("TEMP", str(tmp_path))
     monkeypatch.setattr(gui_app.tempfile, "gettempdir", lambda: str(tmp_path))
     previous = sys.excepthook
     try:

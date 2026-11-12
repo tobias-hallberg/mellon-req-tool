@@ -472,10 +472,6 @@ def _view_of(w) -> tuple:
     return (w.isVisible(), grid_ids(w), selected_ids(w))
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "defect: MELLON-TRACE-SRS-100: with PARENT's Document Editor open, double-clicking CHILD-1's "
-    "outgoing link to PARENT-1 switches CHILD's own window to PARENT's objects (its title still "
-    "names CHILD) and leaves PARENT's Document Editor on its earlier selection"))
 def test_trace_srs_100_double_click_selects_target_in_the_open_target_document_editor(tmp_path, qtbot):
     """MELLON-TRACE-SRS-100: When the user double-clicks an outgoing link in the Inspector, Mellon
     shall show the link's target object selected in the target document's Document Editor.

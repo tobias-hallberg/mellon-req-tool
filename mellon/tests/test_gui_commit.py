@@ -1229,33 +1229,42 @@ def _commit_via_dialog(gui, ed):
     gui.trigger(ed, "Commit")
 
 
+def _commit_refused_then_f5(gui, ed, root):
+    """DOC-2 is edited, then another program puts conflict markers in
+    DOC-1.xml: the commit is refused under the Changed on disk banner
+    (MELLON-GUI-SRS-111), and F5 reads the document again. Returns what the
+    window showed."""
+    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
+    head = (root / ".git" / "HEAD").read_bytes()
+    _break_doc_1(root)
+    _commit_via_dialog(gui, ed)
+    assert ed.grid_pane.is_stale(), "precondition: the commit is refused under the banner"
+    assert (root / ".git" / "HEAD").read_bytes() == head
+    gui.messages.clear()
+    gui.press_f5(ed)
+    return _shows_load_error(gui, ed)
+
+
 def test_store_srs_37_reread_in_commit_dialog_names_file_and_line(gui, authorless_editor_repo):
-    """MELLON-STORE-SRS-37: when the Document Editor reads DOC again while
-    committing it in the Commit dialog and DOC-1.xml holds conflict markers,
-    the window shows the load error's file and line, not a general failure."""
+    """MELLON-STORE-SRS-37: when the Document Editor reads DOC again and
+    DOC-1.xml holds conflict markers, the window shows the load error's file
+    and line, not a general failure. A commit after another program broke the
+    file is refused first (MELLON-GUI-SRS-111); the re-read comes with F5."""
     root = authorless_editor_repo
     ed = gui.editor(root, "DOC")
     gui.set_read_only(ed, False)
-    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
-    _break_doc_1(root)
-    gui.messages.clear()
-    _commit_via_dialog(gui, ed)
-    shown = _shows_load_error(gui, ed)
+    shown = _commit_refused_then_f5(gui, ed, root)
     assert "DOC-1.xml" in shown, f"load error file not shown: {shown!r}"
     assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
 
 
 def test_store_srs_37_reread_in_commit_dialog_says_merge_conflict(gui, authorless_editor_repo):
-    """MELLON-STORE-SRS-37 with -30: the load error shown after the Commit
-    dialog's re-read says the file looks like an unresolved merge conflict."""
+    """MELLON-STORE-SRS-37 with -30: the load error shown on the re-read after
+    a refused commit says the file looks like an unresolved merge conflict."""
     root = authorless_editor_repo
     ed = gui.editor(root, "DOC")
     gui.set_read_only(ed, False)
-    assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
-    _break_doc_1(root)
-    gui.messages.clear()
-    _commit_via_dialog(gui, ed)
-    shown = _shows_load_error(gui, ed)
+    shown = _commit_refused_then_f5(gui, ed, root)
     assert "DOC-1.xml" in shown, f"precondition: the load error was shown: {shown!r}"
     assert CONFLICT_HINT.search(shown), shown
 

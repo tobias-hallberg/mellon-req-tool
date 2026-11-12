@@ -43,7 +43,7 @@ from ..export import TectonicError, pdf as export_pdf
 from ..git_ops import GitError, blob_id_at, discover_repo, head_summary
 from ..schema import Document
 from ..suspects import LinkState, LinkStatus
-from ..service import DocumentService, ServiceError
+from ..service import DocumentService, ErrorCode, ServiceError
 from . import branding, icons
 from .controller import RepoController, describe_load_error
 from .dialogs.about_dialog import show_about
@@ -254,6 +254,9 @@ class DocumentEditorWindow(QMainWindow):
         self.grid_pane.clear_filters_requested.connect(self._clear_all_filters)
         self.grid_pane.filter_edit_requested.connect(self._open_filter_dialog)
         self.grid_pane.table_editor_changed.connect(self._on_table_editor_changed)
+        self.grid_pane.edit_refused.connect(
+            lambda message: self._status.showMessage(message, 8000)
+        )
         # MELLON-VER-SRS-4: From is the History tab's selected commit, To the
         # latest commit.
         self.right_pane.history.compare_requested.connect(
@@ -268,6 +271,9 @@ class DocumentEditorWindow(QMainWindow):
 
         # --- attach service and select document -------------------------
         self.controller.attach_service(service)
+        # MELLON-GUI-SRS-109, MELLON-STORE-SRS-182: every write this window
+        # makes first checks that nothing it read changed on disk.
+        self.controller.set_write_check(self._check_before_write)
         self.controller.select_document(doc_id)
         # Every write the service makes for this document becomes an undo
         # step here; unhooked on close (and destroy, should close not run).
@@ -349,6 +355,21 @@ class DocumentEditorWindow(QMainWindow):
         self._set_stale(changed_figures is None)
         if changed_figures:
             self.grid_pane.refresh_figures()
+
+    def _changed_on_disk(self) -> bool:
+        """Check the disk now, as activation does; True (and the Changed on
+        disk banner shown, MELLON-GUI-SRS-109) when a file of the document or
+        a parent document changed since this window read or wrote it."""
+        if not self.grid_pane.is_stale():
+            self._check_disk_freshness()
+        return self.grid_pane.is_stale()
+
+    def _check_before_write(self) -> None:
+        """The controller's write check: refuse a write whose files changed
+        on disk since this window read them (MELLON-STORE-SRS-182). The
+        caller reports the refusal; the typed text stays where it is."""
+        if self._changed_on_disk():
+            raise ServiceError(ErrorCode.CONFLICT, STALE_EDIT_MESSAGE)
 
     def _check_head_moved(self) -> None:
         """Re-read the grid's link states when HEAD moved since they were
@@ -459,7 +480,9 @@ class DocumentEditorWindow(QMainWindow):
         # when the menu opens rather than on every selection change.
         menu.aboutToShow.connect(self._refresh_discard_action)
         close_act = QAction("&Close", self)
-        close_act.setShortcut(QKeySequence.StandardKey.Close)
+        # MELLON-GUI-SRS-164: Ctrl+W and Ctrl+F4 on every platform (the
+        # standard Close key is only Ctrl+F4 on Windows).
+        close_act.setShortcuts([QKeySequence("Ctrl+W"), QKeySequence("Ctrl+F4")])
         close_act.triggered.connect(self.close)
         # Window-rooted action so the shortcut fires without a menu bar.
         self.addAction(close_act)
@@ -506,7 +529,7 @@ class DocumentEditorWindow(QMainWindow):
         self._read_only_act.setToolTip(
             "Block all edits. Toggle off to allow editing this document."
         )
-        self._read_only_act.toggled.connect(self._set_read_only)
+        self._read_only_act.toggled.connect(self._on_read_only_toggled)
         self.addAction(self._read_only_act)
         menu.addAction(self._read_only_act)
         menu.addSeparator()
@@ -794,6 +817,13 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- read-only toggle ----------------------------------------------
 
+    def _on_read_only_toggled(self, on: bool) -> None:
+        # MELLON-GUI-SRS-74: the Read-only action saves the pending edits
+        # first; read-only mode itself drops what is left in the fields.
+        if on:
+            self._save_pending_edits()
+        self._set_read_only(on)
+
     def _set_read_only(self, on: bool) -> None:
         on = bool(on)
         if self._read_only == on:
@@ -890,20 +920,34 @@ class DocumentEditorWindow(QMainWindow):
         self.grid_pane.commit_open_editor()
         self.inspector.commit_pending()
 
-    def _prepare_edit(self) -> bool:
+    def _prepare_edit(self, *, check_disk: bool = True) -> bool:
         """Preamble for every mutating action; False means don't run it.
 
         Refused while read-only, and while the "Changed on disk" banner is up
         (pending text is left in its editor rather than written over the
-        external change). Otherwise pending text is committed first.
+        external change). With `check_disk`, the disk is checked first, so a
+        change no activation has noticed yet puts the banner up and refuses
+        too (MELLON-GUI-SRS-109, -111). Otherwise pending text is committed
+        first.
         """
         if self._read_only:
             return False
-        if self.grid_pane.is_stale():
+        stale = self._changed_on_disk() if check_disk else self.grid_pane.is_stale()
+        if stale:
             self._status.showMessage(STALE_EDIT_MESSAGE, 6000)
             return False
         self.flush_pending_edits()
-        return True
+        # The flush's own write check may have found a change and put the
+        # banner up; the action is refused then too.
+        return not self.grid_pane.is_stale()
+
+    def _save_pending_edits(self) -> None:
+        """MELLON-GUI-SRS-74: save pending edits before an action that
+        doesn't edit (Trace, Validate, Read-only). Nothing is pending while
+        read-only; under the Changed on disk banner the text stays in its
+        field, as `_prepare_edit` leaves it."""
+        if not self._read_only and not self.grid_pane.is_stale():
+            self.flush_pending_edits()
 
     # --- undo / redo ----------------------------------------------------
 
@@ -911,6 +955,9 @@ class DocumentEditorWindow(QMainWindow):
         """Service change listener: an edit to this document is an undo step."""
         if doc_id != self._doc_id:
             return
+        # An edit of this document through the shared service is this
+        # window's own, not a change on disk (MELLON-GUI-SRS-109).
+        self.controller.note_written(changes.paths)
         self._undo_steps.append((label, changes))
         self._redo_steps.clear()
         self._refresh_undo_actions()
@@ -933,7 +980,10 @@ class DocumentEditorWindow(QMainWindow):
         """Undo the newest step (or redo the newest undone one): the files it
         changed go back to their bytes before (after) it. Refused, and the
         history cleared, when a file changed since."""
-        if not self._prepare_edit():
+        # Undo and Redo aren't edits (docs/definitions.md): the replay checks
+        # the step's own files and names the one that changed
+        # (MELLON-EDIT-SRS-356 to -358).
+        if not self._prepare_edit(check_disk=False):
             return
         # The flush may have written pending text: that is the newest step
         # now (and a redo has nothing left to redo).
@@ -1222,6 +1272,7 @@ class DocumentEditorWindow(QMainWindow):
         )
 
     def _show_trace(self) -> None:
+        self._save_pending_edits()  # MELLON-GUI-SRS-74
         doc_id = self.controller.current_doc_id()
         sel = self.controller.current_obj_id()
         if doc_id is None or sel is None:
@@ -2016,6 +2067,11 @@ class DocumentEditorWindow(QMainWindow):
         if not message:
             self._status.showMessage("Empty commit message — aborted.", 4000)
             return
+        # MELLON-GUI-SRS-111: checked again at the moment of commit, so a
+        # change made while the dialog was open stops it too.
+        if self._changed_on_disk():
+            self._status.showMessage(f"Commit refused. {STALE_EDIT_MESSAGE}", 8000)
+            return
         svc = self.controller.require_service()
         meta_updates = (
             ("author", dlg.author(), preview.current_author),
@@ -2175,6 +2231,11 @@ class DocumentEditorWindow(QMainWindow):
         """
         if self._read_only:
             return
+        # MELLON-GUI-SRS-74: pending text is written before the question, so
+        # a cancelled discard keeps it, and a discard throws it away with the
+        # rest (left pending, the reload's own flush would write it back over
+        # the restored files).
+        self._save_pending_edits()
         doc_id = self._doc_id
         svc = self.controller.require_service()
         if not svc.has_uncommitted_changes(doc_id):
@@ -2205,10 +2266,6 @@ class DocumentEditorWindow(QMainWindow):
         if choice != QMessageBox.StandardButton.Discard:
             self._status.showMessage("Discard cancelled.", 3000)
             return
-        # Write pending typed text first, so it is discarded with the rest:
-        # left pending, the reload's own flush would write it back over the
-        # restored files.
-        self.flush_pending_edits()
         error: ServiceError | None = None
         try:
             restored = svc.discard_document_changes(doc_id)
@@ -2374,6 +2431,7 @@ class DocumentEditorWindow(QMainWindow):
         raise error  # type: ignore[misc]
 
     def _validate_current_doc(self) -> None:
+        self._save_pending_edits()  # MELLON-GUI-SRS-74
         doc_id = self.controller.current_doc_id()
         if doc_id is None:
             self._status.showMessage("No document selected.", 4000)

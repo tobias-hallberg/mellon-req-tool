@@ -166,6 +166,9 @@ def _recorded(method):
                 listener(doc_id, label, changes)
         return result
 
+    # Tells a caller that wraps the service (the GUI's Document Editor checks
+    # the disk before each write) which methods write files.
+    wrapper.writes_files = True
     return wrapper
 
 

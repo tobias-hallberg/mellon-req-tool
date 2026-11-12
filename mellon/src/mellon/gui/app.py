@@ -10,6 +10,7 @@ Explorer opens empty and the user picks a repo via File → Open Repo.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import tempfile
 import time
@@ -17,7 +18,7 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 
-from PySide6.QtCore import QStandardPaths, Qt, QThread, QThreadPool
+from PySide6.QtCore import QCoreApplication, QStandardPaths, Qt, QThread, QThreadPool
 from PySide6.QtGui import QFont, QGuiApplication
 from PySide6.QtWidgets import QApplication, QMessageBox
 
@@ -30,6 +31,35 @@ from .theme import ThemeManager
 _ERROR_DIALOG_INTERVAL_S = 10.0
 
 
+def _log_folder() -> Path:
+    r"""The folder the error log goes in.
+
+    On Windows (MELLON-GUI-SRS-21, -22) `%LOCALAPPDATA%\<org>\<app>`, which
+    is `%LOCALAPPDATA%\mellon\mellon`, read from the variable rather than
+    the known folder, so the place support asks for is the one the variable
+    names; `%TEMP%` if the variable is unset or isn't a folder. Elsewhere,
+    Qt's app-local data folder, or the temp folder if Qt can't determine it.
+    Never a path relative to the working directory.
+    """
+    if sys.platform == "win32":
+        local = os.environ.get("LOCALAPPDATA", "")
+        if local and os.path.isabs(local) and os.path.isdir(local):
+            return Path(local).joinpath(
+                *(n for n in (QCoreApplication.organizationName(),
+                              QCoreApplication.applicationName()) if n)
+            )
+        temp = os.environ.get("TEMP", "")
+        if temp and os.path.isabs(temp) and os.path.isdir(temp):
+            return Path(temp)
+        return Path(tempfile.gettempdir())
+    return Path(
+        QStandardPaths.writableLocation(
+            QStandardPaths.StandardLocation.AppLocalDataLocation
+        )
+        or tempfile.gettempdir()
+    )
+
+
 def _install_excepthook() -> Path:
     """Log uncaught exceptions to a file and show them in a dialog.
 
@@ -38,12 +68,7 @@ def _install_excepthook() -> Path:
     vanish. Dialogs are rate-limited because a failing paint or `data()` call
     repeats on every repaint. Returns the log file path.
     """
-    # writableLocation returns "" when it can't determine the folder; don't
-    # fall back to a path relative to the working directory.
-    base = QStandardPaths.writableLocation(
-        QStandardPaths.StandardLocation.AppLocalDataLocation
-    ) or tempfile.gettempdir()
-    log_path = Path(base) / "logs" / "mellon-gui.log"
+    log_path = _log_folder() / "logs" / "mellon-gui.log"
     state = {"open": False, "last": float("-inf")}
 
     def hook(exc_type, exc, tb) -> None:

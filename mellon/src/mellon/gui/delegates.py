@@ -51,6 +51,7 @@ import html as _html
 
 from ..drawio import qt_svg
 from ..schema import Table
+from ..service import ServiceError
 from ..validator import value_fits
 from .controller import RepoController
 from .models.objects_grid import (
@@ -156,7 +157,12 @@ class AttrDelegate(QStyledItemDelegate):
         doc_id = self._controller.current_doc_id()
         if doc_id is None:
             return None
-        doc = self._controller.document(doc_id)
+        try:
+            doc = self._controller.document(doc_id)
+        except ServiceError:
+            # The document doesn't load now (another program broke a file):
+            # no kind to check against. The write itself reports the failure.
+            return None
         return doc.attribute(self._attr_name)
 
 

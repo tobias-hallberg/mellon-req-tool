@@ -231,6 +231,32 @@ All notable changes to Mellon. The format follows
   (`MELLON-PDF-SRS-147`).
 - **`export_document`'s `suspect_links` carry each link's `doc_id`,** the
   same fields the `suspects` tool gives (`MELLON-PDF-SRS-54`).
+- **A Document Editor no longer writes over a change another program made**
+  (an agent over MCP, a git client, draw.io) while the window wasn't
+  activated. Each edit and each commit checks the files first and is refused
+  with the Changed on disk banner, also when the change was made while the
+  Commit dialog was open. Typed text stays in its field. A file saved again
+  with the same content no longer counts as changed (`MELLON-GUI-SRS-109`,
+  `-111`, `MELLON-STORE-SRS-182`).
+- **Lock and backup files other programs leave in a document folder** (names
+  starting with `~$` or `.$`) no longer bring up the Changed on disk banner
+  (`MELLON-GUI-SRS-99`).
+- **While the Changed on disk banner is up,** dragging a column of the active
+  view no longer saves the view, and editing or pasting in a grid cell says
+  to reload (F5) instead of doing nothing (`MELLON-GUI-SRS-104`).
+- **Trace, Validate, Discard uncommitted changes and Read-only save the text
+  being typed first.** Read-only no longer throws it away, and Discard saves
+  it before asking (`MELLON-GUI-SRS-74`).
+- **Ctrl+W closes a Document Editor on Windows,** as Ctrl+F4 does
+  (`MELLON-GUI-SRS-164`).
+- **The GUI's error log goes where INSTALL.md says:**
+  `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log`, or
+  `%TEMP%\logs\mellon-gui.log` when `%LOCALAPPDATA%` is unset or isn't a
+  folder (`MELLON-GUI-SRS-21`, `-22`).
+- **Double-clicking an outgoing link in the Inspector, or Jump, selects the
+  target in its own document's Document Editor,** opening it if needed; the
+  window the jump started from no longer switches documents
+  (`MELLON-TRACE-SRS-100`).
 
 ### Security
 

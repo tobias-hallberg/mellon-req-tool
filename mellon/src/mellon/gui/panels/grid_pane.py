@@ -19,7 +19,7 @@ from PySide6.QtCore import (
     QTimer,
     Signal,
 )
-from PySide6.QtGui import QAction
+from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import (
     QAbstractItemDelegate,
     QFileDialog,
@@ -51,8 +51,10 @@ from ..delegates import (
 from ..models.objects_grid import (
     OBJ_FIGURE_PATH_ROLE,
     OBJ_STATE_ROLE,
+    STALE_EDIT_MESSAGE,
     ObjectsGridModel,
 )
+from ..widgets.inline_table import InlineTableWidget
 from ..theme import ThemeManager
 from ...schema import Table, TableCell, TableColumn, TableRow
 
@@ -161,9 +163,53 @@ class _OutlineTableView(QTableView):
 
     indent_requested = Signal()
     outdent_requested = Signal()
+    # An edit started on a cell (double-click, F2, typing, paste) that isn't
+    # editable: GridPane says why when the Changed on disk banner is up.
+    edit_attempt_refused = Signal(QModelIndex)
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        # Set (by GridPane) when the model refuses the text being committed
+        # because a file changed on disk; `_kept_editor` is that editor,
+        # which the close that follows the commit leaves open.
+        self.commit_refused = False
+        self._kept_editor: QWidget | None = None
+
+    def edit(self, index, trigger=None, event=None):  # type: ignore[override]
+        if trigger is None:  # the public edit(index) slot
+            return super().edit(index)
+        opened = super().edit(index, trigger, event)
+        # A mouse press asks with NoEditTriggers, which every flag set holds.
+        none = QTableView.EditTrigger.NoEditTriggers
+        if not opened and trigger != none and trigger in self.editTriggers():
+            self.edit_attempt_refused.emit(index)
+        return opened
+
+    def commitData(self, editor) -> None:  # type: ignore[override]
+        self.commit_refused = False
+        super().commitData(editor)
+        # MELLON-GUI-SRS-109: text refused because a file changed on disk
+        # stays in its editor, for the user to copy before reloading. (Not a
+        # table editor: it has its own save and close.)
+        if self.commit_refused and not isinstance(editor, InlineTableWidget):
+            self._kept_editor = editor
+            QTimer.singleShot(0, self._forget_kept_editor)
+        self.commit_refused = False
+
+    def closeEditor(self, editor, hint) -> None:  # type: ignore[override]
+        kept = editor is self._kept_editor
+        self._kept_editor = None
+        if kept and hint != QAbstractItemDelegate.EndEditHint.RevertModelCache:
+            return
+        super().closeEditor(editor, hint)
+
+    def _forget_kept_editor(self) -> None:
+        self._kept_editor = None
 
     def keyPressEvent(self, event) -> None:  # type: ignore[override]
         if self.state() != QTableView.State.EditingState:
+            if event.matches(QKeySequence.StandardKey.Paste):
+                self.edit_attempt_refused.emit(self.currentIndex())
             key = event.key()
             mods = event.modifiers()
             if key == Qt.Key.Key_Backtab or (
@@ -490,6 +536,8 @@ class GridPane(QWidget):
     # or closes (carries None). MainWindow tracks it so the toolbar "Table" menu
     # can drive the live editor.
     table_editor_changed = Signal(object)
+    # A message for the window's status bar about an edit the pane refused.
+    edit_refused = Signal(str)
 
     def __init__(self, controller: RepoController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -618,6 +666,8 @@ class GridPane(QWidget):
         layout.addWidget(self.filter_box)
         layout.addWidget(self._stack)
 
+        self.table.edit_attempt_refused.connect(self._on_edit_attempt_refused)
+        controller.edit_failed.connect(self._on_edit_failed)
         controller.object_selected.connect(self._on_external_selection)
         controller.document_selected.connect(self._refresh_banner)
         controller.object_changed.connect(self._on_object_changed)
@@ -665,6 +715,29 @@ class GridPane(QWidget):
 
     def is_stale(self) -> bool:
         return not self.stale_banner.isHidden()
+
+    def _on_edit_failed(self, _doc_id: str, _obj_id: str, _field: str, message: str) -> None:
+        if message == STALE_EDIT_MESSAGE:
+            self.table.commit_refused = True
+
+    def _on_edit_attempt_refused(self, index: QModelIndex) -> None:
+        """MELLON-GUI-SRS-104: an edit started under the Changed on disk
+        banner is refused with a message that says to reload (the cell's
+        editor doesn't open, and a paste isn't taken)."""
+        if self._read_only or not self.is_stale():
+            return
+        doc_id = self._controller.current_doc_id()
+        obj_id = self._controller.current_obj_id()
+        if not doc_id or not obj_id:
+            return
+        name = None
+        if index.isValid():
+            name = self._model.column_name(self._proxy.mapToSource(index).column())
+        if name in ("state", "id"):
+            return  # never editable, banner or not
+        self._controller.edit_failed.emit(
+            doc_id, obj_id, name or "description", STALE_EDIT_MESSAGE
+        )
 
     def commit_open_editor(self) -> None:
         """Commit and close the open cell editor, if any.
@@ -1051,12 +1124,21 @@ class GridPane(QWidget):
         if self._suspend_order_save:
             return
         n_system = self._system_column_count()
-        if old_visual < n_system or new_visual < n_system:
+        refused = (
+            # MELLON-GUI-SRS-104: under the Changed on disk banner the active
+            # view's file isn't written, so the move is undone.
+            self.is_stale()
+            and not self._read_only
+            and self.current_active_view_slug() is not None
+        )
+        if old_visual < n_system or new_visual < n_system or refused:
             self._suspend_order_save = True
             try:
                 self.table.horizontalHeader().moveSection(new_visual, old_visual)
             finally:
                 self._suspend_order_save = False
+            if refused:
+                self.edit_refused.emit(f"Column order not saved. {STALE_EDIT_MESSAGE}")
             return
         self._persist_current_order()
 
@@ -1075,9 +1157,10 @@ class GridPane(QWidget):
             # unchanged because we pass exactly the currently-visible attrs.
             try:
                 self._controller.set_view_visible(doc_id, slug, tuple(order))
-            except ServiceError:
-                # Transient service error — leave the visual reorder in
-                # place but don't persist.
+            except ServiceError as e:
+                # Leave the visual reorder in place but don't persist; say
+                # why (the write's disk check may have refused it).
+                self.edit_refused.emit(f"Column order not saved: {e}")
                 return
         else:
             _settings_mod.make_settings().setValue(

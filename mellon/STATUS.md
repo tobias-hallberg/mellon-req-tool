@@ -163,9 +163,10 @@ resolve relative paths against the repo root:
 - It refuses a folder that isn't the root of a full git clone, and explains
   which folder to open instead.
 - Uncaught exceptions are logged to
-  `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log` (Qt's
-  `AppLocalDataLocation`; it falls back to the temp folder) and shown in a
-  rate-limited dialog.
+  `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log` (read from the
+  environment variable on Windows, `%TEMP%\logs\` when it is unset or not a
+  folder; Qt's `AppLocalDataLocation` elsewhere) and shown in a rate-limited
+  dialog.
 
 **Project Explorer**
 
@@ -366,9 +367,14 @@ on this document.
 
 **External changes**
 
-- Each editor fingerprints its document folder and its declared parent
-  folders (`repo.folders_fingerprint`, mtime and size). On window activation,
-  a mismatch shows the amber **Changed on disk** banner.
+- Each editor keeps a content digest of every file in its document folder
+  and its declared parent folders (`controller.disk_contents`; a digest is
+  re-read when the file's mtime or size changes, or within 2 s of its mtime,
+  as git does). Editor side files (`.$*`, `~$*`) are left out. On window
+  activation, before each write the window's service makes (`_EditorService`
+  wraps every `writes_files` method) and before and after the Commit dialog,
+  a mismatch shows the amber **Changed on disk** banner and refuses the
+  write.
 - While the banner shows, edits are refused with "Changed on disk. Reload
   first (F5)."
 - **F5** (Menu → Reload from disk) drops the shared cache and reloads. If the

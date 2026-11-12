@@ -390,6 +390,7 @@ class ProjectExplorerWindow(QMainWindow):
             return
         w = DocumentEditorWindow(doc_id, service)
         w.window_closed.connect(self._on_editor_closed)
+        w.controller.set_jump_handler(self._show_object)
         self._editor_windows[doc_id] = w
         w.show()
 
@@ -399,6 +400,18 @@ class ProjectExplorerWindow(QMainWindow):
         item = QListWidgetItem(display)
         item.setData(_DOC_ID_ROLE, doc_id)
         self._open_list.addItem(item)
+
+    def _show_object(self, doc_id: str, obj_id: str) -> None:
+        """MELLON-TRACE-SRS-100: show an object selected in its own
+        document's Document Editor, opening the editor if it isn't open. The
+        window the jump started from stays as it was."""
+        self._open_document(doc_id)
+        w = self._editor_windows.get(doc_id)
+        if w is None:
+            return  # the document doesn't load; `_open_document` said so
+        w.controller.select_object(doc_id, obj_id)
+        w.raise_()
+        w.activateWindow()
 
     def _on_editor_closed(self, doc_id: str) -> None:
         self._editor_windows.pop(doc_id, None)
