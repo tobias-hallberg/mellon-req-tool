@@ -9,6 +9,9 @@ seen in the fixture.
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 from PySide6.QtCore import QRegularExpression, QSortFilterProxyModel, Qt
 from PySide6.QtGui import QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import (
@@ -28,6 +31,20 @@ from ..controller import RepoController
 TARGET_ROLE = Qt.ItemDataRole.UserRole + 1
 
 COMMON_LINK_TYPES = ("satisfies", "verifies", "refines", "implements")
+
+
+def _object_ids_on_disk(folder: Path) -> set[str]:
+    """IDs of the object files in a document folder, as the working copy holds
+    them now; none when the folder can't be read."""
+    try:
+        with os.scandir(folder / "objects") as entries:
+            return {
+                e.name[: -len(".xml")]
+                for e in entries
+                if e.name.endswith(".xml") and e.is_file()
+            }
+    except OSError:
+        return set()
 
 
 class LinkPicker(QDialog):
@@ -90,11 +107,22 @@ class LinkPicker(QDialog):
         svc = self._controller.require_service()
         source = svc.get_document(self._source_doc)
         allowed = {self._source_doc, *source.parents}
+        # MELLON-TRACE-SRS-6: the documents shown can be older than the disk,
+        # so leave out each object whose file is gone from the working copy;
+        # creating the link would be refused. One listing per document.
+        root = svc.repo_root
+        on_disk = {
+            doc_id: _object_ids_on_disk(root / doc_id) if root is not None else None
+            for doc_id in allowed
+        }
         for doc_id, obj_id, title in svc.all_objects():
             if doc_id not in allowed:
                 continue  # source doc may only link to itself or its parents
             if doc_id == self._source_doc and obj_id == self._source_id:
                 continue  # can't link to self
+            listed = on_disk[doc_id]
+            if listed is not None and obj_id not in listed:
+                continue
             label = f"{doc_id} / {obj_id}"
             if title:
                 label += f"  —  {title}"

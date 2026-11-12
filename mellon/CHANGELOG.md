@@ -257,6 +257,19 @@ All notable changes to Mellon. The format follows
   target in its own document's Document Editor,** opening it if needed; the
   window the jump started from no longer switches documents
   (`MELLON-TRACE-SRS-100`).
+- **A link to an object that isn't in the working copy is refused** by the
+  library's `add_link`, the document service, MCP `add_link` and
+  `update_object`, and the Document Editor's Link…, with "link target
+  <doc>/<id> does not exist in the working copy" (naming a missing document
+  when the whole document is gone). It used to be created and then read
+  BROKEN. The link picker no longer offers an object whose file is gone, and
+  copying an object with its links is refused before anything is written
+  when one of its links is broken (`MELLON-TRACE-SRS-6`).
+- **A link to an object that exists but was never committed reads SUSPECT,
+  not BROKEN,** in the scan, `mellon-check`, the state gutter and MCP
+  `suspects`; this includes every link in a repository with no commit. It
+  still can't be acknowledged until the target is committed, and
+  `ack_suspects` skips it with that reason (`MELLON-TRACE-SRS-45`, `-47`).
 
 ### Security
 

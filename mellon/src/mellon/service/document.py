@@ -58,6 +58,7 @@ from ..suspects import (
     ack_all as suspects_ack_all,
     scan_document,
     scan_repo,
+    target_exists,
 )
 from ..coverage import CoverageReport, coverage_report as _coverage_report
 from ..diff import (
@@ -1127,6 +1128,22 @@ class DocumentService:
         source_links = doc.links.get(obj_id, ())
         source_figure_path = folder / "figures" / f"{obj_id}.svg"
         has_figure = source_figure_path.is_file()
+        # MELLON-TRACE-SRS-6: a link to a target that isn't in the working
+        # copy is refused, so a copy with its links can't be made; refuse
+        # before anything is written, so no copy is left half made.
+        if copy_links:
+            missing = [
+                f"{link.target_doc}/{link.target_id}"
+                for link in source_links
+                if not target_exists(folder.parent, link.target_doc, link.target_id)
+            ]
+            if missing:
+                raise ServiceError(
+                    ErrorCode.VALIDATION,
+                    f"cannot copy {obj_id} with its links: link target(s) "
+                    f"{', '.join(missing)} do not exist in the working copy; "
+                    "remove those links or copy without links",
+                )
 
         effective_parent = parent_id
         if effective_parent is None:

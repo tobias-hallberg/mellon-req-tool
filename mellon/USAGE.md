@@ -179,6 +179,7 @@ An object can carry a `<table>` after its `<description>`. By convention its `ty
 - **Required attributes:** `target-doc`, `target-id`, and `type`.
   - `type` is free text. The GUI offers `satisfies`, `verifies`, `refines`, and `implements`.
   - `target-doc` is this document or a declared parent, which must be its own folder at the repo root.
+  - `target-id` must name an object in the working copy when the link is created; Mellon refuses a link to a missing object or document. Copying an object with its links is refused when one of them is broken.
 - **`ack`:** optional. It is the short (7-character) hash of the target's commit that was last reviewed for this link.
   - A new link gets the target's current hash when the target is committed.
   - Otherwise `ack` is left out and the link reads SUSPECT ("never reviewed").
@@ -671,7 +672,7 @@ This is the core quality gate. Assume `VCU3-SRS-1` satisfies `VCU3-SyRS-42`, and
    The GUI has no keyboard shortcut and no whole-document ack. Commit the links file after acking.
 6. **Re-scan.** The suspects are clean.
 
-Broken links can't be acked. A link is BROKEN when its target file is missing, or when the target is not in git history.
+A link is BROKEN when its target file is missing from the working copy, and broken links can't be acked. A link whose target exists but was never committed is SUSPECT ("never reviewed"), and can't be acked until the target is committed: there's no commit to record.
 
 The two-commit structure is enforced by git: a commit can't contain its own hash. If you revise a parent and update its ack in the same commit, the `ack` still points at the old hash, and the scan flags it. That forces a second, explicit commit that records the review.
 

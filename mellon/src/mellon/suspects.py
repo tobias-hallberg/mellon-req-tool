@@ -6,8 +6,9 @@ Suspect-link algorithm (see PLAN.md §4):
         2. If missing -> BROKEN
         3. Get target's last-commit short hash from git (object XML + figure
            SVG, following git's history simplification across merges; see
-           link_index.py)
-        4. If the link has no @ack, or @ack != current_hash -> SUSPECT
+           link_index.py). A target that was never committed has none.
+        4. If the link has no @ack, the target has no last commit, or
+           @ack != current_hash -> SUSPECT
         5. Otherwise -> OK
 """
 
@@ -61,10 +62,8 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
                 continue
             if link.target_doc not in listed:
                 listed[link.target_doc] = _object_files(repo_root, link.target_doc)
-            if (
-                f"{link.target_id}.xml" in listed[link.target_doc]
-                or (repo_root / _object_rel(link)).is_file()
-            ):
+            in_listing = f"{link.target_id}.xml" in listed[link.target_doc]
+            if in_listing or target_exists(repo_root, link.target_doc, link.target_id):
                 existing.setdefault(link.target_doc, set()).add(link.target_id)
     current_by_doc = {
         target_doc: current_hashes(repo, target_doc, ids)
@@ -84,16 +83,22 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
                 )
                 continue
 
+            # MELLON-TRACE-SRS-44, -45, -47: the target exists, so the link isn't
+            # broken. A target never committed has no last change (None), and
+            # neither a missing acknowledged commit nor a recorded one matches
+            # that, so the link is suspect.
             current = current_by_doc[link.target_doc][link.target_id]
-            if current is None:
-                results.append(
-                    LinkStatus(source_id, link, LinkState.BROKEN, None, "target not in git history")
-                )
-                continue
-
             if link.ack is None:
+                # MELLON-TRACE-SRS-46: say why, whether or not there's a last change.
                 results.append(
                     LinkStatus(source_id, link, LinkState.SUSPECT, current, "never reviewed")
+                )
+            elif current is None:
+                results.append(
+                    LinkStatus(
+                        source_id, link, LinkState.SUSPECT, None,
+                        f"ack={link.ack} but target was never committed",
+                    )
                 )
             elif link.ack != current:
                 results.append(
@@ -107,8 +112,19 @@ def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
     return results
 
 
-def _object_rel(link: Link) -> str:
-    return f"{link.target_doc}/objects/{link.target_id}.xml"
+def target_exists(repo_root: Path, target_doc: str, target_id: str) -> bool:
+    """Whether a link target exists in the working copy: its object file is
+    there. The test for a broken link (MELLON-TRACE-SRS-44), which creating a
+    link shares (MELLON-TRACE-SRS-6), so a link Mellon creates never starts
+    broken.
+
+    MELLON-TRACE-SRS-77, -79: a target that isn't an object ID names no object
+    and could name a path outside the repository, so it doesn't exist and
+    nothing is opened for it.
+    """
+    if not is_object_id(target_doc, target_id):
+        return False
+    return (repo_root / target_doc / "objects" / f"{target_id}.xml").is_file()
 
 
 def _object_files(repo_root: Path, target_doc: str) -> set[str]:

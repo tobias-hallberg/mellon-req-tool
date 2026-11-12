@@ -79,7 +79,7 @@ Two things to know first:
    1. Select the `DEMO-SRS` object, click **Link…** (`Ctrl+L`), choose `DEMO-SyRS / DEMO-SyRS-0` with link type `satisfies`, and click **OK**.
    2. Commit `DEMO-SRS`.
 
-   The Inspector shows the link as `[OK]`, and the grid's state column shows a green marker. Link only to committed objects: a link to an object that was never committed shows as BROKEN.
+   The Inspector shows the link as `[OK]`, and the grid's state column shows a green marker. Link only to committed objects: a link to an object that was never committed shows as SUSPECT, and can be acknowledged once the object is committed.
 9. **Revise the parent.** In the `DEMO-SyRS` window, click **Enable editing**, change the text of `DEMO-SyRS-0`, and commit.
 10. **See SUSPECT.** Switch to the `DEMO-SRS` window and press `F5` if the amber **Changed on disk** banner shows.
     - The link is now `[SUSPECT]` and the grid marker turns yellow.

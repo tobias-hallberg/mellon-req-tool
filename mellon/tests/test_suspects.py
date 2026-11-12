@@ -200,18 +200,39 @@ def _write_link_to(doc: Path, target_id: str, ack: str | None) -> None:
     )
 
 
-def test_target_on_disk_but_never_committed_is_broken(repo_tree):
+def test_target_on_disk_but_never_committed_is_suspect_and_not_acked(repo_tree):
+    """MELLON-TRACE-SRS-45: the target exists, so the link isn't broken; with
+    no last change there is nothing to acknowledge, so ack_all leaves it."""
     root, doc, _c1 = repo_tree
     (root / "PARENT" / "objects" / "PARENT-43.xml").write_text(
         PARENT_OBJ_V1.replace("PARENT-42", "PARENT-43"), encoding="utf-8"
     )
     _write_link_to(doc, "PARENT-43", None)
+    before = (doc / "links" / "DOC-1.xml").read_bytes()
 
     statuses = scan_document(load_document(doc), doc)
 
-    assert statuses[0].state is LinkState.BROKEN
-    assert statuses[0].reason == "target not in git history"
+    assert statuses[0].state is LinkState.SUSPECT
+    assert statuses[0].reason == "never reviewed"
     assert statuses[0].current_hash is None
+    assert ack_all(doc, statuses) == []
+    assert (doc / "links" / "DOC-1.xml").read_bytes() == before
+
+
+def test_trace_srs_47_recorded_ack_to_never_committed_target_is_suspect(repo_tree):
+    """MELLON-TRACE-SRS-47: a link that records an acknowledged commit, to a
+    target in the working copy that was never committed (no last change), is
+    suspect: the recorded commit doesn't match no last change."""
+    root, doc, c1 = repo_tree
+    (root / "PARENT" / "objects" / "PARENT-43.xml").write_text(
+        PARENT_OBJ_V1.replace("PARENT-42", "PARENT-43"), encoding="utf-8"
+    )
+    _write_link_to(doc, "PARENT-43", c1)
+
+    (status,) = scan_document(load_document(doc), doc)
+
+    assert status.state is LinkState.SUSPECT
+    assert status.current_hash is None
 
 
 def test_ack_all_never_rewrites_a_broken_link(repo_tree):
@@ -677,10 +698,7 @@ def assert_state(root, key, state, current=None, step=""):
 
 @pytest.mark.parametrize("layer", ["library"])
 @pytest.mark.parametrize("source,target,state", [
-    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target", marks=pytest.mark.xfail(
-        strict=True, reason="defect: MELLON-TRACE-SRS-45: a link with no acknowledged commit to a target "
-        "that is in the working copy but was never committed reads broken ('target not in git history'), "
-        "not suspect; a broken link needs the target missing from the working copy")),
+    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target"),
     pytest.param("CHILD-2", "PARENT-1", "suspect", id="committed-target"),
     pytest.param("CHILD-3", "PARENT-44", "broken", id="missing-target"),
 ])

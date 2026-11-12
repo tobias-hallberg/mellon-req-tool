@@ -1686,3 +1686,31 @@ def test_edit_srs_147_copy_placed_as_sibling_or_under_given_parent(tmp_path, mcp
     root = copy_repo(tmp_path, commit_all)
     new_id = copy_of(root, mcp_at, path_kind, source, parent_id=parent_id)
     assert new_id in sub_objects(root, "SRS", expected_parent)
+
+
+# MELLON-TRACE-SRS-6 and copying an object with its links
+from tests.trace_support import (  # noqa: E402
+    basic_repo as trace_basic_repo,
+    remove_from_working_copy,
+    snapshot as trace_snapshot,
+)
+
+
+def test_copy_with_a_link_to_a_missing_target_is_refused_before_writing(tmp_path):
+    """MELLON-TRACE-SRS-6 refuses a link to a target that isn't in the working
+    copy, so a copy with its links can't be made when one of the source's
+    links is broken: the copy is refused before anything is written, rather
+    than left half made. Without its links, it is made."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", None),
+                                     ("PARENT", "PARENT-2", "satisfies", None)])
+    r.commit("links")
+    remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
+    before = trace_snapshot(r.root)
+    svc = DocumentService(r.root)
+    with pytest.raises(ServiceError, match="PARENT/PARENT-2") as info:
+        svc.copy_object("CHILD", "CHILD-1")
+    assert info.value.code is ErrorCode.VALIDATION
+    assert trace_snapshot(r.root) == before
+    (new_id,) = svc.copy_object("CHILD", "CHILD-1", copy_links=False).value
+    assert new_id not in load_document(r.root / "CHILD").links

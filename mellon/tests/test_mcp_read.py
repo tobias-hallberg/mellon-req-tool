@@ -1852,10 +1852,7 @@ def test_trace_srs_33_incoming_links_found_in_each_document(tmp_path, mcp, layer
 
 @pytest.mark.parametrize("layer", ["mcp"])
 @pytest.mark.parametrize("source,target,state", [
-    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target", marks=pytest.mark.xfail(
-        strict=True, reason="defect: MELLON-TRACE-SRS-45: a link with no acknowledged commit to a target "
-        "that is in the working copy but was never committed reads broken ('target not in git history'), "
-        "not suspect; a broken link needs the target missing from the working copy")),
+    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target"),
     pytest.param("CHILD-2", "PARENT-1", "suspect", id="committed-target"),
     pytest.param("CHILD-3", "PARENT-44", "broken", id="missing-target"),
 ])

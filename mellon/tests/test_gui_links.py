@@ -220,7 +220,6 @@ import re  # noqa: E402
 from tests.trace_support import (  # noqa: E402
     Modals,
     Repo,
-    _defect_6,
     _qt,
     _v_model_repo,
     basic_repo,
@@ -277,18 +276,33 @@ def explorer_open(qtbot, pe, doc_id):
     return new[0]
 
 
-@_defect_6("the Document Editor, when the link picker still offers a target deleted on disk,")
+def test_trace_srs_6_link_picker_leaves_out_a_target_deleted_on_disk(tmp_path, qtbot):
+    """MELLON-TRACE-SRS-6: the link picker doesn't offer an object whose file
+    another program deleted after the Document Editor read the document."""
+    QtCore, QtGui, QtWidgets, QtTest = _qt()
+    from mellon.gui.dialogs.link_picker import LinkPicker
+
+    r = basic_repo(tmp_path)
+    w = open_editor(qtbot, r.root, "CHILD")
+    remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
+    dlg = LinkPicker(w.controller, "CHILD", "CHILD-1", w)
+    qtbot.addWidget(dlg)
+    views = dlg.findChildren(QtWidgets.QListView)
+    rows = [str(v.model().data(v.model().index(i, 0))) for v in views for i in range(v.model().rowCount())]
+    assert any("PARENT-1 " in t + " " for t in rows), rows
+    assert not any("PARENT-2 " in t + " " for t in rows), rows
+
+
 def test_trace_srs_6_document_editor_refuses_link_to_target_deleted_on_disk(tmp_path, qtbot):
     """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
     shall refuse to create the link. Condition: in a Document Editor, the user picks PARENT-2 in the
-    link picker after PARENT-2 was deleted on disk by another program."""
+    link picker, and another program deletes PARENT-2 while the picker is open."""
     QtCore, QtGui, QtWidgets, QtTest = _qt()
     from mellon.gui.dialogs.link_picker import LinkPicker
 
     r = basic_repo(tmp_path)
     w = open_editor(qtbot, r.root, "CHILD")
     click_row(qtbot, w, "CHILD-1")
-    remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
     offered = []
 
     def pick():
@@ -301,21 +315,23 @@ def test_trace_srs_6_document_editor_refuses_link_to_target_deleted_on_disk(tmp_
         rows = [str(m.data(m.index(i, 0))) for i in range(m.rowCount())]
         offered.extend(rows)
         hit = [i for i, t in enumerate(rows) if "PARENT-2 " in t + " "]
+        # Deleted while the picker is open.
+        remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
         if hit:
             views[0].setCurrentIndex(m.index(hit[0], 0))
             mw.accept()
         else:
             mw.reject()
 
-    modals = Modals()
     QtCore.QTimer.singleShot(20, pick)
     [a for a in w.findChildren(QtGui.QAction) if a.text().startswith("Link")][0].trigger()
+    qtbot.waitUntil(lambda: bool(offered), timeout=5000)
     qtbot.wait(200)
-    modals.stop()
-    assert offered, "the link picker did not open"
+    assert any("PARENT-2 " in t + " " for t in offered), f"precondition: PARENT-2 offered: {offered}"
     assert ("PARENT", "PARENT-2") not in disk_links(r.root, "CHILD", "CHILD-1"), (
         f"a link to the deleted PARENT-2 was created (picker offered {offered})"
     )
+    assert "failed" in w.statusBar().currentMessage().lower(), w.statusBar().currentMessage()
 
 
 # ===========================================================================

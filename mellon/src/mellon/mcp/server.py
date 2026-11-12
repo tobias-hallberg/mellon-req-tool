@@ -1971,7 +1971,8 @@ def ack_suspects(
     The response includes:
       - `acknowledged`: links that were re-acked
       - `skipped`: requested keys that matched no SUSPECT link (already OK,
-        missing, or broken), each with a `reason`
+        missing, or broken), or a suspect link whose target was never
+        committed, each with a `reason`
 
     When `dry_run=True`, no files are written and `would_acknowledge` is
     returned instead of `acknowledged`.
@@ -2027,10 +2028,13 @@ def ack_suspects(
                         "target_doc": key[1],
                         "target_id": key[2],
                     },
+                    # MELLON-TRACE-SRS-45: a suspect link without a current
+                    # hash has a target that was never committed, so there
+                    # is no last change to record (MELLON-TRACE-SRS-130).
                     "reason": (
                         f"link state is {existing.state.value!r}, not suspect"
                         if existing.state.value != "suspect"
-                        else "no current_hash available (broken target)"
+                        else "target was never committed: commit it, then acknowledge"
                     ),
                 })
             else:

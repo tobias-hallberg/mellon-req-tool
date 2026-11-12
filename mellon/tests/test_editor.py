@@ -6,6 +6,7 @@ import errno
 import os
 import random
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -243,9 +244,20 @@ def test_trace_srs_79_add_link_reads_nothing_outside_the_repository(
     assert outside == []
 
 
+def _link_target(doc_folder: Path, obj_id: str) -> None:
+    """Put a PARENT object file beside `doc_folder`: a link's target must be in
+    the working copy (MELLON-TRACE-SRS-6)."""
+    objects = doc_folder.parent / "PARENT" / "objects"
+    objects.mkdir(parents=True, exist_ok=True)
+    (objects / f"{obj_id}.xml").write_text(
+        f'<object id="{obj_id}"><description>x</description></object>\n', encoding="utf-8"
+    )
+
+
 def test_add_link_without_git(doc_folder: Path) -> None:
     # No git repo -> ack is None (link starts suspect).
     # Need a source that exists: DOC-0 has no outgoing links currently.
+    _link_target(doc_folder, "PARENT-99")
     ack = add_link(doc_folder, "DOC-0", "PARENT", "PARENT-99", "refines")
     assert ack is None
 
@@ -255,6 +267,7 @@ def test_add_link_without_git(doc_folder: Path) -> None:
 
 
 def test_add_link_rejects_duplicate(doc_folder: Path) -> None:
+    _link_target(doc_folder, "PARENT-1")
     add_link(doc_folder, "DOC-0", "PARENT", "PARENT-1", "refines")
     with pytest.raises(EditorError, match="already exists"):
         add_link(doc_folder, "DOC-0", "PARENT", "PARENT-1", "refines")
@@ -300,6 +313,7 @@ def test_remove_link_last_link_deletes_file(doc_folder: Path) -> None:
 
 
 def test_remove_link_keeps_file_when_other_links_remain(doc_folder: Path) -> None:
+    _link_target(doc_folder, "PARENT-9")
     add_link(doc_folder, "DOC-1", "PARENT", "PARENT-9", "refines")
     ok = remove_link(doc_folder, "DOC-1", "PARENT", "PARENT-42")
     assert ok is True
@@ -1397,6 +1411,7 @@ def test_create_object_maps_page_break_and_writes_lf(doc_folder: Path) -> None:
 
 def test_add_link_first_link_escapes_link_type(doc_folder: Path) -> None:
     # DOC-0 has no links file yet, so this goes through the new-file branch.
+    _link_target(doc_folder, "PARENT-1")
     add_link(doc_folder, "DOC-0", "PARENT", "PARENT-1", 'refines & "clarifies" <x>')
     assert b"\r\n" not in (doc_folder / "links" / "DOC-0.xml").read_bytes()
     (link,) = load_document(doc_folder).links["DOC-0"]
@@ -3079,7 +3094,6 @@ def test_edit_srs_278_library_refuses_filter_without_name(tmp_path, name):
 from tests.trace_support import (  # noqa: E402
     MISSING_TARGETS,
     Repo,
-    _defect_6,
     _make_missing,
     _uncommitted_parent_5,
     basic_repo as trace_basic_repo,
@@ -3124,10 +3138,7 @@ def test_trace_srs_4_link_in_repository_without_commits_gets_no_acknowledged_com
 
 
 @pytest.mark.parametrize("target", list(MISSING_TARGETS))
-@pytest.mark.parametrize("layer", [
-    pytest.param("library", marks=_defect_6("the library's add_link")),
-    pytest.param("service", marks=_defect_6("the document service's add_link")),
-])
+@pytest.mark.parametrize("layer", ["library", "service"])
 def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, target):
     """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
     shall refuse to create the link. Condition: target never existed, or committed and deleted from
@@ -3154,6 +3165,17 @@ def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, tar
                       add_links=[{"target_doc": "PARENT", "target_id": target, "type": "satisfies"}])
     assert refused(result), f"link CHILD-1 -> PARENT/{target} ({MISSING_TARGETS[target]}) was created: {result}"
     assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+def test_trace_srs_6_link_into_missing_document_is_refused(tmp_path):
+    """MELLON-TRACE-SRS-6 with the whole target document gone from the working
+    copy: refused, saying there is no such document, and no file changes."""
+    r = trace_basic_repo(tmp_path)
+    shutil.rmtree(r.root / "PARENT")
+    before = trace_snapshot(r.root)
+    with pytest.raises(EditorError, match="no document 'PARENT'"):
+        editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies")
+    assert trace_snapshot(r.root) == before
 
 
 @pytest.mark.parametrize("layer", ["library"])

@@ -580,13 +580,6 @@ def _make_missing(r: Repo, target: str) -> None:
         remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
 
 
-def _defect_6(where):
-    return pytest.mark.xfail(strict=True, reason=(
-        f"defect: MELLON-TRACE-SRS-6: {where} creates a link to a target object that doesn't exist in "
-        "the working copy (never existed, or deleted on disk): no refusal, the links file is written "
-        "and the link then reads broken"))
-
-
 # ===========================================================================
 # Incoming links (MELLON-TRACE-SRS-33)
 # ===========================================================================

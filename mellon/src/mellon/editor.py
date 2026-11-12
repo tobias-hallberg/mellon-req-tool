@@ -34,7 +34,7 @@ from .filter import (
 )
 from .git_ops import GitError, _replace_file, discover_repo
 from .link_index import current_hashes
-from .loader import LoaderError, load_document
+from .loader import LoaderError, has_manifest, load_document
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
     NEXT_OBJECT_NUMBER_ATTR,
@@ -47,6 +47,7 @@ from .schema import (
     table_geometry_errors,
     whole_number,
 )
+from .suspects import target_exists
 
 
 class EditorError(Exception):
@@ -1339,7 +1340,8 @@ def add_link(
     @ack is omitted (link starts suspect — never reviewed).
 
     Returns the ack value written, or None if no ack was set.
-    Raises if the link already exists (same target-doc + target-id on source).
+    Raises if the target object isn't in the working copy, or if the link
+    already exists (same target-doc + target-id on source).
     """
     link_type = _sanitize_text(link_type, "link type")
     doc = load_document(folder)
@@ -1352,6 +1354,17 @@ def add_link(
             f"declared parents are {list(doc.parents)} "
             f"(add a <parent doc={target_doc!r}/> first if intentional)"
         )
+
+    # MELLON-TRACE-SRS-6: a link to an object that isn't in the working copy
+    # would start broken, so it is refused, by the test the link state uses
+    # (MELLON-TRACE-SRS-44). Documents sit directly under the repository root.
+    if not target_exists(folder.parent, target_doc, target_id):
+        missing = f"link target {target_doc}/{target_id} does not exist in the working copy"
+        if is_object_id(target_doc, target_id) and not has_manifest(
+            folder.parent / target_doc
+        ):
+            missing += f": there is no document {target_doc!r}"
+        raise EditorError(missing)
 
     ack = _compute_ack(folder, target_doc, target_id)
 

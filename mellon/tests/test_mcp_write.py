@@ -2821,8 +2821,8 @@ import sys  # noqa: E402
 from tests.trace_support import (  # noqa: E402
     MISSING_TARGETS,
     Repo,
-    _defect_6,
     _make_missing,
+    _repo_with_never_committed_target,
     _suspects_set,
     _uncommitted_parent_5,
     all_acks,
@@ -2898,10 +2898,7 @@ def test_trace_srs_4_link_to_target_with_no_last_change_gets_no_acknowledged_com
 
 
 @pytest.mark.parametrize("target", list(MISSING_TARGETS))
-@pytest.mark.parametrize("layer", [
-    pytest.param("mcp add_link", marks=_defect_6("the MCP server's add_link (answers ok: true, ack null)")),
-    "mcp update_object",
-])
+@pytest.mark.parametrize("layer", ["mcp add_link", "mcp update_object"])
 def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, target):
     """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
     shall refuse to create the link. Condition: target never existed, or committed and deleted from
@@ -2930,7 +2927,6 @@ def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, tar
     assert trace_snapshot(r.root) == before, "a refused link changed files"
 
 
-@_defect_6("the MCP server's add_link over stdio (answers ok: true, 'never reviewed')")
 def test_trace_srs_6_link_to_missing_target_over_stdio_is_refused(tmp_path):
     """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
     shall refuse to create the link. Condition: add_link to PARENT-99 through the MCP server over stdio."""
@@ -3179,6 +3175,20 @@ def test_trace_srs_140_each_key_that_names_no_suspect_link_is_skipped_with_a_rea
     assert all(isinstance(v, str) and v.strip() for v in reasons.values()), reasons
     assert reasons[("CHILD-1", "PARENT-1")] != reasons[("CHILD-1", "PARENT-3")], reasons
     assert res.get("acknowledged") == [], res
+    assert trace_snapshot(r.root) == before
+
+
+def test_ack_suspects_skips_a_link_whose_target_was_never_committed(tmp_path, mcp):
+    """A suspect link whose target was never committed has no last change to
+    record (MELLON-TRACE-SRS-45, -130): ack_suspects naming it skips it, with
+    a reason that says so, and changes no file (open question Q18)."""
+    r = _repo_with_never_committed_target(tmp_path)
+    before = trace_snapshot(r.root)
+    res = mcp.serve(r.root).ack_suspects("CHILD", link_keys=[_key("CHILD-1", "PARENT-43")])
+    assert res.get("ok") is True, res
+    assert res.get("acknowledged") == [], res
+    (skipped,) = res.get("skipped", [])
+    assert "never committed" in skipped["reason"], skipped
     assert trace_snapshot(r.root) == before
 
 
