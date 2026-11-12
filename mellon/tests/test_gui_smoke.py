@@ -536,3 +536,87 @@ def test_check_srs_9_validate_action_changes_no_working_copy_file(qtbot, tmp_pat
     _blind_trigger_validate(qtbot, win, expect_window=False)
     _blind_assert_unchanged(before, _blind_snapshot(root, include_git=False),
                             "the Validate action")
+
+
+# MELLON-STORE-SRS blind tests
+from tests.store_support import (  # noqa: E402
+    CONFLICTED_DOC_1,
+    clone_with_doc,  # noqa: F401, F811 -- fixture
+    code_only_repo,  # noqa: F401, F811 -- fixture
+    detached_repo,  # noqa: F401, F811 -- fixture
+    git_commit_all,
+    git_env,  # noqa: F401, F811 -- fixture
+    git_init,
+    gui,  # noqa: F401, F811 -- fixture
+    make_doc,
+    uncommitted_repo,  # noqa: F401, F811 -- fixture
+    unopenable_repo,  # noqa: F401, F811 -- fixture
+    write,
+)
+
+
+def test_store_srs_9_project_explorer_refuses_repo_git_cant_open(gui, unopenable_repo):
+    """MELLON-STORE-SRS-9: if git can't open the repository, Mellon shall refuse
+    the folder. With core.repositoryformatversion 99, the Project Explorer
+    refuses it, lists no document, and says git can't open the repository."""
+    pe, ok = gui.explorer(unopenable_repo)
+    assert not ok, "open_repo accepted a repository git can't open"
+    assert gui.tree_rows(pe) == [], "documents were listed for a refused repository"
+    shown = " ".join(t for _, _, t in gui.messages).lower()
+    assert shown, "nothing was shown for the refusal"
+    assert "git" in shown and "open" in shown, f"message doesn't say git can't open it: {shown!r}"
+
+
+def test_store_srs_13_project_explorer_opens_root_without_documents(gui, code_only_repo):
+    """MELLON-STORE-SRS-13: Mellon shall accept a repository root that holds no
+    document. The Project Explorer opens a committed repository holding only a
+    src folder and lists no document."""
+    pe, ok = gui.explorer(code_only_repo)
+    assert ok, f"refused a root without documents: {gui.messages}"
+    assert gui.tree_rows(pe) == [], gui.tree_rows(pe)
+
+
+def test_store_srs_14_project_explorer_accepts_root_without_commit(gui, uncommitted_repo):
+    """MELLON-STORE-SRS-14: Mellon shall accept a repository root whose repository
+    has no commit. The Project Explorer opens it and lists the document created
+    before the first commit."""
+    pe, ok = gui.explorer(uncommitted_repo)
+    assert ok, f"refused a repository without a commit: {gui.messages}"
+    texts = [r["text"] for r in gui.tree_rows(pe)]
+    assert any(t.startswith("DOC") for t in texts), texts
+
+
+def test_store_srs_15_project_explorer_accepts_detached_head(gui, detached_repo):
+    """MELLON-STORE-SRS-15: Mellon shall accept a repository root whose HEAD is
+    detached. The Project Explorer opens it and shows the document as at the
+    checked-out first commit."""
+    pe, ok = gui.explorer(detached_repo)
+    assert ok, f"refused a detached HEAD: {gui.messages}"
+    texts = [r["text"] for r in gui.tree_rows(pe)]
+    assert any("First title" in t for t in texts), texts
+    assert not any("Second title" in t for t in texts), texts
+
+
+def test_store_srs_34_warning_icon_only_on_document_with_load_error(gui, tmp_path, git_env):
+    """MELLON-STORE-SRS-34: the Project Explorer shall show a warning icon on a
+    document with a load error. With conflict markers in one document's object
+    file, that entry has an icon, and the other entries show no icon or a
+    different one."""
+    from PySide6.QtGui import QIcon
+
+    root = git_init(git_env, tmp_path / "icons")
+    for d in ("BAD", "GOOD", "OTHER"):
+        make_doc(root, d, n=1)
+    write(root / "BAD" / "objects" / "BAD-1.xml", CONFLICTED_DOC_1.replace("DOC-1", "BAD-1"))
+    git_commit_all(git_env, root, "seed")
+    pe, ok = gui.explorer(root)
+    assert ok
+    rows = {r["text"].split()[0]: r for r in gui.tree_rows(pe)}
+    assert set(rows) == {"BAD", "GOOD", "OTHER"}, rows
+    bad = rows["BAD"]["icon"]
+    assert isinstance(bad, QIcon) and not bad.isNull(), "no icon on the document with a load error"
+    bad_img = bad.pixmap(16, 16).toImage()
+    for name in ("GOOD", "OTHER"):
+        icon = rows[name]["icon"]
+        if isinstance(icon, QIcon) and not icon.isNull():
+            assert icon.pixmap(16, 16).toImage() != bad_img, f"{name} shows the warning icon"

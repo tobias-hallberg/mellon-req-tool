@@ -726,3 +726,100 @@ def test_check_srs_137_load_error_line_has_document_file_line_and_reason(tmp_pat
     assert "CHILD/objects/CHILD-1.xml" in line.replace("\\", "/"), line
     assert re.search(r"(line\s*3\b|:3\b)", line), f"line 3 isn't named: {line}"
     assert "merge conflict" in line.lower(), line
+
+
+# MELLON-STORE-SRS blind tests
+from tests.store_support import (  # noqa: E402
+    CHECK_EXE,
+    _norm,
+    changed,
+    clone_with_doc,  # noqa: F401, F811 -- fixture
+    detached_repo,  # noqa: F401, F811 -- fixture
+    git,
+    git_env,  # noqa: F401, F811 -- fixture
+    not_in_work_tree,
+    read_only_repo,  # noqa: F401, F811 -- fixture
+    run_program,
+    snapshot,
+    uncommitted_repo,  # noqa: F401, F811 -- fixture
+    unopenable_repo,  # noqa: F401, F811 -- fixture
+)
+
+
+@pytest.mark.parametrize("program", [CHECK_EXE], ids=["check"])
+def test_store_srs_7_subfolder_refusal_names_the_root(clone_with_doc, program):
+    """MELLON-STORE-SRS-7: when Mellon refuses a subfolder of a git work tree,
+    Mellon shall name the work tree's root folder. Started on a document folder
+    inside a clone, the program exits 2 and its error output names the root
+    (not only the subfolder, whose path contains the root's)."""
+    root = clone_with_doc
+    sub = root / "DOC"
+    code, out = run_program(program, sub)
+    assert code == 2, f"expected exit 2 for a subfolder, got {code}: {out}"
+    rest = _norm(out).replace(_norm(str(sub)), "<subfolder>")
+    assert _norm(str(root)) in rest, f"error output doesn't name the root {root}: {out!r}"
+
+
+def test_store_srs_9_check_refuses_repo_git_cant_open(unopenable_repo):
+    """MELLON-STORE-SRS-9: if git can't open the repository, Mellon shall refuse
+    the folder: mellon-check exits 2 on a repository with format version 99."""
+    code, out = run_program(CHECK_EXE, unopenable_repo)
+    assert code == 2, f"expected exit 2, got {code}: {out}"
+
+
+@pytest.mark.parametrize("program", [CHECK_EXE], ids=["check"])
+def test_store_srs_12_each_refusal_gives_its_own_reason(
+    clone_with_doc, unopenable_repo, tmp_path, git_env, program
+):
+    """MELLON-STORE-SRS-12: when Mellon refuses the folder, Mellon shall report
+    whether it is outside a git work tree, a subfolder of one, a shallow clone,
+    or a repository git can't open. Each case exits 2 with a reason that names
+    its own case, and the four reasons differ once paths are taken out."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    if not not_in_work_tree(git_env, outside):
+        pytest.skip(f"{outside} is inside a git work tree on this machine")
+    shallow = tmp_path / "shallow"
+    git(git_env, tmp_path, "clone", "-q", "--depth", "1", clone_with_doc.as_uri(), str(shallow))
+    cases = {
+        "outside": (outside, None),
+        "subfolder": (clone_with_doc / "DOC", clone_with_doc),
+        "shallow": (shallow, None),
+        "cant-open": (unopenable_repo, None),
+    }
+    reasons = {}
+    for name, (folder, root) in cases.items():
+        code, out = run_program(program, folder)
+        assert code == 2, f"{name}: expected exit 2, got {code}: {out}"
+        text = _norm(out).replace(_norm(str(folder)), "<folder>")
+        if root is not None:
+            text = text.replace(_norm(str(root)), "<root>")
+        reasons[name] = text.strip()
+    assert "git" in reasons["outside"], reasons["outside"]
+    assert "<root>" in reasons["subfolder"], reasons["subfolder"]
+    assert "shallow" in reasons["shallow"], reasons["shallow"]
+    assert "open" in reasons["cant-open"], reasons["cant-open"]
+    assert len(set(reasons.values())) == 4, f"reasons don't differ: {reasons}"
+
+
+def test_store_srs_14_check_accepts_root_without_commit(uncommitted_repo):
+    """MELLON-STORE-SRS-14: Mellon shall accept a repository root whose repository
+    has no commit: mellon-check doesn't exit 2 (the root can't be checked)."""
+    code, out = run_program(CHECK_EXE, uncommitted_repo)
+    assert code != 2, f"mellon-check refused the root: {out}"
+
+
+def test_store_srs_15_check_accepts_detached_head(detached_repo):
+    """MELLON-STORE-SRS-15: Mellon shall accept a repository root whose HEAD is
+    detached: mellon-check checks it (exit 0 for this clean document)."""
+    code, out = run_program(CHECK_EXE, detached_repo)
+    assert code == 0, f"exit {code}: {out}"
+
+
+def test_store_srs_210_check_changes_no_file(read_only_repo):
+    """MELLON-STORE-SRS-210: when Mellon checks a repository (mellon-check), it
+    leaves each data file and figure file unchanged."""
+    root, _ = read_only_repo
+    before = snapshot(root, include_git=False)
+    run_program(CHECK_EXE, root)
+    assert changed(before, snapshot(root, include_git=False)) == []

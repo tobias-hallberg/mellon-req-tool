@@ -1408,3 +1408,142 @@ def test_edit_srs_56_include_filters_returns_filters_only(tmp_path, mcp_at, comm
     assert set(entry) == BASE_KEYS | {"filters"}
     assert "Only headings" in json.dumps(entry["filters"])
     assert len(entry["filters"]) == 1
+
+
+# MELLON-STORE-SRS blind tests
+import mellon.mcp.server as mcp_server  # noqa: E402
+from tests.store_support import (  # noqa: E402
+    MCP_EXE,
+    _norm,
+    changed,
+    clone_with_doc,  # noqa: F401, F811 -- fixture
+    code_only_repo,  # noqa: F401, F811 -- fixture
+    detached_repo,  # noqa: F401, F811 -- fixture
+    git,
+    mcp_stdio,
+    no_identity_env,
+    not_in_work_tree,
+    read_only_repo,  # noqa: F401, F811 -- fixture
+    run_program,
+    snapshot,
+    uncommitted_repo,  # noqa: F401, F811 -- fixture
+    unopenable_repo,  # noqa: F401, F811 -- fixture
+)
+
+
+@pytest.mark.parametrize("program", [MCP_EXE], ids=["mcp"])
+def test_store_srs_7_subfolder_refusal_names_the_root(clone_with_doc, program):
+    """MELLON-STORE-SRS-7: when Mellon refuses a subfolder of a git work tree,
+    Mellon shall name the work tree's root folder. Started on a document folder
+    inside a clone, the program exits 2 and its error output names the root
+    (not only the subfolder, whose path contains the root's)."""
+    root = clone_with_doc
+    sub = root / "DOC"
+    code, out = run_program(program, sub)
+    assert code == 2, f"expected exit 2 for a subfolder, got {code}: {out}"
+    rest = _norm(out).replace(_norm(str(sub)), "<subfolder>")
+    assert _norm(str(root)) in rest, f"error output doesn't name the root {root}: {out!r}"
+
+
+def test_store_srs_8_mcp_refuses_shallow_clone(clone_with_doc, tmp_path, git_env):
+    """MELLON-STORE-SRS-8: if the repository is a shallow clone, Mellon shall
+    refuse the folder. The MCP server started on a --depth 1 clone exits 2 and
+    says the repository is a shallow clone."""
+    shallow = tmp_path / "shallow"
+    git(git_env, tmp_path, "clone", "-q", "--depth", "1", clone_with_doc.as_uri(), str(shallow))
+    assert (shallow / ".git" / "shallow").exists(), "precondition: the clone is shallow"
+    code, out = run_program(MCP_EXE, shallow)
+    assert code == 2, f"expected exit 2, got {code}: {out}"
+    assert "shallow" in out.lower(), f"output doesn't say shallow clone: {out!r}"
+
+
+@pytest.mark.parametrize("program", [MCP_EXE], ids=["mcp"])
+def test_store_srs_12_each_refusal_gives_its_own_reason(
+    clone_with_doc, unopenable_repo, tmp_path, git_env, program
+):
+    """MELLON-STORE-SRS-12: when Mellon refuses the folder, Mellon shall report
+    whether it is outside a git work tree, a subfolder of one, a shallow clone,
+    or a repository git can't open. Each case exits 2 with a reason that names
+    its own case, and the four reasons differ once paths are taken out."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    if not not_in_work_tree(git_env, outside):
+        pytest.skip(f"{outside} is inside a git work tree on this machine")
+    shallow = tmp_path / "shallow"
+    git(git_env, tmp_path, "clone", "-q", "--depth", "1", clone_with_doc.as_uri(), str(shallow))
+    cases = {
+        "outside": (outside, None),
+        "subfolder": (clone_with_doc / "DOC", clone_with_doc),
+        "shallow": (shallow, None),
+        "cant-open": (unopenable_repo, None),
+    }
+    reasons = {}
+    for name, (folder, root) in cases.items():
+        code, out = run_program(program, folder)
+        assert code == 2, f"{name}: expected exit 2, got {code}: {out}"
+        text = _norm(out).replace(_norm(str(folder)), "<folder>")
+        if root is not None:
+            text = text.replace(_norm(str(root)), "<root>")
+        reasons[name] = text.strip()
+    assert "git" in reasons["outside"], reasons["outside"]
+    assert "<root>" in reasons["subfolder"], reasons["subfolder"]
+    assert "shallow" in reasons["shallow"], reasons["shallow"]
+    assert "open" in reasons["cant-open"], reasons["cant-open"]
+    assert len(set(reasons.values())) == 4, f"reasons don't differ: {reasons}"
+
+
+def test_store_srs_13_mcp_starts_on_root_without_documents(code_only_repo, tmp_path):
+    """MELLON-STORE-SRS-13: Mellon shall accept a repository root that holds no
+    document. The MCP server starts over stdio (here with no git user.name, T10)
+    and list_documents returns no document."""
+    (docs,) = mcp_stdio(code_only_repo, [("list_documents", {})], env=no_identity_env(tmp_path))
+    assert docs == [], docs
+
+
+def test_store_srs_14_mcp_starts_on_root_without_commit(uncommitted_repo, tmp_path):
+    """MELLON-STORE-SRS-14: Mellon shall accept a repository root whose repository
+    has no commit. The MCP server starts over stdio (with no git user.name, T10)
+    and lists the document."""
+    (docs,) = mcp_stdio(uncommitted_repo, [("list_documents", {})], env=no_identity_env(tmp_path))
+    assert [d["doc_id"] for d in docs] == ["DOC"], docs
+    assert "load_error" not in docs[0], docs
+
+
+def test_store_srs_15_mcp_accepts_detached_head(detached_repo, tmp_path):
+    """MELLON-STORE-SRS-15: Mellon shall accept a repository root whose HEAD is
+    detached. The MCP server starts over stdio (with no git user.name, T10) and
+    reads the object as at the first commit."""
+    (obj,) = mcp_stdio(
+        detached_repo, [("show_object", {"doc_id": "DOC", "obj_id": "DOC-1"})],
+        env=no_identity_env(tmp_path),
+    )
+    assert obj["object"]["description"] == "First text", obj
+
+
+def test_store_srs_210_mcp_read_tools_change_no_file(read_only_repo, mcp_at):
+    """MELLON-STORE-SRS-210: when Mellon answers an MCP tool that only reads, it
+    leaves each data file and figure file unchanged. Each read tool, and the
+    git and review tools that only read, change no file outside .git."""
+    root, first = read_only_repo
+    mcp_at(root)
+    before = snapshot(root, include_git=False)
+    s = mcp_server
+    s.list_documents(include=["*"])
+    s.show_document("PARENT", include=["*"])
+    s.search_objects("Object")
+    s.show_object("CHILD", "CHILD-1")
+    s.inspect_object("PARENT", "PARENT-1")
+    s.outline("CHILD")
+    s.validate_document("CHILD")
+    s.validate_repo()
+    s.repo_health()
+    s.suspects()
+    s.suspects("CHILD")
+    s.trace("CHILD", "CHILD-1")
+    s.incoming_links("PARENT", "PARENT-1")
+    s.coverage_report("PARENT", "CHILD")
+    s.git_history("PARENT", "PARENT-1")
+    s.show_object_at("PARENT", "PARENT-1", first)
+    s.compare_document("PARENT", from_ref=first, to_ref="HEAD")
+    s.review_suspect_link("CHILD", "CHILD-1", "PARENT", "PARENT-1")
+    assert changed(before, snapshot(root, include_git=False)) == []
