@@ -375,3 +375,33 @@ Raised by the requirements view of the Compare section and answered the same day
   - -218: which Ubuntu release. Recommendation: the LTS that CI runs, pinned.
   - -198: what the installer does today while Mellon runs. Recommendation: check on rung 4.
 - **Answer:** open
+
+## Q18: Questions from testing the requirements (2026-11-12)
+
+- **Raised by:** the test mappings and the blind tests of each area, 2026-11-11 and -12
+- **Affects:** the requirement IDs below
+- **How they were handled:** as for Q10 to Q17. A defect against an Implemented or Accepted requirement was fixed; where the product and a requirement disagreed and either could be right, the question is here.
+- **Answered with the recommendation (2026-11-12, to confirm):**
+  - `MELLON-EDIT-SRS-132` to `-134` now say both sides: an editor accepts an empty value and each fitting value, and no other value. `MELLON-EDIT-SRS-363` (Proposed) says an editor saves the typed value unchanged or refuses it.
+  - `MELLON-EDIT-SRS-327` lists the type column with the state, ID and description columns, as built; `MELLON-EDIT-SRS-333` (a column-header control to show or hide a column) is Proposed, since 0.3.0 has none.
+  - `MELLON-PDF-SRS-82`: an empty title is left out of the cover; the document ID doesn't stand in. `MELLON-PDF-SRS-147`: the leading header rows are those before the first body row, and they repeat even when a later header row follows a body row. `MELLON-PDF-SRS-54`: the export result's suspect links carry the same fields as the suspects tool's, `doc_id` included.
+  - `MELLON-TRACE-SRS-100`: a jump selects the target in the target document's own Document Editor, since a Document Editor is the window for one document.
+  - `MELLON-VER-SRS-91`: an editor side file is never committed, even when a path names it.
+- **Still open, each with a recommendation:**
+  - `MELLON-MCP-SRS-53`: for a missing parent declaration, link, figure or table, the server returns `error_type` `NotFound`, which no requirement lists, and existing tests expect it; the requirement says `EditorError`. Recommendation: keep `NotFound` and add it to `MELLON-MCP-SRS-55`'s table and to -53, since agents may already branch on it.
+  - `MELLON-MCP-SRS-104`: a file rewritten with the same size and its modified time put back is answered from the old content, because parsed files are kept while their modified time and size stay the same. Recommendation: narrow -104 to changes that alter a file's size or modified time, and propose a content check separately if a case needs it.
+  - `MELLON-GUI-SRS-74` (pending edits saved before any action) against the Read-only action, which throws typed text away, and Compare of two commits, which doesn't save (`MELLON-VER-SRS-56`, `-73`). Recommendation: keep -74 for every action that reads or writes the working copy, and name Compare of two commits as the exception; make the Read-only action save first.
+  - `MELLON-TRACE-SRS-77`: a links file with an empty `target-id` is a load error for the whole file, not a broken link. Recommendation: keep the load error and say so in `MELLON-STORE-SRS`.
+  - `MELLON-TRACE-SRS-17`: the link picker's link-type box is editable, so a user can type a type the document doesn't list. Recommendation: offer only the listed types.
+  - `MELLON-EDIT-SRS-348`: with only a pending edit and no earlier step, Undo is disabled, so it can't be chosen. Recommendation: enable Undo while a pending edit exists.
+  - Table editor: a first Ctrl+Enter in a cell only ends the cell edit; a second saves the table. USAGE.md says one saves. Recommendation: one Ctrl+Enter saves.
+  - The Views menu has no entry to go back to no view. Recommendation: add "(none)".
+  - The Inspector shows no field for an attribute the object doesn't have set, so it can't set one (`MELLON-EDIT-SRS-125`). Recommendation: show every defined attribute.
+  - Discard is disabled after F5 meets a load error, though the window is writable and the document has uncommitted changes. Recommendation: enable it; discarding is the way out of a broken file.
+  - The Commit dialog committed a file holding conflict markers. Recommendation: refuse a commit while a document has a load error (`MELLON-VER-SRS`, Validation before a commit).
+  - A document whose file gets conflict markers shows no Changed on disk banner on activation, though USAGE.md says the window keeps the last good copy behind it (`MELLON-GUI-SRS`, Changes on disk). Recommendation: show the banner.
+  - `MELLON-STORE-SRS-30`: the merge-conflict note is added for a file holding only a `<<<<<<<` line. Recommendation: say "only when the file holds conflict markers".
+  - `MELLON-STORE-SRS-132`: a draw.io figure whose `content` attribute is single-quoted counts as a draw.io figure, but draw.io reads no diagram from it. Recommendation: accept only what draw.io reads.
+  - `MELLON-MCP-SRS-112`: whether storing a path-like `target_id` (add_link) or skipping one (ack_suspects) counts as accepting a path; `MELLON-MCP-SRS-62` and `-63` (Proposed) would settle it. Recommendation: accept -62 and -63.
+  - CI installs no PDF program, so every test that reads an exported PDF skips there. Recommendation: let CI download the same tectonic release the installer bundles and set `MELLON_TECTONIC`.
+- **Answer:** open
