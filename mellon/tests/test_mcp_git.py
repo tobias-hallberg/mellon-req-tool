@@ -1059,3 +1059,31 @@ def test_67_mcp_result_says_to_was_the_working_copy(mcp_rev):
     assert not _is_error(result), f"precondition: the compare tool failed: {result[1][:300]}"
     strings = _strings(_payload(result))
     assert any("working copy" in s.lower() for s in strings), "the result doesn't say To was the working copy"
+
+
+# --- MELLON-TRACE-SRS-77 / -79: reviewing a link reads nothing outside the repository ---
+
+
+@pytest.mark.parametrize("target_id", ["../../../OUT-1", "VCU3-SyRS-47/../../../../OUT-1"])
+def test_trace_srs_79_review_of_a_target_that_is_no_object_id_reads_nothing_outside(
+    req_test_copy: Path, monkeypatch, target_id: str
+) -> None:
+    """MELLON-TRACE-SRS-77 and -79: a link whose target isn't an object ID is
+    reviewed as broken, without opening a file outside the repository."""
+    from tests.test_suspects import guard_paths_outside
+
+    links = req_test_copy / "VCU3-SRS" / "links" / "VCU3-SRS-15.xml"
+    tree = etree.parse(str(links))
+    etree.SubElement(
+        tree.getroot(), "link",
+        {"target-doc": "VCU3-SyRS", "target-id": target_id, "type": "satisfies"},
+    )
+    tree.write(str(links), xml_declaration=True, encoding="UTF-8")
+    _inside, outside = guard_paths_outside(monkeypatch, req_test_copy)
+
+    r = server.review_suspect_link("VCU3-SRS", "VCU3-SRS-15", "VCU3-SyRS", target_id)
+
+    assert outside == []
+    assert r["state"] == "broken"
+    assert r["parent_text_now"] is None
+    assert r["commits_between"] == []
