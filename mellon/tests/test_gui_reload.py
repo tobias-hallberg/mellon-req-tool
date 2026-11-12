@@ -677,12 +677,6 @@ def test_store_srs_37_reread_after_edit_names_file_and_line(gui, editor_repo):
     assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="defect: MELLON-STORE-SRS-37: after an edit-triggered read the status bar shows "
-    "'Edit failed ...: XML parse error ...' without the load error's unresolved merge "
-    "conflict note (MELLON-STORE-SRS-30) that F5 shows",
-)
 def test_store_srs_37_reread_after_edit_says_merge_conflict(gui, editor_repo):
     """MELLON-STORE-SRS-37 with -30: the load error the Document Editor shows
     after an edit-triggered re-read is the load error, so for a file holding

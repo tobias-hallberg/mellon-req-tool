@@ -40,7 +40,7 @@ from ..git_ops import (
     tag_names,
 )
 from ..git_ops import commit as git_commit
-from ..loader import LoaderError, load_document
+from ..loader import LoaderError, has_manifest, load_document
 from ..repo import (
     DocLoadError,
     LoadedDoc,
@@ -48,6 +48,7 @@ from ..repo import (
     doc_folder_names,
     incoming_links as repo_incoming_links,
     load_all,
+    load_error_message,
     parent_doc_ids as repo_parent_doc_ids,
 )
 from ..schema import Document, FilterRule, Link, RequirementObject, Table
@@ -128,6 +129,12 @@ def _classify_editor_error(err: EditorError) -> ServiceError:
     if any(s in lower for s in _NOT_FOUND_SUBSTRINGS):
         return ServiceError(ErrorCode.NOT_FOUND, msg)
     return ServiceError(ErrorCode.VALIDATION, msg)
+
+
+def _load_error(err: LoaderError) -> ServiceError:
+    # MELLON-STORE-SRS-37: a re-read after an edit or a commit reports the
+    # load error as F5 does, with its unresolved merge conflict note (-30).
+    return ServiceError(ErrorCode.LOAD, load_error_message(err))
 
 
 def _classify_write_error(err: ValueError | OSError) -> ServiceError:
@@ -227,11 +234,7 @@ class DocumentService:
             folder = editor._child_path(root, doc_id)
         except EditorError:
             folder = None
-        if (
-            folder is None
-            or not folder.is_dir()
-            or not (folder / f"{doc_id}.xml").is_file()
-        ):
+        if folder is None or not folder.is_dir() or not has_manifest(folder):
             raise ServiceError(
                 ErrorCode.NOT_FOUND, f"document {doc_id!r} not found under {root}"
             )
@@ -247,7 +250,7 @@ class DocumentService:
         try:
             doc = load_document(folder)
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         loaded = LoadedDoc(folder=folder, document=doc)
         if self._cache is not None:
             self._cache.put(loaded)
@@ -322,7 +325,7 @@ class DocumentService:
         try:
             docs = load_all(root, load_errors=errors)
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         if self._cache is not None:
             self._cache.put_all(docs, errors)
         if load_errors is not None:
@@ -719,7 +722,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -918,7 +921,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
 
@@ -1067,7 +1070,7 @@ class DocumentService:
                 },
             ) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
 
         refreshed = self._reload(doc_id).document
         return CompositeWriteResult(
@@ -1217,7 +1220,7 @@ class DocumentService:
                 },
             ) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
 
         refreshed = self._reload(doc_id).document
         return MutationResult(
@@ -1256,7 +1259,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id, keep_scans=True).document
@@ -1273,7 +1276,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id, keep_scans=True).document
@@ -1290,7 +1293,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1307,7 +1310,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1325,7 +1328,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id, keep_scans=True).document
@@ -1342,7 +1345,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1360,7 +1363,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1375,7 +1378,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1390,7 +1393,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1408,7 +1411,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1452,7 +1455,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
 
@@ -1496,7 +1499,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1513,7 +1516,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1530,7 +1533,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1545,7 +1548,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1562,7 +1565,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1582,7 +1585,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1608,7 +1611,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1623,7 +1626,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1640,7 +1643,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1664,7 +1667,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1682,7 +1685,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1709,7 +1712,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1731,7 +1734,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1757,7 +1760,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1774,7 +1777,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
         refreshed = self._reload(doc_id).document
@@ -1792,7 +1795,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         except (ValueError, OSError) as e:
             raise _classify_write_error(e) from e
 
@@ -1815,7 +1818,7 @@ class DocumentService:
         except OSError as e:
             raise ServiceError(ErrorCode.IO, str(e)) from e
         except etree.XMLSyntaxError as e:
-            raise ServiceError(ErrorCode.LOAD, str(e)) from e
+            raise _load_error(e) from e
         refreshed = self._reload(doc_id).document
         affected = (doc_id,) if rewritten else ()
         return MutationResult(

@@ -2013,12 +2013,27 @@ class DocumentEditorWindow(QMainWindow):
             # back would revert it with the next commit.
             if self._head_id() != head_before:
                 return
-            if manifest.read_bytes() != manifest_before:
-                manifest.write_bytes(manifest_before)
-                # The metadata writes are undone by hand: drop their steps.
-                del self._undo_steps[undo_mark:]
-                self._refresh_undo_actions()
-                self.controller.reload_document(doc_id)
+            try:
+                now = manifest.read_bytes()
+            except OSError:
+                now = None
+            if now == manifest_before:
+                return
+            # MELLON-STORE-SRS-167 (CF-S34): put back with the editor's atomic
+            # write, so a failure leaves the manifest whole; say so if it fails.
+            if Journal(before={manifest: manifest_before}).restore():
+                QMessageBox.warning(
+                    self,
+                    "Manifest not put back",
+                    f"{manifest.name} could not be put back as it was before "
+                    "the commit, so it keeps the author and date written for "
+                    f"the commit.\n\n{manifest}",
+                )
+                return
+            # The metadata writes are undone by hand: drop their steps.
+            del self._undo_steps[undo_mark:]
+            self._refresh_undo_actions()
+            self.controller.reload_document(doc_id)
 
         for field, new_val, current in meta_updates:
             if new_val == current:

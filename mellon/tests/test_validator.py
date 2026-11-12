@@ -281,7 +281,16 @@ def test_non_string_kind_value_checks(
     set_attribute(doc_folder, "DOC-1", "extra", good)
     assert bad_code not in _codes(validate(load_document(doc_folder)))
 
-    set_attribute(doc_folder, "DOC-1", "extra", bad)
+    # Written into the object file by hand: set_attribute writes a boolean's
+    # true or false in lower case (MELLON-STORE-SRS-97), and validation must
+    # still catch "True" in a file another program wrote.
+    path = doc_folder / "objects" / "DOC-1.xml"
+    text = path.read_text(encoding="utf-8")
+    assert f'<attr name="extra">{good}</attr>' in text
+    path.write_text(
+        text.replace(f'<attr name="extra">{good}</attr>', f'<attr name="extra">{bad}</attr>'),
+        encoding="utf-8", newline="\n",
+    )
     assert bad_code in _codes(validate(load_document(doc_folder)))
 
 

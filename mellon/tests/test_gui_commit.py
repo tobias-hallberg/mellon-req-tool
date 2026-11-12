@@ -1245,12 +1245,6 @@ def test_store_srs_37_reread_in_commit_dialog_names_file_and_line(gui, authorles
     assert f"line {CONFLICT_LINE}" in shown or f":{CONFLICT_LINE}" in shown, shown
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="defect: MELLON-STORE-SRS-37: when the Commit dialog's save reads DOC again, the "
-    "status bar shows 'Metadata save failed (author): ... XML parse error ...' without the "
-    "load error's unresolved merge conflict note (MELLON-STORE-SRS-30)",
-)
 def test_store_srs_37_reread_in_commit_dialog_says_merge_conflict(gui, authorless_editor_repo):
     """MELLON-STORE-SRS-37 with -30: the load error shown after the Commit
     dialog's re-read says the file looks like an unresolved merge conflict."""
@@ -1266,11 +1260,6 @@ def test_store_srs_37_reread_in_commit_dialog_says_merge_conflict(gui, authorles
     assert CONFLICT_HINT.search(shown), shown
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="defect: MELLON-STORE-SRS-167 (CF-S34): when the Commit dialog's commit fails, the "
-    "manifest is put back by a plain write, so a put-back failing partway leaves the manifest cut",
-)
 def test_store_srs_167_commit_dialog_put_back_failing_partway(gui, tmp_path, git_env):
     """MELLON-STORE-SRS-167 (CF-S34): in the Commit dialog, when the commit fails
     and then the put-back of the manifest fails partway, the manifest holds its
@@ -1285,7 +1274,7 @@ def test_store_srs_167_commit_dialog_put_back_failing_partway(gui, tmp_path, git
     assert gui.grid_edit(ed, "DOC-2", "rationale", "to commit")
     head = git(git_env, root, "rev-parse", "HEAD")
     write(root / ".git" / "index.lock", b"")  # the commit fails
-    inj = PartialWrites(gui.monkeypatch, root / "DOC", nth=2)
+    inj = PartialWrites(gui.monkeypatch, root / "DOC", nth=2, watch=manifest)
     with gui.qtbot.capture_exceptions():  # what the window does with the error isn't measured here
         _commit_via_dialog(gui, ed)
     inj.armed = False

@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .git_ops import GitError, discover_repo
-from .loader import LoaderError, load_document
+from .loader import LoaderError, has_manifest, load_document
 from .schema import Document, Link
 
 
@@ -45,28 +45,48 @@ class DocLoadError:
 _CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
 
 
-def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
-    message = str(err)
+def _error_file(err: LoaderError) -> Path | None:
     # Most loader messages start with "<path>: ".
-    head, sep, _rest = message.partition(": ")
-    file = Path(head) if sep and Path(head).is_file() else None
-    # lxml's XMLSyntaxError (the cause of a parse failure) carries the line.
-    line = getattr(err.__cause__, "lineno", None)
+    head, sep, _rest = str(err).partition(": ")
+    return Path(head) if sep and Path(head).is_file() else None
+
+
+def _with_conflict_note(err: LoaderError, file: Path | None) -> str:
+    message = str(err)
     if file is not None:
         try:
             if _CONFLICT_MARKER.search(file.read_bytes()):
                 message += " (unresolved merge conflict?)"
         except OSError:
             pass
+    return message
+
+
+def load_error_message(err: LoaderError) -> str:
+    """The loader's message as a `DocLoadError` gives it: with "(unresolved
+    merge conflict?)" appended when the file it names holds git conflict
+    markers (MELLON-STORE-SRS-30)."""
+    return _with_conflict_note(err, _error_file(err))
+
+
+def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
+    file = _error_file(err)
+    # lxml's XMLSyntaxError (the cause of a parse failure) carries the line.
+    line = getattr(err.__cause__, "lineno", None)
     return DocLoadError(
-        doc_id=folder.name, folder=folder, file=file, line=line, message=message
+        doc_id=folder.name,
+        folder=folder,
+        file=file,
+        line=line,
+        message=_with_conflict_note(err, file),
     )
 
 
 def discover_documents(repo_root: str | Path) -> list[Path]:
     """Return sorted paths of document folders directly under `repo_root`.
 
-    A folder qualifies when `<folder>/<folder_name>.xml` exists. Nothing is
+    A folder qualifies when `<folder>/<folder_name>.xml` exists, letter case
+    included (see `loader.has_manifest`). Nothing is
     parsed here, so a broken document is still discovered and its error
     surfaces when it is loaded (see `load_all`). Folders starting with `.`
     are skipped. Deeper nesting is not supported.
@@ -80,7 +100,8 @@ def discover_documents(repo_root: str | Path) -> list[Path]:
     for child in children:
         if not child.is_dir() or child.name.startswith("."):
             continue
-        if (child / f"{child.name}.xml").is_file():
+        # MELLON-STORE-SRS-18: <folder name>.xml, letter case included.
+        if has_manifest(child):
             out.append(child)
     return out
 
@@ -102,7 +123,7 @@ def doc_folder_names(repo_root: str | Path) -> frozenset[str]:
     for child in children:
         if not child.is_dir() or child.name.startswith("."):
             continue
-        if (child / f"{child.name}.xml").is_file():
+        if has_manifest(child):
             out.add(child.name)
     return frozenset(out)
 

@@ -335,11 +335,6 @@ def test_store_srs_18_dot_folder_isnt_a_document(discovery_repo):
     assert ".archive" not in docs and ".archive" not in errors, (list(docs), list(errors))
 
 
-@pytest.mark.xfail(
-    sys.platform == "win32", strict=True,
-    reason="defect: MELLON-STORE-SRS-18: on Windows DOC2/doc2.xml makes DOC2 a document "
-    "that loads; the manifest name's letter case isn't checked",
-)
 def test_store_srs_18_manifest_name_letter_case_counts(discovery_repo):
     """MELLON-STORE-SRS-18: a document's folder holds a file named <folder
     name>.xml, letter case included. DOC2/doc2.xml doesn't make DOC2 a document

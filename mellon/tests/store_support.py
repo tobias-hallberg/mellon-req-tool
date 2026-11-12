@@ -616,11 +616,17 @@ class _HalfWriter:
 
 
 class PartialWrites:
-    """Make the n-th file opened for writing under `folder` fail partway."""
+    """Make the n-th file opened for writing under `folder` fail partway.
 
-    def __init__(self, monkeypatch, folder: Path, nth: int = 1):
+    `content_before` is the content, at that moment, of `watch` when given,
+    else of the file opened: an atomic write opens a new file beside the one
+    it replaces, so a test of that file passes it as `watch`.
+    """
+
+    def __init__(self, monkeypatch, folder: Path, nth: int = 1, watch: Path | None = None):
         self.folder = Path(folder).resolve()
         self.nth = nth
+        self.watch = watch
         self.armed = True
         self.count = 0
         self.fired: list[str] = []
@@ -637,7 +643,8 @@ class PartialWrites:
                 self.count += 1
                 if self.count == self.nth:
                     self.fired.append(str(target))
-                    self.content_before = target.read_bytes() if target.exists() else None
+                    seen = Path(self.watch) if self.watch is not None else target
+                    self.content_before = seen.read_bytes() if seen.exists() else None
                     return _HalfWriter(real_open(file, mode, *a, **k))
             return real_open(file, mode, *a, **k)
 

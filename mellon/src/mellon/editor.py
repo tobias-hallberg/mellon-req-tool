@@ -566,6 +566,9 @@ def set_attribute(folder: Path, obj_id: str, attr_name: str, value: str) -> None
             f"{value!r} is not a valid option for {attr_name!r} "
             f"(options: {list(attr.options)})"
         )
+    # MELLON-STORE-SRS-97: a boolean is held as true or false, in lower case.
+    if attr.kind == "boolean" and value.isascii() and value.lower() in ("true", "false"):
+        value = value.lower()
 
     obj_path = folder / "objects" / f"{obj_id}.xml"
     tree = etree.parse(str(obj_path))
@@ -709,6 +712,9 @@ def clear_table(folder: Path, obj_id: str) -> bool:
     return True
 
 
+_SVG_NS = "http://www.w3.org/2000/svg"
+
+
 def figure_path(folder: Path, obj_id: str) -> Path:
     """Return the on-disk path where `obj_id`'s figure would live (whether or not it exists)."""
     return _child_path(folder / "figures", f"{obj_id}.svg")
@@ -741,9 +747,11 @@ def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
         raise EditorError(
             f"figure source is not well-formed XML: {src_path} ({e})"
         ) from e
-    if etree.QName(src_root.tag).localname != "svg":
+    # MELLON-STORE-SRS-131: the root is svg in SVG's own namespace.
+    if src_root.tag != f"{{{_SVG_NS}}}svg":
         raise EditorError(
-            f"figure source root must be <svg>, got <{src_root.tag}>: {src_path}"
+            f"figure source root must be <svg> in the namespace {_SVG_NS}, "
+            f"got <{src_root.tag}>: {src_path}"
         )
 
     dest = figure_path(folder, obj_id)
@@ -1527,10 +1535,15 @@ def remove_link(
 
 
 _VIEW_SLUG_RE = re.compile(r"[^a-z0-9]+")
+_ASCII_LOWER = str.maketrans(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"
+)
 
 
 def _slugify_view_name(name: str) -> str:
-    slug = _VIEW_SLUG_RE.sub("-", name.strip().lower()).strip("-")
+    # MELLON-STORE-SRS-153: only A-Z become a-z; str.lower() would also turn
+    # the Kelvin sign into k and the dotted capital I into i.
+    slug = _VIEW_SLUG_RE.sub("-", name.strip().translate(_ASCII_LOWER)).strip("-")
     return slug
 
 

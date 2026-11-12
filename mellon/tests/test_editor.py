@@ -2356,11 +2356,6 @@ def test_store_srs_97_boolean_written_lower_case(tmp_path, value):
     assert f'<attr name="flag">{value}</attr>'.encode() in f.read_bytes()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="defect: MELLON-STORE-SRS-97: setting a boolean attribute to 'True' or 'FALSE' "
-    "writes that text into the object file as given, neither refused nor written in lower case",
-)
 @pytest.mark.parametrize("value", ["True", "FALSE"])
 def test_store_srs_97_boolean_not_written_in_other_case(tmp_path, value):
     """MELLON-STORE-SRS-97: a boolean value in the file is in lower case, so
@@ -2441,11 +2436,6 @@ def test_store_srs_115_cells_stored_only_in_the_object_file(tmp_path, git_env):
     assert holders == ["DOC/objects/DOC-1.xml"], holders
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="defect: MELLON-STORE-SRS-131: an svg root element in no namespace is attached "
-    "and written as the figure file instead of being refused",
-)
 def test_store_srs_131_svg_without_namespace_is_refused(tmp_path):
     """MELLON-STORE-SRS-131: a figure file's root element is svg in the namespace
     http://www.w3.org/2000/svg. Attaching <svg><rect/></svg>, in no namespace,
@@ -2472,12 +2462,8 @@ def test_store_srs_131_svg_in_svg_namespace_is_accepted(tmp_path):
         pytest.param("ABC", "abc", id="ascii"),
         pytest.param("  --Hello__World--  ", "hello-world", id="runs-and-trim"),
         pytest.param("ÄBC", "bc", id="a-umlaut"),
-        pytest.param("xK", "x", id="kelvin-sign", marks=pytest.mark.xfail(
-            strict=True, reason="defect: MELLON-STORE-SRS-153: the Kelvin sign U+212A is "
-            "lower-cased to k, giving the slug xk instead of x")),
-        pytest.param("xİ", "x", id="dotted-capital-i", marks=pytest.mark.xfail(
-            strict=True, reason="defect: MELLON-STORE-SRS-153: the dotted capital I U+0130 is "
-            "lower-cased to i, giving a slug with an i instead of x")),
+        pytest.param("xK", "x", id="kelvin-sign"),
+        pytest.param("xİ", "x", id="dotted-capital-i"),
     ],
 )
 @pytest.mark.parametrize("what", ["view", "filter"])

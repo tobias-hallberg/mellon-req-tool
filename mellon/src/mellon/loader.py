@@ -60,7 +60,7 @@ def load_document(folder: str | Path) -> Document:
 
     doc_id = folder.name
     manifest_path = folder / f"{doc_id}.xml"
-    if not manifest_path.is_file():
+    if not has_manifest(folder):
         raise LoaderError(f"Manifest not found: {manifest_path}")
 
     try:
@@ -143,6 +143,25 @@ def load_document(folder: str | Path) -> Document:
         filters=tuple(filters),
         next_object_number=next_object_number,
     )
+
+
+def has_manifest(folder: str | Path) -> bool:
+    """True if `folder` holds a file named `<folder name>.xml`.
+
+    MELLON-STORE-SRS-18: letter case included, so that on a case-insensitive
+    file system (Windows, macOS) DOC/doc.xml doesn't pass for DOC/DOC.xml and
+    every system sees the same documents.
+    """
+    folder = Path(folder)
+    name = f"{folder.name}.xml"
+    if not (folder / name).is_file():
+        return False
+    try:
+        # The listing holds the names as stored; is_file() ignores letter
+        # case where the file system does.
+        return name in os.listdir(folder)
+    except OSError:
+        return False
 
 
 _Manifest = tuple[

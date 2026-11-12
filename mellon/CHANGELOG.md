@@ -143,6 +143,25 @@ All notable changes to Mellon. The format follows
   contents page both said Page 1, the total was one short (7 pages printed
   "of 6"), and the contents gave each section's page one too low. The page
   after the cover is now page 2 (`MELLON-PDF-SRS-104`).
+- **A manifest's name must match its folder's in letter case too.** On
+  Windows and macOS, `DOC/doc.xml` made `DOC` a document; it now doesn't, as
+  on Linux, so every system sees the same documents (`MELLON-STORE-SRS-18`).
+- **A load error after an edit or in the Commit dialog says "(unresolved
+  merge conflict?)"** when the file holds git conflict markers, as F5 already
+  did (`MELLON-STORE-SRS-37`).
+- **A boolean attribute set to `True` or `FALSE` is written as `true` or
+  `false`** (`MELLON-STORE-SRS-97`).
+- **A figure must be an SVG in SVG's namespace.** An `<svg>` root without
+  `xmlns="http://www.w3.org/2000/svg"` was accepted and written; it is now
+  refused, with nothing written (`MELLON-STORE-SRS-131`).
+- **A view's or filter's file name turns only A–Z into lower case.** A name
+  with the Kelvin sign or the dotted capital I got a file name with `k` or
+  `i` (`MELLON-STORE-SRS-153`).
+- **When a commit from the Commit dialog fails, the manifest is put back with
+  an atomic write.** A failure partway through the put-back could leave the
+  manifest cut short, and its error escaped as an unexpected error; the
+  manifest now stays whole and the Document Editor says it wasn't put back
+  (`MELLON-STORE-SRS-167`).
 
 ### Security
 
