@@ -2822,3 +2822,419 @@ def test_edit_srs_177_refusal_beside_document_with_load_error(mcp_root):
     result = _server().move_object("M", "M-0", parent_id="M-2")
     assert result["ok"] is False, result
     assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+# MELLON-TRACE-SRS blind tests
+import subprocess  # noqa: E402
+import sys  # noqa: E402
+
+from tests.trace_support import (  # noqa: E402
+    MISSING_TARGETS,
+    Repo,
+    _defect_6,
+    _make_missing,
+    _suspects_set,
+    _uncommitted_parent_5,
+    all_acks,
+    basic_repo as trace_basic_repo,
+    call,
+    disk_links,
+    mcp,  # noqa: F401, F811 -- fixture
+    refused,
+    snapshot as trace_snapshot,
+)
+
+
+def git_state(r: Repo) -> dict:
+    """What a dry run must leave alone in git: status, index bytes, refs."""
+    return {
+        "status": dict(r.git.status()),
+        "index": (r.root / ".git" / "index").read_bytes(),
+        "refs": {n: str(r.git.references[n].target) for n in r.git.references},
+    }
+
+
+def _parse_tool_result(res):
+    if res.isError:
+        return {"ok": False, "raised": " ".join(getattr(c, "text", "") for c in res.content)}
+    sc = res.structuredContent
+    if sc is not None:
+        return sc["result"] if set(sc) == {"result"} else sc
+    return json.loads(res.content[0].text)
+
+
+def stdio_calls(root, calls, env=None) -> list:
+    """Start mellon-mcp over stdio on `root` and make `calls` [(tool, args)] in order."""
+    import anyio
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
+    exe = shutil.which("mellon-mcp", path=str(Path(sys.executable).parent))
+    assert exe, "mellon-mcp is not installed beside the test interpreter"
+
+    async def run():
+        params = StdioServerParameters(command=exe, args=["--repo-root", str(root)],
+                                       env=dict(os.environ) if env is None else env)
+        out = []
+        async with stdio_client(params) as (rd, wr):
+            async with ClientSession(rd, wr) as s:
+                await s.initialize()
+                for name, args in calls:
+                    out.append(_parse_tool_result(await s.call_tool(name, args)))
+        return out
+
+    return anyio.run(run)
+
+
+@pytest.mark.parametrize("layer", ["mcp"])
+def test_trace_srs_4_link_to_target_with_no_last_change_gets_no_acknowledged_commit(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-4: If a new link's target object has no last change, Mellon shall create the
+    link with no acknowledged commit. Condition: the target's object file is in the working copy and
+    was never committed. Other side: a committed target gets its last change (MELLON-TRACE-SRS-3)."""
+    r = trace_basic_repo(tmp_path)
+    _uncommitted_parent_5(r)
+    if layer == "library":
+        editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-5", "satisfies")
+        editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies")
+    else:
+        s = mcp.serve(r.root)
+        res = s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-5", "satisfies")
+        assert res.get("ok") is True, f"add_link refused: {res}"
+        assert res.get("ack") is None, f"add_link reports ack {res.get('ack')!r} for a never-committed target"
+        assert s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies").get("ok") is True
+    on_disk = disk_links(r.root, "CHILD", "CHILD-1")
+    assert on_disk[("PARENT", "PARENT-5")] == ("satisfies", None), f"link to PARENT-5 on disk: {on_disk}"
+    assert on_disk[("PARENT", "PARENT-1")] == ("satisfies", r.c0[:7]), f"link to PARENT-1 on disk: {on_disk}"
+
+
+@pytest.mark.parametrize("target", list(MISSING_TARGETS))
+@pytest.mark.parametrize("layer", [
+    pytest.param("mcp add_link", marks=_defect_6("the MCP server's add_link (answers ok: true, ack null)")),
+    "mcp update_object",
+])
+def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, target):
+    """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
+    shall refuse to create the link. Condition: target never existed, or committed and deleted from
+    the working copy. Expected: refused, and CHILD's files unchanged (no links file written)."""
+    r = trace_basic_repo(tmp_path)
+    _make_missing(r, target)
+    before = trace_snapshot(r.root)
+    if layer == "library":
+        try:
+            editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", target, "satisfies")
+            result = {"ok": True}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "service":
+        try:
+            res = DocumentService(r.root).add_link("CHILD", "CHILD-1", "PARENT", target, "satisfies")
+            result = {"ok": getattr(res, "ok", True)}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "mcp add_link":
+        result = call(mcp.serve(r.root).add_link, "CHILD", "CHILD-1", "PARENT", target, "satisfies")
+    else:
+        result = call(mcp.serve(r.root).update_object, "CHILD", "CHILD-1",
+                      add_links=[{"target_doc": "PARENT", "target_id": target, "type": "satisfies"}])
+    assert refused(result), f"link CHILD-1 -> PARENT/{target} ({MISSING_TARGETS[target]}) was created: {result}"
+    assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+@_defect_6("the MCP server's add_link over stdio (answers ok: true, 'never reviewed')")
+def test_trace_srs_6_link_to_missing_target_over_stdio_is_refused(tmp_path):
+    """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
+    shall refuse to create the link. Condition: add_link to PARENT-99 through the MCP server over stdio."""
+    r = trace_basic_repo(tmp_path)
+    before = trace_snapshot(r.root)
+    (res,) = stdio_calls(r.root, [("add_link", {
+        "source_doc": "CHILD", "source_id": "CHILD-1", "target_doc": "PARENT",
+        "target_id": "PARENT-99", "link_type": "satisfies"})])
+    assert refused(res), f"add_link to a missing target answered {res}"
+    assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+@pytest.mark.parametrize("layer", ["mcp add_link", "mcp new_object", "mcp update_object"])
+def test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-7: If a new link's source object already has a link to the target object,
+    Mellon shall refuse to create the new link, whatever its link type. Condition: CHILD-1 satisfies
+    PARENT-1; add a verifies link between the same pair (new_object: both in one call)."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.commit("link")
+    before = trace_snapshot(r.root)
+    if layer == "library":
+        try:
+            editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "verifies")
+            result = {"ok": True}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "mcp add_link":
+        result = call(mcp.serve(r.root).add_link, "CHILD", "CHILD-1", "PARENT", "PARENT-1", "verifies")
+    elif layer == "mcp new_object":
+        result = call(mcp.serve(r.root).new_object, "CHILD", description="new", attrs={"type": "Requirement"},
+                      links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "satisfies"},
+                             {"target_doc": "PARENT", "target_id": "PARENT-1", "type": "verifies"}])
+    else:
+        result = call(mcp.serve(r.root).update_object, "CHILD", "CHILD-1",
+                      add_links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "verifies"}])
+    assert refused(result), f"a second link between one pair of objects was created: {result}"
+    assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+def test_trace_srs_7_link_to_another_target_is_not_refused(tmp_path, mcp):
+    """MELLON-TRACE-SRS-7 (other side): the refusal is only for a source that already links to the
+    target. Condition: CHILD-1 satisfies PARENT-1; a verifies link from CHILD-1 to PARENT-2 is created."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.commit("link")
+    res = mcp.serve(r.root).add_link("CHILD", "CHILD-1", "PARENT", "PARENT-2", "verifies")
+    assert res.get("ok") is True, res
+    assert set(disk_links(r.root, "CHILD", "CHILD-1")) == {("PARENT", "PARENT-1"), ("PARENT", "PARENT-2")}
+
+
+@pytest.mark.parametrize("link_type", ["derives from", "ÄÖ-trace", "x"])
+def test_trace_srs_14_mcp_accepts_any_link_type_with_a_non_whitespace_character(tmp_path, mcp, link_type):
+    """MELLON-TRACE-SRS-14: The MCP server shall accept as a link type any text that holds a
+    character other than whitespace. Condition: add_link with a free-text, non-ASCII or one-character
+    link type. Expected: accepted, and the link has exactly that link type on disk and in show_object."""
+    r = trace_basic_repo(tmp_path)
+    s = mcp.serve(r.root)
+    res = s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-1", link_type)
+    assert res.get("ok") is True, f"link type {link_type!r} refused: {res}"
+    assert disk_links(r.root, "CHILD", "CHILD-1") == {("PARENT", "PARENT-1"): (link_type, r.c0[:7])}
+    types = [e["link"]["type"] for e in s.show_object("CHILD", "CHILD-1")["outgoing"]]
+    assert types == [link_type], f"show_object reports {types}"
+
+
+def test_trace_srs_14_mcp_accepts_link_type_with_surrounding_spaces(tmp_path, mcp):
+    """MELLON-TRACE-SRS-14: The MCP server shall accept as a link type any text that holds a
+    character other than whitespace. Condition: ' verifies ' (spaces around it). Expected: accepted.
+    Whether the spaces are kept is MELLON-TRACE-SRS-15 (Proposed), so it isn't checked here."""
+    r = trace_basic_repo(tmp_path)
+    res = mcp.serve(r.root).add_link("CHILD", "CHILD-1", "PARENT", "PARENT-1", " verifies ")
+    assert res.get("ok") is True, f"link type ' verifies ' refused: {res}"
+    assert ("PARENT", "PARENT-1") in disk_links(r.root, "CHILD", "CHILD-1")
+
+
+def test_trace_srs_19_add_link_creates_link_with_given_type(tmp_path, mcp):
+    """MELLON-TRACE-SRS-19: The MCP server shall have an add_link tool that creates a link given the
+    source object, the target object and the link type. Condition: add_link CHILD-1 -> PARENT-0
+    'refines'. Expected: show_object lists exactly that outgoing link, with link type refines."""
+    r = trace_basic_repo(tmp_path)
+    s = mcp.serve(r.root)
+    assert s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-0", "refines").get("ok") is True
+    out = [(e["link"]["target_doc"], e["link"]["target_id"], e["link"]["type"])
+           for e in s.show_object("CHILD", "CHILD-1")["outgoing"]]
+    assert out == [("PARENT", "PARENT-0", "refines")], f"outgoing links of CHILD-1: {out}"
+
+
+def test_trace_srs_24_new_object_with_refused_link_changes_no_file(tmp_path, mcp):
+    """MELLON-TRACE-SRS-24: If a new_object or update_object call gives a link that Mellon refuses,
+    the MCP server shall change no file. Condition: new_object with attributes and a link to a
+    missing target. Expected: refused; every file in the repository byte-identical, none added."""
+    r = trace_basic_repo(tmp_path)
+    before = trace_snapshot(r.root)
+    res = call(mcp.serve(r.root).new_object, "CHILD", description="new one", attrs={"type": "Requirement"},
+               links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "satisfies"},
+                      {"target_doc": "PARENT", "target_id": "PARENT-99", "type": "satisfies"}])
+    assert refused(res), f"new_object with a link to a missing target answered {res}"
+    after = trace_snapshot(r.root)
+    assert after == before, f"files changed: {sorted(set(after) ^ set(before)) or [k for k in after if after[k] != before.get(k)]}"
+
+
+def test_trace_srs_24_update_object_with_refused_link_changes_no_file(tmp_path, mcp):
+    """MELLON-TRACE-SRS-24: If a new_object or update_object call gives a link that Mellon refuses,
+    the MCP server shall change no file. Condition: update_object changing the description and an
+    attribute and adding a link that already exists. Expected: refused; every file byte-identical."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.commit("link")
+    before = trace_snapshot(r.root)
+    res = call(mcp.serve(r.root).update_object, "CHILD", "CHILD-1", description="changed text",
+               attrs={"status": "Approved"},
+               add_links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "satisfies"}])
+    assert refused(res), f"update_object adding an existing link answered {res}"
+    after = trace_snapshot(r.root)
+    assert after == before, f"files changed: {[k for k in after if after[k] != before.get(k)]}"
+
+
+# ===========================================================================
+# Acknowledging (MELLON-TRACE-SRS-131, -139, -140, -141, -142)
+# ===========================================================================
+
+
+def _key(src, tid, tdoc="PARENT"):
+    return {"source_id": src, "target_doc": tdoc, "target_id": tid}
+
+
+def _skipped_keys(res) -> list:
+    return [(e["key"]["source_id"], e["key"]["target_doc"], e["key"]["target_id"]) for e in res.get("skipped", [])]
+
+
+def test_trace_srs_131_ack_suspects_skips_a_broken_link(tmp_path, mcp):
+    """MELLON-TRACE-SRS-131: If a link is broken, Mellon shall refuse to acknowledge the link.
+    Condition: ack_suspects with link_keys naming CHILD-1's link to the missing PARENT-9.
+    Expected: listed as skipped, nothing acknowledged, every file byte-identical."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-9", "satisfies", None), ("PARENT", "PARENT-1", "satisfies", None)])
+    r.commit("links")
+    before = trace_snapshot(r.root)
+    res = mcp.serve(r.root).ack_suspects("CHILD", link_keys=[_key("CHILD-1", "PARENT-9")])
+    assert res.get("acknowledged") == [], res
+    assert _skipped_keys(res) == [("CHILD-1", "PARENT", "PARENT-9")], res
+    assert trace_snapshot(r.root) == before, "acknowledging a broken link changed files"
+
+
+def test_trace_srs_131_ack_suspects_without_keys_leaves_a_broken_link_alone(tmp_path, mcp):
+    """MELLON-TRACE-SRS-131: If a link is broken, Mellon shall refuse to acknowledge the link.
+    Condition: ack_suspects with no link_keys on a document with a broken and a suspect link.
+    Expected: the broken link keeps no acknowledged commit."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-9", "satisfies", None), ("PARENT", "PARENT-1", "satisfies", None)])
+    r.commit("links")
+    mcp.serve(r.root).ack_suspects("CHILD")
+    assert disk_links(r.root, "CHILD", "CHILD-1")[("PARENT", "PARENT-9")] == ("satisfies", None)
+
+
+def _prefix_case_repo(tmp_path, name="repo") -> Repo:
+    r = Repo(tmp_path / name)
+    r.add_doc("PARENT", {"PARENT-1": "p1", "PARENT-10": "p10"})
+    r.add_doc("DOC", {"DOC-1": "d1", "DOC-10": "d10"}, parents=["PARENT"])
+    r.c0 = r.commit("seed")
+    for src in ("DOC-1", "DOC-10"):
+        r.set_links("DOC", src, [("PARENT", "PARENT-1", "satisfies", None), ("PARENT", "PARENT-10", "satisfies", None)])
+    r.commit("links")
+    return r
+
+
+ALL_PREFIX_LINKS = [("DOC-1", "PARENT-1"), ("DOC-1", "PARENT-10"), ("DOC-10", "PARENT-1"), ("DOC-10", "PARENT-10")]
+
+
+def _acked_links(before, after) -> set:
+    return {(k[1], k[3]) for k, v in after.items() if v and before.get(k) != v}
+
+
+def test_trace_srs_139_link_keys_acknowledge_exactly_the_named_link(tmp_path, mcp):
+    """MELLON-TRACE-SRS-139: When an ack_suspects call gives link_keys, the MCP server shall
+    acknowledge only the suspect links that the link keys name. Condition: suspect links DOC-1 and
+    DOC-10 to PARENT-1 and PARENT-10 (shared prefixes); the key names DOC-1 -> PARENT-1 (CF-T34)."""
+    r = _prefix_case_repo(tmp_path)
+    before = all_acks(r.root)
+    mcp.serve(r.root).ack_suspects("DOC", link_keys=[_key("DOC-1", "PARENT-1")])
+    assert _acked_links(before, all_acks(r.root)) == {("DOC-1", "PARENT-1")}
+
+
+def test_trace_srs_139_link_keys_differing_in_letter_case_acknowledge_nothing(tmp_path, mcp):
+    """MELLON-TRACE-SRS-139: ... acknowledge only the suspect links that the link keys name.
+    Condition: keys that differ from DOC-1 -> PARENT/PARENT-1 only in letter case (source, target
+    document, target ID). Expected: nothing acknowledged, every file byte-identical (CF-T34)."""
+    r = _prefix_case_repo(tmp_path)
+    before = trace_snapshot(r.root)
+    res = mcp.serve(r.root).ack_suspects("DOC", link_keys=[
+        _key("doc-1", "PARENT-1"), _key("DOC-1", "PARENT-1", tdoc="parent"), _key("DOC-1", "parent-1")])
+    assert res.get("acknowledged") == [], res
+    assert trace_snapshot(r.root) == before
+
+
+def test_trace_srs_139_each_subset_of_link_keys_acknowledges_exactly_that_subset(tmp_path, mcp):
+    """MELLON-TRACE-SRS-139: ... acknowledge only the suspect links that the link keys name.
+    Condition (T11): every one of the 16 subsets of the four suspect links DOC-1/DOC-10 ->
+    PARENT-1/PARENT-10 given as link_keys. Expected: exactly the subset is acknowledged."""
+    template = _prefix_case_repo(tmp_path, "template")
+    for n in range(16):
+        subset = {lk for i, lk in enumerate(ALL_PREFIX_LINKS) if n >> i & 1}
+        root = tmp_path / f"r{n}"
+        shutil.copytree(template.root, root)
+        before = all_acks(root)
+        mcp.serve(root).ack_suspects("DOC", link_keys=[_key(s, t) for s, t in sorted(subset)])
+        assert _acked_links(before, all_acks(root)) == subset, f"subset {sorted(subset)}"
+
+
+def test_trace_srs_139_link_keys_over_stdio_without_git_user_name(tmp_path):
+    """MELLON-TRACE-SRS-139: ... acknowledge only the suspect links that the link keys name.
+    Condition (T10, stdio): the MCP server over stdio in an environment with no git user.name or
+    user.email; the key names DOC-1 -> PARENT-1. Expected: only that link is acknowledged."""
+    r = _prefix_case_repo(tmp_path)
+    empty = tmp_path / "no-identity"
+    empty.mkdir()
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("GIT_AUTHOR", "GIT_COMMITTER", "GIT_CONFIG"))}
+    drive, rest = os.path.splitdrive(str(empty))
+    env.update({"HOME": str(empty), "USERPROFILE": str(empty), "HOMEDRIVE": drive, "HOMEPATH": rest,
+                "XDG_CONFIG_HOME": str(empty), "GIT_CONFIG_NOSYSTEM": "1"})
+    probe = subprocess.run(
+        [sys.executable, "-c", "import pygit2,sys; c=pygit2.Repository(sys.argv[1]).config; "
+         "print('user.name' in c, 'user.email' in c)", str(r.root)],
+        env=env, capture_output=True, text=True, check=True).stdout.split()
+    assert probe == ["False", "False"], f"precondition: identity still set in the server's environment: {probe}"
+    before = all_acks(r.root)
+    (res,) = stdio_calls(r.root, [("ack_suspects", {"doc_id": "DOC", "link_keys": [_key("DOC-1", "PARENT-1")]})], env=env)
+    assert not refused(res), res
+    assert _acked_links(before, all_acks(r.root)) == {("DOC-1", "PARENT-1")}
+
+
+def test_trace_srs_140_each_key_that_names_no_suspect_link_is_skipped_with_a_reason(tmp_path, mcp):
+    """MELLON-TRACE-SRS-140: When an ack_suspects call names a link that doesn't exist or isn't
+    suspect, the MCP server shall report the link as skipped, with the reason. Condition: keys naming
+    an OK link, a link that doesn't exist and a key with a typo in the target ID. Expected: each
+    skipped with a reason; the OK link's reason differs from the missing link's; no file changes."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-2", "satisfies", None)])
+    r.commit("links")
+    before = trace_snapshot(r.root)
+    keys = [_key("CHILD-1", "PARENT-1"), _key("CHILD-1", "PARENT-3"), _key("CHILD-2", "PARETN-2")]
+    res = mcp.serve(r.root).ack_suspects("CHILD", link_keys=keys)
+    reasons = {(e["key"]["source_id"], e["key"]["target_id"]): e.get("reason") for e in res.get("skipped", [])}
+    assert set(reasons) == {("CHILD-1", "PARENT-1"), ("CHILD-1", "PARENT-3"), ("CHILD-2", "PARETN-2")}, res
+    assert all(isinstance(v, str) and v.strip() for v in reasons.values()), reasons
+    assert reasons[("CHILD-1", "PARENT-1")] != reasons[("CHILD-1", "PARENT-3")], reasons
+    assert res.get("acknowledged") == [], res
+    assert trace_snapshot(r.root) == before
+
+
+def _dry_run_repo(tmp_path, name="repo") -> Repo:
+    r = trace_basic_repo(tmp_path, name)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", None), ("PARENT", "PARENT-2", "satisfies", None)])
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-3", "satisfies", r.c0[:7])])
+    r.set_links("CHILD", "CHILD-3", [("PARENT", "PARENT-9", "satisfies", None)])
+    r.commit("links")
+    return r
+
+
+DRY_RUN_KEYS = {
+    "no-link-keys": None,
+    "some-link-keys": [_key("CHILD-1", "PARENT-2"), _key("CHILD-2", "PARENT-3"), _key("CHILD-3", "PARENT-9")],
+}
+
+
+@pytest.mark.parametrize("keys", list(DRY_RUN_KEYS))
+def test_trace_srs_141_dry_run_lists_the_links_the_real_call_acknowledges(tmp_path, mcp, keys):
+    """MELLON-TRACE-SRS-141: When an ack_suspects call asks for a dry run, the MCP server shall return
+    the links that the call acknowledges when made without a dry run. Condition: suspect, OK and
+    broken links; without link_keys and with a subset. Expected: the dry run's links equal the links
+    whose acknowledged commit the real call writes."""
+    r = _dry_run_repo(tmp_path)
+    s = mcp.serve(r.root)
+    link_keys = DRY_RUN_KEYS[keys]
+    dry = s.ack_suspects("CHILD", dry_run=True, link_keys=link_keys)
+    would = {(e["source_id"], e["link"]["target_id"]) for e in dry["would_acknowledge"]}
+    before = all_acks(r.root)
+    s.ack_suspects("CHILD", link_keys=link_keys)
+    assert _acked_links(before, all_acks(r.root)) == would
+
+
+def test_trace_srs_142_dry_run_changes_no_file(tmp_path, mcp):
+    """MELLON-TRACE-SRS-142: When an ack_suspects call asks for a dry run, the MCP server shall change
+    no file. Condition: dry runs without and with link_keys on a document with suspect links.
+    Expected: every working-copy file byte-identical, git status, index and refs unchanged, and the
+    same suspect links reported afterwards. (Mellon's own cache file in .git is not compared.)"""
+    r = _dry_run_repo(tmp_path)
+    s = mcp.serve(r.root)
+    before_suspects = _suspects_set(s.suspects("CHILD"))
+    files, git = trace_snapshot(r.root), git_state(r)
+    s.ack_suspects("CHILD", dry_run=True)
+    s.ack_suspects("CHILD", dry_run=True, link_keys=[_key("CHILD-1", "PARENT-1")])
+    assert trace_snapshot(r.root) == files, "a dry run changed working-copy files"
+    assert git_state(r) == git, "a dry run changed git status, the index or refs"
+    mcp.restart()
+    assert _suspects_set(s.suspects("CHILD")) == before_suspects

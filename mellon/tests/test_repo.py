@@ -483,3 +483,60 @@ def test_store_srs_119_links_source_must_match_file_name(tmp_path):
     assert "DOC" in errors and "DOC" not in docs
     err = errors["DOC"]
     assert err.file is not None and err.file.parent.name == "links" and err.file.name == "DOC-1.xml", err
+
+
+# MELLON-TRACE-SRS blind tests
+import random  # noqa: E402
+
+from mellon.service.document import DocumentService  # noqa: E402
+from tests.trace_support import (  # noqa: E402
+    EXPECTED_INCOMING_PARENT_1,
+    Repo,
+    _three_document_repo,
+    mcp,  # noqa: F401, F811 -- fixture
+)
+
+
+@pytest.mark.parametrize("layer", ["library", "service"])
+def test_trace_srs_33_incoming_links_found_in_each_document(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-33: Mellon shall find an object's incoming links in each document of the
+    repository. Condition: PARENT-1 is the target of PARENT-2 (same document), CHILD-1 and SIB-1
+    (two other documents); other links go to PARENT-3. Expected: exactly those three, with source
+    documents and link types."""
+    r = _three_document_repo(tmp_path)
+    if layer == "library":
+        got = [(d, s, lk.type) for d, s, lk in repo_incoming_links(load_all(r.root), "PARENT", "PARENT-1")]
+    elif layer == "service":
+        got = [(d, s, lk.type) for d, s, lk in DocumentService(r.root).incoming_links("PARENT", "PARENT-1")]
+    else:
+        got = [(e["source_doc"], e["source_id"], e["link_type"])
+               for e in mcp.serve(r.root).incoming_links("PARENT", "PARENT-1")]
+    assert sorted(got) == EXPECTED_INCOMING_PARENT_1
+
+
+def test_trace_srs_33_incoming_links_match_generated_link_sets(tmp_path):
+    """MELLON-TRACE-SRS-33: Mellon shall find an object's incoming links in each document of the
+    repository. Condition (T11): 25 generated repositories of three documents with random links.
+    Expected: each object's incoming links are exactly the links that name it, from any document."""
+    rng = random.Random(33)
+    for n in range(25):
+        root = tmp_path / f"r{n}"
+        r = Repo(root, git=False)
+        docs = {"TOP": [], "MID": ["TOP"], "LOW": ["MID", "TOP"]}
+        ids = {d: [f"{d}-{i}" for i in range(1, rng.randint(2, 6))] for d in docs}
+        for d, parents in docs.items():
+            r.add_doc(d, {o: o.lower() for o in ids[d]}, parents=parents)
+        expected = {}
+        for d, parents in docs.items():
+            for src in ids[d]:
+                pool = [(t, o) for t in [d, *parents] for o in ids[t] if o != src]
+                chosen = rng.sample(pool, rng.randint(0, min(4, len(pool))))
+                items = [(t, o, rng.choice(["satisfies", "verifies", "refines"]), None) for t, o in chosen]
+                r.set_links(d, src, items)
+                for t, o, typ, _ in items:
+                    expected.setdefault((t, o), []).append((d, src, typ))
+        loaded = load_all(root)
+        for d in docs:
+            for o in ids[d]:
+                got = sorted((sd, ss, lk.type) for sd, ss, lk in repo_incoming_links(loaded, d, o))
+                assert got == sorted(expected.get((d, o), [])), f"repository {n}, object {o}"

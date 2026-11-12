@@ -644,3 +644,249 @@ def test_trace_srs_77_an_object_id_of_another_document_is_broken(repo_tree):
     statuses = scan_document(load_document(doc), doc)
 
     assert [s.state for s in statuses] == [LinkState.BROKEN]
+
+
+# MELLON-TRACE-SRS blind tests
+import shutil  # noqa: E402
+
+from mellon.service.document import DocumentService  # noqa: E402
+from tests.trace_support import (  # noqa: E402
+    SVG,
+    T0,
+    Repo,
+    _repo_with_never_committed_target,
+    _under,
+    basic_repo,
+    link_status,
+    mcp,  # noqa: F401, F811 -- fixture
+    recorded_paths,
+)
+
+
+def assert_state(root, key, state, current=None, step=""):
+    """Check a link's state (and the target's last change) both from scratch and with kept answers."""
+    for scratch in (True, False):
+        st = link_status(root, *key, scratch=scratch)
+        where = f"{step} ({'from scratch' if scratch else 'with kept answers'})"
+        assert st.state.value == state, f"{where}: {key} is {st.state.value} ({st.reason}), expected {state}"
+        if current is not None:
+            assert st.current_hash == current[:7], (
+                f"{where}: last change of {key[2]}/{key[3]} is {st.current_hash}, expected {current[:7]}"
+            )
+
+
+@pytest.mark.parametrize("layer", ["library"])
+@pytest.mark.parametrize("source,target,state", [
+    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target", marks=pytest.mark.xfail(
+        strict=True, reason="defect: MELLON-TRACE-SRS-45: a link with no acknowledged commit to a target "
+        "that is in the working copy but was never committed reads broken ('target not in git history'), "
+        "not suspect; a broken link needs the target missing from the working copy")),
+    pytest.param("CHILD-2", "PARENT-1", "suspect", id="committed-target"),
+    pytest.param("CHILD-3", "PARENT-44", "broken", id="missing-target"),
+])
+def test_trace_srs_45_link_with_no_acknowledged_commit_is_suspect(tmp_path, mcp, layer, source, target, state):
+    """MELLON-TRACE-SRS-45: If a link has no acknowledged commit, Mellon shall report the link as
+    suspect. Condition: no acknowledged commit, with a target that exists in the working copy and was
+    never committed (no last change, CF-T15), a committed target, and, as the boundary, a missing
+    target, which is broken (MELLON-TRACE-SRS-44 comes first)."""
+    r = _repo_with_never_committed_target(tmp_path)
+    if layer == "library":
+        st = link_status(r.root, "CHILD", source, "PARENT", target, scratch=True)
+        got = (st.state.value, st.reason)
+    else:
+        rows = [e for e in mcp.serve(r.root).suspects("CHILD")
+                if e["source_id"] == source and e["link"]["target_id"] == target]
+        got = (rows[0]["state"], rows[0]["reason"]) if rows else ("ok", "not listed")
+    assert got[0] == state, f"{source} -> PARENT/{target}: {got}"
+
+
+# ===========================================================================
+# Changes to a target (MELLON-TRACE-SRS-59, -61, -62, -63, -64)
+# ===========================================================================
+
+KEY_42 = ("CHILD", "CHILD-1", "PARENT", "PARENT-42")
+
+
+def _merge_history(tmp_path, *, keep_figure: bool, side_newer: bool):
+    """base -> A (main) changes PARENT-42's object file; base -> B (side) adds its figure;
+    the link is acknowledged at A; then A and B are merged."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-42": "original parent text"})
+    r.add_doc("CHILD", {"CHILD-1": "child"}, parents=["PARENT"])
+    base = r.commit("base", when=T0)
+    r.write("PARENT/figures/PARENT-42.svg", SVG)
+    b = r.commit("B adds the figure", parents=[base], branch="refs/heads/side", when=T0 + (300 if side_newer else 100))
+    r.delete("PARENT/figures/PARENT-42.svg")
+    r.set_object("PARENT", "PARENT-42", "revised parent text")
+    a = r.commit("A revises the text", parents=[base], when=T0 + 200)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-42", "satisfies", a[:7])])
+    a2 = r.commit("acknowledge at A", when=T0 + 250)
+    if keep_figure:
+        r.write("PARENT/figures/PARENT-42.svg", SVG)
+    m = r.commit("merge side", parents=[a2, b], when=T0 + 400)
+    return r, {"base": base, "a": a, "b": b, "m": m}
+
+
+def test_trace_srs_59_merge_taking_file_from_one_side_and_figure_from_other_is_a_change(tmp_path):
+    """MELLON-TRACE-SRS-59: Mellon shall count a merge commit as a change to the target only when the
+    target object's file and figure, taken together, differ between the merge commit and each of its
+    parents. Condition: the merge takes A's object file and B's figure (A dated after B), so taken
+    together it differs from both parents. Expected: the last change is the merge, and a link
+    acknowledged at A is suspect."""
+    r, c = _merge_history(tmp_path, keep_figure=True, side_newer=False)
+    assert_state(r.root, KEY_42, "suspect", c["m"], "after the merge")
+
+
+def test_trace_srs_59_merge_equal_to_one_parent_is_no_change(tmp_path):
+    """MELLON-TRACE-SRS-59 (other side, with MELLON-TRACE-SRS-60): a merge whose target object file
+    and figure equal one parent's is no change. Condition: the merge keeps A's file and drops B's
+    figure; B is dated after A. Expected: the last change is A, and the link acknowledged at A is OK."""
+    r, c = _merge_history(tmp_path, keep_figure=False, side_newer=True)
+    assert_state(r.root, KEY_42, "ok", c["a"], "after the merge")
+
+
+def _blobs(tree, prefix="") -> dict:
+    out = {}
+    for e in tree:
+        path = f"{prefix}{e.name}"
+        if e.type_str == "tree":
+            out.update(_blobs(e, path + "/"))
+        else:
+            out[path] = (str(e.id), e.filemode)
+    return out
+
+
+def _assert_mode_only(r: Repo, commit_hash: str, path: str) -> None:
+    """Setup check: the commit differs from its parent only in `path`'s mode."""
+    c = r.git[commit_hash]
+    new, old = _blobs(c.tree), _blobs(c.parents[0].tree)
+    changed = {p for p in set(new) | set(old) if new.get(p) != old.get(p)}
+    assert changed == {path}, f"setup: commit changed {changed}"
+    assert new[path][0] == old[path][0] and new[path][1] != old[path][1], f"setup: {old[path]} -> {new[path]}"
+
+
+def test_trace_srs_61_mode_only_commits_are_no_change_to_the_target(tmp_path):
+    """MELLON-TRACE-SRS-61: If a commit changes only the mode of the target's files, Mellon shall count
+    the commit as no change to the target. Condition: an OK link; one commit makes only the object
+    file executable, a later one only the figure. Expected: the link stays OK with the same last
+    change. Control: a later content change turns it suspect."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-1": "parent one"})
+    r.add_doc("CHILD", {"CHILD-1": "child"}, parents=["PARENT"])
+    r.write("PARENT/figures/PARENT-1.svg", SVG)
+    c0 = r.commit("seed")
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", c0[:7])])
+    r.commit("acknowledge")
+    key = ("CHILD", "CHILD-1", "PARENT", "PARENT-1")
+    assert_state(r.root, key, "ok", c0, "after the acknowledgement")
+
+    xml, svg = "PARENT/objects/PARENT-1.xml", "PARENT/figures/PARENT-1.svg"
+    c2 = r.commit("object file mode only", modes={xml: 0o100755})
+    _assert_mode_only(r, c2, xml)
+    assert_state(r.root, key, "ok", c0, "after a commit changing only the object file's mode")
+
+    c3 = r.commit("figure mode only", modes={xml: 0o100755, svg: 0o100755})
+    _assert_mode_only(r, c3, svg)
+    assert_state(r.root, key, "ok", c0, "after a commit changing only the figure's mode")
+
+    r.set_object("PARENT", "PARENT-1", "parent one, revised")
+    c4 = r.commit("content change")
+    assert_state(r.root, key, "suspect", c4, "after a content change (control)")
+
+
+def _ok_link_repo(tmp_path) -> tuple[Repo, str]:
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-0": ("Heading", "Heading"), "PARENT-1": "parent one", "PARENT-2": "parent two"})
+    r.add_doc("CHILD", {"CHILD-1": "child one"}, parents=["PARENT"])
+    c0 = r.commit("seed")
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", c0[:7])])
+    r.commit("acknowledge")
+    return r, c0
+
+
+KEY_1 = ("CHILD", "CHILD-1", "PARENT", "PARENT-1")
+
+
+def test_trace_srs_62_changes_to_the_targets_outgoing_links_are_no_change(tmp_path):
+    """MELLON-TRACE-SRS-62: Mellon shall count a change to the target object's outgoing links as no
+    change to the target. Condition: an OK link to PARENT-1; commits that give PARENT-1 an outgoing
+    link, acknowledge that link, then remove it. Expected: the link stays OK, last change unchanged."""
+    r, c0 = _ok_link_repo(tmp_path)
+    assert_state(r.root, KEY_1, "ok", c0, "before")
+    r.set_links("PARENT", "PARENT-1", [("PARENT", "PARENT-2", "refines", None)])
+    r.commit("PARENT-1 gets an outgoing link")
+    assert_state(r.root, KEY_1, "ok", c0, "after PARENT-1 got an outgoing link")
+    r.set_links("PARENT", "PARENT-1", [("PARENT", "PARENT-2", "refines", c0[:7])])
+    r.commit("acknowledge PARENT-1's link")
+    assert_state(r.root, KEY_1, "ok", c0, "after PARENT-1's link was acknowledged")
+    r.set_links("PARENT", "PARENT-1", [])
+    r.commit("remove PARENT-1's link")
+    assert_state(r.root, KEY_1, "ok", c0, "after PARENT-1's link was removed")
+
+
+def test_trace_srs_63_changes_to_the_target_documents_manifest_are_no_change(tmp_path):
+    """MELLON-TRACE-SRS-63: Mellon shall count a change to the target document's manifest as no
+    change to the target. Condition: an OK link to PARENT-1; commits that move PARENT-1 in the
+    outline, change an attribute definition, and change the title. Expected: OK after each."""
+    r, c0 = _ok_link_repo(tmp_path)
+    moved = ["PARENT-0", ("PARENT-2", ["PARENT-1"])]
+    r.set_manifest("PARENT", moved)
+    r.commit("move PARENT-1 under PARENT-2")
+    assert_state(r.root, KEY_1, "ok", c0, "after PARENT-1 moved in the outline")
+    r.set_manifest("PARENT", moved, status_options=("Draft", "Approved", "Withdrawn"))
+    r.commit("add a status option")
+    assert_state(r.root, KEY_1, "ok", c0, "after an attribute definition changed")
+    r.set_manifest("PARENT", moved, title="Renamed parent", status_options=("Draft", "Approved", "Withdrawn"))
+    r.commit("rename the document")
+    assert_state(r.root, KEY_1, "ok", c0, "after the title changed")
+
+
+def test_trace_srs_64_changes_to_the_source_object_do_not_change_the_state(tmp_path):
+    """MELLON-TRACE-SRS-64: Mellon shall work out a link's state without regard to changes to the
+    link's source object. Condition: an OK link from CHILD-1; commits that change CHILD-1's
+    description, then its status attribute. Expected: the link stays OK."""
+    r, c0 = _ok_link_repo(tmp_path)
+    r.set_object("CHILD", "CHILD-1", ("child one, rewritten",))
+    r.commit("rewrite CHILD-1")
+    assert_state(r.root, KEY_1, "ok", c0, "after CHILD-1's description changed")
+    r.set_object("CHILD", "CHILD-1", ("child one, rewritten", "Requirement", "Approved"))
+    r.commit("approve CHILD-1")
+    assert_state(r.root, KEY_1, "ok", c0, "after CHILD-1's attribute changed")
+
+
+# ===========================================================================
+# Safeguards (MELLON-TRACE-SRS-77, -79)
+# ===========================================================================
+
+# An empty target ID is left out: Mellon reports the links file as a load error ("<link> requires
+# @target-doc, @target-id, @type"), and MELLON-TRACE-SRS-77 doesn't say whether an empty target-id
+# is a link with a target that isn't an object ID or a malformed file (requirement gap).
+TARGETS_77 = {
+    "nested-name": ("sub/x", {"sub", "x", "x.xml", "x.svg"}),
+    "drive-path": ("C:/x", {"x", "x.xml", "x.svg"}),
+    "rooted-path": ("/x", {"x", "x.xml", "x.svg"}),
+    "trailing-space": ("PARENT-1 ", {"PARENT-1 ", "PARENT-1 .xml", "PARENT-1 .svg"}),
+}
+
+
+@pytest.mark.parametrize("case", list(TARGETS_77))
+def test_trace_srs_77_target_that_is_no_object_id_is_broken_without_opening_files(tmp_path, case):
+    """MELLON-TRACE-SRS-77: If a link's target isn't an object ID, Mellon shall report the link as
+    broken without opening a file or folder for the target. Condition: target IDs 'sub/x', 'C:/x',
+    '/x', '' and 'PARENT-1 ' (PARENT-1 exists; Windows drops a trailing space from a file name)."""
+    target, names = TARGETS_77[case]
+    r = basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", target, "satisfies", r.c0[:7])])
+    r.commit("odd target")
+    warm = tmp_path / "warm"
+    shutil.copytree(r.root, warm)
+    DocumentService(warm).scan_suspects("CHILD")  # imports done before recording
+
+    with recorded_paths(r.root) as (seen, outside):
+        found = DocumentService(r.root).scan_suspects("CHILD")["CHILD"]
+    states = [(s.link.target_id, s.state.value) for s in found if s.source_id == "CHILD-1"]
+    assert states == [(target, "broken")], f"CHILD-1's link to {target!r}: {states}"
+    assert any(_under(p, str(r.root)) for p in seen), "setup: the recorder saw none of Mellon's reads"
+    assert outside == [], f"paths outside the repository were asked for: {outside}"
+    for_target = [p for p in seen if os.path.basename(os.path.normpath(p)) in names]
+    assert for_target == [], f"paths opened for target {target!r}: {for_target}"

@@ -132,3 +132,81 @@ def test_trace_cycle_safe(tmp_path: Path):
     assert inner.children == ()  # Cycle cut here.
 
 
+# MELLON-TRACE-SRS blind tests
+import random  # noqa: E402
+
+from mellon.repo import load_all  # noqa: E402
+from tests.trace_support import Repo  # noqa: E402
+
+
+def edge_ids(edges) -> list:
+    """Library TraceEdge tuples as nested (target_id, children) pairs."""
+    return [(e.target_id, edge_ids(e.children)) for e in edges]
+
+
+# ===========================================================================
+# Trace (MELLON-TRACE-SRS-160, -168, -169, -171, -172, -175)
+# ===========================================================================
+
+
+def _graph(tmp_path, n, edges, name="g"):
+    r = Repo(tmp_path / name, git=False)
+    r.add_doc("CYC", {f"CYC-{i}": f"object {i}" for i in range(1, n + 1)})
+    out = {}
+    for s_, t in edges:
+        out.setdefault(s_, []).append(t)
+    for s_, ts in out.items():
+        r.set_links("CYC", f"CYC-{s_}", [("CYC", f"CYC-{t}", "refines", None) for t in ts])
+    return load_all(r.root)
+
+
+def test_trace_srs_160_trace_down_ends_at_an_object_reached_a_second_time(tmp_path):
+    """MELLON-TRACE-SRS-160: Mellon shall end each path of a trace at the first object that the path
+    reaches a second time. Condition: A <- B <- A (A links to B and B to A), traced down from A.
+    Expected: the path A, B, A ends at A, its last object."""
+    docs = _graph(tmp_path, 2, [(1, 2), (2, 1)])
+    assert edge_ids(trace_down(docs, "CYC", "CYC-1")) == [("CYC-2", [("CYC-1", [])])]
+
+
+def test_trace_srs_160_trace_up_ends_at_an_object_reached_a_second_time(tmp_path):
+    """MELLON-TRACE-SRS-160: Mellon shall end each path of a trace at the first object that the path
+    reaches a second time. Condition: the cycle A -> B -> C -> A traced up from A, and A -> B -> C -> B
+    (a cycle not through the traced object). Expected: each path ends at the repeated object."""
+    docs = _graph(tmp_path, 3, [(1, 2), (2, 3), (3, 1)], "g1")
+    assert edge_ids(trace_up(docs, "CYC", "CYC-1")) == [("CYC-2", [("CYC-3", [("CYC-1", [])])])]
+    docs = _graph(tmp_path, 3, [(1, 2), (2, 3), (3, 2)], "g2")
+    assert edge_ids(trace_up(docs, "CYC", "CYC-1")) == [("CYC-2", [("CYC-3", [("CYC-2", [])])])]
+
+
+def _check_paths(edges, root, adjacency, path=None):
+    """Each path of a trace follows every link of each object on it and ends exactly where an object
+    repeats or no link leads on."""
+    path = [root] if path is None else path
+    last = path[-1]
+    repeated = last in path[:-1]
+    kids = [(e.target_id, e) for e in edges]
+    if repeated:
+        assert kids == [], f"path {path} goes on past the repeated {last}"
+        return
+    assert sorted(k for k, _ in kids) == sorted(adjacency.get(last, [])), f"at {path}: {sorted(k for k, _ in kids)}"
+    for k, e in kids:
+        _check_paths(e.children, root, adjacency, path + [k])
+
+
+def test_trace_srs_160_paths_end_at_the_first_repeat_in_generated_graphs(tmp_path):
+    """MELLON-TRACE-SRS-160: Mellon shall end each path of a trace at the first object that the path
+    reaches a second time. Condition (T11): 40 generated link graphs of 5 objects with cycles, traced
+    up and down from each object. Expected: each path follows every link and ends at its first repeat."""
+    rng = random.Random(160)
+    for g in range(40):
+        pairs = [(a, b) for a in range(1, 6) for b in range(1, 6) if a != b]
+        edges = rng.sample(pairs, rng.randint(3, 8))
+        docs = _graph(tmp_path, 5, edges, f"g{g}")
+        up, down = {}, {}
+        for a, b in edges:
+            up.setdefault(f"CYC-{a}", []).append(f"CYC-{b}")
+            down.setdefault(f"CYC-{b}", []).append(f"CYC-{a}")
+        for i in range(1, 6):
+            oid = f"CYC-{i}"
+            _check_paths(trace_up(docs, "CYC", oid), oid, up)
+            _check_paths(trace_down(docs, "CYC", oid), oid, down)

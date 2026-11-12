@@ -3075,3 +3075,112 @@ def test_edit_srs_278_library_refuses_filter_without_name(tmp_path, name):
     with pytest.raises(EditorError):
         rename_filter(folder, slug, name)
     assert changed_files(before, tree_hashes(tmp_path)) == []
+
+
+# MELLON-TRACE-SRS blind tests
+from tests.trace_support import (  # noqa: E402
+    MISSING_TARGETS,
+    Repo,
+    _defect_6,
+    _make_missing,
+    _uncommitted_parent_5,
+    basic_repo as trace_basic_repo,
+    call,
+    disk_links,
+    mcp,  # noqa: F401, F811 -- fixture
+    refused,
+    snapshot as trace_snapshot,
+)
+
+
+@pytest.mark.parametrize("layer", ["library"])
+def test_trace_srs_4_link_to_target_with_no_last_change_gets_no_acknowledged_commit(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-4: If a new link's target object has no last change, Mellon shall create the
+    link with no acknowledged commit. Condition: the target's object file is in the working copy and
+    was never committed. Other side: a committed target gets its last change (MELLON-TRACE-SRS-3)."""
+    r = trace_basic_repo(tmp_path)
+    _uncommitted_parent_5(r)
+    if layer == "library":
+        editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-5", "satisfies")
+        editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies")
+    else:
+        s = mcp.serve(r.root)
+        res = s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-5", "satisfies")
+        assert res.get("ok") is True, f"add_link refused: {res}"
+        assert res.get("ack") is None, f"add_link reports ack {res.get('ack')!r} for a never-committed target"
+        assert s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies").get("ok") is True
+    on_disk = disk_links(r.root, "CHILD", "CHILD-1")
+    assert on_disk[("PARENT", "PARENT-5")] == ("satisfies", None), f"link to PARENT-5 on disk: {on_disk}"
+    assert on_disk[("PARENT", "PARENT-1")] == ("satisfies", r.c0[:7]), f"link to PARENT-1 on disk: {on_disk}"
+
+
+def test_trace_srs_4_link_in_repository_without_commits_gets_no_acknowledged_commit(tmp_path):
+    """MELLON-TRACE-SRS-4: If a new link's target object has no last change, Mellon shall create the
+    link with no acknowledged commit. Condition (T10): a git repository with no commit at all."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-1": "parent one"})
+    r.add_doc("CHILD", {"CHILD-1": "child one"}, parents=["PARENT"])
+    assert r.git.head_is_unborn, "precondition: no commit"
+    editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "satisfies")
+    assert disk_links(r.root, "CHILD", "CHILD-1") == {("PARENT", "PARENT-1"): ("satisfies", None)}
+
+
+@pytest.mark.parametrize("target", list(MISSING_TARGETS))
+@pytest.mark.parametrize("layer", [
+    pytest.param("library", marks=_defect_6("the library's add_link")),
+    pytest.param("service", marks=_defect_6("the document service's add_link")),
+])
+def test_trace_srs_6_link_to_missing_target_is_refused(tmp_path, mcp, layer, target):
+    """MELLON-TRACE-SRS-6: If a new link's target object doesn't exist in the working copy, Mellon
+    shall refuse to create the link. Condition: target never existed, or committed and deleted from
+    the working copy. Expected: refused, and CHILD's files unchanged (no links file written)."""
+    r = trace_basic_repo(tmp_path)
+    _make_missing(r, target)
+    before = trace_snapshot(r.root)
+    if layer == "library":
+        try:
+            editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", target, "satisfies")
+            result = {"ok": True}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "service":
+        try:
+            res = DocumentService(r.root).add_link("CHILD", "CHILD-1", "PARENT", target, "satisfies")
+            result = {"ok": getattr(res, "ok", True)}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "mcp add_link":
+        result = call(mcp.serve(r.root).add_link, "CHILD", "CHILD-1", "PARENT", target, "satisfies")
+    else:
+        result = call(mcp.serve(r.root).update_object, "CHILD", "CHILD-1",
+                      add_links=[{"target_doc": "PARENT", "target_id": target, "type": "satisfies"}])
+    assert refused(result), f"link CHILD-1 -> PARENT/{target} ({MISSING_TARGETS[target]}) was created: {result}"
+    assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+@pytest.mark.parametrize("layer", ["library"])
+def test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-7: If a new link's source object already has a link to the target object,
+    Mellon shall refuse to create the new link, whatever its link type. Condition: CHILD-1 satisfies
+    PARENT-1; add a verifies link between the same pair (new_object: both in one call)."""
+    r = trace_basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.commit("link")
+    before = trace_snapshot(r.root)
+    if layer == "library":
+        try:
+            editor.add_link(r.root / "CHILD", "CHILD-1", "PARENT", "PARENT-1", "verifies")
+            result = {"ok": True}
+        except Exception as e:  # noqa: BLE001
+            result = {"ok": False, "raised": repr(e)}
+    elif layer == "mcp add_link":
+        result = call(mcp.serve(r.root).add_link, "CHILD", "CHILD-1", "PARENT", "PARENT-1", "verifies")
+    elif layer == "mcp new_object":
+        result = call(mcp.serve(r.root).new_object, "CHILD", description="new", attrs={"type": "Requirement"},
+                      links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "satisfies"},
+                             {"target_doc": "PARENT", "target_id": "PARENT-1", "type": "verifies"}])
+    else:
+        result = call(mcp.serve(r.root).update_object, "CHILD", "CHILD-1",
+                      add_links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "verifies"}])
+    assert refused(result), f"a second link between one pair of objects was created: {result}"
+    assert trace_snapshot(r.root) == before, "a refused link changed files"

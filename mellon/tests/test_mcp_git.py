@@ -1087,3 +1087,169 @@ def test_trace_srs_79_review_of_a_target_that_is_no_object_id_reads_nothing_outs
     assert r["state"] == "broken"
     assert r["parent_text_now"] is None
     assert r["commits_between"] == []
+
+
+# MELLON-TRACE-SRS blind tests
+import subprocess  # noqa: E402
+
+from tests.trace_support import (  # noqa: E402
+    OPERATIONS_79,
+    SVG,
+    T0,
+    Repo,
+    _outside_repo,
+    _under,
+    call,
+    mcp,  # noqa: F401, F811 -- fixture
+    recorded_paths,
+)
+
+
+@pytest.mark.parametrize("operation", ["review of a suspect link"])
+def test_trace_srs_79_no_path_outside_the_repository_is_opened(tmp_path, mcp, operation):
+    """MELLON-TRACE-SRS-79: Mellon shall not open a file or folder outside the repository to work out
+    a link's state, incoming links, a trace, a coverage report or a review of a suspect link.
+    Condition: link targets and target documents '../OUT', 'PARENT-42/../../../../OUT-1' and a share,
+    with a document OUT and a file OUT-1.xml beside the repository; the same names given as tool
+    arguments. Expected: no path outside the repository is asked for."""
+    r = _outside_repo(tmp_path)
+    warm = tmp_path / "warm" / "repo"
+    shutil.copytree(r.root, warm)
+    op = OPERATIONS_79[operation]
+    for fn in (op,):
+        call(fn, mcp.serve(warm))  # imports done before recording
+    s = mcp.serve(r.root)
+    with recorded_paths(r.root) as (seen, outside):
+        call(op, s)
+    assert any(_under(p, str(r.root)) for p in seen), "setup: the recorder saw none of Mellon's reads"
+    assert outside == [], f"{operation}: paths outside the repository were asked for: {outside}"
+
+
+# ===========================================================================
+# Reviewing suspect links (MELLON-TRACE-SRS-117, -118, -120)
+# ===========================================================================
+
+TARGET_FILES_1 = ["PARENT/objects/PARENT-1.xml", "PARENT/figures/PARENT-1.svg"]
+
+
+def _git_log_range(root, ack, files) -> set | None:
+    """`git log <ack>..HEAD -- files`, to check the test's own history; None without git."""
+    git = shutil.which("git")
+    if not git:
+        return None
+    out = subprocess.run([git, "-C", str(root), "log", "--format=%H", f"{ack}..HEAD", "--", *files],
+                         capture_output=True, text=True, check=True).stdout
+    return set(out.split())
+
+
+def _review_commits(s, source="CHILD-1", target="PARENT-1") -> list:
+    return s.review_suspect_link("CHILD", source, "PARENT", target)["commits_between"]
+
+
+def _two_doc(tmp_path) -> Repo:
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-1": "v1"})
+    r.add_doc("CHILD", {"CHILD-1": "child", "CHILD-2": "child two"}, parents=["PARENT"])
+    return r
+
+
+def test_trace_srs_117_commits_after_a_rebase_that_dropped_the_acknowledged_commit(tmp_path, mcp):
+    """MELLON-TRACE-SRS-117: review_suspect_link shall return the commits that are the latest commit
+    or its ancestors, aren't the acknowledged commit or its ancestors, and changed the target object's
+    file or figure. Condition: the acknowledged commit C1 was replaced by a rebase (C1', with a clock
+    behind C1's), then C2' changed the target again. Expected: exactly C1' and C2'."""
+    r = _two_doc(tmp_path)
+    c0 = r.commit("base", when=T0 + 1000)
+    r.set_object("PARENT", "PARENT-1", "v2")
+    c1 = r.commit("revise", when=T0 + 2000)
+    c1r = r.commit("revise (rebased)", parents=[c0], when=T0 + 1500)
+    r.set_object("PARENT", "PARENT-1", "v3")
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", c1[:7])])
+    c2r = r.commit("revise again", when=T0 + 1600)
+    expected = {c1r, c2r}
+    git_says = _git_log_range(r.root, c1, TARGET_FILES_1)
+    assert git_says in (None, expected), f"setup: git log lists {git_says}"
+    got = {e["commit_oid"] for e in _review_commits(mcp.serve(r.root))}
+    assert got == expected, f"commits listed: {got}; expected {expected}"
+
+
+def test_trace_srs_117_commits_from_a_branch_forked_before_the_acknowledged_commit(tmp_path, mcp):
+    """MELLON-TRACE-SRS-117: review_suspect_link shall return the commits that are the latest commit
+    or its ancestors, aren't the acknowledged commit or its ancestors, and changed the target object's
+    file or figure. Condition: a side branch forked before the acknowledged commit C1 adds the
+    target's figure (dated before C1) and is merged after it. Expected: exactly the side commit and
+    the merge (which differs from both parents)."""
+    r = _two_doc(tmp_path)
+    c0 = r.commit("base", when=T0 + 1000)
+    r.write("PARENT/figures/PARENT-1.svg", SVG)
+    s1 = r.commit("side adds the figure", parents=[c0], branch="refs/heads/side", when=T0 + 1100)
+    r.delete("PARENT/figures/PARENT-1.svg")
+    r.set_object("PARENT", "PARENT-1", "v2")
+    c1 = r.commit("revise", parents=[c0], when=T0 + 1200)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", c1[:7])])
+    c2 = r.commit("acknowledge", when=T0 + 1300)
+    r.write("PARENT/figures/PARENT-1.svg", SVG)
+    m = r.commit("merge side", parents=[c2, s1], when=T0 + 1400)
+    expected = {s1, m}
+    git_says = _git_log_range(r.root, c1, TARGET_FILES_1)
+    assert git_says in (None, expected), f"setup: git log lists {git_says}"
+    got = {e["commit_oid"] for e in _review_commits(mcp.serve(r.root))}
+    assert got == expected, f"commits listed: {got}; expected {expected}"
+
+
+def _revisions_after_ack(tmp_path, revs: list[int], newest_clock_rev: int | None = None) -> Repo:
+    r = _two_doc(tmp_path)
+    c0 = r.commit("base", when=T0)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", c0[:7])])
+    r.commit("acknowledge", when=T0 + 10)
+    for k in revs:
+        r.set_object("PARENT", "PARENT-1", f"revision {k}")
+        when = T0 + 100_000 if k == newest_clock_rev else T0 + 100 + k
+        r.commit(f"Rev {k}", when=when)
+    return r
+
+
+def test_trace_srs_118_twenty_commits_are_listed_whole(tmp_path, mcp):
+    """MELLON-TRACE-SRS-118: If more than 20 commits fit MELLON-TRACE-SRS-117, review_suspect_link
+    shall return the 20 nearest the latest commit in history and report that more exist. Condition
+    (boundary): exactly 20 target revisions after the acknowledgement. Expected: all 20, not cut."""
+    r = _revisions_after_ack(tmp_path, list(range(1, 21)))
+    out = mcp.serve(r.root).review_suspect_link("CHILD", "CHILD-1", "PARENT", "PARENT-1")
+    msgs = {e["message"].strip() for e in out["commits_between"]}
+    assert msgs == {f"Rev {k}" for k in range(1, 21)}, sorted(msgs)
+    assert len(out["commits_between"]) == 20
+    assert out["commits_between_truncated"] is False
+
+
+def test_trace_srs_118_twenty_one_commits_are_cut_to_the_twenty_nearest_in_history(tmp_path, mcp):
+    """MELLON-TRACE-SRS-118: If more than 20 commits fit MELLON-TRACE-SRS-117, review_suspect_link
+    shall return the 20 nearest the latest commit in history and report that more exist. Condition:
+    21 revisions Rev 0..Rev 20; Rev 0, the furthest in history, has the newest clock. Expected:
+    Rev 1..Rev 20, Rev 0 absent, reported as cut."""
+    r = _revisions_after_ack(tmp_path, list(range(0, 21)), newest_clock_rev=0)
+    out = mcp.serve(r.root).review_suspect_link("CHILD", "CHILD-1", "PARENT", "PARENT-1")
+    msgs = [e["message"].strip() for e in out["commits_between"]]
+    assert set(msgs) == {f"Rev {k}" for k in range(1, 21)}, msgs
+    assert len(msgs) == 20
+    assert out["commits_between_truncated"] is True
+
+
+def test_trace_srs_120_changed_fields_unknown_when_target_did_not_exist_at_the_acknowledged_commit(tmp_path, mcp):
+    """MELLON-TRACE-SRS-120: If the reviewed link has no acknowledged commit, the commit can't be
+    found, or the target didn't exist there, review_suspect_link shall return the changed fields as
+    unknown. Condition: the acknowledged commit exists but precedes PARENT-5's creation. Control: a
+    link acknowledged where the target existed gets a list of changed fields."""
+    r = _two_doc(tmp_path)
+    c0 = r.commit("base")
+    r.set_object("PARENT", "PARENT-5", "created later")
+    r.set_manifest("PARENT", ["PARENT-1", "PARENT-5"])
+    r.commit("create PARENT-5")
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-5", "satisfies", c0[:7])])
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-1", "satisfies", c0[:7])])
+    r.set_object("PARENT", "PARENT-1", "v2")
+    r.commit("links; revise PARENT-1")
+    s = mcp.serve(r.root)
+    before_creation = s.review_suspect_link("CHILD", "CHILD-1", "PARENT", "PARENT-5")
+    assert before_creation["changed_fields"] is None, before_creation
+    control = s.review_suspect_link("CHILD", "CHILD-2", "PARENT", "PARENT-1")
+    assert control["changed_fields"] == ["description"], control

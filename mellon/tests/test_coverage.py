@@ -348,3 +348,36 @@ def test_coverage_report_to_dict_default_omits_lists(two_doc_repo) -> None:
     assert "covered_objects" not in payload
     assert payload["total"] == 3
     assert payload["covered"] == 2
+
+
+# MELLON-TRACE-SRS blind tests
+from mellon.repo import load_all  # noqa: E402
+from tests.trace_support import Repo  # noqa: E402
+
+
+# ===========================================================================
+# Coverage (MELLON-TRACE-SRS-184, -197, -200)
+# ===========================================================================
+
+
+def _rows(report) -> dict:
+    return {row.source_id: row.covered for row in report.rows}
+
+
+def test_trace_srs_184_transitive_coverage_follows_a_chain_in_the_reports_direction(tmp_path):
+    """MELLON-TRACE-SRS-184: When Mellon works out transitive coverage, Mellon shall count an object of
+    the reported document as covered when a chain of links, each in the report's direction, joins the
+    object to the covering document. Condition: STS-1 -> SRS-1 -> SYS-1, STS-2 unlinked, SYS-2 unlinked.
+    Expected: outgoing STS against SYS and incoming SYS against STS cover STS-1 / SYS-1 transitively
+    only; STS-2 and SYS-2 stay uncovered."""
+    r = Repo(tmp_path / "repo", git=False)
+    r.add_doc("SYS", {"SYS-1": "s1", "SYS-2": "s2"})
+    r.add_doc("SRS", {"SRS-1": "r1"}, parents=["SYS"])
+    r.add_doc("STS", {"STS-1": ("t1", "Test Case"), "STS-2": ("t2", "Test Case")}, parents=["SRS"])
+    r.set_links("SRS", "SRS-1", [("SYS", "SYS-1", "satisfies", None)])
+    r.set_links("STS", "STS-1", [("SRS", "SRS-1", "verifies", None)])
+    docs = load_all(r.root)
+    assert _rows(coverage_report(docs, "STS", "SYS", direction="outgoing", transitive=True)) == {"STS-1": True, "STS-2": False}
+    assert _rows(coverage_report(docs, "STS", "SYS", direction="outgoing")) == {"STS-1": False, "STS-2": False}
+    assert _rows(coverage_report(docs, "SYS", "STS", direction="incoming", transitive=True)) == {"SYS-1": True, "SYS-2": False}
+    assert _rows(coverage_report(docs, "SYS", "STS", direction="incoming")) == {"SYS-1": False, "SYS-2": False}

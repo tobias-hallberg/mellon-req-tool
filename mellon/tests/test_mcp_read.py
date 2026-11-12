@@ -1747,3 +1747,305 @@ def test_edit_srs_266_search_limit_holds_beside_document_with_load_error(mcp_roo
     _many_repo(mcp_root, 60)
     _broken_doc(mcp_root)
     assert len(_server().search_objects("needle")) == 50
+
+
+# MELLON-TRACE-SRS blind tests
+from mellon.repo import incoming_links as repo_incoming_links, load_all  # noqa: E402
+from mellon.service.document import DocumentService  # noqa: E402
+from tests.trace_support import (  # noqa: E402
+    EXPECTED_INCOMING_PARENT_1,
+    OPERATIONS_79,
+    Repo,
+    _outside_repo,
+    _repo_with_never_committed_target,
+    _suspects_set,
+    _three_document_repo,
+    _under,
+    _v_model_repo,
+    basic_repo,
+    call,
+    link_status,
+    mcp,  # noqa: F401, F811 -- fixture
+    recorded_paths,
+    remove_from_working_copy,
+)
+
+
+def trace_ids(edges) -> list:
+    """MCP trace edges as nested (target_id, children) pairs."""
+    return [(e["target_id"], trace_ids(e.get("children") or [])) for e in edges]
+
+
+def depths(edges, depth=1, out=None) -> dict:
+    """target_id -> set of depths at which an MCP trace reaches it."""
+    out = {} if out is None else out
+    for e in edges:
+        out.setdefault(e["target_id"], set()).add(depth)
+        depths(e.get("children") or [], depth + 1, out)
+    return out
+
+
+def entry_ids(entries) -> set:
+    return {e if isinstance(e, str) else (e.get("obj_id") or e.get("id")) for e in entries or []}
+
+
+# ===========================================================================
+# Links in the working copy (MELLON-TRACE-SRS-1)
+# ===========================================================================
+
+
+def test_trace_srs_1_uncommitted_new_link_counts_in_incoming_trace_and_coverage(tmp_path, mcp):
+    """MELLON-TRACE-SRS-1: Mellon shall work out incoming links, link states, traces and coverage
+    from the links ... in the working copy. Condition: a link added and not committed shows at its
+    target's incoming links, in the source's trace up and in incoming coverage."""
+    r = basic_repo(tmp_path)
+    s = mcp.serve(r.root)
+    assert "PARENT-2" in entry_ids(s.coverage_report("PARENT", "CHILD", include_lists=True)["uncovered"])
+
+    assert s.add_link("CHILD", "CHILD-1", "PARENT", "PARENT-2", "satisfies").get("ok") is True
+    assert "CHILD/links/CHILD-1.xml" in r.git.status(), "precondition: the new link is not committed"
+
+    incoming = {(e["source_doc"], e["source_id"]) for e in s.incoming_links("PARENT", "PARENT-2")}
+    assert incoming == {("CHILD", "CHILD-1")}, f"incoming links of PARENT-2: {incoming}"
+    up = s.trace("CHILD", "CHILD-1", direction="up")["up"]
+    assert [t for t, _ in trace_ids(up)] == ["PARENT-2"], f"trace up of CHILD-1: {trace_ids(up)}"
+    cov = s.coverage_report("PARENT", "CHILD", include_lists=True)
+    assert "PARENT-2" in entry_ids(cov["covered_objects"]), f"coverage: {cov}"
+    assert "PARENT-2" not in entry_ids(cov["uncovered"]), f"coverage: {cov}"
+
+
+def test_trace_srs_1_uncommitted_removal_drops_link_from_incoming_trace_and_coverage(tmp_path, mcp):
+    """MELLON-TRACE-SRS-1: Mellon shall work out incoming links, ... traces and coverage from the
+    links ... in the working copy. Condition: a committed link removed and not committed is gone
+    from incoming links, the trace up and incoming coverage."""
+    r = basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-1", "satisfies", r.c0[:7])])
+    r.commit("link CHILD-2")
+    s = mcp.serve(r.root)
+    assert {e["source_id"] for e in s.incoming_links("PARENT", "PARENT-1")} == {"CHILD-2"}, "precondition"
+
+    assert s.remove_link("CHILD", "CHILD-2", "PARENT", "PARENT-1").get("ok") is True
+    assert "CHILD/links/CHILD-2.xml" in r.git.status(), "precondition: the removal is not committed"
+
+    assert s.incoming_links("PARENT", "PARENT-1") == [], "incoming links of PARENT-1 still list the removed link"
+    assert s.trace("CHILD", "CHILD-2", direction="up")["up"] == [], "trace up of CHILD-2 still follows the removed link"
+    cov = s.coverage_report("PARENT", "CHILD", include_lists=True)
+    assert "PARENT-1" in entry_ids(cov["uncovered"]), f"PARENT-1 should be uncovered: {cov}"
+
+
+@pytest.mark.parametrize("layer", ["mcp"])
+def test_trace_srs_33_incoming_links_found_in_each_document(tmp_path, mcp, layer):
+    """MELLON-TRACE-SRS-33: Mellon shall find an object's incoming links in each document of the
+    repository. Condition: PARENT-1 is the target of PARENT-2 (same document), CHILD-1 and SIB-1
+    (two other documents); other links go to PARENT-3. Expected: exactly those three, with source
+    documents and link types."""
+    r = _three_document_repo(tmp_path)
+    if layer == "library":
+        got = [(d, s, lk.type) for d, s, lk in repo_incoming_links(load_all(r.root), "PARENT", "PARENT-1")]
+    elif layer == "service":
+        got = [(d, s, lk.type) for d, s, lk in DocumentService(r.root).incoming_links("PARENT", "PARENT-1")]
+    else:
+        got = [(e["source_doc"], e["source_id"], e["link_type"])
+               for e in mcp.serve(r.root).incoming_links("PARENT", "PARENT-1")]
+    assert sorted(got) == EXPECTED_INCOMING_PARENT_1
+
+
+@pytest.mark.parametrize("layer", ["mcp"])
+@pytest.mark.parametrize("source,target,state", [
+    pytest.param("CHILD-1", "PARENT-43", "suspect", id="never-committed-target", marks=pytest.mark.xfail(
+        strict=True, reason="defect: MELLON-TRACE-SRS-45: a link with no acknowledged commit to a target "
+        "that is in the working copy but was never committed reads broken ('target not in git history'), "
+        "not suspect; a broken link needs the target missing from the working copy")),
+    pytest.param("CHILD-2", "PARENT-1", "suspect", id="committed-target"),
+    pytest.param("CHILD-3", "PARENT-44", "broken", id="missing-target"),
+])
+def test_trace_srs_45_link_with_no_acknowledged_commit_is_suspect(tmp_path, mcp, layer, source, target, state):
+    """MELLON-TRACE-SRS-45: If a link has no acknowledged commit, Mellon shall report the link as
+    suspect. Condition: no acknowledged commit, with a target that exists in the working copy and was
+    never committed (no last change, CF-T15), a committed target, and, as the boundary, a missing
+    target, which is broken (MELLON-TRACE-SRS-44 comes first)."""
+    r = _repo_with_never_committed_target(tmp_path)
+    if layer == "library":
+        st = link_status(r.root, "CHILD", source, "PARENT", target, scratch=True)
+        got = (st.state.value, st.reason)
+    else:
+        rows = [e for e in mcp.serve(r.root).suspects("CHILD")
+                if e["source_id"] == source and e["link"]["target_id"] == target]
+        got = (rows[0]["state"], rows[0]["reason"]) if rows else ("ok", "not listed")
+    assert got[0] == state, f"{source} -> PARENT/{target}: {got}"
+
+
+@pytest.mark.parametrize("operation", [op for op in OPERATIONS_79 if op != "review of a suspect link"])
+def test_trace_srs_79_no_path_outside_the_repository_is_opened(tmp_path, mcp, operation):
+    """MELLON-TRACE-SRS-79: Mellon shall not open a file or folder outside the repository to work out
+    a link's state, incoming links, a trace, a coverage report or a review of a suspect link.
+    Condition: link targets and target documents '../OUT', 'PARENT-42/../../../../OUT-1' and a share,
+    with a document OUT and a file OUT-1.xml beside the repository; the same names given as tool
+    arguments. Expected: no path outside the repository is asked for."""
+    r = _outside_repo(tmp_path)
+    warm = tmp_path / "warm" / "repo"
+    shutil.copytree(r.root, warm)
+    op = OPERATIONS_79[operation]
+    for fn in (op,):
+        call(fn, mcp.serve(warm))  # imports done before recording
+    s = mcp.serve(r.root)
+    with recorded_paths(r.root) as (seen, outside):
+        call(op, s)
+    assert any(_under(p, str(r.root)) for p in seen), "setup: the recorder saw none of Mellon's reads"
+    assert outside == [], f"{operation}: paths outside the repository were asked for: {outside}"
+
+
+# ===========================================================================
+# Link states over MCP (MELLON-TRACE-SRS-104, -105)
+# ===========================================================================
+
+
+def _suspect_and_broken_repo(tmp_path) -> Repo:
+    r = basic_repo(tmp_path)
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", None)])
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-2", "satisfies", r.c0[:7])])
+    r.set_links("CHILD", "CHILD-3", [("PARENT", "PARENT-3", "satisfies", r.c0[:7])])
+    r.commit("links")
+    remove_from_working_copy(r, "PARENT", "PARENT-2", ["PARENT-0", "PARENT-1", "PARENT-3"])
+    return r
+
+
+@pytest.mark.parametrize("load_error_elsewhere", [False, True], ids=["clean", "other-document-fails-to-load"])
+def test_trace_srs_104_suspects_returns_suspect_and_broken_links_of_the_document(tmp_path, mcp, load_error_elsewhere):
+    """MELLON-TRACE-SRS-104: The MCP server shall have a suspects tool that returns, for a given
+    document, each outgoing link of the document's objects that is suspect or broken, with the link's
+    state. Condition: CHILD has a suspect link, a broken link (target object file deleted) and an OK
+    link; T10: another document fails to load. Expected: exactly the suspect and the broken link."""
+    r = _suspect_and_broken_repo(tmp_path)
+    if load_error_elsewhere:
+        r.write("BAD/BAD.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<document id="BAD">\n  <outline>\n')
+    got = _suspects_set(mcp.serve(r.root).suspects("CHILD"))
+    assert got == {("CHILD", "CHILD-1", "PARENT-1", "suspect"), ("CHILD", "CHILD-2", "PARENT-2", "broken")}
+
+
+def test_trace_srs_105_suspects_without_document_returns_each_suspect_or_broken_link(tmp_path, mcp):
+    """MELLON-TRACE-SRS-105: When a suspects call names no document, the MCP server shall return each
+    suspect or broken link in the repository. Condition: suspect links in CHILD and GRAND, a broken
+    link in GRAND, and a document CLEAN with only an OK link. Expected: exactly those three links."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("PARENT", {"PARENT-1": "p1", "PARENT-2": "p2"})
+    r.add_doc("CHILD", {"CHILD-1": "c1", "CHILD-2": "c2"}, parents=["PARENT"])
+    r.add_doc("GRAND", {"GRAND-1": "g1", "GRAND-2": "g2"}, parents=["CHILD"])
+    r.add_doc("CLEAN", {"CLEAN-1": "k1"}, parents=["PARENT"])
+    c0 = r.commit("seed")
+    r.set_links("CHILD", "CHILD-1", [("PARENT", "PARENT-1", "satisfies", None)])
+    r.set_links("CHILD", "CHILD-2", [("PARENT", "PARENT-2", "satisfies", c0[:7])])
+    r.set_links("GRAND", "GRAND-1", [("CHILD", "CHILD-1", "satisfies", None)])
+    r.set_links("GRAND", "GRAND-2", [("CHILD", "CHILD-9", "satisfies", None)])
+    r.set_links("CLEAN", "CLEAN-1", [("PARENT", "PARENT-1", "satisfies", c0[:7])])
+    r.commit("links")
+    got = _suspects_set(mcp.serve(r.root).suspects())
+    assert got == {
+        ("CHILD", "CHILD-1", "PARENT-1", "suspect"),
+        ("GRAND", "GRAND-1", "CHILD-1", "suspect"),
+        ("GRAND", "GRAND-2", "CHILD-9", "broken"),
+    }
+
+
+@pytest.mark.parametrize("direction", ["up", "down", "both"])
+def test_trace_srs_168_trace_returns_the_asked_direction(tmp_path, mcp, direction):
+    """MELLON-TRACE-SRS-168: The MCP server shall have a trace tool that returns the trace of a given
+    object up, down or both. Condition: SRS-1 satisfies SYS-1 and STS-1 verifies SRS-1. Expected: up
+    holds SYS-1, down holds STS-1; a direction not asked for is absent or empty."""
+    r = _v_model_repo(tmp_path)
+    out = mcp.serve(r.root).trace("SRS", "SRS-1", direction=direction)
+    want_up = [("SYS-1", [])] if direction in ("up", "both") else []
+    want_down = [("STS-1", [])] if direction in ("down", "both") else []
+    assert trace_ids(out.get("up") or []) == want_up, out
+    assert trace_ids(out.get("down") or []) == want_down, out
+
+
+def test_trace_srs_169_trace_without_direction_returns_up_and_down(tmp_path, mcp):
+    """MELLON-TRACE-SRS-169: When a trace call gives no direction, the MCP server shall return the
+    trace up and down. Condition: SRS-1 has a target and a source. Expected: both, with content."""
+    r = _v_model_repo(tmp_path)
+    out = mcp.serve(r.root).trace("SRS", "SRS-1")
+    assert trace_ids(out.get("up") or []) == [("SYS-1", [])], out
+    assert trace_ids(out.get("down") or []) == [("STS-1", [])], out
+
+
+def _chain_repo(tmp_path, n=9) -> Repo:
+    """CH-(k+1) refines CH-k, for k = 1 .. n-1."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("CH", {f"CH-{k}": f"level {k}" for k in range(1, n + 1)})
+    for k in range(2, n + 1):
+        r.set_links("CH", f"CH-{k}", [("CH", f"CH-{k - 1}", "refines", None)])
+    r.commit("chain")
+    return r
+
+
+def test_trace_srs_171_trace_without_max_depth_stops_at_depth_two(tmp_path, mcp):
+    """MELLON-TRACE-SRS-171: When a trace call omits max_depth, the MCP server shall use a max_depth
+    of 2. Condition: a chain CH-1 <- ... <- CH-9; trace CH-5. Expected: up CH-4 (depth 1) and CH-3
+    (depth 2), not CH-2; down CH-6 and CH-7, not CH-8 (depth as in docs/definitions.md)."""
+    r = _chain_repo(tmp_path)
+    out = mcp.serve(r.root).trace("CH", "CH-5")
+    assert depths(out["up"]) == {"CH-4": {1}, "CH-3": {2}}, out["up"]
+    assert depths(out["down"]) == {"CH-6": {1}, "CH-7": {2}}, out["down"]
+
+
+def test_trace_srs_172_trace_with_null_max_depth_has_no_depth_limit(tmp_path, mcp):
+    """MELLON-TRACE-SRS-172: When a trace call sets max_depth to null, the MCP server shall return the
+    trace without a depth limit. Condition: the chain CH-1 <- ... <- CH-9; trace CH-5 both ways and
+    CH-9 up. Expected: each object of the chain at its depth, CH-1 at depth 8 from CH-9."""
+    r = _chain_repo(tmp_path)
+    s = mcp.serve(r.root)
+    out = s.trace("CH", "CH-5", max_depth=None)
+    assert depths(out["up"]) == {"CH-4": {1}, "CH-3": {2}, "CH-2": {3}, "CH-1": {4}}, out["up"]
+    assert depths(out["down"]) == {"CH-6": {1}, "CH-7": {2}, "CH-8": {3}, "CH-9": {4}}, out["down"]
+    top = s.trace("CH", "CH-9", direction="up", max_depth=None)
+    assert depths(top["up"]) == {f"CH-{k}": {9 - k} for k in range(1, 9)}, top["up"]
+
+
+def test_trace_srs_175_inspect_object_traces_to_depth_two_by_default(tmp_path, mcp):
+    """MELLON-TRACE-SRS-175: When an inspect_object call sets neither trace_depth nor include_trace,
+    the MCP server shall return the object's trace up and down to a depth of 2. Condition: the chain
+    CH-1 <- ... <- CH-9; inspect CH-5. Expected: up CH-4 and CH-3, not CH-2; down CH-6 and CH-7."""
+    r = _chain_repo(tmp_path)
+    out = mcp.serve(r.root).inspect_object("CH", "CH-5")
+    assert depths(out["trace_up"]) == {"CH-4": {1}, "CH-3": {2}}, out["trace_up"]
+    assert depths(out["trace_down"]) == {"CH-6": {1}, "CH-7": {2}}, out["trace_down"]
+
+
+def test_trace_srs_197_coverage_report_returns_counts_and_share(tmp_path, mcp):
+    """MELLON-TRACE-SRS-197: The MCP server shall have a coverage_report tool that returns the number
+    of objects counted, the number covered and the share covered as a percentage. Condition: three
+    counted requirements, two covered. Expected: 3, 2 and 66.67 % (to within the tool's rounding)."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("REQ", {"REQ-0": ("Heading", "Heading"), "REQ-1": "r1", "REQ-2": "r2", "REQ-3": "r3"})
+    r.add_doc("TST", {"TST-1": ("t1", "Test Case"), "TST-2": ("t2", "Test Case")}, parents=["REQ"])
+    r.set_links("TST", "TST-1", [("REQ", "REQ-1", "verifies", None)])
+    r.set_links("TST", "TST-2", [("REQ", "REQ-2", "verifies", None)])
+    r.commit("seed")
+    out = mcp.serve(r.root).coverage_report("REQ", "TST")
+    assert (out["total"], out["covered"]) == (3, 2), out
+    assert abs(out["coverage_percent"] - 200 / 3) < 0.05, out
+
+
+def test_trace_srs_200_coverage_report_defaults(tmp_path, mcp):
+    """MELLON-TRACE-SRS-200: When a coverage_report call doesn't say otherwise, the MCP server shall
+    work out incoming, direct coverage by links of each link type, without headings. Condition:
+    REQ-1 covered only by refines, REQ-2 only by verifies, REQ-3 only through MID (transitive),
+    REQ-4 only by its own outgoing link, heading REQ-0 linked from TST. Expected: 4 counted,
+    REQ-1 and REQ-2 covered, REQ-3 and REQ-4 uncovered, REQ-0 not counted."""
+    r = Repo(tmp_path / "repo")
+    r.add_doc("REQ", {"REQ-0": ("Heading", "Heading"), "REQ-1": "r1", "REQ-2": "r2", "REQ-3": "r3", "REQ-4": "r4"},
+              parents=["TST"])
+    r.add_doc("MID", {"MID-1": "m1"}, parents=["REQ"])
+    r.add_doc("TST", {f"TST-{i}": (f"t{i}", "Test Case") for i in range(1, 5)}, parents=["REQ", "MID"])
+    r.set_links("TST", "TST-1", [("REQ", "REQ-1", "refines", None)])
+    r.set_links("TST", "TST-2", [("REQ", "REQ-2", "verifies", None)])
+    r.set_links("TST", "TST-3", [("MID", "MID-1", "verifies", None)])
+    r.set_links("TST", "TST-4", [("REQ", "REQ-0", "verifies", None)])
+    r.set_links("MID", "MID-1", [("REQ", "REQ-3", "refines", None)])
+    r.set_links("REQ", "REQ-4", [("TST", "TST-1", "satisfies", None)])
+    r.commit("seed")
+    out = mcp.serve(r.root).coverage_report("REQ", "TST", include_lists=True)
+    assert out["total"] == 4, out
+    assert entry_ids(out["covered_objects"]) == {"REQ-1", "REQ-2"}, out
+    assert entry_ids(out["uncovered"]) == {"REQ-3", "REQ-4"}, out
