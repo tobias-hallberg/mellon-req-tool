@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-125">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A submodule isn't tested.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_discard_paths_refuses_a_nested_repo_before_touching_files
+tests/test_git_ops.py::test_discard_paths_refuses_a_symlink_in_head
+tests/test_gui_commit.py::test_ver_srs_209_discard_refused_when_latest_commit_holds_a_submodule_in_the_folder</attr>
+  <description>Initialise a nested git repository inside the document's folder, then discard; separately commit a symbolic link in the folder (built in the index) and discard. Expected: each discard is refused before any file changes; the nested repository's file stays, and no link is written.</description>
+</object>

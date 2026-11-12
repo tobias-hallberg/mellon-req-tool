@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-92">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. 'No other path' isn't checked: no other change is uncommitted when the call runs; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_auto_commit_set_attribute_against_git_repo
+tests/test_mcp_write.py::test_auto_commit_bulk_set_attribute_single_commit
+tests/test_mcp_write.py::test_auto_commit_multi_file_mutation_leaves_tree_clean
+tests/test_mcp_write.py::test_ver_srs_107_commit_message_commits_only_the_files_the_call_changed
+tests/test_mcp_write.py::test_ver_srs_107_commit_message_commits_files_the_call_changed_in_other_documents</attr>
+  <description>Call set_attribute, bulk_set_attribute on three objects, and each of create_document, delete_attribute, remove_attr_option, new_object with links, copy_object, remove_link (deleting the links file), delete_object with force (stripping links in another document) and manage_view rename, each with a commit_message. Expected: each call makes one commit, HEAD moves, and afterwards the working copy has no uncommitted change, so every file the call changed, in whichever document, is in the commit.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-195">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_374_gui_operations_change_only_the_current_branch_and_their_own_tags
+tests/test_mcp_git.py::test_ver_srs_374_mcp_operations_change_only_the_current_branch_and_their_own_tags</attr>
+  <description>Record every reference: branches, remote-tracking branches, tags, the stash, and HEAD's target. Through Mellon, commit, cut an issue, tag, discard, and resolve a merge. Expected: only the current branch moved, by the new commits, and only the tags Mellon created were added. Compare's own check of this (MELLON-VER-SRS-56) doesn't cover the other operations.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-197">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_ver_srs_377_document_editor_status_bar_shows_detached_head</attr>
+  <description>Check out a commit by its hash, which detaches HEAD, and open a document in the Document Editor. Expected: the status bar shows that HEAD is detached, with the commit's hash. Only the library's head summary is tested for a detached HEAD (no branch name).</description>
+</object>

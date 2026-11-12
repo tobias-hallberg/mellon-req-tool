@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-142">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_upstream_warnings_empty_for_a_clean_chain
+tests/test_service.py::test_upstream_warnings_reach_up_the_chain_only
+tests/test_service.py::test_upstream_warnings_report_suspect_links_and_validation_errors
+tests/test_service.py::test_upstream_warnings_survive_a_link_cycle
+tests/test_service.py::test_upstream_warnings_name_a_document_that_does_not_load
+tests/test_gui_commit.py::test_commit_dialog_shows_upstream_points_only_with_a_tag
+tests/test_gui_commit.py::test_commit_dialog_without_upstream_points_has_no_block</attr>
+  <description>Build CHILD -&gt; PARENT -&gt; GRAND by links, and SIB linking to PARENT, all committed and acknowledged. Change GRAND, SIB and CHILD; then revise GRAND and commit, and give PARENT a validation error; then close a link cycle back to CHILD; then break GRAND's manifest. Enter a tag name in CHILD's commit dialog each time. Expected: no warning for the clean chain; then 'GRAND — uncommitted changes' only; then PARENT's uncommitted change, suspect link and validation error; CHILD is never its own upstream; GRAND is named as not loading. The warnings show only while a tag name is entered and Commit stays enabled.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-111">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_auto_commit_skipped_when_no_message</attr>
+  <description>Call set_attribute without commit_message. Expected: HEAD doesn't move, and the result holds neither a commit nor a commit error.</description>
+</object>

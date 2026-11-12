@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-176">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_ver_srs_171_write_tools_take_an_optional_commit_message_over_stdio</attr>
+  <description>List the MCP server's tools with their input schemas. Expected: each write tool that MELLON-MCP-SRS-35's table names, other than tag_issue, has an optional commit_message string parameter, and tag_issue has none. No test checks the schemas.</description>
+</object>

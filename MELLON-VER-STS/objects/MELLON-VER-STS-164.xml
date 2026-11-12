@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-164">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_the_later_object_is_renumbered_everywhere
+tests/test_merge.py::test_different_fields_merge_by_themselves
+tests/test_merge.py::test_deleted_on_one_side_changed_on_the_other_is_kept_by_default
+tests/test_gui_merge.py::test_explorer_resolve_refreshes_after_the_dialog</attr>
+  <description>Resolve merges with a renumbering, a field-by-field merge and a deleted-and-changed object, from the library and from the Project Explorer's Resolve merge…. Expected: afterwards the git index holds no conflicting file in a document folder, and `git commit --no-edit` makes the merge commit.</description>
+</object>

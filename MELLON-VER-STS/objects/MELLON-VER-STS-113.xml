@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-113">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_commit_changes_round_trip
+tests/test_mcp_write.py::test_auto_commit_set_attribute_against_git_repo</attr>
+  <description>Commit through commit_changes and through set_attribute with a commit_message. Expected: each result holds a 7-digit hash that the new HEAD starts with, and the commit message.</description>
+</object>

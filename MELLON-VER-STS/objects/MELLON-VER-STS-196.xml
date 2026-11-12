@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-196">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_ver_srs_375_project_explorer_status_bar_shows_branch_and_latest_commit</attr>
+  <description>Open a clone on branch main in the Project Explorer. Expected: the status bar shows 'main' and the latest commit's 7-digit hash. After a commit from a git client and activating the window, it shows the new hash. The Project Explorer's test checks only the count of uncommitted changes.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-165">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_git_cell_shows_branch_and_hash
+tests/test_git_ops.py::test_head_summary_after_first_commit
+tests/test_git_ops.py::test_head_summary_empty_repo</attr>
+  <description>Open a document of a clone on its main branch in the Document Editor; read the head summary of an empty repository and after the first commit. Expected: the status bar shows the branch name and the latest commit's 7-digit hash, separated by ' @ '; with no commit there is no branch or hash.</description>
+</object>

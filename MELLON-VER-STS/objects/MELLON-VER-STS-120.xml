@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-120">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Git index entries aren't checked.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_discard_cancel_changes_nothing
+tests/test_gui_commit.py::test_ver_srs_196_cancelled_discard_changes_no_file_and_no_index_entry</attr>
+  <description>Edit CHILD-0 and add an object, start a discard and cancel the confirmation. Expected: the object file's bytes and the new object's file are unchanged, the document still has uncommitted changes, and the status bar says the discard was cancelled.</description>
+</object>

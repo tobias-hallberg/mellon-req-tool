@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-160">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand
+tests/test_merge.py::test_same_field_on_both_is_merged_by_hand</attr>
+  <description>Both sides change VCU3-SRS-1's status, to Approved and Reviewed. Open the Resolve merge dialog, resolve with the preset, then pick theirs and resolve. Expected: ours is chosen at first (Approved is written), and picking theirs writes Reviewed.</description>
+</object>

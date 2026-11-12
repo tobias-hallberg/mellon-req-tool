@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-88">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_with_paths_leaves_out_prestaged_files</attr>
+  <description>Change a.txt; create other.txt and stage it in the git index; commit with a.txt as the only path. Expected: the commit holds a.txt's new content and not other.txt; afterwards a.txt shows no change and other.txt is still staged as a new file.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-115">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The status-bar count with a side file isn't checked.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_dirty_paths_under_skips_editor_side_files
+tests/test_service.py::test_prepare_document_commit_figure_only_edit_is_affected
+tests/test_gui_smoke.py::test_ver_srs_184_side_files_dont_count_as_uncommitted_changes</attr>
+  <description>Write a figure with draw.io's .$&lt;id&gt;.svg.bkp and .dtmp beside it and a ~$ lock file in the document folder. Expected: only the figure is an uncommitted change; the side files are neither listed nor counted.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-172">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_143_commit_dialog_lists_the_file_of_text_typed_in_a_grid_cell
+tests/test_gui_commit.py::test_ver_srs_143_committed_text_typed_in_a_grid_cell
+tests/test_gui_commit.py::test_ver_srs_143_committed_text_typed_in_the_inspector</attr>
+  <description>Out of read-only mode, type a new description in a grid cell without leaving the cell, and choose Commit. Repeat with text typed in the Inspector's description. Expected: the commit dialog lists the object file, and the new commit holds the typed text. No test types and then commits.</description>
+</object>

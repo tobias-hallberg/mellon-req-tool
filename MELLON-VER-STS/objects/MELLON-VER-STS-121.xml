@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-121">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_discard_unavailable_when_read_only_or_clean</attr>
+  <description>Make an uncommitted change and put the Document Editor in read-only mode; open the menu and call the discard. Expected: the action is disabled, no confirmation is asked, and the change stays.</description>
+</object>

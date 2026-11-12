@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-130">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Attribute values at an older commit aren't compared.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_show_object_at_returns_historical_description
+tests/test_gui_history.py::test_object_at_commit_returns_historical_description
+tests/test_gui_history.py::test_object_at_commit_dialog_renders_snapshot
+tests/test_git_ops.py::test_show_blob_at_current_and_historical
+tests/test_gui_history.py::test_ver_srs_230_history_tab_view_at_this_commit_shows_values_from_that_commit
+tests/test_mcp_git.py::test_ver_srs_230_show_object_at_returns_values_from_that_commit</attr>
+  <description>Show VCU3-SyRS-47 at the parent of the commit 'Tighten VCU3-SyRS-47', through show_object_at and from the History tab, and at the latest commit. Expected: at the parent, the description is the original one, without '50 ms'; at the latest commit it holds '50 ms detection budget'; the result names the commit; the dialog shows one attribute row per attribute the object had.</description>
+</object>

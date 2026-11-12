@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-128">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. max_entries is tested below the MCP server only.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_git_history_matches_fixture
+tests/test_mcp_git.py::test_git_history_includes_figure_commits
+tests/test_git_ops.py::test_log_for_path_respects_max_entries
+tests/test_mcp_git.py::test_ver_srs_222_git_history_returns_newest_max_entries_commits
+tests/test_mcp_git.py::test_ver_srs_222_git_history_over_stdio</attr>
+  <description>Call git_history for VCU3-SyRS-42; commit a figure for it and call again; read an object's history with a limit of 2 entries after three commits. Expected: the five fixture commits newest first; then the figure commit first; with the limit, the two newest.</description>
+</object>

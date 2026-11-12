@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-170">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_131_commit_dialog_runs_no_git_hook
+tests/test_mcp_git.py::test_ver_srs_131_commit_changes_runs_no_git_hook
+tests/test_mcp_git.py::test_ver_srs_131_commit_changes_runs_no_hook_from_core_hookspath
+tests/test_mcp_write.py::test_ver_srs_131_commit_message_commit_runs_no_git_hook</attr>
+  <description>Install executable pre-commit, commit-msg and post-commit hooks in .git/hooks. Each writes a marker file, and pre-commit also exits 1. Commit from the commit dialog, through commit_changes, and through a write tool's commit_message. Expected: each commit is made, and no marker file exists. No test exists.</description>
+</object>

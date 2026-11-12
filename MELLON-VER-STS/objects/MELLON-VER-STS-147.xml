@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-147">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_banner_follows_the_merge
+tests/test_gui_merge.py::test_explorer_resolve_refreshes_after_the_dialog</attr>
+  <description>With a merge stopped on conflicts, look at the merge banner and choose Resolve merge…; resolve, refresh, and look again. Expected: while files conflict, the banner shows the Resolve merge… action, which opens the Resolve merge dialog; once no file conflicts, the action is hidden.</description>
+</object>

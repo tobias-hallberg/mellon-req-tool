@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-110">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A commit refused because the latest commit moved (CF-V14) isn't tested; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_failed_commit_leaves_no_metadata_edit_behind
+tests/test_gui_commit.py::test_unwrapped_git_error_still_rolls_back_metadata
+tests/test_gui_commit.py::test_error_after_the_commit_landed_keeps_the_committed_manifest
+tests/test_gui_commit.py::test_ver_srs_168_failed_dialog_commit_restores_manifest_author_and_date</attr>
+  <description>Change the author to bob and the date in the commit dialog, then make the commit fail with a git error reported by Mellon, and with a raw git error. Then make a commit land and fail only afterwards. Expected: after each failure the manifest's bytes are as before the dialog's edit and the document's author is 'tester'; when the commit had landed, the manifest stays as committed, with author bob.</description>
+</object>

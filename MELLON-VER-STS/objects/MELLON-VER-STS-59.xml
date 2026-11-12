@@ -11,7 +11,8 @@ tests/test_merge.py::test_ver_srs_64_side_number_above_merged_objects
 tests/test_merge.py::test_ver_srs_64_each_merged_document
 tests/test_merge.py::test_ver_srs_64_create_after_merge_gives_an_id_never_given_out
 tests/test_merge.py::test_resolve_records_the_number_in_a_document_neither_side_numbered
-tests/test_merge.py::test_a_side_without_a_number_counts_as_0</attr>
+tests/test_merge.py::test_a_side_without_a_number_counts_as_0
+tests/test_merge.py::test_object_id_without_a_number_leaves_the_merged_number</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <description>Resolve merges in which: both sides created an object under the same ID; one side created and deleted objects; one side records a number above every merged object; two documents conflict at once; neither side records a number; one side records none. Then create an object. Expected: each merged document records the highest of both sides' numbers and one more than its highest object number, a side with no number counting as 0, and the object created afterwards gets an ID never given out on either side.</description>
 </object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-97">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_nothing_to_commit_errors
+tests/test_service.py::test_commit_document_clean_tree_raises_validation
+tests/test_mcp_git.py::test_commit_changes_nothing_staged
+tests/test_gui_commit.py::test_commit_dialog_allows_metadata_only_commit
+tests/test_gui_commit.py::test_commit_dialog_unchanged_issue_is_a_plain_commit</attr>
+  <description>With nothing uncommitted, commit through the library, through the Document Editor's service and through commit_changes; open the commit dialog on a clean document with the author, date and issue as prefilled, and with the issue cleared. Expected: each commit is refused ('nothing to commit' from the library; a refusal from the service and the MCP server); the dialog's Commit stays disabled.</description>
+</object>

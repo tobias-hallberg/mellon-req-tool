@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-148">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_same_field_on_both_is_merged_by_hand
+tests/test_merge.py::test_different_fields_merge_by_themselves</attr>
+  <description>Resolve a merge with defaults, then resolve it again choosing a merged text and theirs' status; resolve another merge twice with defaults. Expected: the second resolution gives the newly chosen values, and two default resolutions give the same files, so each starts from the merge base, ours and theirs rather than from what the first wrote.</description>
+</object>

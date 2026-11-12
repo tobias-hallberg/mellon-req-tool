@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-114">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_project_explorer_git_cell_counts_only_document_files
+tests/test_gui_polish.py::test_git_cell_counts_only_document_files
+tests/test_gui_polish.py::test_git_cell_dirty_marker_appears_after_edit</attr>
+  <description>Open a clean clone in the Project Explorer and in a Document Editor; write notes.txt and src/app.py; then rewrite one object file; then edit an object through the grid. Expected: both status bars show no uncommitted change while only the non-document files differ, and '1' uncommitted change after the object file changes; the Document Editor's count appears after the grid edit.</description>
+</object>

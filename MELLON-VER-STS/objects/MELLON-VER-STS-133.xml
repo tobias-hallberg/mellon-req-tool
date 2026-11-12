@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-133">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_create_issue_tag_refuses_an_issue_that_goes_backwards
+tests/test_git_ops.py::test_current_issue_returns_highest_reachable
+tests/test_git_ops.py::test_current_issue_excludes_unreachable_branch_tag
+tests/test_gui_commit.py::test_commit_dialog_blocks_ok_on_lower_issue</attr>
+  <description>With issue 3 current, enter 2, 03 and 2.9, then 3.1; in the commit dialog enter 2, then 4. Also put issue 99 on a commit the latest commit doesn't reach, and issue 1 on the latest commit. Expected: 2, 03 and 2.9 are refused as not higher than the current issue; 3.1 and 4 are accepted; the current issue is the highest by issue order among issues the latest commit reaches (12.23.54 above 2; 1, not 99).</description>
+</object>

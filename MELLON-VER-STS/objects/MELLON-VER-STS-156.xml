@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-156">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A figure on the renumbered object isn't tested.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_the_later_object_is_renumbered_everywhere
+tests/test_merge.py::test_whichever_side_committed_later_yields
+tests/test_merge.py::test_ver_srs_337_renumbered_object_takes_its_files_with_the_new_id</attr>
+  <description>In the merges of the renumbering test case, b's new object also links up to VCU3-SyRS-49, and an object of VCU3-STS links to it in a file only b changed. Resolve. Expected: the renumbered object has its own description and links under the new ID; it keeps its place in the outline (under VCU3-SRS-19 or VCU3-SRS-14); VCU3-STS-1 links to the new ID and not to the kept one; the git client can make the merge commit.</description>
+</object>

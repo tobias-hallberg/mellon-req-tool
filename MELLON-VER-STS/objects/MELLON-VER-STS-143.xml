@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-143">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_commit_document_cuts_issue_and_tag_together
+tests/test_gui_commit.py::test_issue_and_tag_in_one_commit_name_both</attr>
+  <description>Commit a change with issue 1 and tag name PDR in one commit. Expected: CHILD-issue-1 and PDR both name the new commit, and the status bar names both.</description>
+</object>

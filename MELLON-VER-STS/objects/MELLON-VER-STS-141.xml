@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-141">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_a_tag_on_a_clean_document_tags_the_current_commit
+tests/test_gui_commit.py::test_commit_dialog_with_nothing_to_commit_tags_the_current_commit
+tests/test_service.py::test_tag_head_tags_the_current_commit</attr>
+  <description>On a clean document out of read-only mode, check the Commit action, open the commit dialog and enter tag name CDR-1.0 with a message. Expected: Commit is enabled and opens the dialog; the button reads Tag and the message field is disabled; accepting tags the latest commit, makes no commit (HEAD unchanged), and the status bar says the current commit was tagged.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-93">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Only the case with both unset is tested; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_refuses_without_identity
+tests/test_gui_commit.py::test_missing_git_identity_is_shown_in_full
+tests/test_gui_commit.py::test_ver_srs_112_document_editor_commit_refused_when_one_identity_setting_is_missing
+tests/test_mcp_git.py::test_ver_srs_112_commit_changes_refused_when_one_identity_setting_is_missing</attr>
+  <description>With neither git's user.name nor user.email set at any level, commit a change through the library and from the Document Editor. Expected: no commit is made (the repository keeps no commit, or the change stays uncommitted), and the message shown in full names `git config --global user.name` and `git config --global user.email`.</description>
+</object>

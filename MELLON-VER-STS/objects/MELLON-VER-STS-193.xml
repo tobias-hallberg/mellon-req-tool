@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-193">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_366_resolving_again_after_a_partial_failure_writes_the_merged_files
+tests/test_merge.py::test_ver_srs_366_resolving_again_after_a_partial_failure_records_the_same_index</attr>
+  <description>Resolve a merge with two conflicting document files, and make the resolution fail after the first file is written, for example with the second file read-only. Remove the cause and resolve again. Expected: both files end merged and marked resolved, with the same content as a resolution that never failed. Resolving twice is tested, but a partial failure isn't.</description>
+</object>

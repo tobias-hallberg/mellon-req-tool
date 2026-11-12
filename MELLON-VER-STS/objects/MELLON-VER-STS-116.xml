@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-116">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_discard_restores_edits_and_removes_new_objects</attr>
+  <description>Leave read-only mode, edit CHILD-0 and add an object, open the menu and choose Discard uncommitted changes to this document…. Expected: the action is enabled, and the Document Editor asks to confirm once, saying that all edits since the last commit to CHILD, new objects included, will be lost.</description>
+</object>

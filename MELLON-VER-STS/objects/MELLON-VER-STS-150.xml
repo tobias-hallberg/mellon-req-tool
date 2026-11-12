@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-150">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_different_fields_merge_by_themselves</attr>
+  <description>Ours changes VCU3-SRS-1's rationale, theirs its description, so git conflicts on the file. Resolve. Expected: nothing is asked; the object has ours' rationale and theirs' description; no file conflicts.</description>
+</object>

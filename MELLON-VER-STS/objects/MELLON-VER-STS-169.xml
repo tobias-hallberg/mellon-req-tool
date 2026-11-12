@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-169">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_118_commit_dialog_refused_while_git_operation_in_progress
+tests/test_mcp_git.py::test_ver_srs_118_commit_changes_refused_while_git_operation_in_progress</attr>
+  <description>Stop each of these on a conflict in a document file, then mark the file resolved with `git add`: `git rebase`, `git cherry-pick`, and `git revert`. Also run cherry-pick and revert with --no-commit. In each state, change a document and commit from the commit dialog and through commit_changes. Expected: every commit is refused and HEAD doesn't move. Repeat in a linked worktree once MELLON-STORE-SRS-16 is accepted. No test exists.</description>
+</object>

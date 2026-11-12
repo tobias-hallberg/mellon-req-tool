@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-137">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_raising_the_issue_cuts_a_new_issue_tag
+tests/test_service.py::test_commit_document_creates_issue_tag
+tests/test_service.py::test_commit_with_prefilled_issue_cuts_no_tag</attr>
+  <description>With issue 1 current, commit a change after raising the issue to 2; with issue 3, commit with 4. Expected: the new commit is tagged CHILD-issue-2 (CHILD-issue-4), the status bar names it, and the current issue becomes 2.</description>
+</object>

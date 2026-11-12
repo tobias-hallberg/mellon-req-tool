@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-192">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_ver_srs_353_merge_dialog_lists_fields_merged_in_from_theirs</attr>
+  <description>Both sides change VCU3-SRS-1's description, and theirs also sets priority. Open the Resolve merge dialog. Expected: the object's block lists priority as merged in from theirs. Only the merge plan's list is tested.</description>
+</object>

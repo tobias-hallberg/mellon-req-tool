@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-157">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand</attr>
+  <description>Open the Resolve merge dialog for a merge in which both sides created VCU3-SRS-34. Expected: the dialog shows a line saying VCU3-SRS-34 on b was created later and naming its new ID VCU3-SRS-35, with no choice to make.</description>
+</object>

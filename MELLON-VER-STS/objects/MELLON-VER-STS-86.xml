@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-86">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Not covered: a folder given as a path, and an editor side file among the selected paths; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_handles_modify_add_delete
+tests/test_git_ops.py::test_commit_with_explicit_paths
+tests/test_git_ops.py::test_commit_with_paths_leaves_out_prestaged_files
+tests/test_git_ops.py::test_dirty_paths_under_includes_staged_only_changes
+tests/test_service.py::test_commit_document_includes_files_staged_elsewhere
+tests/test_gui_commit.py::test_ver_srs_91_commit_dialog_leaves_side_files_out_of_the_commit
+tests/test_mcp_git.py::test_ver_srs_91_commit_changes_folder_path_commits_the_folders_files_without_side_files
+tests/test_mcp_git.py::test_ver_srs_91_side_file_named_as_a_path_is_left_out_of_the_commit</attr>
+  <description>Commit three files, then change one, add one, delete one and leave one unchanged, and commit. Separately, change two files and commit naming only one of them. Separately, stage a file in the git index from a git client and commit another path; and stage a new object file and the manifest from a git client, make one more edit in Mellon, and commit the document. Expected: the new commit holds each unchanged file as the latest commit held it and each selected path with its working-copy content; the changed file that wasn't selected keeps its content from the latest commit; the file staged but not selected isn't in the commit; the document's staged new object is committed with the rest, and the document has no uncommitted change afterwards.</description>
+</object>

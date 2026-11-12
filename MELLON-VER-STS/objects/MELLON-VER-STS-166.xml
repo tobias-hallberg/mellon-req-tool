@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-166">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_compare.py::test_ver_srs_88_compare_says_pending_edits_arent_in_the_comparison</attr>
+  <description>Accepted but not built. Open a document in the Document Editor, out of read-only mode. Change one of its object files from outside Mellon so the Changed on disk banner shows. Type a new description in the grid's cell editor without leaving the cell. From the Compare dialog compare the latest commit with the working copy. Repeat typing in the Inspector instead. Expected: the Compare dialog shows that the pending edits aren't in the comparison, and the typed text isn't listed as the To value.</description>
+</object>

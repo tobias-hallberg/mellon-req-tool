@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-101">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Files git ignores aren't tested; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_clean_tree
+tests/test_service.py::test_prepare_document_commit_with_object_edit
+tests/test_service.py::test_prepare_document_commit_figure_only_edit_is_affected
+tests/test_service.py::test_prepare_document_commit_manifest_only_has_no_affected
+tests/test_service.py::test_commit_document_includes_files_staged_elsewhere
+tests/test_git_ops.py::test_dirty_paths_under_filters_by_folder
+tests/test_git_ops.py::test_dirty_paths_under_includes_deletes
+tests/test_git_ops.py::test_dirty_paths_under_includes_staged_only_changes
+tests/test_git_ops.py::test_dirty_paths_under_does_not_match_prefix_collisions
+tests/test_git_ops.py::test_dirty_paths_under_accepts_a_single_file
+tests/test_git_ops.py::test_dirty_paths_under_skips_editor_side_files
+tests/test_gui_commit.py::test_commit_dialog_pre_fills_default_message
+tests/test_gui_commit.py::test_ver_srs_146_commit_dialog_leaves_out_a_file_git_ignores
+tests/test_gui_commit.py::test_ver_srs_146_commit_dialog_leaves_out_editor_side_files</attr>
+  <description>In a committed document, change an object file; set a figure (with draw.io's .$ backup beside it); change only the manifest; stage a new object file from a git client; delete a file; change a file in a document whose ID is a prefix of another's. Open the commit dialog (or list the document's changes) each time. Expected: exactly the changed, added, deleted and staged files of the open document's folder are listed; the side file and files of other documents, including the one sharing the prefix, aren't; a clean document lists none.</description>
+</object>

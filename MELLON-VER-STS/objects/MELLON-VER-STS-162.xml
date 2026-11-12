@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-162">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_same_field_on_both_is_merged_by_hand
+tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand</attr>
+  <description>Both sides change VCU3-SRS-1, which satisfies VCU3-SyRS-42; open the Resolve merge dialog. Expected: the object's block shows 'satisfies VCU3-SyRS-42:' followed by VCU3-SyRS-42's merged description.</description>
+</object>

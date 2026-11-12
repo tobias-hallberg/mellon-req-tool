@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-124">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_discard_paths_refuses_while_the_index_is_locked</attr>
+  <description>Leave index.lock in the git folder, with a staged and an untracked change in the document, and discard. Expected: the discard is refused, saying the index is locked; the files and the staged entry are unchanged.</description>
+</object>

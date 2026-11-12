@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-122">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_discard_unavailable_for_a_never_committed_document
+tests/test_service.py::test_discard_document_changes_refuses_a_never_committed_document
+tests/test_git_ops.py::test_discard_paths_refuses_a_folder_never_committed</attr>
+  <description>Create a document that was never committed (also in a repository with no commit) and discard it from the Document Editor, the service and the library. Expected: the action is disabled; each discard is refused with 'nothing to restore' or 'never been committed'; the document's files stay.</description>
+</object>

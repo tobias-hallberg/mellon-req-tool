@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-123">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_discard_paths_refuses_during_merge
+tests/test_service.py::test_discard_document_changes_refuses_during_merge</attr>
+  <description>Start a merge that stops with a conflict, resolve the file by hand, and discard it; separately write MERGE_HEAD with no conflict and discard a document with a change. Expected: each discard is refused, saying to finish the merge, and the files keep their content.</description>
+</object>

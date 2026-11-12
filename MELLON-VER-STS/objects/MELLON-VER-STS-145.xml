@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-145">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Which of two tags failed isn't checked.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_commit_document_reports_a_tag_failure_and_keeps_the_commit
+tests/test_service.py::test_commit_document_reports_tag_conflict
+tests/test_gui_commit.py::test_a_tag_taken_after_the_dialog_opened_fails_but_the_commit_stands
+tests/test_gui_commit.py::test_ver_srs_292_failed_tag_after_commit_keeps_commit_and_names_the_tag</attr>
+  <description>Have another program create tag CDR-1.0 between opening the commit dialog and committing with that tag name; separately commit with an issue whose tag exists on an unreachable commit. Expected: the commit lands and the document has no uncommitted change; the result and the status bar say the tag failed because it already exists.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-107">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_default_commit_cuts_no_issue_tag
+tests/test_service.py::test_prepare_document_commit_prefills_metadata</attr>
+  <description>Commit a change from the commit dialog leaving the date as prefilled. Expected: the committed manifest keeps its date 2026-04-22, and the prefill is the manifest's date rather than today.</description>
+</object>

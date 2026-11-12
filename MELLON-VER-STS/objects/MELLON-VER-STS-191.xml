@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-191">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_ver_srs_349_merge_dialog_resolves_whole_items_to_ours_by_default
+tests/test_gui_merge.py::test_ver_srs_349_merge_dialog_offers_ours_or_theirs_for_each_whole_item</attr>
+  <description>Both sides change each of these to different content: one object's table, one object's figure, one view, one filter, the rules file, and the attribute definition 'priority'. Theirs also adds a new attribute definition. Open the Resolve merge dialog and resolve without input. Expected: each item offers ours or theirs, with ours chosen, and the result is ours' version of each. Theirs' new attribute definition stays. No test exists.</description>
+</object>

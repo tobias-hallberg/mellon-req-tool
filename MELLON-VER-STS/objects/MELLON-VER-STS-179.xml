@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-179">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_211_discard_completes_when_run_again_after_failing_partway</attr>
+  <description>In DOC, edit one object, add one and delete one. Make the discard fail after its first file is written, for example by making a later file read-only or holding it open on Windows. Remove the cause and discard again. Expected: the second discard leaves DOC exactly as the latest commit holds it, with no uncommitted change. No test makes a discard fail partway.</description>
+</object>

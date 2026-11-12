@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-100">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The dialog-opening tests call the window's commit routine rather than trigger the action.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_default_commit_cuts_no_issue_tag
+tests/test_gui_commit.py::test_a_tag_on_a_clean_document_tags_the_current_commit
+tests/test_gui_edits.py::test_commit_blocked_by_validation_errors
+tests/test_gui_commit.py::test_ver_srs_141_commit_action_opens_commit_dialog_for_the_open_document</attr>
+  <description>Open CHILD in the Document Editor, leave read-only mode, change an object and commit from the window; separately check the Commit action on a clean document, and choose it on a document with a validation error. Expected: the Commit action is enabled; committing opens one commit dialog, prefilled for CHILD, and accepting it commits CHILD.</description>
+</object>

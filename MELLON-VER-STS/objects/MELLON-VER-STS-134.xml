@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-134">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_create_issue_tag_refuses_duplicate
+tests/test_mcp_write.py::test_tag_issue_refuses_duplicate
+tests/test_service.py::test_tag_issue_git_error_on_duplicate
+tests/test_service.py::test_commit_document_reports_tag_conflict</attr>
+  <description>Cut an issue, then cut it again through the library, tag_issue and the service; put CHILD-issue-2 on a commit the latest commit no longer reaches, then commit with issue 2. Expected: each second attempt is refused as already existing; in the last case the commit lands without the issue and reports the existing tag.</description>
+</object>

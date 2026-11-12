@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-108">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_commit_dialog_refuses_clearing_an_existing_date
+tests/test_gui_commit.py::test_commit_dialog_allows_empty_manifest_date</attr>
+  <description>In the commit dialog of a document whose manifest has a date, clear the date; open the dialog of a document whose manifest has no date. Expected: clearing an existing date disables Commit with a message asking for YYYY-MM-DD; with no date in the manifest the empty date is accepted.</description>
+</object>

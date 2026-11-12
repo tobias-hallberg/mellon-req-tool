@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-96">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_refuses_when_another_commit_lands_meanwhile</attr>
+  <description>Start a commit of mine.txt and, while it runs, have another program commit theirs.txt to the same branch. Expected: the first commit isn't made and its error says to commit again; the other program's commit stays the tip with its change; committing again then holds both changes.</description>
+</object>

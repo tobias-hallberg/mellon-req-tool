@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-117">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Files git ignores aren't tested.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_discard_paths_restores_folder_to_head
+tests/test_service.py::test_discard_document_changes_restores_the_folder
+tests/test_service.py::test_discard_document_changes_refreshes_other_documents_suspect_scans
+tests/test_gui_commit.py::test_discard_restores_edits_and_removes_new_objects</attr>
+  <description>In CHILD: modify the manifest and an object (and stage it), add an object, delete a links file; in another folder: add files, stage changes. Discard CHILD. Separately delete PARENT-1's object file outside Mellon and discard PARENT. Expected: each file of the folder that the latest commit holds has its committed bytes again, the deleted file included; each added file is gone; discarding again changes nothing; the Document Editor shows the restored text and no new object.</description>
+</object>

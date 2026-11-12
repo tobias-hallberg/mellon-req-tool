@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-168">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_115_commit_dialog_records_git_identity_as_author_and_committer
+tests/test_mcp_git.py::test_ver_srs_115_commit_changes_records_git_identity_as_author_and_committer
+tests/test_mcp_git.py::test_ver_srs_115_commit_records_the_identity_from_the_global_git_config
+tests/test_mcp_write.py::test_ver_srs_115_commit_message_commit_records_git_identity_as_author_and_committer</attr>
+  <description>Set user.name 'Ann Example' and user.email 'ann@example.invalid' in the repository's git config. Commit a change from the commit dialog, through commit_changes, and through set_attribute with a commit_message. Expected: each new commit's author and committer are exactly 'Ann Example &lt;ann@example.invalid&gt;'. No test reads a commit's author or committer.</description>
+</object>

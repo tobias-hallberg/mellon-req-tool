@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-190">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_ver_srs_346_merge_dialog_shows_ours_and_theirs_texts</attr>
+  <description>Both sides change VCU3-SRS-1's description, and separately the document title, to different texts. Open the Resolve merge dialog. Expected: for each, the dialog shows ours' text ('Mine.') and theirs' text ('Theirs.'). Only the merge plan carries both today, and the dialog's display isn't checked.</description>
+</object>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-140">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_tag_name_error_accepts
+tests/test_git_ops.py::test_tag_name_error_refuses
+tests/test_git_ops.py::test_tag_name_error_allows_issue_words_that_are_not_the_issue_form
+tests/test_git_ops.py::test_create_tag_refuses_what_tag_name_error_refuses
+tests/test_gui_commit.py::test_commit_dialog_tag_is_optional_and_checked_as_typed
+tests/test_service.py::test_tag_head_refuses_a_bad_or_taken_name
+tests/test_service.py::test_prepare_document_commit_lists_existing_tags</attr>
+  <description>In the commit dialog, and through the service and library, enter tag names 'CDR-1.0', 'PDR', 'release/2026-10', 'v1.0-rc1', 'issue-review', 'X-issue-draft' and then '', 'CDR 1.0', 'a..b', 'x~1', 'x.lock', '-x', an existing tag's name, and names in issue form such as 'DOC-issue-2' and 'X-issue-1.2'. Expected: the first set is accepted; each of the rest is refused as typed, with the reason (not a valid tag name, already exists, form of an issue tag), and Commit is disabled.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-188">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_321_parent_documents_added_on_both_sides_are_all_kept</attr>
+  <description>Ours adds parent document P1 and theirs adds P2 to the same document, so both changed the parent documents. Resolve. Expected: the merged manifest declares the base parents, P1 and P2. The existing test has only one side change the parents.</description>
+</object>

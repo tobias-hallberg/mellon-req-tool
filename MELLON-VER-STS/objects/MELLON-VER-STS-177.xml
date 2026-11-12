@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-177">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_ver_srs_173_failed_commit_message_commit_keeps_the_write_and_returns_the_error
+tests/test_mcp_write.py::test_ver_srs_173_commit_message_without_a_git_repository_keeps_the_write</attr>
+  <description>Leave index.lock in the git folder, or unset user.email, and call set_attribute with a commit_message. Expected: the result reports the write as done and carries the commit's error. The object file holds the new value and HEAD doesn't move. After removing the cause, commit_changes commits the change. Only the absence of a commit error is tested.</description>
+</object>

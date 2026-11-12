@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-109">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The committed date isn't checked.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_commit_includes_dialog_metadata
+tests/test_gui_commit.py::test_commit_dialog_allows_metadata_only_commit</attr>
+  <description>With no other change, change the author to 'bob' and the date in the commit dialog and commit. Expected: Commit enables once the author differs; the new commit's manifest holds author bob, and the document has no uncommitted change afterwards.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-184">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_ver_srs_303_merge_banner_says_to_commit_in_a_git_client_without_conflicts</attr>
+  <description>Resolve a merge, or start one with `git merge --no-commit` that has no conflicts, and press F5. Expected: the merge banner's own text says to make the merge commit in a git client, and the banner offers no Resolve merge… action. Today the instruction is checked only in the status bar after Resolve.</description>
+</object>

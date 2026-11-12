@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-94">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A merge stopped without a conflict (`git merge --no-commit`) isn't tested; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_refuses_during_merge
+tests/test_gui_commit.py::test_ver_srs_117_commit_dialog_refused_during_merge_without_conflict
+tests/test_mcp_git.py::test_ver_srs_117_commit_changes_refused_during_merge_without_conflict
+tests/test_mcp_git.py::test_ver_srs_117_commit_changes_accepted_once_the_merge_is_aborted</attr>
+  <description>Start a merge that stops with a conflict, write a resolution into the file and commit it. Then clear git's merge state while the conflict stays in the git index, and commit again. Expected: both commits are refused, saying to finish the merge in the git client.</description>
+</object>

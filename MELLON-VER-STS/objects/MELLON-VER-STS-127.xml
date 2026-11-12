@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-127">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Shown values aren't compared with the commits'.</attr>
+  <attr name="automated-tests">tests/test_gui_history.py::test_history_tab_populates_on_selection
+tests/test_gui_history.py::test_object_history_returns_expected_commits
+tests/test_git_ops.py::test_log_for_path_includes_commit_oid</attr>
+  <description>Select VCU3-SyRS-42 with the History tab showing. Expected: each of the five rows has every column filled, and each commit carries its 7-digit hash (a prefix of the full hash), author, date and message.</description>
+</object>

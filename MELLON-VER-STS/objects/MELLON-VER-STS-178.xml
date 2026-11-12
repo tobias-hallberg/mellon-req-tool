@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-178">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_204_discard_enabled_and_works_while_changed_on_disk_banner_shows</attr>
+  <description>Make an uncommitted change in the open document. Then change another of its files from outside, so the Changed on disk banner shows. Open the menu. Expected: Discard uncommitted changes to this document… is enabled, and confirming it puts the folder back as the latest commit holds it. No test exists.</description>
+</object>

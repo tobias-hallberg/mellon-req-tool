@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-163">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. MELLON-VER-SRS-355 to -357 replace this requirement.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand
+tests/test_merge.py::test_same_field_on_both_is_merged_by_hand</attr>
+  <description>Open the Resolve merge dialog for a merge with a renumbering and a by-hand conflict, and resolve a merge without giving any choice. Expected: Resolve is enabled at once, and resolving without input writes the presets and leaves no conflict.</description>
+</object>

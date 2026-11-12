@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-95">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The tests don't check that the report says the user can commit again; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_refuses_while_the_index_is_locked
+tests/test_git_ops.py::test_commit_writes_the_index_before_committing
+tests/test_service.py::test_commit_document_with_the_index_locked_commits_nothing
+tests/test_gui_commit.py::test_ver_srs_121_commit_dialog_with_index_lock_says_commit_again
+tests/test_mcp_git.py::test_ver_srs_121_commit_changes_with_index_lock_says_commit_again</attr>
+  <description>Leave index.lock in the git folder and commit a change through the library and through the Document Editor's service with a raised issue; separately have another program create index.lock while the commit writes the index. Expected: no commit is made and HEAD doesn't move; the error says the index is locked; once the lock is gone, committing again commits the change (and cuts the issue).</description>
+</object>

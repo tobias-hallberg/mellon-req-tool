@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-194">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_373_gui_operations_dont_fetch_pull_or_push
+tests/test_mcp_git.py::test_ver_srs_373_mcp_operations_dont_fetch_pull_or_push</attr>
+  <description>Add a remote 'origin' pointing at a local bare repository, and set credential.helper to a program that writes a marker file. Through the GUI and the MCP server: commit, cut an issue, tag, discard, compare, and resolve a merge. Expected: the bare repository's references are unchanged, no FETCH_HEAD is written, the remote-tracking branches don't move, and the marker file doesn't exist. Could also be verified by Inspection. No test exists.</description>
+</object>

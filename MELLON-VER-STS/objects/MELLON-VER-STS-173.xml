@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-173">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_144_commit_refused_while_changed_on_disk_banner_shows
+tests/test_gui_commit.py::test_ver_srs_144_commit_opens_again_after_reload</attr>
+  <description>Open a document, change one of its object files from outside Mellon, and activate the window so the Changed on disk banner shows. Choose Commit. Expected: no commit dialog opens, no commit is made, and HEAD doesn't move. No test exists.</description>
+</object>

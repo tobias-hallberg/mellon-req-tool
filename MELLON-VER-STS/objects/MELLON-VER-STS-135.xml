@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-135">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_prefills_metadata
+tests/test_service.py::test_prepare_document_commit_prefill_issue_dotted
+tests/test_service.py::test_prepare_document_commit_prefill_issue_empty_when_no_tag
+tests/test_git_ops.py::test_current_issue_empty_when_no_tags
+tests/test_git_ops.py::test_current_issue_returns_highest_reachable
+tests/test_git_ops.py::test_current_issue_ignores_other_docs
+tests/test_git_ops.py::test_current_issue_excludes_unreachable_branch_tag
+tests/test_gui_commit.py::test_default_commit_cuts_no_issue_tag
+tests/test_gui_commit.py::test_commit_dialog_allows_empty_issue_for_untagged_document</attr>
+  <description>Open the commit dialog for CHILD with issue 1 at the latest commit; with issue 12.23.54; with no issue; with issues of another document only; with an issue only on a commit the latest commit doesn't reach. Expected: the issue is prefilled 1, then 12.23.54, and empty in the last three cases; the hint says the document has no issue yet.</description>
+</object>

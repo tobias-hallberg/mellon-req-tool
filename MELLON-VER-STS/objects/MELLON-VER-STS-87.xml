@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-87">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_commit_handles_modify_add_delete
+tests/test_git_ops.py::test_dirty_paths_under_includes_staged_only_changes
+tests/test_service.py::test_commit_without_paths_commits_a_deleted_document_folder
+tests/test_service.py::test_commit_without_paths_commits_a_renamed_document_folder
+tests/test_mcp_git.py::test_ver_srs_92_commit_changes_deleted_folder_leaves_its_files_out
+tests/test_mcp_git.py::test_ver_srs_92_commit_changes_deleted_file_is_left_out</attr>
+  <description>Delete a committed file and commit with it selected; delete a file and stage the deletion in a git client, then commit the document; delete a whole document folder and commit; rename a document folder and its manifest and commit. Expected: each deleted file is absent from the new commit; after the rename the old folder is absent and the new one present; no uncommitted change is left in either folder.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-99">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_commit_blocked_by_validation_errors</attr>
+  <description>Give an object of VCU3-SRS a status outside the attribute's options by editing its file, reload, and choose Commit in the Document Editor. Expected: the commit dialog doesn't open; a message box titled as a failed validation names the error; the status bar says the commit is blocked by validation errors.</description>
+</object>

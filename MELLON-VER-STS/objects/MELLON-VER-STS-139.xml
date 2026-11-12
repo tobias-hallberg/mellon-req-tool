@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-139">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_create_tag_makes_an_annotated_tag
+tests/test_git_ops.py::test_create_tag_message_defaults_to_the_name
+tests/test_gui_commit.py::test_a_tag_in_the_dialog_tags_the_new_commit
+tests/test_service.py::test_commit_document_creates_the_tag
+tests/test_service.py::test_commit_document_without_a_tag_creates_none</attr>
+  <description>Commit a change from the commit dialog with tag name CDR-1.0 and message 'Critical design review'; create a tag with no message; commit with no tag name and with an empty one. Expected: CDR-1.0 is an annotated tag on the new commit, with the message and git's user as tagger; a tag without a message takes its name as message; without a tag name no tag is created.</description>
+</object>

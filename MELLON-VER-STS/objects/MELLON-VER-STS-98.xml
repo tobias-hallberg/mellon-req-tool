@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-98">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_failed_commit_leaves_no_metadata_edit_behind
+tests/test_gui_commit.py::test_missing_git_identity_is_shown_in_full
+tests/test_git_ops.py::test_commit_refuses_while_the_index_is_locked</attr>
+  <description>Make the commit fail from the Document Editor with a git error 'index.lock exists', and with git's identity unset; commit through the library with index.lock present. Expected: each failure is reported with its reason: the Document Editor shows git's message in a message box and says the commit failed; the library's error says the index is locked.</description>
+</object>

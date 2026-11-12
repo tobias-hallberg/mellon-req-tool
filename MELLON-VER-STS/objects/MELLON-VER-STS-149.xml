@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-149">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A one-sided deletion isn't tested.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_same_field_on_both_is_merged_by_hand
+tests/test_merge.py::test_document_properties_merge_field_by_field
+tests/test_merge.py::test_ver_srs_313_object_deleted_on_one_side_stays_deleted</attr>
+  <description>Both sides change VCU3-SRS-1's description and status; only theirs also sets priority. Separately ours changes the title and theirs changes the title and adds a parent document. Resolve with defaults. Expected: priority is theirs' value; the parent that only theirs added is declared.</description>
+</object>

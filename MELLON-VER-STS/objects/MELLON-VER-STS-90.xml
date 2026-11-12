@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-90">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_commit_changes_without_paths_commits_only_document_folders
+tests/test_mcp_git.py::test_commit_changes_round_trip
+tests/test_service.py::test_commit_without_paths_reads_status_once
+tests/test_service.py::test_commit_without_paths_commits_a_deleted_document_folder
+tests/test_service.py::test_commit_without_paths_commits_a_renamed_document_folder
+tests/test_git_ops.py::test_head_doc_folder_names_reads_the_last_commit</attr>
+  <description>Through the MCP server, edit an object, write secrets.env at the repository root and exports/out.txt, and call commit_changes without paths. Separately, change objects in two documents and write notes.txt; delete a whole document folder; rename a document folder. Commit without paths each time. Expected: the commit holds each changed document file, the deletions of the deleted or renamed folder's files, and the renamed folder's files; no file outside document folders is committed; the latest commit's document folders are known even when the folder is gone from the working copy.</description>
+</object>

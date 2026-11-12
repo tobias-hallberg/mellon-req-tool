@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-129">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. The dialog is built directly, not by pressing the button.</attr>
+  <attr name="automated-tests">tests/test_gui_history.py::test_history_tab_empty_state_until_selection
+tests/test_gui_history.py::test_history_tab_view_button_enables_on_row_selection
+tests/test_gui_history.py::test_object_at_commit_dialog_renders_snapshot</attr>
+  <description>Open the History tab with no object selected; select VCU3-SyRS-42; select a commit row; open the object at the latest commit. Expected: View at this commit… is disabled until a row is selected, then enabled; the dialog shows the commit's hash in its title, and the description read-only.</description>
+</object>

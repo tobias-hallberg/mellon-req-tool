@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-152">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_outline_merge_applies_theirs_moves_adds_and_deletes
+tests/test_merge.py::test_the_later_object_is_renumbered_everywhere</attr>
+  <description>Merge outlines where ours adds O under H1 and theirs moves A under H2 after C, deletes B and adds T first under H1; also resolve a merge where both sides add objects under different headings. Expected: H1 holds T then O, H2 holds C then A; each new object sits where its side put it, and no object is listed twice.</description>
+</object>

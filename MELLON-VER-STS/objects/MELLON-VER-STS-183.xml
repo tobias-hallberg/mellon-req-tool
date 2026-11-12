@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-183">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_ver_srs_300_merge_banner_shows_the_number_of_conflicting_files</attr>
+  <description>Start a merge that stops on three conflicting files: two document files and NOTES.txt. Expected: the merge banner shows the number 3. The existing test checks only the words 'file(s) conflict'.</description>
+</object>

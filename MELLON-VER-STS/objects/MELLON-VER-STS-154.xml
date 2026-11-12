@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-154">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_conflicts_outside_documents_are_reported_not_touched</attr>
+  <description>Both sides change NOTES.txt at the repository root to different text, so git conflicts on it; resolve. Expected: NOTES.txt is still a conflicting file, untouched.</description>
+</object>

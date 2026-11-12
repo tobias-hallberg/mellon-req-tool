@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-159">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand
+tests/test_merge.py::test_same_field_on_both_is_merged_by_hand
+tests/test_merge.py::test_document_properties_merge_field_by_field</attr>
+  <description>Both sides change VCU3-SRS-1's description, and separately the document title. Open the Resolve merge dialog, press Use theirs, then type 'Mine and theirs.' and resolve. Expected: the merged text starts as ours ('Mine.'); Use theirs fills it with 'Theirs.'; the typed text is what is written; a merged title is written likewise.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-161">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_deleted_on_one_side_changed_on_the_other_is_kept_by_default
+tests/test_merge.py::test_deleted_on_one_side_can_be_deleted
+tests/test_gui_merge.py::test_dialog_keep_checkbox_for_a_deleted_object</attr>
+  <description>Ours changes VCU3-SRS-10's description; theirs deletes the object. Open the Resolve merge dialog; resolve with keep, and again with keep unticked. Expected: keep is ticked and says the object was deleted on b; keeping leaves the object with ours' text and in the outline; unticking deletes it from the files and the outline.</description>
+</object>

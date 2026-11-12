@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-112">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_commit_changes_round_trip
+tests/test_mcp_git.py::test_commit_changes_can_suppress_trailer
+tests/test_mcp_write.py::test_auto_commit_uses_via_mellon_mcp_trailer
+tests/test_mcp_write.py::test_auto_commit_set_attribute_against_git_repo</attr>
+  <description>Commit through commit_changes, through commit_changes with include_trailer false, and through set_attribute with a commit_message. Expected: the commit messages end with 'Via: mellon-mcp', except the one with include_trailer false.</description>
+</object>

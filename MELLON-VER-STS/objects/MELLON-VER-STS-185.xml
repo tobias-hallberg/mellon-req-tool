@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-185">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_310_criss_cross_merge_uses_the_base_git_merge_base_prints</attr>
+  <description>Build a criss-cross history in which ours and theirs have two merge bases, with a document file that both sides changed. Resolve. Expected: each merged field equals a three-way merge from the base that `git merge-base ours theirs` prints. No test has two merge bases.</description>
+</object>

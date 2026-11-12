@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-103">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Broken links aren't tested; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_includes_suspect_links
+tests/test_service.py::test_prepare_document_commit_no_suspect_links_when_acked
+tests/test_gui_commit.py::test_commit_dialog_shows_suspect_warning
+tests/test_gui_commit.py::test_ver_srs_149_commit_dialog_lists_a_broken_link</attr>
+  <description>With CHILD-0's link to PARENT-1 never acknowledged, change CHILD and open the commit dialog; then acknowledge the link, commit, and open the dialog again. Expected: the first time the dialog lists the link as suspect, naming CHILD-0 and PARENT/PARENT-1; after the acknowledgement no suspect link is listed.</description>
+</object>

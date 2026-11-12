@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-155">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Author and committer dates are set alike, so which date counts isn't decided (review Q9).</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_the_later_object_is_renumbered_everywhere
+tests/test_merge.py::test_whichever_side_committed_later_yields</attr>
+  <description>Branch a creates VCU3-SRS-34 and -35, branch b creates its own VCU3-SRS-34; merge b into a with a's commit earlier, then again with b's commit earlier. Expected: without asking, the object whose creating commit is later is renumbered (b's to VCU3-SRS-36 the first time, a's the second), and the other keeps VCU3-SRS-34.</description>
+</object>

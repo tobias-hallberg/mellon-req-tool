@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-180">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_ver_srs_250_list_documents_returns_the_current_issue
+tests/test_mcp_read.py::test_ver_srs_250_list_documents_current_issue_follows_issue_order
+tests/test_mcp_read.py::test_ver_srs_250_current_issue_over_generated_issue_tags</attr>
+  <description>Tag PARENT-issue-1 and -2 on ancestors of the latest commit, and PARENT-issue-3 on a commit of another branch only. Leave CHILD without an issue. Call list_documents. Expected: PARENT's current issue is 2 and CHILD's is empty. No test reads the field.</description>
+</object>

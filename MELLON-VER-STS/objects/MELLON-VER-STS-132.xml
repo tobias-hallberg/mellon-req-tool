@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-132">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_git_ops.py::test_validate_issue_accepts
+tests/test_git_ops.py::test_validate_issue_rejects
+tests/test_git_ops.py::test_create_issue_tag_validates_format
+tests/test_gui_commit.py::test_commit_dialog_blocks_ok_on_invalid_issue
+tests/test_gui_commit.py::test_commit_dialog_allows_empty_issue_for_untagged_document
+tests/test_mcp_write.py::test_tag_issue_validates_format
+tests/test_service.py::test_tag_issue_validation_error_for_bad_format</attr>
+  <description>Enter each of '1', '1.2', '12.23.54', '0', '0.0.0' as a new issue, and each of '', 'draft', '1.2.x', '1.', '.5', '1..2', 'v1', '1 2', in the commit dialog, through tag_issue and through the service. Expected: the first set is accepted; each of the second set is refused as not dot-separated numeric, and the dialog disables Commit.</description>
+</object>

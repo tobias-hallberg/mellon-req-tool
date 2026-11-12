@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-146">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Activating the window isn't tested.</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_banner_follows_the_merge
+tests/test_gui_merge.py::test_explorer_resolve_refreshes_after_the_dialog
+tests/test_gui_merge.py::test_ver_srs_297_project_explorer_checks_for_a_merge_when_activated
+tests/test_gui_merge.py::test_ver_srs_297_project_explorer_hides_the_banner_when_activated_after_an_abort</attr>
+  <description>Open a repository in the Project Explorer, then start a merge that stops with conflicts and press F5; resolve and press F5 again. Separately start the merge first and then open the repository. Expected: no merge banner before the merge; the banner shows after F5 and after opening; it stays while the merge is in progress.</description>
+</object>

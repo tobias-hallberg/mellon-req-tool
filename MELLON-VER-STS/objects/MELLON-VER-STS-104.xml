@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-104">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_warns_about_dirty_parent
+tests/test_gui_commit.py::test_commit_dialog_shows_parent_warning
+tests/test_gui_commit.py::test_commit_dialog_shows_upstream_points_only_with_a_tag</attr>
+  <description>Change PARENT and CHILD, where CHILD declares PARENT as a parent document; open CHILD's commit dialog. Expected: the dialog warns that PARENT has uncommitted changes, lists only CHILD's files, and Commit stays enabled.</description>
+</object>

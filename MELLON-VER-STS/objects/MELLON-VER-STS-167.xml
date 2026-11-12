@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-167">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_ver_srs_93_first_commit_from_commit_dialog_holds_only_the_documents_files
+tests/test_mcp_git.py::test_ver_srs_93_first_commit_through_commit_changes_holds_only_the_selected_path</attr>
+  <description>In a repository with no commit, write DOC/DOC.xml, DOC/objects/DOC-0.xml and notes.txt. Commit from commit_changes with paths ['DOC/DOC.xml'], and from the commit dialog for DOC. Expected: each new commit is a root commit, and its tree holds exactly the selected paths. The other files stay untracked. No test asserts the tree. A probe on 2026-11-11 with the library commit gave a tree holding only the named file.</description>
+</object>

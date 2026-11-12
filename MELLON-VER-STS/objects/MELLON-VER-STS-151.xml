@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-151">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_links_merge_as_a_set</attr>
+  <description>Each side adds a different link from VCU3-STS-1, so git conflicts on its links file. Resolve. Expected: nothing is asked, and VCU3-STS-1 keeps its base link and both new ones.</description>
+</object>

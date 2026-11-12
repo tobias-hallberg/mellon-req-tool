@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-181">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_ver_srs_251_show_document_returns_the_current_issue</attr>
+  <description>In the same repository as the MELLON-VER-SRS-250 test, call show_document for PARENT and for CHILD. Expected: current issue 2 for PARENT and empty for CHILD.</description>
+</object>

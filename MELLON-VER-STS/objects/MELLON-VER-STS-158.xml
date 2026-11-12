@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-158">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. Tables and figures aren't tested.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_same_field_on_both_is_merged_by_hand
+tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand
+tests/test_gui_merge.py::test_ver_srs_345_merge_dialog_asks_for_the_merged_table_and_figure</attr>
+  <description>Both sides change VCU3-SRS-1's description and status to different values. Expected: the merge asks for the description and the status, and for nothing else; the Resolve merge dialog shows a field for each.</description>
+</object>

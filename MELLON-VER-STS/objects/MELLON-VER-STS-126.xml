@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-126">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_history.py::test_history_tab_populates_on_selection
+tests/test_gui_history.py::test_visible_history_tab_follows_selection
+tests/test_gui_history.py::test_showing_history_tab_loads_the_current_object
+tests/test_gui_history.py::test_commit_while_hidden_shows_when_the_tab_opens
+tests/test_gui_history.py::test_commit_from_a_git_client_shows_on_window_activation
+tests/test_gui_history.py::test_object_history_returns_expected_commits
+tests/test_gui_history.py::test_object_history_includes_figure_only_commits
+tests/test_git_ops.py::test_log_for_path_orders_newest_first
+tests/test_git_ops.py::test_log_for_path_several_paths_as_one_unit</attr>
+  <description>Select VCU3-SyRS-42, which five commits changed, with the History tab showing; select it while the tab is hidden and then show the tab; commit a change while the tab is hidden; commit from a git client and activate the window; set a figure on the object and commit. Expected: the tab lists the object's commits newest first and no other commit; the new commits appear first, the figure-only commit included; a commit that touched another file isn't listed.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-106">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_prefills_metadata
+tests/test_service.py::test_prepare_document_commit_prefill_author_falls_back_to_git_user
+tests/test_gui_commit.py::test_commit_dialog_metadata_prefilled</attr>
+  <description>Open the commit dialog on CHILD whose manifest has author 'tester' and date 2026-04-22; then clear the manifest's author, commit, set git's user.name to 'git-fallback-user' and open the dialog again. Expected: the dialog prefills author 'tester' and date 2026-04-22 (not today); with no metadata author it prefills 'git-fallback-user'; the dialog shows the prefilled values.</description>
+</object>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-187">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_317_link_changed_on_both_sides_keeps_ours</attr>
+  <description>In the base, A links to B with an acknowledged commit X. Ours sets the acknowledged commit to Y, and theirs sets it to Z. Separately, ours and theirs each change the link's type to a different type. Resolve each. Expected: the link keeps ours' acknowledged commit, and ours' link type. No test exists.</description>
+</object>

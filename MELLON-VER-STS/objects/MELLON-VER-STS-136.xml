@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-136">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_default_commit_cuts_no_issue_tag
+tests/test_service.py::test_commit_with_prefilled_issue_cuts_no_tag
+tests/test_service.py::test_commit_document_skips_tag_when_issue_unchanged</attr>
+  <description>Commit a change with the issue as prefilled, with and without an issue already cut; commit through the service with the prefilled issue and with the current issue. Expected: no tag is added each time.</description>
+</object>

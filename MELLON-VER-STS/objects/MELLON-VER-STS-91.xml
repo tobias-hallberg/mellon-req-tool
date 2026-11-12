@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-91">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests. A folder given as a path isn't covered and fails today; see the gaps.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_commit_changes_respects_paths
+tests/test_git_ops.py::test_commit_with_explicit_paths</attr>
+  <description>Through the MCP server, edit VCU3-SRS-1 and VCU3-SRS-2, then call commit_changes with paths holding only VCU3-SRS-1's object file. Expected: the commit holds VCU3-SRS-1's new text and VCU3-SRS-2's text from the latest commit.</description>
+</object>

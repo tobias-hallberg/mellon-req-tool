@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-138">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_commit_dialog_allows_metadata_only_commit
+tests/test_gui_commit.py::test_commit_dialog_with_nothing_to_commit_tags_the_current_commit</attr>
+  <description>On a clean document, raise the issue in the commit dialog, without and then with a tag name. Expected: Commit (or Tag) stays disabled and the hint says there is nothing to commit; changing the author enables Commit.</description>
+</object>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-102">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests.</attr>
+  <attr name="automated-tests">tests/test_service.py::test_prepare_document_commit_with_object_edit
+tests/test_service.py::test_prepare_document_commit_figure_only_edit_is_affected
+tests/test_service.py::test_prepare_document_commit_manifest_only_has_no_affected
+tests/test_service.py::test_prepare_document_commit_clean_tree
+tests/test_gui_commit.py::test_commit_dialog_pre_fills_default_message</attr>
+  <description>Open the commit dialog for CHILD: clean; after changing CHILD-0's attribute; after setting only CHILD-0's figure; after changing only the manifest's title. Expected: the message is 'Edited CHILD. Affected requirements: CHILD-0.' for the object and the figure change, and 'Edited CHILD. No affected requirements.' when clean or when only the manifest changed; the dialog shows the prefilled message.</description>
+</object>

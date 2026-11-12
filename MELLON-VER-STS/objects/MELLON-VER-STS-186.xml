@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-186">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_316_link_removed_on_one_side_is_removed</attr>
+  <description>In the base, VCU3-STS-1 links to VCU3-SRS-1 and VCU3-SRS-2. Ours removes the link to VCU3-SRS-2, and theirs adds a link to VCU3-SRS-11, so the links file conflicts. Resolve. Expected: VCU3-STS-1 links to VCU3-SRS-1 and VCU3-SRS-11, and not to VCU3-SRS-2. No test exists.</description>
+</object>

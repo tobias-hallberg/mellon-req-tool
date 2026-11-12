@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-182">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_git.py::test_ver_srs_265_tag_issue_tags_the_latest_commit</attr>
+  <description>Commit a change, then call tag_issue('VCU3-SRS', '5'). Expected: refs/tags/VCU3-SRS-issue-5 resolves to the latest commit's hash. The existing tag_issue tests check only that the tag exists.</description>
+</object>
