@@ -185,26 +185,50 @@ def test_render_table_latex_repeats_leading_header_rows():
             TableRow((TableCell("a"), TableCell("b"))),
             TableRow((TableCell("c"), TableCell("d")), header=True),
         ),
-        # Header rows split by a body row.
-        (
-            TableRow((TableCell("a"), TableCell("b")), header=True),
-            TableRow((TableCell("c"), TableCell("d"))),
-            TableRow((TableCell("e"), TableCell("f")), header=True),
-            TableRow((TableCell("g"), TableCell("h"))),
-        ),
         # A header cell whose rowspan reaches into the body.
         (
             TableRow((TableCell("tall", rowspan=2), TableCell("b")), header=True),
             TableRow((TableCell("c"),)),
         ),
+        # The same, with a later header row and body row after it.
+        (
+            TableRow((TableCell("tall", rowspan=2), TableCell("b")), header=True),
+            TableRow((TableCell("c"),)),
+            TableRow((TableCell("e"), TableCell("f")), header=True),
+            TableRow((TableCell("g"), TableCell("h"))),
+        ),
         # No header rows at all.
         (TableRow((TableCell("a"), TableCell("b"))),),
     ],
-    ids=["all-header", "trailing", "split", "rowspan-into-body", "none"],
+    ids=["all-header", "trailing", "rowspan-into-body", "rowspan-into-body-then-split", "none"],
 )
 def test_render_table_latex_no_repeating_head(rows):
     t = Table(columns=(TableColumn(), TableColumn()), rows=rows)
     assert r"\endhead" not in render_table_latex(t)
+
+
+def test_render_table_latex_repeats_leading_header_rows_before_a_later_header_row():
+    """The header rows before the first body row repeat even when a later
+    header row follows a body row (MELLON-PDF-SRS-147). The later one stays a
+    bold row in the body, with its own rule below it."""
+    t = Table(
+        columns=(TableColumn(), TableColumn()),
+        rows=(
+            TableRow((TableCell("a"), TableCell("b")), header=True),
+            TableRow((TableCell("c"), TableCell("d"))),
+            TableRow((TableCell("e"), TableCell("f")), header=True),
+            TableRow((TableCell("g"), TableCell("h"))),
+        ),
+    )
+    lines = render_table_latex(t).splitlines()
+    assert lines.count(r"\endhead") == 1
+    head_end = lines.index(r"\endhead")
+    assert lines[head_end - 1] == r"\midrule"
+    assert r"\textbf{a}" in lines[head_end - 2]
+    assert lines[head_end + 1].strip().startswith("c & d")
+    later = next(i for i, line in enumerate(lines) if r"\textbf{e}" in line)
+    assert later > head_end
+    assert lines[later + 1] == r"\midrule"
 
 
 def test_render_table_latex_colspan():
@@ -601,9 +625,11 @@ def test_syrs_class_has_no_stamped_placeholders():
     assert r"pdfauthor={\@docOwner}" in code
 
 
-def test_render_latex_subject_falls_back_to_doc_id(doc_folder: Path):
+def test_render_latex_empty_title_sets_no_subject(doc_folder: Path):
+    """An empty title is left out of the cover and the page headers; the
+    document ID doesn't stand in for it (MELLON-PDF-SRS-82)."""
     _replace_in(doc_folder / "DOC.xml", "<title>Test doc</title>", "<title></title>")
-    assert r"\setDocSubject{DOC}" in render_latex(load_document(doc_folder))
+    assert r"\setDocSubject" not in render_latex(load_document(doc_folder))
 
 
 def _pdf_info_string(blob: bytes, key: str) -> str | None:

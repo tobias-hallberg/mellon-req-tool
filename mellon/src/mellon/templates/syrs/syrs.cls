@@ -123,7 +123,13 @@
 %% Specification"); hidden when unset.
 \newcommand{\setDocType}[1]{\renewcommand{\@docType}{#1}}
 
-\AtBeginDocument{\hypersetup{pdftitle={\@docSubject},pdfauthor={\@docOwner}}}
+%% A document without a title is named after its id in the PDF's properties
+%% only; the cover and header leave the title out.
+\AtBeginDocument{%
+  \ifdefempty{\@docSubject}%
+    {\hypersetup{pdftitle={\@docID}}}%
+    {\hypersetup{pdftitle={\@docSubject}}}%
+  \hypersetup{pdfauthor={\@docOwner}}}
 
 %% "Rev. A.00 • 2026-01-01", leaving out whichever half is unset.
 \newcommand{\syrs@revdate}{%
@@ -302,14 +308,15 @@
       \vspace{4mm}}
 
     %% Title — the document subject, big SemiBold sans
-    \begingroup
-      \sffamily\bfseries\color{ink}%
-      \fontsize{34pt}{38pt}\selectfont%
-      \setlength{\parskip}{0pt}%
-      \raggedright
-      \@docSubject\par
-    \endgroup
-    \vspace{6mm}
+    \ifdefempty{\@docSubject}{}{%
+      \begingroup
+        \sffamily\bfseries\color{ink}%
+        \fontsize{34pt}{38pt}\selectfont%
+        \setlength{\parskip}{0pt}%
+        \raggedright
+        \@docSubject\par
+      \endgroup
+      \vspace{6mm}}
 
     %% Subtitle (issue / standard line)
     \ifdefempty{\@docStandard}{}{%

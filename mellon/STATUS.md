@@ -481,8 +481,9 @@ A table is structured content on one object: `<table>` inside
   - the validator reports `TABLE_GEOMETRY`, `TABLE_BAD_ALIGN`,
     `TABLE_BAD_SPAN` and `TABLE_NO_COLUMNS`
 - **Export** produces a `longtable` (booktabs, `\multicolumn`, `\multirow`).
-  Leading header rows end the longtable head (`\endhead`), so they repeat on
-  every page, unless a header rowspan reaches into the body.
+  Leading header rows (those before the first body row) end the longtable
+  head (`\endhead`), so they repeat on every page, even when a later header
+  row follows a body row, unless a header rowspan reaches into the body.
 - **GUI:** one rendering engine. The read-only preview and the editor are the
   same `InlineTableWidget` (`gui/widgets/inline_table.py`). The preview is a
   cached `grab()` of it, and double-click opens it live in the same place.
@@ -517,8 +518,9 @@ A table is structured content on one object: `<table>` inside
     one-cell diagram) to cropped vector PDFs, placed next to the .tex and
     printed by `\syrsfigure` — scaled down to fit, numbered, captioned with the
     description on ordinary objects (replacing the `\shall` row) and with
-    "Figure N" alone on headings and tables. A figure that didn't render, or
-    every figure when draw.io is missing, prints a placeholder line and is
+    "Figure N" alone on headings and tables. A figure that didn't render
+    (draw.io wrote no whole PDF for it: none, empty or cut off), or every
+    figure when draw.io is missing, prints a placeholder line and is
     reported through the `unrendered` out-list. draw.io isn't started for a
     document without figures.
 - **Traceability section:** with `parents` (doc id → `Document`, from
@@ -536,8 +538,10 @@ A table is structured content on one object: `<table>` inside
   before the save dialog. MCP `export_document` exports anyway and returns
   them in `suspect_links`. Without git there is nothing to check.
 - **Cover, running header and PDF title/author** come from `doc.id`,
-  `metadata.title` / `author` / `date` and `rev`. Empty fields are left off,
-  and there are no hard-coded placeholders.
+  `metadata.title` / `author` / `date` and `rev`. Empty fields are left off
+  the cover and the running header, and there are no hard-coded placeholders
+  (an empty title isn't replaced by the document ID). Only the PDF Title
+  property falls back to the document ID.
 - **Surfaces:** MCP `export_document` and the GUI's Export (`Ctrl+E`, in a
   background thread).
 - **tectonic lookup:** `MELLON_TECTONIC`, then `<exe-dir>/tools` (frozen

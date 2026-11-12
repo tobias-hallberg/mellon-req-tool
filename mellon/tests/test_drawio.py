@@ -302,7 +302,7 @@ class _Run:
         for f in sorted(src.iterdir()):
             self.inputs[f.name] = f.read_bytes()
             if f.stem in self.render:
-                (out_dir / f"{f.stem}.pdf").write_bytes(b"%PDF-1.7")
+                (out_dir / f"{f.stem}.pdf").write_bytes(b"%PDF-1.7\n%%EOF\n")
         return subprocess.CompletedProcess(cmd, 1, "", "")
 
 

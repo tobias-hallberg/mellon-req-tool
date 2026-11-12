@@ -92,9 +92,10 @@ def render_table_latex(table: Table) -> str:
 
     Page-breaks across "very big" tables via ``longtable``; merged cells become
     ``\\multicolumn`` (colspan) and ``\\multirow`` (rowspan). Header rows are
-    bolded and separated from the body by a single ``\\midrule``. When they
-    are the table's leading rows and no rowspan reaches past them into the
-    body, they repeat at the top of every page (``\\endhead``).
+    bolded, and a ``\\midrule`` follows the last of them. The leading header
+    rows (those before the first body row) end with a ``\\midrule`` too and
+    repeat at the top of every page (``\\endhead``), unless a rowspan reaches
+    from them into the rows below.
 
     Cell text is escaped here, so the returned string is inserted into the
     template verbatim (NOT through ``escape_latex`` again). A geometrically
@@ -110,12 +111,13 @@ def render_table_latex(table: Table) -> str:
     for i, row in enumerate(table.rows):
         if row.header:
             last_header = i
-    # Header rows that open the table, with at least one body row after them.
+    # MELLON-PDF-SRS-147: the leading header rows (rows[:lead]) repeat,
+    # whatever header rows come later, when a body row follows them.
     lead = next(
         (i for i, row in enumerate(table.rows) if not row.header),
         len(table.rows),
     )
-    repeat_header = 0 < lead < len(table.rows) and last_header == lead - 1
+    repeat_header = 0 < lead < len(table.rows)
 
     body: list[str] = []
     # Rowspans still covering rows below: each {col, width, remaining}.
@@ -166,11 +168,12 @@ def render_table_latex(table: Table) -> str:
         for s in active:
             s["remaining"] -= 1
         active = [s for s in active if s["remaining"] > 0] + new_spans
-        if r == last_header:
+        # A \multirow still open would be cut off from its rows below.
+        head_end = repeat_header and r == lead - 1 and not active
+        if r == last_header or head_end:
             body.append(r"\midrule")
-            # A \multirow still open would be cut off from its rows below.
-            if repeat_header and not active:
-                body.append(r"\endhead")
+        if head_end:
+            body.append(r"\endhead")
 
     lines = [rf"\begin{{longtable}}{{{''.join(aligns)}}}", r"\toprule"]
     lines.extend(body)
@@ -412,7 +415,9 @@ def render_latex(
     template = env.from_string(_read_bundled(_TEMPLATE_FILE))
     return template.render(
         doc_id=doc.id,
-        subject=doc.metadata.title or doc.id,
+        # MELLON-PDF-SRS-82: no title, no title on the cover or in the
+        # header (the class still names the PDF after the document ID).
+        subject=doc.metadata.title,
         owner=doc.metadata.author,
         date=doc.metadata.date,
         rev=rev,

@@ -220,6 +220,17 @@ All notable changes to Mellon. The format follows
 - **Enter in a table cell inserts a line break** (`MELLON-EDIT-SRS-211`), and
   **Ctrl+Enter saves the cell's text** to the object and closes the cell's
   editor (`MELLON-GUI-SRS-165`).
+- **A figure that draw.io saves as an empty or incomplete PDF prints as a
+  placeholder** and is listed in the notice of figures not drawn, and in
+  `export_document`'s `unrendered_figures`, instead of failing the whole
+  export (`MELLON-PDF-SRS-58`, `-61`, `-73`).
+- **A document without a title no longer shows its ID as the title** on the
+  cover and in the page headers; the title is left out (`MELLON-PDF-SRS-82`).
+- **A table's leading header rows repeat on each page** the table continues
+  onto, even when a later header row follows a body row
+  (`MELLON-PDF-SRS-147`).
+- **`export_document`'s `suspect_links` carry each link's `doc_id`,** the
+  same fields the `suspects` tool gives (`MELLON-PDF-SRS-54`).
 
 ### Security
 

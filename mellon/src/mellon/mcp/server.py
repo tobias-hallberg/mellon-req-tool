@@ -49,6 +49,7 @@ from .serialize import (
     document_diff_to_dict,
     document_summary_to_dict,
     link_status_to_dict,
+    suspect_to_dict,
     load_error_to_dict,
     object_to_dict,
     search_hit_to_dict,
@@ -689,9 +690,7 @@ def suspects(doc_id: str | None = None) -> list[dict]:
         for s in statuses:
             if s.state.value == "ok":
                 continue
-            d = link_status_to_dict(s)
-            d["doc_id"] = did
-            results.append(d)
+            results.append(suspect_to_dict(s, did))
     return results
 
 
@@ -2585,7 +2584,8 @@ def export_document(
             f"; {len(problems) - n_broken} suspect and {n_broken} broken "
             "link(s) (see suspect_links)"
         )
-        extra["suspect_links"] = [link_status_to_dict(s) for s in problems]
+        # MELLON-PDF-SRS-54: the same form as the suspects tool's items.
+        extra["suspect_links"] = [suspect_to_dict(s, doc_id) for s in problems]
     return _write_result(
         affected=[],
         message=message,

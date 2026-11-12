@@ -477,8 +477,9 @@ def export_pdfs(exe: str, svgs: Sequence[Path], out_dir: Path) -> dict[int, Path
 
     ``svgs[n]`` becomes ``out_dir/fig-<n>.pdf``; the result maps ``n`` to
     the PDF for each figure that rendered. One that didn't (an empty
-    diagram, an unreadable file) is simply absent — draw.io carries on past
-    it — so callers fall back per figure. A plain SVG is wrapped as a picture
+    diagram, an unreadable file, an output that isn't a whole PDF) is
+    simply absent — draw.io carries on past it — so callers fall back per
+    figure. A plain SVG is wrapped as a picture
     first (``_wrap_plain_svg``). Multi-page diagrams export their first page.
 
     Raises ``DrawioError`` only when draw.io can't be run at all.
@@ -508,5 +509,30 @@ def export_pdfs(exe: str, svgs: Sequence[Path], out_dir: Path) -> dict[int, Path
     return {
         n: pdf
         for n in range(len(svgs))
-        if (pdf := out_dir / f"fig-{n}.pdf").is_file()
+        if _is_usable_pdf(pdf := out_dir / f"fig-{n}.pdf")
     }
+
+
+# How far from the end of a PDF its "%%EOF" marker may sit (trailing
+# whitespace or a short incremental-update tail).
+_PDF_TAIL = 1024
+
+
+def _is_usable_pdf(path: Path) -> bool:
+    """True when ``path`` is a whole PDF file: a ``%PDF-`` header and an
+    ``%%EOF`` marker at the end.
+
+    MELLON-PDF-SRS-58/-73: a figure draw.io wrote as an empty or cut-off
+    file counts as not drawn, so it gets the placeholder and the notice
+    instead of failing the PDF program.
+    """
+    try:
+        with path.open("rb") as f:
+            head = f.read(5)
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(max(0, size - _PDF_TAIL))
+            tail = f.read()
+    except OSError:
+        return False
+    return head == b"%PDF-" and b"%%EOF" in tail

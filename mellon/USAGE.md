@@ -163,7 +163,7 @@ An object can carry a `<table>` after its `<description>`. By convention its `ty
 - **Spans:** cells are plain text. A covered slot has no `<cell>` of its own, because the spanning cell owns it.
 - **Tiling:** the rows must tile the grid exactly. Every position is covered once, nothing overflows, and no rowspan runs past the last row. The loader rejects a table that breaks this.
 - **Not linkable:** cells can't be linked one by one. This is deliberately not the DOORS cells-as-objects model.
-- **Export:** a table renders as a `longtable`. Header rows at the top of the table repeat on every page it spans, unless a header cell's row span reaches into the body.
+- **Export:** a table renders as a `longtable`. The header rows before the first body row repeat on every page it spans, even when a later header row follows a body row, unless a header cell's row span reaches into the body.
 
 ### Links: `links/<id>.xml`
 
@@ -420,7 +420,7 @@ The History tab's **Compare with latest…** compares the whole document at the 
   - On an ordinary object, the figure replaces the requirement text inside the card and the description becomes its caption: **Figure N:** *description*. The attributes still print below.
   - On a heading or a table object, the figure follows the heading or the table, captioned **Figure N** only, since the description already prints there.
   - A plain SVG (not made with draw.io) renders too.
-  - A figure draw.io can't render (an empty diagram) or every figure when draw.io isn't installed prints a placeholder line instead, and a dialog lists the affected objects.
+  - A figure draw.io can't render (an empty diagram, or one it writes no whole PDF for) or every figure when draw.io isn't installed prints a placeholder line instead, and a dialog lists the affected objects.
 - **Traceability:** a document that declares parent documents (Properties, Parents tab) ends with a numbered **Traceability** section on a new page. MCP `export_document` produces the same PDF.
   - A summary: how many objects link to a parent, the count of links in each state, and per parent how many of its objects are covered.
   - **Links to** *parents*: a link table with one row per object in outline order, headings excluded: the object id and each parent object it links to. An object without such a link shows *none*. The column heads repeat on every page.

@@ -142,6 +142,13 @@ def link_status_to_dict(status: LinkStatus) -> dict:
     }
 
 
+def suspect_to_dict(status: LinkStatus, doc_id: str) -> dict:
+    """One item of the `suspects` tool: the link status plus the id of the
+    document holding the link. MELLON-PDF-SRS-54: the export tool's
+    `suspect_links` uses this form too."""
+    return {**link_status_to_dict(status), "doc_id": doc_id}
+
+
 def trace_edge_to_dict(edge: TraceEdge) -> dict:
     return {
         "link_type": edge.link_type,
