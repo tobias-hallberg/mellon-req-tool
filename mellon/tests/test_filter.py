@@ -381,3 +381,226 @@ def test_valid_ops_returned_per_kind() -> None:
     assert "is-true" in valid_ops_for_kind("boolean")
     assert "starts-with" in valid_ops_for_kind("text")
     assert valid_ops_for_kind("nope") == ()
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from pathlib import Path  # noqa: E402
+
+from tests.edit_b_support import _ALL_ATTR_OPS, _KIND_OPS, write_doc  # noqa: E402
+
+
+# A value fitting each operator on the kind it belongs to.
+_OP_VALUE = {
+    "enum": {"eq": "Draft", "ne": "Draft"},
+    "text": {"eq": "x", "ne": "x", "contains": "x", "not-contains": "x",
+             "starts-with": "x"},
+    "integer": {"eq": "3", "ne": "3", "lt": "3", "le": "3", "gt": "3",
+                "ge": "3", "between": "1|5"},
+    "real": {"eq": "3.5", "ne": "3.5", "lt": "3.5", "le": "3.5", "gt": "3.5",
+             "ge": "3.5", "between": "1.5|5.5"},
+    "boolean": {},
+    "date": {"eq": "2026-01-01", "ne": "2026-01-01", "before": "2026-01-01",
+             "after": "2026-01-01", "between": "2026-01-01|2026-12-31"},
+}
+
+
+_GENERIC_VALUE = {"eq": "3", "ne": "3", "contains": "x", "not-contains": "x",
+                  "starts-with": "x", "lt": "3", "le": "3", "gt": "3", "ge": "3",
+                  "between": "1|5", "before": "2026-01-01",
+                  "after": "2026-01-01"}
+
+
+_KIND_ATTR = {"enum": "status", "text": "note", "integer": "count",
+              "real": "weight", "boolean": "flag", "date": "due"}
+
+
+def _kinds_doc(root: Path) -> Path:
+    attrs = [
+        {"name": "type", "kind": "enum", "required": True,
+         "options": ["Heading", "Requirement"]},
+        {"name": "status", "kind": "enum", "required": False,
+         "options": ["Draft", "Approved"]},
+        {"name": "note", "kind": "text", "required": False},
+        {"name": "count", "kind": "integer", "required": False},
+        {"name": "weight", "kind": "real", "required": False},
+        {"name": "flag", "kind": "boolean", "required": False},
+        {"name": "due", "kind": "date", "required": False},
+    ]
+    return write_doc(root, "K", attrs=attrs, objects={
+        "K-0": ({"type": "Requirement", "status": "Draft", "note": "xyz",
+                 "count": "3", "weight": "3.5", "flag": "true",
+                 "due": "2026-01-01"}, "one"),
+        "K-1": ({"type": "Requirement"}, "two"),
+    }, next_number=2)
+
+
+def _apply(doc, kind: str, op: str, value: str | None = None):
+    from mellon.filter import evaluate
+    from mellon.schema import Filter, FilterRule
+
+    if value is None:
+        value = _OP_VALUE[kind].get(op, _GENERIC_VALUE.get(op, ""))
+    rule = FilterRule(kind="attr", attr=_KIND_ATTR[kind], op=op, value=value)
+    filt = Filter(slug="f", name="F", combinator="all", keep_ancestors=False,
+                  rules=(rule,))
+    return evaluate(doc, filt)
+
+
+def _check_operator(tmp_path, kind: str, op: str) -> None:
+    from mellon.filter import FilterError
+    from mellon.loader import load_document
+
+    doc = load_document(_kinds_doc(tmp_path))
+    if op in _KIND_OPS[kind]:
+        result = _apply(doc, kind, op)
+        assert isinstance(result, set), f"{op} on {kind} was not applied"
+    else:
+        with pytest.raises(FilterError):
+            _apply(doc, kind, op)
+
+
+@pytest.mark.parametrize("op", _ALL_ATTR_OPS)
+def test_edit_srs_292_enumeration_accepts_only_eq_ne_is_empty_is_not_empty(
+        tmp_path, op):
+    """MELLON-EDIT-SRS-292: applying a filter, Mellon accepts on an
+    enumeration only eq, ne, is-empty and is-not-empty; each other operator is
+    refused."""
+    _check_operator(tmp_path, "enum", op)
+
+
+@pytest.mark.parametrize("op", _ALL_ATTR_OPS)
+def test_edit_srs_293_text_accepts_only_its_seven_operators(tmp_path, op):
+    """MELLON-EDIT-SRS-293: on a text attribute only contains, not-contains,
+    starts-with, eq, ne, is-empty and is-not-empty are accepted."""
+    _check_operator(tmp_path, "text", op)
+
+
+@pytest.mark.parametrize("kind", ["integer", "real"])
+@pytest.mark.parametrize("op", _ALL_ATTR_OPS)
+def test_edit_srs_294_number_accepts_only_its_nine_operators(tmp_path, kind, op):
+    """MELLON-EDIT-SRS-294: on an integer or real attribute only eq, ne, lt,
+    le, gt, ge, between, is-empty and is-not-empty are accepted."""
+    _check_operator(tmp_path, kind, op)
+
+
+_BOOLEAN_OPS = [
+    pytest.param(op, marks=pytest.mark.xfail(strict=True, reason=(
+        "defect: MELLON-EDIT-SRS-295: is-not-empty on a boolean attribute is "
+        "applied instead of refused")))
+    if op == "is-not-empty" else op
+    for op in _ALL_ATTR_OPS]
+
+
+@pytest.mark.parametrize("op", _BOOLEAN_OPS)
+def test_edit_srs_295_boolean_accepts_only_is_true_is_false_is_empty(tmp_path, op):
+    """MELLON-EDIT-SRS-295: on a boolean attribute only is-true, is-false and
+    is-empty are accepted."""
+    _check_operator(tmp_path, "boolean", op)
+
+
+@pytest.mark.parametrize("op", _ALL_ATTR_OPS)
+def test_edit_srs_296_date_accepts_only_its_seven_operators(tmp_path, op):
+    """MELLON-EDIT-SRS-296: on a date attribute only eq, ne, before, after,
+    between, is-empty and is-not-empty are accepted."""
+    _check_operator(tmp_path, "date", op)
+
+
+def _undefined_attr_rule(op: str, value: str = ""):
+    from mellon.schema import Filter, FilterRule
+
+    return Filter(slug="f", name="F", combinator="all", keep_ancestors=False,
+                  rules=(FilterRule(kind="attr", attr="nosuch", op=op,
+                                    value=value),))
+
+
+@pytest.mark.parametrize("op,value,matches_all", [
+    ("is-empty", "", True), ("ne", "x", True), ("contains", "x", False)],
+    ids=["is-empty", "ne", "contains"])
+def test_edit_srs_297_undefined_attribute_is_treated_as_text(
+        tmp_path, op, value, matches_all):
+    """MELLON-EDIT-SRS-297: a filter condition on an attribute the document
+    doesn't define treats it as text: is-empty and ne x match each object
+    (none has a value), contains x matches none."""
+    from mellon.filter import evaluate
+    from mellon.loader import load_document
+
+    doc = load_document(_kinds_doc(tmp_path))
+    got = evaluate(doc, _undefined_attr_rule(op, value))
+    assert got == ({"K-0", "K-1"} if matches_all else set())
+
+
+def test_edit_srs_297_undefined_attribute_refuses_operator_unfit_for_text(tmp_path):
+    """MELLON-EDIT-SRS-297 with MELLON-EDIT-SRS-293: as a text attribute, an
+    undefined attribute refuses lt."""
+    from mellon.filter import FilterError, evaluate
+    from mellon.loader import load_document
+
+    doc = load_document(_kinds_doc(tmp_path))
+    with pytest.raises(FilterError):
+        evaluate(doc, _undefined_attr_rule("lt", "3"))
+
+
+def _bounds_doc(root: Path) -> Path:
+    attrs = [
+        {"name": "type", "kind": "enum", "required": True,
+         "options": ["Requirement"]},
+        {"name": "weight", "kind": "real", "required": False},
+        {"name": "due", "kind": "date", "required": False},
+    ]
+    return write_doc(root, "BD", attrs=attrs, objects={
+        "BD-0": ({"type": "Requirement", "weight": "0.49", "due": "2026-04-30"}, "0"),
+        "BD-1": ({"type": "Requirement", "weight": "0.5", "due": "2026-05-01"}, "1"),
+        "BD-2": ({"type": "Requirement", "weight": "1.5", "due": "2026-06-01"}, "2"),
+        "BD-3": ({"type": "Requirement", "weight": "1.51", "due": "2026-06-02"}, "3"),
+        "BD-4": ({"type": "Requirement", "weight": "1.0", "due": "2026-05-15"}, "4"),
+    }, next_number=5)
+
+
+@pytest.mark.parametrize("attr,bounds", [
+    ("weight", "0.5|1.5"), ("due", "2026-05-01|2026-06-01")], ids=["real", "date"])
+def test_edit_srs_300_between_includes_both_bounds(tmp_path, attr, bounds):
+    """MELLON-EDIT-SRS-300: between matches values from the lower to the upper
+    bound, both included; values just outside (0.49 and 1.51; 2026-04-30 and
+    2026-06-02) don't match."""
+    from mellon.filter import evaluate
+    from mellon.loader import load_document
+    from mellon.schema import Filter, FilterRule
+
+    doc = load_document(_bounds_doc(tmp_path))
+    filt = Filter(slug="f", name="F", keep_ancestors=False, rules=(
+        FilterRule(kind="attr", attr=attr, op="between", value=bounds),))
+    assert evaluate(doc, filt) == {"BD-1", "BD-2", "BD-4"}
+
+
+def _combinator_doc(root: Path) -> Path:
+    attrs = [
+        {"name": "type", "kind": "enum", "required": True,
+         "options": ["Requirement"]},
+        {"name": "priority", "kind": "enum", "required": False,
+         "options": ["High", "Low"]},
+        {"name": "approved", "kind": "boolean", "required": False},
+    ]
+    return write_doc(root, "CB", attrs=attrs, objects={
+        "CB-0": ({"type": "Requirement", "priority": "High", "approved": "true"}, "A"),
+        "CB-1": ({"type": "Requirement", "priority": "Low", "approved": "false"}, "B"),
+    }, next_number=2)
+
+
+@pytest.mark.parametrize("combinator,expected", [
+    ("all", set()), ("any", {"CB-0", "CB-1"})], ids=["all", "any"])
+def test_edit_srs_284_all_needs_each_condition_any_needs_one(
+        tmp_path, combinator, expected):
+    """MELLON-EDIT-SRS-284/-285: A (High, approved) meets only 'approved
+    is-true'; B (Low, not approved) only 'priority eq Low'. Under all no
+    object matches; under any both do."""
+    from mellon.filter import evaluate
+    from mellon.loader import load_document
+    from mellon.schema import Filter, FilterRule
+
+    doc = load_document(_combinator_doc(tmp_path))
+    filt = Filter(slug="f", name="F", combinator=combinator,
+                  keep_ancestors=False, rules=(
+                      FilterRule(kind="attr", attr="priority", op="eq",
+                                 value="Low"),
+                      FilterRule(kind="attr", attr="approved", op="is-true")))
+    assert evaluate(doc, filt) == expected

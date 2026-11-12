@@ -2940,3 +2940,138 @@ def test_edit_srs_162_library_refuses_delete_with_sub_object_even_forced(tmp_pat
         report = None
     assert report is None or report.performed is False
     assert changed(before, snapshot(root)) == []
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from tests.edit_b_support import (  # noqa: E402
+    DRAWIO_COMPRESSED,
+    PNG_BYTES,
+    SVG_A,
+    _BAD_OUTLINES,
+    _BAD_SPANS,
+    _BAD_TILINGS,
+    _DESCENDANT_MOVES,
+    _eq,
+    _figure_doc,
+    _nest_doc,
+    _norm,
+    _ordering,
+    _sections_doc,
+    _table,
+    _table_doc,
+    changed_files,
+    children_of,
+    outline_tree,
+    top_level,
+    tree_hashes,
+    write_doc,
+)
+
+
+@pytest.mark.parametrize("case", list(_DESCENDANT_MOVES))
+def test_edit_srs_177_library_refuses_move_under_or_beside_descendant(tmp_path, case):
+    """MELLON-EDIT-SRS-177: if a move asks to place an object under the object
+    itself, or under, before or after one of its descendant objects, Mellon
+    shall refuse the move. Library; no file may change."""
+    from mellon.editor import EditorError, move_object
+
+    folder = _nest_doc(tmp_path)
+    before = tree_hashes(tmp_path)
+    with pytest.raises(EditorError):
+        move_object(folder, "M-0", **_DESCENDANT_MOVES[case])
+    assert changed_files(before, tree_hashes(tmp_path)) == [], (
+        f"refused move {case} changed files")
+
+
+def test_edit_srs_177_control_move_of_non_ancestor_is_made(tmp_path):
+    """MELLON-EDIT-SRS-177, other side of the condition: moving A (M-1), which
+    is no ancestor of its target place, to the top level is made, and its
+    sub-object B moves with it (MELLON-EDIT-SRS-176)."""
+    from mellon.editor import move_object
+
+    folder = _nest_doc(tmp_path)
+    move_object(folder, "M-1", to_top=True)
+    tree = outline_tree(folder / "M.xml")
+    assert "M-1" in top_level(tree)
+    assert children_of(tree, "M-1") == ["M-2"]
+    assert children_of(tree, "M-0") == []
+
+
+@pytest.mark.parametrize("case", list(_BAD_OUTLINES))
+def test_edit_srs_190_library_refuses_bad_outline_before_writing(tmp_path, case):
+    """MELLON-EDIT-SRS-190: an outline that doesn't name each object exactly
+    once, or names an object the document doesn't have, is refused before
+    writing any file (library set_outline)."""
+    from mellon.editor import EditorError, set_outline
+
+    folder = _sections_doc(tmp_path)
+    before = tree_hashes(tmp_path)
+    with pytest.raises(EditorError):
+        set_outline(folder, _ordering(_norm(_BAD_OUTLINES[case])))
+    assert changed_files(before, tree_hashes(tmp_path)) == []
+
+
+@pytest.mark.parametrize("case", list(_BAD_TILINGS))
+def test_edit_srs_205_library_refuses_table_not_tiled_once(tmp_path, case):
+    """MELLON-EDIT-SRS-205: if a table's cells don't cover each row and column
+    position exactly once, Mellon shall refuse to write the table. Library;
+    the object file's bytes are unchanged."""
+    from mellon.editor import EditorError, set_table
+
+    folder = _table_doc(tmp_path)
+    obj_file = folder / "objects" / "T-0.xml"
+    old = obj_file.read_bytes()
+    with pytest.raises(EditorError):
+        set_table(folder, "T-0", _table(*_BAD_TILINGS[case]))
+    assert obj_file.read_bytes() == old
+
+
+@pytest.mark.parametrize("case", list(_BAD_SPANS))
+def test_edit_srs_207_library_refuses_span_below_one(tmp_path, case):
+    """MELLON-EDIT-SRS-207: a cell with a row or column span below 1 is
+    refused (library); the object file's bytes are unchanged."""
+    from mellon.editor import EditorError, set_table
+
+    colspan, rowspan = _BAD_SPANS[case]
+    folder = _table_doc(tmp_path)
+    obj_file = folder / "objects" / "T-0.xml"
+    old = obj_file.read_bytes()
+    with pytest.raises((EditorError, ValueError)):
+        # Building the cell may itself refuse the span; either way no write.
+        set_table(folder, "T-0", _table(["left"], [[("a", colspan, rowspan)]]))
+    assert obj_file.read_bytes() == old
+
+
+@pytest.mark.parametrize("content", ["png", "compressed-drawio"])
+def test_edit_srs_233_library_refuses_non_svg_named_svg(tmp_path, content):
+    """MELLON-EDIT-SRS-233: a file that isn't a well-formed SVG file is
+    refused as a figure, judged by content, not by its .svg name. The
+    object's existing figure keeps its bytes."""
+    from mellon.editor import EditorError, set_figure
+
+    folder = _figure_doc(tmp_path / "repo")
+    src = tmp_path / "x.svg"
+    src.write_bytes(PNG_BYTES if content == "png" else DRAWIO_COMPRESSED)
+    before = tree_hashes(tmp_path / "repo")
+    with pytest.raises(EditorError):
+        set_figure(folder, "F-0", src)
+    assert (folder / "figures" / "F-0.svg").read_bytes() == SVG_A
+    assert changed_files(before, tree_hashes(tmp_path / "repo")) == []
+
+
+@pytest.mark.parametrize("name", ["", "   "], ids=["empty", "spaces"])
+def test_edit_srs_278_library_refuses_filter_without_name(tmp_path, name):
+    """MELLON-EDIT-SRS-278: create_filter and rename_filter refuse an empty
+    name or one of only spaces; no filter file is written or changed."""
+    from mellon.editor import EditorError, create_filter, rename_filter
+
+    folder = write_doc(tmp_path, "D", objects={
+        "D-0": ({"type": "Requirement"}, "x")}, next_number=1)
+    with pytest.raises(EditorError):
+        create_filter(folder, name, rules=[_eq("status", "Draft")])
+    assert list(folder.glob("filters/*.xml")) == []
+    slug = create_filter(folder, "Kept", rules=[_eq("status", "Draft")])
+    before = tree_hashes(tmp_path)
+    with pytest.raises(EditorError):
+        rename_filter(folder, slug, name)
+    assert changed_files(before, tree_hashes(tmp_path)) == []

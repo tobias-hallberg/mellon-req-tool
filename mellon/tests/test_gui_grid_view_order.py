@@ -192,3 +192,197 @@ def test_edit_srs_122_grid_rows_follow_outline_preorder(qtbot, tmp_path, modals,
     commit_all(root)
     w = open_editor_window(qtbot, root, "D")
     assert grid_ids(w) == ids
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from lxml import etree  # noqa: E402
+
+from tests.edit_b_support import (  # noqa: E402
+    _FIXED_HEADERS,
+    MessageBoxes,
+    _attr_headers,
+    _filters_repo,
+    _new_view_handler,
+    _plain,
+    _views_menu_choose,
+    answer_text,
+    button,
+    drive_dialogs,
+    grid_headers,
+    menu_action,
+    menu_texts,
+    open_editor,
+)
+
+
+def test_edit_srs_325_views_menu_lists_views_and_activates_choice(
+        tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-325: the Views menu lists Dev and Test; choosing Test
+    makes Test the active view (its attribute columns show, in its order);
+    choosing Dev then makes Dev active."""
+    root = _filters_repo(tmp_path, views=[("Dev", ["status", "rationale"]),
+                                          ("Test", ["count", "priority"])])
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+    names = menu_texts(window, "Views")
+    assert "Dev" in names and "Test" in names
+    _views_menu_choose(window, "Test")
+    qtbot.wait(10)
+    assert window.grid_pane.current_active_view_slug() == "test"
+    assert _attr_headers(window) == ["count", "priority"]
+    _views_menu_choose(window, "Dev")
+    qtbot.wait(10)
+    assert window.grid_pane.current_active_view_slug() == "dev"
+    assert _attr_headers(window) == ["status", "rationale"]
+
+
+def test_edit_srs_326_active_view_shows_exactly_its_attribute_columns(
+        tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-326: with Test (count, priority) active, the attribute
+    columns besides the fixed ones of MELLON-EDIT-SRS-327 (state, object ID,
+    description and type) are exactly count, priority, in that order."""
+    root = _filters_repo(tmp_path, views=[("Test", ["count", "priority"])])
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+    _views_menu_choose(window, "Test")
+    qtbot.wait(10)
+    assert _attr_headers(window) == ["count", "priority"]
+
+
+def test_edit_srs_327_system_columns_show_in_each_view(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-327: with a view listing only rationale active, the
+    grid still shows the state, object ID, description and type columns;
+    status, which the view doesn't list, is hidden."""
+    root = _filters_repo(tmp_path, views=[("Only", ["rationale"])])
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+    _views_menu_choose(window, "Only")
+    qtbot.wait(10)
+    shown = grid_headers(window)
+    for column in _FIXED_HEADERS:
+        assert column in shown, f"column {column or 'state'!r} hidden in a view"
+    assert "rationale" in shown and "status" not in shown
+
+
+def test_edit_srs_329_new_view_saves_name_and_chosen_columns(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-329: Views menu, New view..., name QA, choose status and
+    priority: views/qa.xml lists status then priority, and the Views menu
+    lists QA."""
+    root = _filters_repo(tmp_path)
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+    drive_dialogs(monkeypatch, qtbot, _new_view_handler(qtbot, "QA", ["status", "priority"]))
+    menu_action(window, "Views", "New view").trigger()
+    qtbot.wait(10)
+    view_file = root / "D" / "views" / "qa.xml"
+    assert view_file.exists()
+    el = etree.parse(str(view_file)).getroot()
+    assert el.get("name") == "QA"
+    assert [a.get("name") for a in el.findall("attribute")] == ["status", "priority"]
+    assert "QA" in menu_texts(window, "Views")
+
+
+def test_edit_srs_331_manage_views_renames_view(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-331: Views menu, Manage views..., rename QA to Review:
+    the Views menu lists Review, not QA, and Review keeps QA's columns."""
+    from PySide6.QtWidgets import QListWidget
+
+    from mellon.loader import load_document
+
+    root = _filters_repo(tmp_path, views=[("QA", ["status", "priority"])])
+    MessageBoxes(monkeypatch)
+    answer_text(monkeypatch, "Review")
+    window = open_editor(qtbot, root, "D")
+
+    def handler(dialog):
+        lst = dialog.findChildren(QListWidget)[0]
+        lst.setCurrentRow(0)
+        button(dialog, "Rename").click()
+        button(dialog, "Close").click()
+
+    drive_dialogs(monkeypatch, qtbot, handler)
+    menu_action(window, "Views", "Manage views").trigger()
+    qtbot.wait(10)
+    names = menu_texts(window, "Views")
+    assert "Review" in names and "QA" not in names
+    (view,) = load_document(root / "D").views
+    assert view.name == "Review"
+    assert list(view.visible) == ["status", "priority"]
+
+
+def test_edit_srs_332_manage_views_deletes_view(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-332: Manage views..., delete Review (confirming): its
+    view file is gone and the Views menu no longer lists it."""
+    from PySide6.QtWidgets import QListWidget
+
+    root = _filters_repo(tmp_path, views=[("Review", ["status"]), ("Dev", ["rationale"])])
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+
+    def handler(dialog):
+        lst = dialog.findChildren(QListWidget)[0]
+        row = [lst.item(i).text() for i in range(lst.count())].index("Review")
+        lst.setCurrentRow(row)
+        button(dialog, "Delete").click()
+        button(dialog, "Close").click()
+
+    drive_dialogs(monkeypatch, qtbot, handler)
+    menu_action(window, "Views", "Manage views").trigger()
+    qtbot.wait(10)
+    assert sorted(p.name for p in (root / "D" / "views").glob("*.xml")) == ["dev.xml"]
+    names = menu_texts(window, "Views")
+    assert "Review" not in names and "Dev" in names
+
+
+def _header_menu(window, qtbot, monkeypatch, column_label: str):
+    """Open the grid column header's context menu over `column_label`; the
+    menu that would show is returned instead of waiting for a click."""
+    from PySide6.QtCore import QPoint, Qt
+    from PySide6.QtGui import QContextMenuEvent
+    from PySide6.QtWidgets import QApplication, QMenu
+
+    menus = []
+
+    def capture(menu, *args, **kwargs):
+        menus.append(menu)
+        return None
+
+    for name in ("exec", "exec_", "popup"):
+        monkeypatch.setattr(QMenu, name, capture, raising=False)
+    view = window.grid_pane.table
+    header = view.horizontalHeader()
+    model = view.model()
+    logical = next(c for c in range(model.columnCount())
+                   if model.headerData(c, Qt.Horizontal) == column_label)
+    pos = QPoint(header.sectionViewportPosition(logical) + 3, header.height() // 2)
+    event = QContextMenuEvent(QContextMenuEvent.Mouse, pos, header.mapToGlobal(pos))
+    QApplication.sendEvent(header.viewport(), event)
+    qtbot.wait(10)
+    if not menus and header.contextMenuPolicy() == Qt.CustomContextMenu:
+        header.customContextMenuRequested.emit(pos)
+        qtbot.wait(10)
+    return menus[-1] if menus else None
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "not built: MELLON-EDIT-SRS-333 is Proposed"))
+def test_edit_srs_333_column_header_hides_and_shows_attribute_column(
+        tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-333: from the grid's column header, hide the
+    rationale column, then show it again."""
+    root = _filters_repo(tmp_path)
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "D")
+    assert "rationale" in grid_headers(window)
+    menu = _header_menu(window, qtbot, monkeypatch, "rationale")
+    assert menu is not None, "the column header offers no menu"
+    toggle = [a for a in menu.actions() if _plain(a.text()) == "rationale"
+              and a.isCheckable()]
+    assert toggle, "the header menu has no show/hide entry for rationale"
+    toggle[0].trigger()
+    qtbot.wait(10)
+    assert "rationale" not in grid_headers(window)
+    menu = _header_menu(window, qtbot, monkeypatch, "status")
+    [a for a in menu.actions() if _plain(a.text()) == "rationale"][0].trigger()
+    qtbot.wait(10)
+    assert "rationale" in grid_headers(window)

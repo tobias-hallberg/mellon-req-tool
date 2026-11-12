@@ -370,3 +370,94 @@ def test_wrap_plain_svg_sizes_the_picture() -> None:
     geo = etree.fromstring(xml).find(".//mxGeometry")
     assert (geo.get("width"), geo.get("height")) == ("200", "100")
     assert drawio._wrap_plain_svg(b"<html/>") is None
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+import sys  # noqa: E402
+
+from tests.edit_b_support import _fake_program  # noqa: E402
+
+
+def _drawio_places(tmp_path: Path, monkeypatch) -> dict[str, Path]:
+    """Point every place Mellon looks at an empty folder under tmp_path, and
+    return where a program would go in each."""
+    exe = "draw.io.exe" if sys.platform == "win32" else "drawio"
+    pf = tmp_path / "pf"
+    la = tmp_path / "la"
+    bin_dir = tmp_path / "bin"
+    for d in (pf, la, bin_dir):
+        d.mkdir()
+    cwd = tmp_path / "cwd"
+    cwd.mkdir()
+    monkeypatch.chdir(cwd)
+    monkeypatch.delenv("MELLON_DRAWIO", raising=False)
+    monkeypatch.setenv("ProgramFiles", str(pf))
+    monkeypatch.setenv("ProgramW6432", str(pf))
+    monkeypatch.setenv("ProgramFiles(x86)", str(pf))
+    monkeypatch.setenv("LOCALAPPDATA", str(la))
+    monkeypatch.setenv("PATH", str(bin_dir))
+    path_exe = "drawio.exe" if sys.platform == "win32" else "drawio"
+    return {
+        "env": tmp_path / "custom" / exe,
+        "programfiles": pf / "draw.io" / exe,
+        "localappdata": la / "Programs" / "draw.io" / exe,
+        "path": bin_dir / path_exe,
+    }
+
+
+def _same(found, expected: Path) -> bool:
+    return found is not None and Path(found).resolve() == expected.resolve()
+
+
+def test_edit_srs_246_mellon_drawio_wins_over_programfiles(tmp_path, monkeypatch):
+    """MELLON-EDIT-SRS-246 (a): MELLON_DRAWIO names a program and
+    %ProgramFiles%\\draw.io holds one: the MELLON_DRAWIO program is found."""
+    from mellon.drawio import find_drawio
+
+    places = _drawio_places(tmp_path, monkeypatch)
+    _fake_program(places["env"])
+    _fake_program(places["programfiles"])
+    _fake_program(places["path"])
+    monkeypatch.setenv("MELLON_DRAWIO", str(places["env"]))
+    found = find_drawio()
+    assert _same(found, places["env"]), found
+
+
+@pytest.mark.skipif(sys.platform != "win32",
+                    reason="%ProgramFiles% and %LOCALAPPDATA% are Windows places")
+def test_edit_srs_246_programfiles_wins_over_localappdata(tmp_path, monkeypatch):
+    """MELLON-EDIT-SRS-246 (b): %ProgramFiles%\\draw.io and
+    %LOCALAPPDATA%\\Programs\\draw.io both hold one: %ProgramFiles%'s."""
+    from mellon.drawio import find_drawio
+
+    places = _drawio_places(tmp_path, monkeypatch)
+    _fake_program(places["programfiles"])
+    _fake_program(places["localappdata"])
+    _fake_program(places["path"])
+    found = find_drawio()
+    assert _same(found, places["programfiles"]), found
+
+
+@pytest.mark.skipif(sys.platform != "win32",
+                    reason="%LOCALAPPDATA% is a Windows place")
+def test_edit_srs_246_localappdata_wins_over_path(tmp_path, monkeypatch):
+    """MELLON-EDIT-SRS-246 (c): %LOCALAPPDATA%\\Programs\\draw.io and PATH
+    both hold one: %LOCALAPPDATA%'s."""
+    from mellon.drawio import find_drawio
+
+    places = _drawio_places(tmp_path, monkeypatch)
+    _fake_program(places["localappdata"])
+    _fake_program(places["path"])
+    found = find_drawio()
+    assert _same(found, places["localappdata"]), found
+
+
+def test_edit_srs_246_path_is_last_place(tmp_path, monkeypatch):
+    """MELLON-EDIT-SRS-246: with only PATH holding draw.io, it is found on
+    PATH; with no place holding one, nothing is found."""
+    from mellon.drawio import find_drawio
+
+    places = _drawio_places(tmp_path, monkeypatch)
+    assert find_drawio() is None
+    _fake_program(places["path"])
+    assert _same(find_drawio(), places["path"])

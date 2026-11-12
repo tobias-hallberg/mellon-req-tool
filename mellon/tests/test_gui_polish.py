@@ -219,3 +219,75 @@ def test_filter_empty_distinct_from_document_empty(qtbot, tmp_path: Path):
     w = DocumentEditorWindow("EMPTY", svc)
     qtbot.addWidget(w)
     assert w.grid_pane._stack.currentWidget() is w.grid_pane._empty
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from tests.edit_b_support import (  # noqa: E402
+    MessageBoxes,
+    children_of,
+    find_action,
+    git_commit_all,
+    git_init,
+    open_editor,
+    outline_tree,
+    select,
+    top_level,
+    write_doc,
+)
+
+
+# ==========================================================================
+# Outline actions in the Document Editor
+# ==========================================================================
+
+
+def _indent_repo(tmp_path: Path) -> Path:
+    """O: P (O-0) over S1, S2, S3; X (O-4) over Y (O-5); Q (O-6)."""
+    root = tmp_path / "repo"
+    root.mkdir()
+    write_doc(root, "O", objects={
+        "O-0": ({"type": "Heading"}, "P"),
+        "O-1": ({"type": "Requirement"}, "S1"),
+        "O-2": ({"type": "Requirement"}, "S2"),
+        "O-3": ({"type": "Requirement"}, "S3"),
+        "O-4": ({"type": "Requirement"}, "X"),
+        "O-5": ({"type": "Requirement"}, "Y"),
+        "O-6": ({"type": "Requirement"}, "Q"),
+    }, outline=[("O-0", ["O-1", "O-2", "O-3"]), ("O-4", ["O-5"]), "O-6"],
+        next_number=7)
+    git_init(root)
+    git_commit_all(root, "seed")
+    return root
+
+
+def test_edit_srs_180_indent_makes_object_last_sub_object_of_sibling_before(
+        tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-180: Indent makes the selected object the last
+    sub-object of the sibling before it. Select X: P's sub-objects become
+    S1, S2, S3, X; Y stays under X; the top level reads P, Q."""
+    root = _indent_repo(tmp_path)
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "O")
+    select(window, "O-4", qtbot)
+    find_action(window, "Indent").trigger()
+    qtbot.wait(10)
+    tree = outline_tree(root / "O" / "O.xml")
+    assert children_of(tree, "O-0") == ["O-1", "O-2", "O-3", "O-4"]
+    assert children_of(tree, "O-4") == ["O-5"]
+    assert top_level(tree) == ["O-0", "O-6"]
+
+
+def test_edit_srs_181_outdent_makes_object_next_sibling_of_its_parent(
+        tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-181: Outdent makes the selected object the next
+    sibling of its parent object. Select S1 under P: the top level reads
+    P, S1, X, Q (S1 directly after P)."""
+    root = _indent_repo(tmp_path)
+    MessageBoxes(monkeypatch)
+    window = open_editor(qtbot, root, "O")
+    select(window, "O-1", qtbot)
+    find_action(window, "Outdent").trigger()
+    qtbot.wait(10)
+    tree = outline_tree(root / "O" / "O.xml")
+    assert top_level(tree) == ["O-0", "O-1", "O-4", "O-6"]
+    assert "O-1" not in children_of(tree, "O-0")

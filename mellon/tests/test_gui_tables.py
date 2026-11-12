@@ -601,3 +601,264 @@ def test_preview_widget_is_render_only(window) -> None:
     assert pv.parent() is None
     assert pv.testAttribute(Qt.WidgetAttribute.WA_DontShowOnScreen) is True
     assert pv.isVisible() is False
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from tests.edit_b_support import (  # noqa: E402
+    _edit_cell,
+    _gui_table_repo,
+    _header_2x2,
+    _open_table_editor,
+    _plain,
+    _save_table,
+    menu_action,
+)
+
+
+def _saved_table(root: Path):
+    from mellon.loader import load_document
+
+    return load_document(root / "T").objects["T-0"].table
+
+
+def _cells(table) -> list[list[tuple]]:
+    return [[(c.text, c.colspan, c.rowspan) for c in row.cells]
+            for row in table.rows]
+
+
+def _select_cells(editor, top: int, left: int, bottom: int, right: int) -> None:
+    from PySide6.QtWidgets import QTableWidgetSelectionRange
+
+    grid = editor.table
+    grid.clearSelection()
+    grid.setCurrentCell(top, left)
+    grid.setRangeSelected(QTableWidgetSelectionRange(top, left, bottom, right),
+                          True)
+
+
+def test_edit_srs_210_table_editor_saves_edited_cell_text(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-210: the table editor lets the user edit a cell's text.
+    Change cell (1,1) of a 2x2 table to 'New text' and save: the saved table
+    holds New text there and the other three cells are unchanged."""
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    _edit_cell(qtbot, editor, 1, 1, ["New text"])
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert [[c.text for c in row.cells] for row in table.rows] == [
+        ["h1", "h2"], ["a", "New text"]]
+    assert [row.header for row in table.rows] == [True, False]
+
+
+def test_edit_srs_211_table_editor_keeps_pasted_line_break(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-211: a cell text of two lines, first and second, given
+    to the cell editor (pasted) and saved, is stored with the line break."""
+    from PySide6.QtWidgets import QApplication
+    from PySide6.QtCore import Qt
+
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    QApplication.clipboard().setText("first\nsecond")
+    _edit_cell(qtbot, editor, 1, 0, [(Qt.Key_V, Qt.ControlModifier)])
+    _save_table(qtbot, editor)
+    assert _saved_table(root).rows[1].cells[0].text == "first\nsecond"
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-EDIT-SRS-211: the cell editor is a one-line field; "
+    "typing first, Enter, second gives 'firstsecond', so a line break can't "
+    "be typed in a cell (USAGE: plain Enter inserts a newline)"))
+def test_edit_srs_211_table_editor_keeps_typed_line_break(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-211: typing first, a line break (Enter, the key USAGE.md
+    names for a newline in a table-cell editor) and second, then saving,
+    stores first, line break, second."""
+    from PySide6.QtCore import Qt
+
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    _edit_cell(qtbot, editor, 1, 0, ["first", (Qt.Key_Return,), "second"])
+    _save_table(qtbot, editor)
+    assert _saved_table(root).rows[1].cells[0].text == "first\nsecond"
+
+
+def test_edit_srs_212_cancelled_cell_edit_keeps_old_text(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-212: start editing a cell holding 'a', type 'new',
+    cancel with Escape, then save: the cell still holds 'a' and the object
+    file's bytes are unchanged."""
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    obj_file = root / "T" / "objects" / "T-0.xml"
+    old = obj_file.read_bytes()
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    _edit_cell(qtbot, editor, 1, 0, ["new"], finish="escape")
+    assert editor.to_table().rows[1].cells[0].text == "a"
+    _save_table(qtbot, editor)
+    assert obj_file.read_bytes() == old
+
+
+def _run_table_action(window, text: str, sub: str | None = None) -> None:
+    action = menu_action(window, "Table", text)
+    if sub is not None:
+        assert action.menu() is not None, f"{text} has no submenu"
+        action = next(a for a in action.menu().actions() if _plain(a.text()) == sub)
+    assert action.isEnabled(), f"Table menu: {text} {sub or ''} is disabled"
+    action.trigger()
+
+
+def test_edit_srs_213_add_row_from_table_menu_is_saved_empty(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-213: the Table menu adds a row to the table being
+    edited. After Add row below and save, the saved table has three rows and
+    the new row's cells are empty; each position is covered once."""
+    from mellon.schema import table_geometry_errors
+
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(1, 0)
+    _run_table_action(window, "Add row below")
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert len(table.rows) == 3
+    texts = [[c.text for c in row.cells] for row in table.rows]
+    assert ["h1", "h2"] in texts and ["a", "b"] in texts
+    new_rows = [t for t in texts if t not in (["h1", "h2"], ["a", "b"])]
+    assert new_rows == [["", ""]]
+    assert table_geometry_errors(table) == []
+
+
+def _one_column(texts: list[str]):
+    from mellon.schema import Table, TableCell, TableColumn, TableRow
+
+    return Table(columns=(TableColumn("left"),),
+                 rows=tuple(TableRow(cells=(TableCell(t),)) for t in texts))
+
+
+def _one_row(texts: list[str]):
+    from mellon.schema import Table, TableCell, TableColumn, TableRow
+
+    return Table(columns=tuple(TableColumn("left") for _ in texts),
+                 rows=(TableRow(cells=tuple(TableCell(t) for t in texts)),))
+
+
+def test_edit_srs_215_delete_row_from_table_menu(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-215: rows a, b, c; with a cell of row b selected,
+    Delete row and save: the saved table has rows a, c."""
+    root = _gui_table_repo(tmp_path, _one_column(["a", "b", "c"]))
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(1, 0)
+    _run_table_action(window, "Delete row")
+    _save_table(qtbot, editor)
+    assert _cells(_saved_table(root)) == [[("a", 1, 1)], [("c", 1, 1)]]
+
+
+def test_edit_srs_216_add_column_from_table_menu(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-216: on a 2-column table choose Add column right and
+    save: the saved table has three columns and each position is covered
+    once."""
+    from mellon.schema import table_geometry_errors
+
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(1, 1)
+    _run_table_action(window, "Add column right")
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert len(table.columns) == 3
+    assert table_geometry_errors(table) == []
+    assert [sum(c.colspan for c in row.cells) for row in table.rows] == [3, 3]
+
+
+def test_edit_srs_218_delete_column_from_table_menu(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-218: columns a, b, c in one row; with cell b selected,
+    Delete column and save: the saved table has columns a, c."""
+    root = _gui_table_repo(tmp_path, _one_row(["a", "b", "c"]))
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(0, 1)
+    _run_table_action(window, "Delete column")
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert len(table.columns) == 2
+    assert _cells(table) == [[("a", 1, 1), ("c", 1, 1)]]
+
+
+def test_edit_srs_221_merge_cells_from_table_menu(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-221: select the 1x2 range of row 1 and choose Merge
+    cells, then save: the saved row's first cell has column span 2 and the
+    table still covers each position once."""
+    from mellon.schema import table_geometry_errors
+
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    _select_cells(editor, 1, 0, 1, 1)
+    _run_table_action(window, "Merge cells")
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert len(table.rows[1].cells) == 1
+    assert table.rows[1].cells[0].colspan == 2
+    assert table_geometry_errors(table) == []
+
+
+def test_edit_srs_224_split_cell_from_table_menu(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-224: a 2x2 table whose top-left cell spans both
+    columns and both rows; select it, choose Split cell, save: four single
+    cells, each position covered once."""
+    from mellon.schema import Table, TableCell, TableColumn, TableRow, \
+        table_geometry_errors
+
+    merged = Table(columns=(TableColumn("left"), TableColumn("left")), rows=(
+        TableRow(cells=(TableCell("all", colspan=2, rowspan=2),)),
+        TableRow(cells=())))
+    root = _gui_table_repo(tmp_path, merged)
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    _select_cells(editor, 0, 0, 0, 0)
+    _run_table_action(window, "Split cell")
+    _save_table(qtbot, editor)
+    table = _saved_table(root)
+    assert [len(row.cells) for row in table.rows] == [2, 2]
+    assert all((c.colspan, c.rowspan) == (1, 1) for row in table.rows
+               for c in row.cells)
+    assert table_geometry_errors(table) == []
+
+
+def test_edit_srs_226_header_row_toggles_back_to_body_row(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-226: with a cell of the header row selected, Header row
+    makes it a body row again; saved, row 0 is a body row."""
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(0, 0)
+    _run_table_action(window, "Header row")
+    _save_table(qtbot, editor)
+    assert [row.header for row in _saved_table(root).rows] == [False, False]
+
+
+def test_edit_srs_226_header_row_makes_body_row_a_header(tmp_path, qtbot, monkeypatch):
+    """MELLON-EDIT-SRS-226, other direction: with a cell of body row 1
+    selected, Header row makes row 1 a header row."""
+    from mellon.schema import Table, TableCell, TableColumn, TableRow
+
+    plain = Table(columns=(TableColumn("left"),), rows=(
+        TableRow(cells=(TableCell("a"),)), TableRow(cells=(TableCell("b"),))))
+    root = _gui_table_repo(tmp_path, plain)
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(0, 0)
+    _run_table_action(window, "Header row")
+    _save_table(qtbot, editor)
+    assert [row.header for row in _saved_table(root).rows] == [True, False]
+
+
+@pytest.mark.parametrize("first,second", [("Right", "Left"), ("Center", "Right")])
+def test_edit_srs_227_column_alignment_from_table_menu(tmp_path, qtbot, monkeypatch,
+                                                       first, second):
+    """MELLON-EDIT-SRS-227: set the first column's alignment from the Table
+    menu and save; reopen and set it again: the saved alignment is the first
+    choice, then the second; the other column stays left."""
+    root = _gui_table_repo(tmp_path, _header_2x2())
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(1, 0)
+    _run_table_action(window, "Column alignment", first)
+    _save_table(qtbot, editor)
+    assert [c.align for c in _saved_table(root).columns] == [first.lower(), "left"]
+    window.close()
+    window, editor = _open_table_editor(qtbot, root, monkeypatch)
+    editor.table.setCurrentCell(0, 0)
+    _run_table_action(window, "Column alignment", second)
+    _save_table(qtbot, editor)
+    assert [c.align for c in _saved_table(root).columns] == [second.lower(), "left"]

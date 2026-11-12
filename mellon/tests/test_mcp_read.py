@@ -1547,3 +1547,203 @@ def test_store_srs_210_mcp_read_tools_change_no_file(read_only_repo, mcp_at):
     s.compare_document("PARENT", from_ref=first, to_ref="HEAD")
     s.review_suspect_link("CHILD", "CHILD-1", "PARENT", "PARENT-1")
     assert changed(before, snapshot(root, include_git=False)) == []
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from tests.edit_b_support import (  # noqa: E402
+    STD_ATTRS,
+    _broken_doc,
+    _server,
+    git_commit_all,
+    git_init,
+    mcp_root,  # noqa: F401, F811 -- fixture
+    write_doc,
+)
+
+
+# ==========================================================================
+# Search
+# ==========================================================================
+
+
+def _hit_ids(hits) -> list[tuple[str, str]]:
+    return [(h["doc_id"], h["obj_id"]) for h in hits]
+
+
+def _case_repo(root: Path) -> None:
+    """PARENT: PARENT-0 heading, PARENT-1 'watchdog' + Draft, PARENT-2."""
+    write_doc(root, "PARENT", objects={
+        "PARENT-0": ({"type": "Heading", "status": "Approved"}, "Overview"),
+        "PARENT-1": ({"type": "Requirement", "status": "Draft"},
+                     "The watchdog resets the unit."),
+        "PARENT-2": ({"type": "Requirement", "status": "Approved"},
+                     "Brakes engage."),
+    }, next_number=3)
+
+
+@pytest.mark.parametrize("query,field", [
+    ("WATCHDOG", "description"),   # stored lower case
+    ("parent-1", "object ID"),     # stored upper case
+    ("draft", "attribute value"),  # stored as Draft
+], ids=["description", "object-id", "attribute-value"])
+def test_edit_srs_260_search_ignores_letter_case(mcp_root, query, field):
+    """MELLON-EDIT-SRS-260: search_objects finds objects whose object ID,
+    attribute values or description contain the text, ignoring letter case.
+    Only PARENT-1 contains each text in some letter case."""
+    _case_repo(mcp_root)
+    hits = _server().search_objects(query)
+    assert _hit_ids(hits) == [("PARENT", "PARENT-1")], (
+        f"{query!r} should find PARENT-1 by its {field}: {hits}")
+
+
+def test_edit_srs_260_search_finds_nothing_for_text_no_object_contains(mcp_root):
+    """MELLON-EDIT-SRS-260, other side: a text no object contains, in any
+    letter case, gives no hit."""
+    _case_repo(mcp_root)
+    assert _server().search_objects("WATCHDOGS") == []
+
+
+def _scope_repo(root: Path) -> None:
+    write_doc(root, "PARENT", objects={
+        "PARENT-0": ({"type": "Heading"}, "Parent heading"),
+        "PARENT-1": ({"type": "Requirement"}, "The system shall brake."),
+    }, next_number=2)
+    write_doc(root, "CHILD", objects={
+        "CHILD-0": ({"type": "Requirement"}, "The system shall brake softly."),
+        "CHILD-1": ({"type": "Requirement"}, "Unrelated."),
+    }, parents=["PARENT"], next_number=2)
+
+
+def test_edit_srs_261_search_with_doc_ids_searches_only_those(mcp_root):
+    """MELLON-EDIT-SRS-261: with doc_ids [CHILD] the hits are exactly CHILD's
+    matching object; without doc_ids PARENT's matching object is a hit too."""
+    _scope_repo(mcp_root)
+    only_child = _server().search_objects("shall brake", doc_ids=["CHILD"])
+    assert _hit_ids(only_child) == [("CHILD", "CHILD-0")]
+    everywhere = _server().search_objects("shall brake")
+    assert set(_hit_ids(everywhere)) == {("CHILD", "CHILD-0"),
+                                         ("PARENT", "PARENT-1")}
+
+
+def _tie_repo(root: Path) -> None:
+    """A-9, A-10, B-1 each hold 'zebra' only in the description (score 1);
+    B-2 holds it only in one attribute value (score 2)."""
+    attrs = STD_ATTRS
+    write_doc(root, "A", objects={
+        "A-9": ({"type": "Requirement"}, "a zebra here"),
+        "A-10": ({"type": "Requirement"}, "another zebra"),
+    }, attrs=attrs, next_number=11)
+    write_doc(root, "B", objects={
+        "B-1": ({"type": "Requirement"}, "zebra again"),
+        "B-2": ({"type": "Requirement", "rationale": "zebra crossing"}, "x"),
+    }, attrs=attrs, next_number=3)
+
+
+def test_edit_srs_263_hits_ordered_by_score_then_doc_then_object_id_as_text(
+        mcp_root):
+    """MELLON-EDIT-SRS-263: hits by score, highest first, then by document ID
+    and object ID compared as text: B-2 (2), then A-10, A-9, B-1 (1 each);
+    as text A-10 comes before A-9."""
+    _tie_repo(mcp_root)
+    hits = _server().search_objects("zebra")
+    assert _hit_ids(hits) == [("B", "B-2"), ("A", "A-10"), ("A", "A-9"),
+                              ("B", "B-1")]
+
+
+def _score_repo(root: Path) -> None:
+    """Query QQ. QQ-0 matches by ID only; QQ-1 by ID and description;
+    ZZ-0 by one attribute value; ZZ-1 by two; ZZ-2 by description only."""
+    attrs = [
+        {"name": "type", "kind": "enum", "required": True,
+         "options": ["Heading", "Requirement"]},
+        {"name": "note1", "kind": "text", "required": False},
+        {"name": "note2", "kind": "text", "required": False},
+    ]
+    write_doc(root, "QQ", objects={
+        "QQ-0": ({"type": "Requirement"}, "nothing to see"),
+        "QQ-1": ({"type": "Requirement"}, "the QQ text"),
+    }, attrs=attrs, next_number=2)
+    write_doc(root, "ZZ", objects={
+        "ZZ-0": ({"type": "Requirement", "note1": "QQ one"}, "plain"),
+        "ZZ-1": ({"type": "Requirement", "note1": "QQ one", "note2": "QQ two"},
+                 "plain"),
+        "ZZ-2": ({"type": "Requirement"}, "QQ in text"),
+        "ZZ-3": ({"type": "Requirement", "note1": "other"}, "no match"),
+    }, attrs=attrs, next_number=4)
+
+
+def test_edit_srs_265_search_scores_id_5_attribute_2_each_description_1(mcp_root):
+    """MELLON-EDIT-SRS-265: score 5 for an object ID match, 2 for each
+    matching attribute value and 1 for a description match."""
+    _score_repo(mcp_root)
+    scores = {h["obj_id"]: h["score"] for h in _server().search_objects("QQ")}
+    assert scores == {"QQ-0": 5, "QQ-1": 6, "ZZ-0": 2, "ZZ-1": 4, "ZZ-2": 1}
+
+
+def _many_repo(root: Path, n: int) -> None:
+    write_doc(root, "BIG", objects={
+        f"BIG-{i}": ({"type": "Requirement"}, f"needle {i}") for i in range(n)
+    }, next_number=n)
+
+
+@pytest.mark.parametrize("max_results,expected", [
+    (None, 50), (1, 1), (49, 49), (60, 60), (61, 60)],
+    ids=["default", "max-1", "max-49", "max-60", "max-61"])
+def test_edit_srs_266_search_returns_at_most_the_maximum_default_50(
+        mcp_root, max_results, expected):
+    """MELLON-EDIT-SRS-266: no more than the given maximum of hits, or 50 when
+    the call gives none. 60 objects hold the text."""
+    _many_repo(mcp_root, 60)
+    if max_results is None:
+        hits = _server().search_objects("needle")
+    else:
+        hits = _server().search_objects("needle", max_results=max_results)
+    assert len(hits) == expected
+
+
+def test_edit_srs_260_search_objects_over_stdio(tmp_path):
+    """MELLON-EDIT-SRS-260/-265 over the MCP server's stdio: search_objects
+    ignores letter case and scores an ID-and-description hit 6."""
+    import asyncio
+    import json
+
+    from mcp import ClientSession, StdioServerParameters
+    from mcp.client.stdio import stdio_client
+
+    root = tmp_path / "repo"
+    root.mkdir()
+    _case_repo(root)
+    git_init(root)
+    git_commit_all(root, "seed")
+    exe = shutil.which("mellon-mcp", path=str(Path(sys.executable).parent))
+    assert exe, "mellon-mcp is not installed in this environment"
+
+    async def run():
+        params = StdioServerParameters(command=exe, args=["--repo-root", str(root)])
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                out = {}
+                for q in ("WATCHDOG", "parent-1"):
+                    res = await session.call_tool("search_objects", {"query": q})
+                    assert not res.isError, res
+                    payload = res.structuredContent
+                    if payload is None:
+                        payload = [json.loads(c.text) for c in res.content]
+                    if isinstance(payload, dict) and "result" in payload:
+                        payload = payload["result"]
+                    out[q] = payload
+                return out
+
+    out = asyncio.run(run())
+    assert [(h["obj_id"], h["score"]) for h in out["WATCHDOG"]] == [("PARENT-1", 1)]
+    assert [(h["obj_id"], h["score"]) for h in out["parent-1"]] == [("PARENT-1", 5)]
+
+
+def test_edit_srs_266_search_limit_holds_beside_document_with_load_error(mcp_root):
+    """MELLON-EDIT-SRS-266 with a broken repository (T10): with another
+    document failing to load, search_objects still returns no more than 50
+    hits by default from the 60 matching objects that load."""
+    _many_repo(mcp_root, 60)
+    _broken_doc(mcp_root)
+    assert len(_server().search_objects("needle")) == 50

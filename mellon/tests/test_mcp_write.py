@@ -2540,3 +2540,285 @@ def test_mcp_srs_54_operating_system_refusal_returns_os_error(tmp_path, rich_tem
     p = payload(res)
     assert failed(res), f"precondition: the write didn't fail: {show(res)}"
     assert isinstance(p, dict) and p.get("error_type") == "OSError", show(res)
+
+
+# MELLON-EDIT-SRS blind tests (176 and up)
+from tests.edit_b_support import (  # noqa: E402
+    DRAWIO_COMPRESSED,
+    PNG_BYTES,
+    SVG_A,
+    SVG_B,
+    _BAD_OUTLINES,
+    _BAD_SPANS,
+    _BAD_TILINGS,
+    _DESCENDANT_MOVES,
+    _broken_doc,
+    _figure_doc,
+    _nest_doc,
+    _norm,
+    _ordering,
+    _sections_doc,
+    _server,
+    _table,
+    _table_doc,
+    changed_files,
+    mcp_root,  # noqa: F401, F811 -- fixture
+    outline_tree,
+    tree_hashes,
+)
+
+
+def mcp_children(nodes, ref_id):
+    """Sub-object ids of `ref_id` in show_document's outline (dicts)."""
+    for node in nodes:
+        if node["id"] == ref_id:
+            return [c["id"] for c in node.get("children", [])]
+        found = mcp_children(node.get("children", []), ref_id)
+        if found is not None:
+            return found
+    return None
+
+
+@pytest.mark.parametrize("case", list(_DESCENDANT_MOVES))
+def test_edit_srs_177_move_object_tool_refuses_move_under_or_beside_descendant(
+        mcp_root, case):
+    """MELLON-EDIT-SRS-177 through the move_object tool: placing H under itself,
+    or under, before or after a descendant is refused and writes no file."""
+    _nest_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().move_object("M", "M-0", **_DESCENDANT_MOVES[case])
+    assert result["ok"] is False, f"move {case} was not refused: {result}"
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def _mcp_outline(doc_id: str) -> list:
+    return _server().show_document(doc_id, include=["outline"])["outline"]
+
+
+def test_edit_srs_187_move_object_under_a_parent(mcp_root):
+    """MELLON-EDIT-SRS-187 (a): move_object with parent_id moves the object
+    under the given parent object."""
+    _sections_doc(mcp_root)
+    result = _server().move_object("S", "S-6", parent_id="S-0")
+    assert result["ok"] is True, result
+    outline = _mcp_outline("S")
+    assert "S-6" in mcp_children(outline, "S-0")
+    assert [n["id"] for n in outline] == ["S-0", "S-3"]
+
+
+def test_edit_srs_187_move_object_to_top(mcp_root):
+    """MELLON-EDIT-SRS-187 (b): move_object with to_top moves a sub-object to
+    the top level."""
+    _sections_doc(mcp_root)
+    result = _server().move_object("S", "S-4", to_top=True)
+    assert result["ok"] is True, result
+    outline = _mcp_outline("S")
+    assert "S-4" in [n["id"] for n in outline]
+    assert mcp_children(outline, "S-3") == ["S-5"]
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-EDIT-SRS-187: move_object(before=S-4) without parent_id "
+    "is refused ('sibling not found under target parent') instead of placing "
+    "the object directly before S-4"))
+def test_edit_srs_187_move_object_directly_before_object_in_other_section(mcp_root):
+    """MELLON-EDIT-SRS-187 (c): move_object with before = S-4 (in section H2),
+    no parent_id, places S-1 directly before S-4, under S-4's parent."""
+    _sections_doc(mcp_root)
+    result = _server().move_object("S", "S-1", before="S-4")
+    assert result["ok"] is True, result
+    outline = _mcp_outline("S")
+    assert mcp_children(outline, "S-3") == ["S-1", "S-4", "S-5"]
+    assert mcp_children(outline, "S-0") == ["S-2"]
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-EDIT-SRS-187: move_object(after=S-5) without parent_id "
+    "is refused ('sibling not found under target parent') instead of placing "
+    "the object directly after S-5"))
+def test_edit_srs_187_move_object_directly_after_object_in_other_section(mcp_root):
+    """MELLON-EDIT-SRS-187 (d): move_object with after = S-5 (in section H2),
+    no parent_id, places S-2 directly after S-5, under S-5's parent."""
+    _sections_doc(mcp_root)
+    result = _server().move_object("S", "S-2", after="S-5")
+    assert result["ok"] is True, result
+    outline = _mcp_outline("S")
+    assert mcp_children(outline, "S-3") == ["S-4", "S-5", "S-2"]
+    assert mcp_children(outline, "S-0") == ["S-1"]
+
+
+def test_edit_srs_187_move_object_before_with_parent_named(mcp_root):
+    """MELLON-EDIT-SRS-187 (c) with the target's parent named too: S-1 lands
+    directly before S-5 under S-3."""
+    _sections_doc(mcp_root)
+    result = _server().move_object("S", "S-1", parent_id="S-3", before="S-5")
+    assert result["ok"] is True, result
+    assert mcp_children(_mcp_outline("S"), "S-3") == ["S-4", "S-1", "S-5"]
+
+
+@pytest.mark.parametrize("case", list(_BAD_OUTLINES))
+def test_edit_srs_190_reorder_outline_refuses_bad_outline_before_writing(
+        mcp_root, case):
+    """MELLON-EDIT-SRS-190 through reorder_outline: refused (ok false) and no
+    file of the repository written."""
+    _sections_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().reorder_outline("S", _ordering(_norm(_BAD_OUTLINES[case])))
+    assert result["ok"] is False, result
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def test_edit_srs_190_control_full_outline_is_written(mcp_root):
+    """MELLON-EDIT-SRS-189/-190 control: an outline naming each object exactly
+    once is accepted and replaces the document's outline."""
+    folder = _sections_doc(mcp_root)
+    wanted = [("S-3", [("S-4", []), ("S-5", [])]), ("S-6", []),
+              ("S-0", [("S-2", []), ("S-1", [])])]
+    result = _server().reorder_outline("S", _ordering(wanted))
+    assert result["ok"] is True, result
+    assert outline_tree(folder / "S.xml") == wanted
+
+
+def _table_dict(cols: list[str], rows: list[list[tuple]]) -> dict:
+    return {
+        "columns": [{"align": a} for a in cols],
+        "rows": [{"cells": [{"text": t, "colspan": c, "rowspan": r}
+                            for t, c, r in row]} for row in rows],
+    }
+
+
+# A 2x2 merged block plus a third column fills a 3x2 table exactly once.
+_GOOD_TILING = (["left", "left", "left"],
+                [[("block", 2, 2), ("x", 1, 1)], [("y", 1, 1)]])
+
+
+@pytest.mark.parametrize("case", list(_BAD_TILINGS))
+def test_edit_srs_205_set_table_tool_refuses_table_not_tiled_once(mcp_root, case):
+    """MELLON-EDIT-SRS-205 through set_table: refused, no file written."""
+    _table_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().set_table("T", "T-0", _table_dict(*_BAD_TILINGS[case]))
+    assert result["ok"] is False, result
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def test_edit_srs_205_control_exact_tiling_with_merged_block_is_written(mcp_root):
+    """MELLON-EDIT-SRS-205, other side: a 2x2 merged block beside a third
+    column covers each position once and is written."""
+    _table_doc(mcp_root)
+    result = _server().set_table("T", "T-0", _table_dict(*_GOOD_TILING))
+    assert result["ok"] is True, result
+    from mellon.loader import load_document
+
+    table = load_document(mcp_root / "T").objects["T-0"].table
+    assert table is not None
+    assert [(c.text, c.colspan, c.rowspan) for c in table.rows[0].cells] == [
+        ("block", 2, 2), ("x", 1, 1)]
+    assert [(c.text, c.colspan, c.rowspan) for c in table.rows[1].cells] == [
+        ("y", 1, 1)]
+
+
+@pytest.mark.parametrize("align", ["justify", "", "Left", "middle"],
+                         ids=["justify", "empty", "Left", "middle"])
+def test_edit_srs_206_refuses_column_alignment_outside_left_center_right(
+        mcp_root, align):
+    """MELLON-EDIT-SRS-206: a column alignment other than left, center and
+    right is refused (set_table and library), object file unchanged."""
+    from mellon.editor import EditorError, set_table
+
+    folder = _table_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().set_table(
+        "T", "T-0", _table_dict(["left", align], [[("a", 1, 1), ("b", 1, 1)]]))
+    assert result["ok"] is False, result
+    with pytest.raises((EditorError, ValueError)):
+        set_table(folder, "T-0",
+                  _table(["left", align], [[("a", 1, 1), ("b", 1, 1)]]))
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+@pytest.mark.parametrize("align", ["left", "center", "right"])
+def test_edit_srs_206_accepts_left_center_right_and_reads_them_back(
+        mcp_root, align):
+    """MELLON-EDIT-SRS-206, other side: left, center and right are written and
+    read back as given."""
+    from mellon.loader import load_document
+
+    _table_doc(mcp_root)
+    result = _server().set_table(
+        "T", "T-0", _table_dict([align, "left"], [[("a", 1, 1), ("b", 1, 1)]]))
+    assert result["ok"] is True, result
+    table = load_document(mcp_root / "T").objects["T-0"].table
+    assert [c.align for c in table.columns] == [align, "left"]
+
+
+@pytest.mark.parametrize("case", list(_BAD_SPANS))
+def test_edit_srs_207_set_table_tool_refuses_span_below_one(mcp_root, case):
+    """MELLON-EDIT-SRS-207 through set_table: refused, no file written."""
+    colspan, rowspan = _BAD_SPANS[case]
+    _table_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().set_table(
+        "T", "T-0", _table_dict(["left"], [[("a", colspan, rowspan)]]))
+    assert result["ok"] is False, result
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def test_edit_srs_207_control_span_of_one_is_written(mcp_root):
+    """MELLON-EDIT-SRS-207, other side: spans of exactly 1 are written."""
+    from mellon.loader import load_document
+
+    _table_doc(mcp_root)
+    result = _server().set_table("T", "T-0",
+                                 _table_dict(["left"], [[("a", 1, 1)]]))
+    assert result["ok"] is True, result
+    cell = load_document(mcp_root / "T").objects["T-0"].table.rows[0].cells[0]
+    assert (cell.text, cell.colspan, cell.rowspan) == ("a", 1, 1)
+
+
+@pytest.mark.parametrize("content", ["png", "compressed-drawio"])
+def test_edit_srs_233_set_figure_tool_refuses_non_svg_named_svg(mcp_root, content):
+    """MELLON-EDIT-SRS-233 through set_figure: refused (ok false), and the
+    existing figure file's bytes are unchanged."""
+    folder = _figure_doc(mcp_root)
+    (mcp_root / "x.svg").write_bytes(
+        PNG_BYTES if content == "png" else DRAWIO_COMPRESSED)
+    before = tree_hashes(mcp_root)
+    result = _server().set_figure("F", "F-0", "x.svg")
+    assert result["ok"] is False, result
+    assert (folder / "figures" / "F-0.svg").read_bytes() == SVG_A
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def test_edit_srs_233_control_well_formed_svg_replaces_figure(mcp_root):
+    """MELLON-EDIT-SRS-232/-233 control: a well-formed SVG given by a path
+    relative to the repository root replaces the figure with its bytes."""
+    folder = _figure_doc(mcp_root)
+    (mcp_root / "x.svg").write_bytes(SVG_B)
+    result = _server().set_figure("F", "F-0", "x.svg")
+    assert result["ok"] is True, result
+    assert (folder / "figures" / "F-0.svg").read_bytes() == SVG_B
+
+
+def test_edit_srs_190_refusal_writes_nothing_beside_document_with_load_error(mcp_root):
+    """MELLON-EDIT-SRS-190 with a broken repository (T10): another document has
+    a load error; reorder_outline naming S-1 twice is still refused and no
+    file of the repository is written."""
+    _sections_doc(mcp_root)
+    _broken_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().reorder_outline("S", _ordering(_norm(_BAD_OUTLINES["named-twice"])))
+    assert result["ok"] is False, result
+    assert changed_files(before, tree_hashes(mcp_root)) == []
+
+
+def test_edit_srs_177_refusal_beside_document_with_load_error(mcp_root):
+    """MELLON-EDIT-SRS-177 with a broken repository (T10): a move of H under
+    its descendant is still refused, with no file written, while another
+    document has a load error."""
+    _nest_doc(mcp_root)
+    _broken_doc(mcp_root)
+    before = tree_hashes(mcp_root)
+    result = _server().move_object("M", "M-0", parent_id="M-2")
+    assert result["ok"] is False, result
+    assert changed_files(before, tree_hashes(mcp_root)) == []
