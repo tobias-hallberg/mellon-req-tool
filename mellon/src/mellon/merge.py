@@ -1005,7 +1005,7 @@ def resolve(
     st = _open(root)
     results = _compute(st, edits or {}, delete).results
     for doc in {p.partition("/")[0] for p in results}:
-        _reconcile_outline(root, doc, results)
+        _reconcile_outline(st, root, doc, results)
         # MELLON-VER-SRS-64: each document the merge writes gets its next
         # object number.
         _record_next_number(st, root, doc, results)
@@ -1031,7 +1031,7 @@ def resolve(
 
 
 def _reconcile_outline(
-    root: Path, doc: str, results: dict[str, bytes | None]
+    st: _State, root: Path, doc: str, results: dict[str, bytes | None]
 ) -> None:
     """Make the outline list exactly the objects the merge keeps.
 
@@ -1043,10 +1043,11 @@ def _reconcile_outline(
     if data is None and manifest in results:
         return  # the document itself goes
     if data is None:
-        path = root / manifest
-        if not path.is_file():
+        # MELLON-VER-SRS-366: the manifest as the merge leaves it, not the
+        # work tree's, which a resolve that failed partway may have written.
+        data = _merged_file(st, results, manifest)
+        if data is None:
             return
-        data = path.read_bytes()
     try:
         doc_root = _parse(data)
     except etree.XMLSyntaxError:
@@ -1097,10 +1098,11 @@ def _record_next_number(
     if data is None and manifest in results:
         return  # the document itself goes
     if data is None:
-        path = root / manifest
-        if not path.is_file():
+        # MELLON-VER-SRS-366: the manifest as the merge leaves it, not the
+        # work tree's, which a resolve that failed partway may have written.
+        data = _merged_file(st, results, manifest)
+        if data is None:
             return
-        data = path.read_bytes()
     try:
         doc_root = _parse(data)
     except etree.XMLSyntaxError:

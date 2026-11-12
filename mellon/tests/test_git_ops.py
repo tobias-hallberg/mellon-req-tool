@@ -254,11 +254,27 @@ def test_commit_refuses_without_identity(tmp_git: Path, no_git_identity) -> None
 
 
 def test_commit_wraps_pygit2_errors(tmp_git: Path) -> None:
+    # A nested repository can't be staged as files: libgit2's error comes out
+    # as GitError, and nothing is committed.
+    _write(tmp_git, "a.txt", "x")
+    head = commit(tmp_git, "seed")
+    nested = tmp_git / "nested"
+    pygit2.init_repository(str(nested))
+    _write(nested, "b.txt", "y")
+    with pytest.raises(GitError, match="invalid path"):
+        commit(tmp_git, "a nested repository", paths=["nested"])
+    assert str(pygit2.Repository(str(tmp_git)).head.target).startswith(head)
+
+
+def test_commit_of_a_folder_commits_the_files_under_it(tmp_git: Path) -> None:
+    # MELLON-VER-SRS-91: a selected folder selects each file under it.
     _write(tmp_git, "a.txt", "x")
     commit(tmp_git, "seed")
     _write(tmp_git, "sub/b.txt", "y")
-    with pytest.raises(GitError, match="is a directory"):
-        commit(tmp_git, "a directory is not a path to stage", paths=["sub"])
+    _write(tmp_git, "sub/deeper/c.txt", "z")
+    commit(tmp_git, "the folder", paths=["sub"])
+    tree = pygit2.Repository(str(tmp_git)).head.peel(pygit2.Commit).tree
+    assert tree["sub/b.txt"] is not None and tree["sub/deeper/c.txt"] is not None
 
 
 # --- check_repo_root() --------------------------------------------------

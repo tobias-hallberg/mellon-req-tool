@@ -20,7 +20,9 @@ All notable changes to Mellon. The format follows
   commit each version resolved to; a name that names more than one commit,
   such as a tag and a branch of the same name, is an error, and branches are
   listed by their full ref names. Comparing with the working copy first
-  saves text still being typed. The History tab has **Compare with latest…**.
+  saves text still being typed; when the Document Editor can't save it (under
+  the Changed on disk banner), the result says the pending edits aren't in the
+  comparison. The History tab has **Compare with latest…**.
   Specified first, in `MELLON-VER-SRS`, Mellon's own requirements, kept in
   this repo next to its test cases in `MELLON-VER-STS`.
 - **MCP `compare_document`** returns the same changes, and the full hash of
@@ -175,6 +177,23 @@ All notable changes to Mellon. The format follows
 - **A repository whose `.git/HEAD` git can't read is refused** by the MCP
   server, `mellon-check` and the GUI, as git itself refuses it. It was served
   (`MELLON-MCP-SRS-8`, `MELLON-STORE-SRS-9`).
+- **`commit_changes` takes a document folder as a path.** It failed with "it
+  is a directory"; a folder now selects each changed file under it, and a
+  deleted folder commits the deletion instead of answering "nothing to
+  commit". An editor side file named as a path is left out of the commit
+  (`MELLON-VER-SRS-91`, `-92`).
+- **Mellon refuses to commit while a cherry-pick of several commits with
+  `--no-commit` is stopped,** which `git status` reports as in progress
+  (`MELLON-VER-SRS-118`).
+- **A refused commit puts the manifest's author and date back** when another
+  git program committed while the Commit dialog's commit was being recorded
+  (`MELLON-VER-SRS-168`).
+- **Discard is refused when the latest commit holds a submodule or a symbolic
+  link in the document's folder,** changed or not, and changes nothing
+  (`MELLON-VER-SRS-209`).
+- **Resolving a merge again after a resolve failed partway stages the merged
+  manifest,** so the merge commit is the same as after a resolve that never
+  failed (`MELLON-VER-SRS-366`).
 
 ### Security
 

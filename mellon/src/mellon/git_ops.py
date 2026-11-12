@@ -151,11 +151,30 @@ def _resolve_signature(repo: pygit2.Repository) -> pygit2.Signature:
     return pygit2.Signature(name, email)
 
 
+def _sequencer_in_progress(repo: pygit2.Repository) -> bool:
+    """True while git's sequencer has a cherry-pick or revert to finish.
+
+    MELLON-VER-SRS-118: `git cherry-pick --no-commit A..B` stopped on a
+    conflict leaves `sequencer/todo` and no CHERRY_PICK_HEAD, which libgit2
+    doesn't count as a state. `git status` (wt_status) does, from the todo
+    list's first command; the same rule is used here.
+    """
+    try:
+        todo = (Path(repo.path) / "sequencer" / "todo").read_text(
+            encoding="utf-8", errors="replace"
+        )
+    except OSError:
+        return False
+    words = todo.split(None, 1)
+    return bool(words) and words[0] in ("pick", "p", "revert")
+
+
 def _refuse_during_merge(repo: pygit2.Repository, then: str) -> None:
     """Raise GitError while a merge (or rebase, cherry-pick, ...) is unfinished."""
     if (
         repo.state() != pygit2.GIT_REPOSITORY_STATE_NONE
         or repo.index.conflicts is not None
+        or _sequencer_in_progress(repo)
     ):
         raise GitError(
             "a merge (or another git operation) is in progress; "
@@ -218,8 +237,7 @@ def commit(
         tree_index = pygit2.Index()
         if head is not None:
             tree_index.read_tree(head.tree)
-        for p in paths:
-            p_posix = str(p).replace("\\", "/")
+        for p_posix in _selected_files(repo, root, head, paths):
             if (root / p_posix).exists():
                 index.add(p_posix)
                 tree_index.add(index[p_posix])
@@ -253,7 +271,58 @@ def commit(
     return _short(oid)
 
 
+def _selected_files(
+    repo: pygit2.Repository,
+    root: Path,
+    head: pygit2.Commit | None,
+    paths: Iterable[str],
+) -> list[str]:
+    """The files `commit` takes from `paths`, posix-style.
+
+    MELLON-VER-SRS-91/-92 (term Selected path): a folder selects each file
+    under it, in the work tree and at HEAD, so a folder deleted since HEAD
+    selects each file HEAD holds there. Only files that differ from HEAD
+    matter to the tree, so a folder is expanded to its uncommitted paths.
+    Editor side files are never selected, even when named.
+    """
+    out: list[str] = []
+    for p in paths:
+        rel = str(p).replace("\\", "/").rstrip("/")
+        if rel == ".":
+            rel = ""
+        target = root / rel
+        is_dir = target.is_dir() and not target.is_symlink()
+        if not is_dir and head is not None and rel and not os.path.lexists(target):
+            try:
+                is_dir = head.tree[rel].filemode == pygit2.GIT_FILEMODE_TREE
+            except KeyError:
+                pass
+        if is_dir:
+            out.extend(dirty_paths_under(repo, rel))
+        elif not is_side_file(rel):
+            out.append(rel)
+    return out
+
+
 _REGULAR_FILEMODES = (pygit2.GIT_FILEMODE_BLOB, pygit2.GIT_FILEMODE_BLOB_EXECUTABLE)
+
+
+def _special_entry_under(
+    repo: pygit2.Repository, tree: pygit2.Tree, rel: str
+) -> str | None:
+    """The first entry at or under `rel` in `tree` that is neither a folder
+    nor a plain file (a symlink, or a submodule's gitlink), or None."""
+    try:
+        stack = [(rel, tree[rel])]
+    except KeyError:
+        return None
+    while stack:
+        path, entry = stack.pop()
+        if entry.filemode == pygit2.GIT_FILEMODE_TREE:
+            stack.extend((f"{path}/{e.name}", e) for e in repo[entry.id])
+        elif entry.filemode not in _REGULAR_FILEMODES:
+            return path
+    return None
 
 
 def discard_paths(repo: pygit2.Repository, paths: Iterable[str]) -> list[str]:
@@ -292,6 +361,14 @@ def discard_paths(repo: pygit2.Repository, paths: Iterable[str]) -> list[str]:
                 raise GitError(
                     f"{rel!r} is not in the last commit, so there is nothing "
                     "to restore it to"
+                )
+            # MELLON-VER-SRS-209: refused when HEAD holds a symlink or
+            # submodule anywhere under the path, changed or not.
+            special = _special_entry_under(repo, head_tree, rel)
+            if special is not None:
+                raise GitError(
+                    f"{special!r} is a symlink or submodule in the last "
+                    "commit, which Mellon doesn't restore; discard with git"
                 )
         root = Path(repo.workdir)
         prefixes = tuple(f"{rel}/" for rel in rels)

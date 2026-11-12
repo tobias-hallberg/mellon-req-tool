@@ -8,7 +8,8 @@ shows the selected object's changed fields at From and at To.
 The comparison itself is `DocumentService.compare_document`, run on the
 thread pool so the editor stays responsive. It only reads, so the dialog is
 available in read-only mode too; before comparing with the working copy, it
-asks the Document Editor to save its pending edits (`save_pending_edits`).
+asks the Document Editor to save its pending edits (`save_pending_edits`),
+and says so with the result when they couldn't be saved.
 Non-modal: double-clicking a row selects the object in the Document Editor
 and leaves the dialog open.
 
@@ -435,8 +436,14 @@ class CompareDialog(QDialog):
 
     # Emitted before comparing with the working copy, for the Document
     # Editor to save its pending edits. Connect it directly, so they are
-    # saved before the comparison starts.
+    # saved before the comparison starts. A slot that can't save them calls
+    # `pending_edits_not_saved`.
     save_pending_edits = Signal()
+
+    UNSAVED_NOTE = (
+        "The Document Editor's pending edits aren't in this comparison: it "
+        "couldn't save them (it doesn't while the document has changed on disk)."
+    )
 
     def __init__(
         self,
@@ -452,6 +459,9 @@ class CompareDialog(QDialog):
         # From and To as shown for `diff`, and for the comparison running.
         self._labels: tuple[str, str] = ("", "")
         self._pending_labels: tuple[str, str] = ("", "")
+        # MELLON-VER-SRS-88: set from `save_pending_edits` when the pending
+        # edits couldn't be saved, for the latest comparison.
+        self._edits_unsaved = False
         self._request = 0
         self._busy = False
         self._versions: list[Version] = []
@@ -616,6 +626,12 @@ class CompareDialog(QDialog):
     def is_busy(self) -> bool:
         return self._busy
 
+    def pending_edits_not_saved(self) -> None:
+        """For the Document Editor, while `save_pending_edits` is emitted:
+        its pending edits couldn't be saved, so the comparison with the
+        working copy doesn't hold them, and the result says so."""
+        self._edits_unsaved = True
+
     def ref(self, combo: QComboBox) -> str | None:
         """The version `combo` names: the chosen entry's ref, or the typed
         text (a commit hash, tag or branch name). None when empty."""
@@ -653,6 +669,7 @@ class CompareDialog(QDialog):
         # MELLON-VER-SRS-73: the working copy is the files on disk, so text
         # still being typed is saved first: here, on the GUI thread, before
         # the job reads the files. Comparing two commits saves nothing.
+        self._edits_unsaved = False
         if WORKING_COPY in (ref_a, ref_b):
             self.save_pending_edits.emit()
         # MELLON-VER-SRS-40: each comparison gets a new request number; only
@@ -718,6 +735,9 @@ class CompareDialog(QDialog):
             for side, err in (("From", diff.outline_error_a), ("To", diff.outline_error_b))
             if err
         ]
+        # MELLON-VER-SRS-88: the working copy compared lacks the pending edits.
+        if self._edits_unsaved:
+            problems.append(self.UNSAVED_NOTE)
         if problems:
             self._show_message("\n".join(problems))
 

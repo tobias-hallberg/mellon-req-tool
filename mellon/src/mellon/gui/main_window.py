@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pygit2
 from PySide6.QtCore import (
     QByteArray,
     QEvent,
@@ -20,6 +21,7 @@ from PySide6.QtCore import (
 )
 from PySide6.QtGui import QAction, QCloseEvent, QKeySequence
 from PySide6.QtWidgets import (
+    QAbstractItemView,
     QDialog,
     QFileDialog,
     QLabel,
@@ -38,7 +40,7 @@ from PySide6.QtCore import Qt
 from ..drawio import DOWNLOAD_URL, find_drawio
 from ..editor import Journal
 from ..export import TectonicError, pdf as export_pdf
-from ..git_ops import GitError, discover_repo, head_summary
+from ..git_ops import GitError, blob_id_at, discover_repo, head_summary
 from ..schema import Document
 from ..suspects import LinkState, LinkStatus
 from ..service import DocumentService, ServiceError
@@ -1259,11 +1261,32 @@ class DocumentEditorWindow(QMainWindow):
     def _save_pending_edits_for_compare(self) -> None:
         # MELLON-VER-SRS-73: save the pending edits before comparing with the
         # working copy. Each writes only what it writes on focus-out
-        # (MELLON-VER-SRS-56). Not while the "Changed on disk" banner is up:
-        # the save would be refused and the typed text dropped (as in
-        # `_prepare_edit`), so it stays in its editor.
-        if not self._read_only and not self.grid_pane.is_stale():
-            self.flush_pending_edits()
+        # (MELLON-VER-SRS-56).
+        if self._read_only:
+            return
+        failed: list[str] = []
+
+        def on_failed(_doc_id: str, _obj_id: str, field: str, _message: str) -> None:
+            failed.append(field)
+
+        self.controller.edit_failed.connect(on_failed)
+        try:
+            if not self.grid_pane.is_stale():
+                self.flush_pending_edits()
+            else:
+                # Under the "Changed on disk" banner the grid's save would be
+                # refused and close its cell editor, dropping the typed text
+                # (as in `_prepare_edit`), so it stays in its editor. The
+                # Inspector refuses too, keeping its text.
+                table = self.grid_pane.table
+                if table.state() == QAbstractItemView.State.EditingState:
+                    failed.append("cell")
+                self.inspector.commit_pending()
+        finally:
+            self.controller.edit_failed.disconnect(on_failed)
+        # MELLON-VER-SRS-88: the dialog says the edits aren't compared.
+        if failed and self._compare_dialog is not None:
+            self._compare_dialog.pending_edits_not_saved()
 
     # --- figures --------------------------------------------------------
 
@@ -2008,16 +2031,17 @@ class DocumentEditorWindow(QMainWindow):
         undo_mark = len(self._undo_steps)
 
         def restore_manifest() -> None:
-            # Only while nothing was committed: once HEAD moved, the commit
-            # may hold the manifest as it is now, and putting the old bytes
-            # back would revert it with the next commit.
-            if self._head_id() != head_before:
-                return
             try:
                 now = manifest.read_bytes()
             except OSError:
                 now = None
             if now == manifest_before:
+                return
+            # Once HEAD moved, a commit may hold the manifest as it is now,
+            # and putting the old bytes back would revert it with the next
+            # commit. MELLON-VER-SRS-168: a commit another git program made
+            # while Mellon recorded doesn't hold it, so the edit goes back.
+            if self._head_id() != head_before and self._head_holds(manifest, now):
                 return
             # MELLON-STORE-SRS-167 (CF-S34): put back with the editor's atomic
             # write, so a failure leaves the manifest whole; say so if it fails.
@@ -2114,6 +2138,20 @@ class DocumentEditorWindow(QMainWindow):
             return None if repo.head_is_unborn else str(repo.head.target)
         except Exception:  # noqa: BLE001 — no repo, or HEAD unreadable
             return None
+
+    def _head_holds(self, path: Path, data: bytes | None) -> bool:
+        """True when HEAD holds the file `path` as `data`: the same bytes,
+        or git status finds the file unchanged (after git's filters)."""
+        if data is None:
+            return False
+        try:
+            repo, root = discover_repo(path.parent)
+            rel = path.resolve().relative_to(root).as_posix()
+            if blob_id_at(repo, rel, "HEAD") == pygit2.hash(data):
+                return True
+            return repo.status_file(rel) == pygit2.GIT_STATUS_CURRENT
+        except Exception:  # noqa: BLE001 — no repo, HEAD unreadable
+            return False
 
     def _refresh_discard_action(self) -> None:
         """Enable "Discard uncommitted changes…" for a writable document that

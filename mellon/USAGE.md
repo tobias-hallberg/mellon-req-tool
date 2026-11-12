@@ -571,9 +571,9 @@ Commit (Ctrl+S or Ctrl+K) works on the current document only.
 |---|---|
 | GUI commit dialog | Only the dirty files inside the current document's folder. |
 | MCP `commit_changes()` with no `paths` | Every uncommitted change inside the document folders, including folders deleted or renamed since the last commit. Nothing else in the work tree is included. |
-| MCP `commit_changes(paths=[…])` or `commit_message=` on a write tool | Exactly those paths. |
+| MCP `commit_changes(paths=[…])` or `commit_message=` on a write tool | Exactly those paths. A folder selects each changed file under it, deleted files included. |
 
-In every case the commit is HEAD plus the selected paths, each with its work-tree content. A file someone staged in another git client counts as an uncommitted change of its folder; staged files outside the selection stay out of the commit, and they stay staged.
+In every case the commit is HEAD plus the selected paths, each with its work-tree content. An editor side file (`.$*`, `~$*`) is never committed, even when a path names it. A file someone staged in another git client counts as an uncommitted change of its folder; staged files outside the selection stay out of the commit, and they stay staged.
 
 ### When a commit is refused
 
