@@ -395,6 +395,18 @@ def check_repo_root(root: str | Path) -> str | None:
         # Found but unopenable: corrupt, unsupported format, or not owned
         # by the current user.
         return f"{root}: cannot open git repository: {e}"
+    # MELLON-STORE-SRS-9: libgit2 opens a .git folder whose HEAD git can't
+    # read, which git itself calls "not a git repository". Git's rule: HEAD
+    # holds a commit hash, or names a ref under refs/ (born or not).
+    try:
+        head = repo.lookup_reference("HEAD")
+    except (pygit2.GitError, KeyError) as e:
+        return f"{root}: cannot open git repository: {e}"
+    if isinstance(head.target, str) and not head.target.startswith("refs/"):
+        return (
+            f"{root}: cannot open git repository: HEAD names {head.target!r}, "
+            f"not a ref under refs/"
+        )
     if Path(root).resolve() != git_root:
         return (
             f"{root} is not the root of its git work tree ({git_root}); "

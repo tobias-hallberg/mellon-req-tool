@@ -333,17 +333,7 @@ def refused_folder(case: str, base: Path, template: Path, env):
         "file",
         "missing_path",
         "shallow_clone",
-        pytest.param(
-            "broken_git_folder",
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "defect: MELLON-MCP-SRS-8 (with MELLON-STORE-SRS-9): a clone whose .git/HEAD git "
-                    "can't read is served ('mellon-mcp serving ... (3 document(s))', status 0) instead "
-                    "of refused with status 2"
-                ),
-            ),
-        ),
+        "broken_git_folder",
     ],
 )
 def test_mcp_srs_8_exit_2_when_folder_is_not_a_repository_root(case, tmp_path, plain_template, ident_home):
@@ -511,14 +501,6 @@ def test_mcp_srs_120_each_level_writes_a_subset_of_the_level_below(repo, level_r
         assert not extra, f"{higher} wrote lines that {lower} didn't: {sorted(extra)[:5]}"
 
 
-LOG_LEVEL_IGNORED = (
-    "defect: MELLON-MCP-SRS-120: --log-level is accepted but changes nothing; under WARNING and "
-    "ERROR standard error still holds the INFO lines (the serving line, 'Processing request of "
-    "type ...', the per-call lines) and the no-document warning"
-)
-
-
-@pytest.mark.xfail(strict=True, reason=LOG_LEVEL_IGNORED)
 @pytest.mark.parametrize("repo", ["clone", "empty"])
 def test_mcp_srs_120_serving_line_only_under_debug_and_info(repo, level_runs):
     """MELLON-MCP-SRS-120: under WARNING or ERROR, the MCP server shall leave out INFO
@@ -535,7 +517,6 @@ def test_mcp_srs_120_serving_line_only_under_debug_and_info(repo, level_runs):
         assert not lines, f"{level} wrote the INFO serving line: {lines}"
 
 
-@pytest.mark.xfail(strict=True, reason=LOG_LEVEL_IGNORED)
 def test_mcp_srs_120_no_document_warning_hidden_under_error(level_runs):
     """MELLON-MCP-SRS-120: under ERROR, the MCP server shall leave out WARNING messages.
 
@@ -963,14 +944,6 @@ def test_mcp_srs_99_read_only_server_refuses_each_changing_tool(case, read_only_
     assert not run["pdf_written"], "the PDF was written"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "defect: MELLON-MCP-SRS-100: the refusal comes back as isError true with the text 'Error "
-        "executing tool <tool>: Server is running in --read-only mode; write tools are disabled.': "
-        "no JSON result and no error_type, so 'PermissionError' reaches the agent nowhere"
-    ),
-)
 @pytest.mark.parametrize("case", READ_ONLY_CASES)
 def test_mcp_srs_100_read_only_refusal_returns_permission_error(case, read_only_run):
     """MELLON-MCP-SRS-100: if the read-only server refuses a tool call, the MCP server

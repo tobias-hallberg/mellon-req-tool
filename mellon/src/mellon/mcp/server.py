@@ -14,7 +14,8 @@ the repo root: `set_figure` reads the SVG at `source_path`, and
 `--read-only` disables it — that flag's promise is "this server cannot write
 to the filesystem").
 
-`--read-only` makes every write tool refuse with a `PermissionError`. Writes
+`--read-only` makes every write tool, `commit_changes` and `export_document`
+refuse with `{ok: False, error, error_type: "PermissionError"}`. Writes
 otherwise call service methods directly; `ServiceError` is translated to the
 long-established `{ok: False, error, error_type}` dict so existing agents
 don't see a breaking change.
@@ -25,6 +26,7 @@ All logging goes to stderr (MCP stdio reserves stdout for JSON-RPC).
 from __future__ import annotations
 
 import argparse
+import functools
 import logging
 import os
 import sys
@@ -110,25 +112,77 @@ def _svc() -> DocumentService:
     return _State.service
 
 
+class _Refusal(Exception):
+    """A tool call refused before it reaches the service.
+
+    A tool registered with `_refusing_tool` returns it as its failure result;
+    anywhere else FastMCP turns it into a tool error.
+    """
+
+    error_type = "Refusal"
+
+
+class _ReadOnlyRefusal(_Refusal):
+    error_type = _ERROR_TYPE_BY_CODE[ErrorCode.READ_ONLY]  # "PermissionError"
+
+
+class _NoDocument(_Refusal, ValueError):
+    """A doc_id names no document. A ValueError, which read tools raise."""
+
+    error_type = _ERROR_TYPE_BY_CODE[ErrorCode.NOT_FOUND]  # "EditorError"
+
+
+def _refusing_tool(*refusals: type[_Refusal]):
+    """`@mcp.tool()` for a tool that returns each of `refusals` as
+    `{ok: False, affected_files: [], message, error, error_type}`, the shape
+    of its other failures, instead of raising it."""
+
+    def register(fn):
+        @functools.wraps(fn)
+        def call(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return fn(*args, **kwargs)
+            except refusals as e:
+                return {
+                    "ok": False,
+                    "affected_files": [],
+                    "message": f"{fn.__name__} refused",
+                    "error": str(e),
+                    "error_type": e.error_type,
+                }
+
+        return mcp.tool()(call)
+
+    return register
+
+
+# MELLON-MCP-SRS-45, -53, -100: a write tool returns its read-only refusal and
+# a doc_id that names no document as a failure result, not a tool error.
+_write_tool = _refusing_tool(_ReadOnlyRefusal, _NoDocument)
+# MELLON-MCP-SRS-100: commit_changes and export_document aren't write tools;
+# only their read-only refusal is a failure result.
+_changing_tool = _refusing_tool(_ReadOnlyRefusal)
+
+
 def _guard_write() -> None:
     """Enforce --read-only at the MCP boundary.
 
     Read-only is tracked on `_State.read_only` so tests can monkeypatch it
-    mid-process and get the same `PermissionError` the pre-service server
-    raised. The service is built read-only too, as a second line of defence.
+    mid-process. The service is built read-only too, as a second line of
+    defence.
     """
     if _State.read_only:
-        raise PermissionError(
+        raise _ReadOnlyRefusal(
             "Server is running in --read-only mode; write tools are disabled."
         )
 
 
 def _require_doc(doc_id: str) -> Path:
-    """Resolve `doc_id` to its folder; raise ValueError if the doc is missing.
+    """Resolve `doc_id` to its folder; raise `_NoDocument` if the doc is missing.
 
-    Kept separate from the service so "no such document" surfaces as a clean
-    ValueError (which FastMCP turns into a JSON-RPC error) rather than the
-    in-band error dict used for per-object write failures.
+    Kept separate from the service. A read tool lets the ValueError through
+    (FastMCP turns it into a tool error); a write tool returns it as its
+    failure result (`_write_tool`).
     """
     root = _require_root()
     try:
@@ -142,7 +196,7 @@ def _require_doc(doc_id: str) -> Path:
         or not folder.is_dir()
         or not (folder / f"{doc_id}.xml").is_file()
     ):
-        raise ValueError(f"No document {doc_id!r} in repo at {root}")
+        raise _NoDocument(f"No document {doc_id!r} in repo at {root}")
     return folder
 
 
@@ -742,7 +796,7 @@ def coverage_report(
 # --- Write tools -----------------------------------------------------------
 
 
-@mcp.tool()
+@_write_tool
 def new_object(
     doc_id: str,
     parent_id: str | None = None,
@@ -829,7 +883,7 @@ def new_object(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def set_attribute(
     doc_id: str,
     obj_id: str,
@@ -860,7 +914,7 @@ def set_attribute(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def edit_description(
     doc_id: str,
     obj_id: str,
@@ -884,7 +938,7 @@ def edit_description(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def update_object(
     doc_id: str,
     obj_id: str,
@@ -969,7 +1023,7 @@ def update_object(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def copy_object(
     doc_id: str,
     obj_id: str,
@@ -1029,7 +1083,7 @@ def copy_object(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def bulk_set_attribute(
     doc_id: str,
     obj_ids: list[str],
@@ -1082,7 +1136,7 @@ def bulk_set_attribute(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def set_figure(
     doc_id: str,
     obj_id: str,
@@ -1119,7 +1173,7 @@ def set_figure(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def clear_figure(
     doc_id: str,
     obj_id: str,
@@ -1196,7 +1250,7 @@ def _table_from_dict(data: Any) -> Table:
     return Table(columns=tuple(columns), rows=tuple(rows))
 
 
-@mcp.tool()
+@_write_tool
 def set_table(
     doc_id: str,
     obj_id: str,
@@ -1240,7 +1294,7 @@ def set_table(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def clear_table(
     doc_id: str,
     obj_id: str,
@@ -1270,7 +1324,7 @@ def clear_table(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def edit_metadata(
     doc_id: str,
     field: str,
@@ -1296,7 +1350,7 @@ def edit_metadata(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def tag_issue(doc_id: str, issue: str) -> dict:
     """Create the `<doc_id>-issue-<issue>` lightweight tag at HEAD.
 
@@ -1319,7 +1373,7 @@ def tag_issue(doc_id: str, issue: str) -> dict:
     )
 
 
-@mcp.tool()
+@_write_tool
 def add_parent_doc(
     doc_id: str,
     parent_doc: str,
@@ -1339,7 +1393,7 @@ def add_parent_doc(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def remove_parent_doc(
     doc_id: str,
     parent_doc: str,
@@ -1368,7 +1422,7 @@ def remove_parent_doc(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def add_attr_option(
     doc_id: str,
     attr_name: str,
@@ -1389,7 +1443,7 @@ def add_attr_option(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def define_attribute(
     doc_id: str,
     name: str,
@@ -1454,7 +1508,7 @@ def define_attribute(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def change_attribute_required(
     doc_id: str,
     name: str,
@@ -1483,7 +1537,7 @@ def change_attribute_required(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def delete_attribute(
     doc_id: str,
     name: str,
@@ -1511,7 +1565,7 @@ def delete_attribute(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def remove_attr_option(
     doc_id: str,
     attr_name: str,
@@ -1540,7 +1594,7 @@ def remove_attr_option(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def manage_view(
     doc_id: str,
     action: Literal["create", "rename", "delete", "edit"],
@@ -1665,7 +1719,7 @@ def manage_view(
     }
 
 
-@mcp.tool()
+@_write_tool
 def create_document(
     doc_id: str,
     title: str = "",
@@ -1717,7 +1771,7 @@ def create_document(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def move_object(
     doc_id: str,
     obj_id: str,
@@ -1747,7 +1801,7 @@ def move_object(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def reorder_outline(
     doc_id: str,
     ordering: list[dict],
@@ -1782,7 +1836,7 @@ def reorder_outline(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def add_link(
     source_doc: str,
     source_id: str,
@@ -1814,7 +1868,7 @@ def add_link(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def remove_link(
     source_doc: str,
     source_id: str,
@@ -1852,7 +1906,7 @@ def remove_link(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def delete_object(
     doc_id: str,
     obj_id: str,
@@ -1894,7 +1948,7 @@ def delete_object(
     ))
 
 
-@mcp.tool()
+@_write_tool
 def ack_suspects(
     doc_id: str,
     dry_run: bool = False,
@@ -2110,7 +2164,7 @@ def _changed_fields(
     return changed
 
 
-@mcp.tool()
+@_changing_tool
 def commit_changes(
     message: str,
     paths: list[str] | None = None,
@@ -2395,7 +2449,7 @@ def review_suspect_link(
     }
 
 
-@mcp.tool()
+@_changing_tool
 def export_document(
     doc_id: str,
     out_path: str,
@@ -2567,11 +2621,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    logging.basicConfig(
-        stream=sys.stderr,
-        level=args.log_level,
-        format="%(asctime)s %(levelname)s %(name)s %(message)s",
-    )
+    # MELLON-MCP-SRS-120: FastMCP("mellon") above already gave the root logger
+    # a stderr handler (format "%(message)s") at INFO, so basicConfig() only
+    # adds one if that ever stops. The level goes on the root logger, which
+    # every logger in the process defers to, the MCP library's included.
+    logging.basicConfig(stream=sys.stderr, format="%(message)s")
+    logging.getLogger().setLevel(args.log_level)
 
     repo_root = args.repo_root or Path(
         os.environ.get("CLAUDE_PROJECT_DIR") or Path.cwd()

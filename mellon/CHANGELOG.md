@@ -162,6 +162,19 @@ All notable changes to Mellon. The format follows
   manifest cut short, and its error escaped as an unexpected error; the
   manifest now stays whole and the Document Editor says it wasn't put back
   (`MELLON-STORE-SRS-167`).
+- **The MCP server's read-only refusal and a missing document come back as a
+  failure result.** A write tool on a read-only server, and a write tool
+  given a document that doesn't exist, returned a tool error with only a text,
+  so an agent couldn't branch on them. They now return `ok: false`, `error`
+  and `error_type`: `PermissionError` for the read-only refusal
+  (`commit_changes` and `export_document` included), `EditorError` for the
+  missing document (`MELLON-MCP-SRS-45`, `-53`, `-100`).
+- **`mellon-mcp --log-level` takes effect.** Every level wrote the same lines;
+  `WARNING` and `ERROR` now leave out the informational ones, the MCP
+  library's own included (`MELLON-MCP-SRS-120`).
+- **A repository whose `.git/HEAD` git can't read is refused** by the MCP
+  server, `mellon-check` and the GUI, as git itself refuses it. It was served
+  (`MELLON-MCP-SRS-8`, `MELLON-STORE-SRS-9`).
 
 ### Security
 

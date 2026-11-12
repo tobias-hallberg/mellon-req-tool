@@ -104,8 +104,9 @@ def test_doc_id_cannot_reach_a_document_outside_the_repo(
         server.show_document("../X/X")
     manifest = tmp_path / "X" / "X" / "X.xml"
     before = manifest.read_bytes()
-    with pytest.raises(ValueError, match="No document"):
-        server.edit_metadata("../X/X", "title", "outside")
+    # A write tool returns it as its failure result (MELLON-MCP-SRS-45).
+    result = server.edit_metadata("../X/X", "title", "outside")
+    assert result["ok"] is False and "No document" in result["error"], result
     assert manifest.read_bytes() == before
 
 

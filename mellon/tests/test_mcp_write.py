@@ -9,13 +9,13 @@ original.
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import shutil
 from pathlib import Path
 
 import pytest
 from lxml import etree
-from mcp.server.fastmcp.exceptions import ToolError
 
 from mellon.mcp import server
 from mellon.service import DocumentService
@@ -52,6 +52,24 @@ def req_test_copy(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, clean_worktre
 # --- new_object ----------------------------------------------------------
 
 
+
+def _refused_read_only(result: dict) -> None:
+    """MELLON-MCP-SRS-100: a read-only server returns its refusal as a
+    failure result with error_type PermissionError, not as a tool error."""
+    assert result["ok"] is False, result
+    assert result["error_type"] == "PermissionError", result
+    assert "read-only" in result["error"], result
+    assert result["affected_files"] == [], result
+
+
+def _tool_result(res) -> dict:
+    """The dict a tool returned, from FastMCP's call_tool."""
+    if isinstance(res, tuple):
+        res = res[1] if isinstance(res[1], dict) else res[0]
+    if isinstance(res, dict):
+        return res.get("result", res) if set(res) == {"result"} else res
+    return json.loads(res[0].text)
+
 def test_new_object_appends_top_level(mcp_repo: Path) -> None:
     result = server.new_object("PARENT", description="Freshly added")
     assert result["ok"] is True
@@ -74,8 +92,11 @@ def test_new_object_with_parent(mcp_repo: Path) -> None:
 
 
 def test_new_object_unknown_doc_raises(mcp_repo: Path) -> None:
-    with pytest.raises(ValueError, match="No document 'NOPE'"):
-        server.new_object("NOPE")
+    # MELLON-MCP-SRS-45, -53: a failure result, not a tool error.
+    result = server.new_object("NOPE")
+    assert result["ok"] is False, result
+    assert result["error_type"] == "EditorError", result
+    assert "No document 'NOPE'" in result["error"], result
 
 
 # --- new_object composite (attrs + links in one call) -------------------
@@ -258,8 +279,7 @@ def test_copy_object_unknown_parent_rejected(mcp_repo: Path) -> None:
 
 def test_copy_object_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError, match="read-only"):
-        server.copy_object("CHILD", "CHILD-0")
+    _refused_read_only(server.copy_object("CHILD", "CHILD-0"))
 
 
 # --- edit_attribute ------------------------------------------------------
@@ -474,10 +494,9 @@ def test_bulk_set_attribute_unknown_attr_no_files_touched(mcp_repo: Path) -> Non
 
 def test_bulk_set_attribute_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError, match="read-only"):
-        server.bulk_set_attribute(
+    _refused_read_only(server.bulk_set_attribute(
             "CHILD", ["CHILD-0"], "status", "Approved"
-        )
+        ))
 
 
 # --- reorder_outline ---------------------------------------------------------
@@ -523,14 +542,13 @@ def test_reorder_outline_missing_id_returns_error(mcp_repo: Path) -> None:
 
 def test_reorder_outline_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError, match="read-only"):
-        server.reorder_outline(
+    _refused_read_only(server.reorder_outline(
             "PARENT",
             [
                 {"id": "PARENT-0", "children": []},
                 {"id": "PARENT-1", "children": []},
             ],
-        )
+        ))
 
 
 # --- tag_issue ----------------------------------------------------------
@@ -1034,14 +1052,10 @@ def test_manage_view_read_only_blocks(
     mcp_repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError):
-        server.manage_view("PARENT", action="create", name="Dev", visible_attrs=["status"])
-    with pytest.raises(PermissionError):
-        server.manage_view("PARENT", action="rename", slug="dev", name="Anything")
-    with pytest.raises(PermissionError):
-        server.manage_view("PARENT", action="delete", slug="dev")
-    with pytest.raises(PermissionError):
-        server.manage_view("PARENT", action="edit", slug="dev", visible_attrs=["status"])
+    _refused_read_only(server.manage_view("PARENT", action="create", name="Dev", visible_attrs=["status"]))
+    _refused_read_only(server.manage_view("PARENT", action="rename", slug="dev", name="Anything"))
+    _refused_read_only(server.manage_view("PARENT", action="delete", slug="dev"))
+    _refused_read_only(server.manage_view("PARENT", action="edit", slug="dev", visible_attrs=["status"]))
 
 
 # --- read-only guard -------------------------------------------------
@@ -1051,10 +1065,8 @@ def test_read_only_blocks_writes(
     mcp_repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError, match="read-only"):
-        server.new_object("PARENT")
-    with pytest.raises(PermissionError):
-        server.set_attribute("PARENT", "PARENT-1", "status", "Draft")
+    _refused_read_only(server.new_object("PARENT"))
+    _refused_read_only(server.set_attribute("PARENT", "PARENT-1", "status", "Draft"))
     # Read tools remain callable.
     docs = server.list_documents()
     assert {d["doc_id"] for d in docs} == {"PARENT", "CHILD"}
@@ -1106,9 +1118,8 @@ def test_read_only_refuses_every_write_tool(
     if tool in _READ_TOOLS:
         asyncio.run(server.mcp.call_tool(tool, args))  # still works
     else:
-        with pytest.raises(ToolError) as ei:
-            asyncio.run(server.mcp.call_tool(tool, args))
-        assert isinstance(ei.value.__cause__, PermissionError), ei.value
+        # MELLON-MCP-SRS-100: the refusal is the tool's failure result.
+        _refused_read_only(_tool_result(asyncio.run(server.mcp.call_tool(tool, args))))
     assert not pygit2.Repository(str(req_test_copy)).status()
 
 
@@ -1371,8 +1382,7 @@ def test_create_document_bad_id_fails(mcp_repo: Path) -> None:
 def test_create_document_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
     import pytest
-    with pytest.raises(PermissionError):
-        server.create_document("SHOULD_FAIL")
+    _refused_read_only(server.create_document("SHOULD_FAIL"))
 
 
 # --- set_figure / clear_figure ------------------------------------------
@@ -1458,15 +1468,13 @@ def test_set_figure_read_only_raises(
     src.write_bytes(_MCP_SVG)
     monkeypatch.setattr(server._State, "read_only", True)
     import pytest
-    with pytest.raises(PermissionError):
-        server.set_figure("PARENT", "PARENT-1", str(src))
+    _refused_read_only(server.set_figure("PARENT", "PARENT-1", str(src)))
 
 
 def test_clear_figure_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
     import pytest
-    with pytest.raises(PermissionError):
-        server.clear_figure("PARENT", "PARENT-1")
+    _refused_read_only(server.clear_figure("PARENT", "PARENT-1"))
 
 
 # --- set_table / clear_table ---------------------------------------------
@@ -1519,8 +1527,7 @@ def test_clear_table_tool_no_table(mcp_repo: Path) -> None:
 def test_set_table_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
     import pytest
-    with pytest.raises(PermissionError):
-        server.set_table("PARENT", "PARENT-1", _TABLE_DICT)
+    _refused_read_only(server.set_table("PARENT", "PARENT-1", _TABLE_DICT))
 
 
 # --- export_document -------------------------------------------------------
@@ -1669,8 +1676,7 @@ def test_export_document_refuses_bad_out_path(
 
 def test_export_document_read_only_raises(mcp_repo: Path, monkeypatch) -> None:
     monkeypatch.setattr(server._State, "read_only", True)
-    with pytest.raises(PermissionError, match="read-only"):
-        server.export_document("CHILD", "out.pdf")
+    _refused_read_only(server.export_document("CHILD", "out.pdf"))
 
 
 def test_export_document_unknown_doc_raises(mcp_repo: Path, fake_pdf) -> None:
