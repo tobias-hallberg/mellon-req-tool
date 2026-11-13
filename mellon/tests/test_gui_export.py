@@ -517,3 +517,297 @@ def test_export_job_outliving_its_signals_does_not_raise(
     mw._ExportJob(signals, doc, w.controller.folder(w._doc_id), None, target).run()
 
     assert target.exists() is (outcome == "written")
+
+
+# MELLON-PDF-SRS blind tests
+import re  # noqa: E402
+
+import pygit2  # noqa: E402
+
+from tests.pdf_support import (  # noqa: E402
+    FIGURES_FAIL,
+    FIGURES_WRITE_EMPTY_FILES,
+    FIGURES_WRITE_NOTHING,
+    OS_REASON,
+    PDF_PROGRAM,
+    STANDIN_PDF_PROGRAM,
+    Pdf,
+    _attrs_repo,
+    _broken_parent_repo,
+    _check_default_attributes,
+    _check_names_unloaded_parent,
+    _clean_repo_for_177,
+    _figure_repo,
+    _git_state,
+    _status,
+    _uncommitted_repo,
+    git_commit_all,
+    gui,  # noqa: F401, F811 -- fixture
+    heading,
+    hide_drawio,
+    id_positions,
+    issue_repo,  # noqa: F401, F811 -- fixture
+    make_program,
+    needs_pdf,
+    obj,
+    pdf_standin,
+    small_repo,
+    squash,
+    write_doc,
+)
+
+
+# A PDF program that waits until the file named by BLIND_RELEASE exists (at
+# most 60 s), then writes a one-page PDF.
+BLOCKING_PDF_PROGRAM = (
+    r'''
+import os, time
+from pathlib import Path
+release = Path(os.environ["BLIND_RELEASE"])
+deadline = time.monotonic() + 60
+while not release.exists() and time.monotonic() < deadline:
+    time.sleep(0.05)
+'''
+    + STANDIN_PDF_PROGRAM
+)
+
+
+# ==========================================================================
+# Starting an export
+# ==========================================================================
+
+
+@needs_pdf
+def test_pdf_srs_2_export_action_writes_pdf_of_the_open_document(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-2: the Document Editor's Export action exports the open
+    document to a PDF file (at the path chosen in the save dialog)."""
+    root = tmp_path / "repo"
+    write_doc(
+        root,
+        "DOC",
+        [
+            heading(
+                "DOC-0",
+                "Opening Section",
+                obj("DOC-1", "First requirement text."),
+                obj("DOC-2", "Second requirement text."),
+                obj("DOC-3", "Third requirement text."),
+            )
+        ],
+    )
+    write_doc(root, "OTHER", [obj("OTHER-1", "Belongs to another document.")])
+    git_commit_all(root, "docs")
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    out = tmp_path / "exports" / "doc.pdf"
+    out.parent.mkdir()
+    win = gui.open(root, "DOC")
+    gui.export(win, out)
+
+    assert out.read_bytes()[:5] == b"%PDF-", "the Export action wrote no PDF at the chosen path"
+    text = Pdf(out).flat()
+    assert re.search(r"\bDOC\b(?!-)", text), "the PDF doesn't show the document ID"
+    for oid in ("DOC-1", "DOC-2", "DOC-3"):
+        assert id_positions(text, oid), f"the PDF doesn't show object {oid}"
+    assert "OTHER-1" not in text, "the PDF shows another document's object"
+
+
+def test_pdf_srs_3_ctrl_e_starts_the_export(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-3: the Export action has the shortcut Ctrl+E. Pressing
+    Ctrl+E in a Document Editor starts the export (the save dialog is asked for);
+    E alone doesn't."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtGui import QKeySequence
+    from PySide6.QtTest import QTest
+
+    root = small_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    action = gui.export_action(win)
+    assert QKeySequence("Ctrl+E") in action.shortcuts(), "Ctrl+E isn't a shortcut of the Export action"
+
+    win.activateWindow()
+    gui.qtbot.waitUntil(win.isActiveWindow, timeout=5000)
+    gui.save_path = None  # cancel the save dialog
+    QTest.keyClick(win, Qt.Key.Key_E)
+    gui.qtbot.wait(200)
+    assert "save" not in gui.kinds(), "E without Ctrl started an export"
+    QTest.keyClick(win, Qt.Key.Key_E, Qt.KeyboardModifier.ControlModifier)
+    gui.qtbot.waitUntil(lambda: "save" in gui.kinds(), timeout=5000)
+    gui.wait_idle(win)
+
+
+def test_pdf_srs_7_windows_respond_to_input_while_an_export_runs(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-7: while an export runs, the Document Editor windows
+    respond to input: a selection made in each of two windows takes effect in
+    the Inspector before the export ends."""
+    root = tmp_path / "repo"
+    write_doc(root, "DOC", [obj("DOC-1", "One"), obj("DOC-2", "Two"), obj("DOC-3", "Three")])
+    write_doc(root, "OTHER", [obj("OTHER-1", "Uno"), obj("OTHER-2", "Dos"), obj("OTHER-3", "Tres")])
+    git_commit_all(root, "docs")
+    release = tmp_path / "release"
+    blocking = make_program(tmp_path / "bin", "tectonic", BLOCKING_PDF_PROGRAM)
+    monkeypatch.setenv("MELLON_TECTONIC", str(blocking))
+    monkeypatch.setenv("BLIND_RELEASE", str(release))
+
+    from mellon.service.document import DocumentService
+
+    service = DocumentService(root, cache=True)
+    exporting = gui.open(root, "DOC", service)
+    other = gui.open(root, "OTHER", service)
+    gui.save_path = str(tmp_path / "out.pdf")
+    gui.export_action(exporting).trigger()
+    try:
+        assert exporting.is_exporting(), "the export had ended when the Export action returned"
+        gui.click_object(exporting, "DOC-3")
+        gui.click_object(other, "OTHER-2")
+        gui.qtbot.waitUntil(lambda: "DOC-3" in gui.inspector_texts(exporting), timeout=5000)
+        gui.qtbot.waitUntil(lambda: "OTHER-2" in gui.inspector_texts(other), timeout=5000)
+        assert exporting.is_exporting(), "the export ended before the selections took effect"
+    finally:
+        release.write_text("go", encoding="utf-8")
+        gui.wait_idle(exporting)
+
+
+@needs_pdf
+def test_pdf_srs_10_export_action_shows_uncommitted_changes(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-10: an export that chooses no version exports the working
+    copy, with the document's uncommitted changes (Export action, window opened
+    after the change)."""
+    root = _uncommitted_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    out = tmp_path / "out.pdf"
+    win = gui.open(root, "DOC")
+    gui.export(win, out)
+    text = squash(Pdf(out).text)
+    assert squash("Uncommitted wording beta.") in text, "the PDF doesn't show the uncommitted text"
+    assert squash("Committed wording alpha.") not in text, "the PDF shows the committed text"
+
+
+@pytest.mark.parametrize(
+    "figure_program",
+    [
+        pytest.param(FIGURES_WRITE_NOTHING, id="writes-nothing"),
+        pytest.param(
+            FIGURES_WRITE_EMPTY_FILES,
+            id="writes-empty-file",
+        ),
+    ],
+)
+def test_pdf_srs_58_notice_lists_a_figure_the_figure_program_left_out(
+    gui, tmp_path, monkeypatch, figure_program
+):
+    """MELLON-PDF-SRS-58: when the figure program exits with status 0 but writes
+    no figure PDF, or an empty one, the Document Editor shows the notice of
+    figures not drawn, listing that object (and not the object without one)."""
+    root = _figure_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    monkeypatch.setenv("MELLON_DRAWIO", str(make_program(tmp_path / "fig", "drawio", figure_program)))
+    win = gui.open(root, "DOC")
+    gui.export(win, tmp_path / "out.pdf")
+    notices = [n for n in gui.notices() if id_positions(n, "DOC-1")]
+    assert notices, f"no notice lists DOC-1: {gui.events}"
+    assert not id_positions(notices[0], "DOC-2"), "the notice lists an object without a figure"
+
+
+def test_pdf_srs_59_notice_says_the_figure_program_was_not_found(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-59: when Mellon can't find the figure program, the notice
+    of figures not drawn names the figure program and says it wasn't found."""
+    root = _figure_repo(tmp_path / "repo")
+    hide_drawio(monkeypatch, tmp_path)
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.export(win, tmp_path / "out.pdf")
+    notices = [n for n in gui.notices() if id_positions(n, "DOC-1")]
+    assert notices, f"no notice of figures not drawn: {gui.events}"
+    assert "draw.io" in notices[0], "the notice doesn't name the figure program"
+    assert re.search(NOT_FOUND, notices[0], re.I), "the notice doesn't say the program wasn't found"
+
+
+NOT_FOUND = r"(couldn[’']t|could not|can[’']t|cannot|didn[’']t|did not|wasn[’']t able to)\s+find|not\s+(be\s+)?found"
+
+
+def test_pdf_srs_59_notice_doesnt_say_not_found_when_the_program_fails(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-59, other side: when the figure program is found but
+    fails, the notice lists the figure and doesn't say the program wasn't found."""
+    root = _figure_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    monkeypatch.setenv("MELLON_DRAWIO", str(make_program(tmp_path / "fig", "drawio", FIGURES_FAIL)))
+    win = gui.open(root, "DOC")
+    gui.export(win, tmp_path / "out.pdf")
+    notices = [n for n in gui.notices() if id_positions(n, "DOC-1")]
+    assert notices, f"no notice of figures not drawn: {gui.events}"
+    assert not re.search(NOT_FOUND, notices[0], re.I), notices[0]
+
+
+def test_pdf_srs_65_export_action_reports_a_failure_with_its_reason(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-65: an export from the Export action that fails for a
+    reason other than the PDF program (the output path is a folder) shows that
+    the export failed, with the reason, and writes no file."""
+    root = small_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    taken = tmp_path / "taken-by-folder.pdf"
+    taken.mkdir()
+    win = gui.open(root, "DOC")
+    gui.export(win, taken)
+    shown = gui.notices() + [win.statusBar().currentMessage()]
+    failed = [s for s in shown if re.search(r"fail", s, re.I)]
+    assert failed, f"nothing says the export failed: {shown}"
+    assert any(re.search(OS_REASON, s, re.I) for s in failed), f"no reason given: {failed}"
+    assert list(taken.iterdir()) == []
+
+
+@needs_pdf
+def test_pdf_srs_84_export_action_shows_current_issue(gui, issue_repo, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-84: the Export action's cover shows the document's current
+    issue as the revision."""
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    out = tmp_path / "out.pdf"
+    win = gui.open(issue_repo, "DOC")
+    gui.export(win, out)
+    assert "4.2.10" in squash(Pdf(out).texts[0])
+
+
+@needs_pdf
+def test_pdf_srs_125_export_action_default_attributes(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-125: the Export action's PDF shows the attributes type,
+    status, priority and verification-method, in that order, and no other."""
+    root = _attrs_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    out = tmp_path / "out.pdf"
+    win = gui.open(root, "DOC")
+    gui.export(win, out)
+    _check_default_attributes(Pdf(out))
+
+
+@needs_pdf
+def test_pdf_srs_172_export_action_names_a_parent_that_didnt_load(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-172: if a parent document has a load error, the export
+    succeeds and the Traceability section names the parent and states that it
+    didn't load (Export action)."""
+    root = _broken_parent_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    out = tmp_path / "out.pdf"
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "export"
+    gui.export(win, out)
+    assert out.is_file(), f"no PDF written: {gui.events}"
+    _check_names_unloaded_parent(Pdf(out))
+
+
+@needs_pdf
+def test_pdf_srs_177_export_action_changes_no_file_index_or_reference(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-177: an export through the Export action, started in the
+    repository folder, to a path outside the document folders, changes no
+    working-copy file, the index or a reference: git status shows only the PDF."""
+    root = _clean_repo_for_177(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", PDF_PROGRAM)
+    monkeypatch.chdir(root)
+    (root / "out").mkdir()
+    win = gui.open(root, "DOC")
+    before = _git_state(root, set())
+    gui.export(win, root / "out" / "doc.pdf")
+    assert (root / "out" / "doc.pdf").is_file(), gui.events
+    assert _status(root) == {"out/doc.pdf": pygit2.GIT_STATUS_WT_NEW}, _status(root)
+    after = _git_state(root, {"out/doc.pdf"})
+    changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+    assert changed == [], f"the export changed: {changed}"

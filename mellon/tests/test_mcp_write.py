@@ -3430,3 +3430,349 @@ def test_ver_srs_173_commit_message_without_a_git_repository_keeps_the_write(mcp
     assert res.get("ok") is True, f"the write isn't reported as done: {res}"
     assert res.get("commit_error"), f"the result carries no commit error: {res}"
     assert _attr((root / "CHILD/objects/CHILD-0.xml").read_bytes(), "status") == "Approved"
+
+
+# MELLON-PDF-SRS blind tests
+import re  # noqa: E402
+import time  # noqa: E402
+
+from tests.pdf_support import (  # noqa: E402
+    FIGURES_FAIL,
+    FIGURES_WRITE_EMPTY_FILES,
+    FIGURES_WRITE_NOTHING,
+    OS_REASON,
+    Pdf,
+    _clean_repo_for_177,
+    _figure_repo,
+    _git_state,
+    _linked_repo,
+    _status as pdf_status,
+    _uncommitted_repo,
+    git_commit_all,
+    hide_drawio,
+    make_program,
+    mcp_calls,
+    mcp_export,
+    needs_pdf,
+    obj,
+    pdf_standin,
+    short,
+    small_repo,
+    squash,
+    write_doc as pdf_write_doc,
+)
+
+
+@needs_pdf
+def test_pdf_srs_10_export_tool_shows_uncommitted_changes(tmp_path):
+    """MELLON-PDF-SRS-10: an export that chooses no version exports the working
+    copy, with the document's uncommitted changes (export tool)."""
+    root = _uncommitted_repo(tmp_path / "repo")
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    text = squash(Pdf(out).text)
+    assert squash("Uncommitted wording beta.") in text, "the PDF doesn't show the uncommitted text"
+    assert squash("Committed wording alpha.") not in text, "the PDF shows the committed text"
+
+
+# ==========================================================================
+# Where the PDF goes
+# ==========================================================================
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["reportpdf", "report.pdf.txt", "report.pd", "report"],
+    ids=["reportpdf", "pdf-then-txt", "pd", "no-extension"],
+)
+def test_pdf_srs_26_export_tool_refuses_a_name_not_ending_in_pdf(tmp_path, name):
+    """MELLON-PDF-SRS-26: given an output path whose file name doesn't end in
+    .pdf, the export tool refuses the export, and no file is written."""
+    root = small_repo(tmp_path / "repo")
+    out_dir = tmp_path / "exports"
+    out_dir.mkdir()
+    res = mcp_export(root, "DOC", out_dir / name, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is False, f"{name!r} was accepted: {res}"
+    assert list(out_dir.iterdir()) == [], "a refused export wrote a file"
+
+
+def test_pdf_srs_26_export_tool_accepts_a_name_ending_in_pdf(tmp_path):
+    """MELLON-PDF-SRS-26, other side of the boundary: a file name that ends in
+    .pdf is exported to."""
+    root = small_repo(tmp_path / "repo")
+    out = tmp_path / "exports" / "report.pdf"
+    out.parent.mkdir()
+    res = mcp_export(root, "DOC", out, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is True, res
+    assert out.read_bytes()[:5] == b"%PDF-"
+
+
+@pytest.mark.parametrize("where", ["absolute", "nested", "relative"])
+def test_pdf_srs_27_export_tool_refuses_a_path_inside_dot_git(tmp_path, where):
+    """MELLON-PDF-SRS-27: given an output path inside the repository's .git
+    folder, the export tool refuses the export, and no file is written there."""
+    root = small_repo(tmp_path / "repo")
+    target = {
+        "absolute": root / ".git" / "x.pdf",
+        "nested": root / ".git" / "refs" / "x.pdf",
+        "relative": Path(".git") / "x.pdf",
+    }[where]
+    before = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    res = mcp_export(root, "DOC", target, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is False, f"{target} was accepted: {res}"
+    after = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    assert [p for p in after if p not in before] == [], "a refused export wrote into .git"
+
+
+def test_pdf_srs_27_export_tool_accepts_a_file_beside_dot_git(tmp_path):
+    """MELLON-PDF-SRS-27, other side of the boundary: a file named .git.pdf in
+    the repository root isn't inside the .git folder, so it is exported to."""
+    root = small_repo(tmp_path / "repo")
+    out = root / ".git.pdf"
+    res = mcp_export(root, "DOC", out, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is True, res
+    assert out.read_bytes()[:5] == b"%PDF-"
+
+
+def _three_states_repo(root: Path) -> Path:
+    """DOC-1 has an OK, a suspect and a broken outgoing link."""
+    pdf_write_doc(root, "PAR", [obj("PAR-1", "Parent one."), obj("PAR-2", "Parent two.")])
+    ack = short(git_commit_all(root, "parent"))
+    pdf_write_doc(
+        root,
+        "DOC",
+        [obj("DOC-1", "One.", links=[("PAR", "PAR-1", ack), ("PAR", "PAR-2", None), ("PAR", "PAR-9", None)])],
+        parents=("PAR",),
+    )
+    git_commit_all(root, "doc")
+    return root
+
+
+def _link_key(item: dict) -> tuple:
+    return (item["source_id"], item["link"]["target_doc"], item["link"]["target_id"])
+
+
+def test_pdf_srs_54_result_lists_each_suspect_and_broken_link(tmp_path):
+    """MELLON-PDF-SRS-54: the export tool returns each suspect and broken
+    outgoing link of the document, as the suspects tool reports it; an OK link
+    isn't among them."""
+    root = _three_states_repo(tmp_path / "repo")
+    exported, suspects = mcp_calls(
+        root,
+        [
+            ("export_document", {"doc_id": "DOC", "out_path": str(tmp_path / "out.pdf")}),
+            ("suspects", {"doc_id": "DOC"}),
+        ],
+        env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))},
+    )
+    assert exported["ok"], exported
+    expected = {_link_key(s): s for s in suspects if s["state"] in ("suspect", "broken")}
+    assert {k[2] for k in expected} == {"PAR-2", "PAR-9"}, "precondition: one suspect and one broken link"
+    got = {_link_key(s): s for s in exported["suspect_links"]}
+    assert set(got) == set(expected), f"links returned: {sorted(got)}"
+    for key, item in got.items():
+        for field in ("source_id", "link", "state", "current_hash", "reason"):
+            assert item.get(field) == expected[key].get(field), f"{key}: {field} differs"
+
+
+def test_pdf_srs_54_items_are_in_the_suspects_tool_form(tmp_path):
+    """MELLON-PDF-SRS-54: each link the export tool returns is in the form the
+    suspects tool gives: the same fields with the same values."""
+    root = _three_states_repo(tmp_path / "repo")
+    exported, suspects = mcp_calls(
+        root,
+        [
+            ("export_document", {"doc_id": "DOC", "out_path": str(tmp_path / "out.pdf")}),
+            ("suspects", {"doc_id": "DOC"}),
+        ],
+        env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))},
+    )
+    expected = {_link_key(s): s for s in suspects if s["state"] in ("suspect", "broken")}
+    for item in exported["suspect_links"]:
+        assert item == expected[_link_key(item)]
+
+
+def test_pdf_srs_56_export_tool_exports_a_document_with_a_broken_link(tmp_path):
+    """MELLON-PDF-SRS-56: the export tool exports a document that has a broken
+    outgoing link: ok, and the PDF is written."""
+    root = _linked_repo(tmp_path / "repo", broken=True)
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is True, res
+    assert out.read_bytes()[:5] == b"%PDF-"
+
+
+@pytest.mark.parametrize(
+    "figure_program",
+    [
+        pytest.param(FIGURES_WRITE_NOTHING, id="writes-nothing"),
+        pytest.param(
+            FIGURES_WRITE_EMPTY_FILES,
+            id="writes-empty-file",
+        ),
+    ],
+)
+def test_pdf_srs_61_result_lists_a_figure_the_figure_program_left_out(tmp_path, figure_program):
+    """MELLON-PDF-SRS-61 (test case of MELLON-PDF-SRS-58): when the figure
+    program exits with status 0 but writes no figure PDF, or an empty one, the
+    export tool's result names the object whose figure isn't drawn."""
+    root = _figure_repo(tmp_path / "repo")
+    env = {
+        "MELLON_TECTONIC": str(pdf_standin(tmp_path)),
+        "MELLON_DRAWIO": str(make_program(tmp_path / "fig", "drawio", figure_program)),
+    }
+    res = mcp_export(root, "DOC", tmp_path / "out.pdf", env=env)
+    assert res["ok"], res
+    assert res.get("unrendered_figures") == ["DOC-1"], res
+
+
+def test_pdf_srs_62_result_says_the_figure_program_was_not_found(tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-62: when Mellon can't find the figure program, the export
+    tool's result says so (drawio_found false)."""
+    root = _figure_repo(tmp_path / "repo")
+    env = hide_drawio(monkeypatch, tmp_path)
+    env["MELLON_TECTONIC"] = str(pdf_standin(tmp_path))
+    res = mcp_export(root, "DOC", tmp_path / "out.pdf", env=env)
+    assert res["ok"], res
+    assert res.get("drawio_found") is False, res
+
+
+def test_pdf_srs_62_result_doesnt_say_not_found_when_the_program_is_found(tmp_path):
+    """MELLON-PDF-SRS-62, other side: with the figure program found (a stand-in
+    that fails), the result doesn't say it wasn't found."""
+    root = _figure_repo(tmp_path / "repo")
+    env = {
+        "MELLON_TECTONIC": str(pdf_standin(tmp_path)),
+        "MELLON_DRAWIO": str(make_program(tmp_path / "fig", "drawio", FIGURES_FAIL)),
+    }
+    res = mcp_export(root, "DOC", tmp_path / "out.pdf", env=env)
+    assert res["ok"], res
+    assert res.get("drawio_found") is not False, res
+
+
+def test_pdf_srs_65_export_tool_reports_a_failure_with_its_reason(tmp_path):
+    """MELLON-PDF-SRS-65: an export that fails for a reason other than the PDF
+    program (its output path is a folder, so it can't be written) returns an
+    error result with the reason."""
+    root = small_repo(tmp_path / "repo")
+    taken = tmp_path / "taken-by-folder.pdf"
+    taken.mkdir()
+    res = mcp_export(root, "DOC", taken, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is False, res
+    reason = str(res.get("error", ""))
+    assert re.search(OS_REASON, reason, re.I), f"no reason given: {res}"
+    assert taken.is_dir() and list(taken.iterdir()) == []
+
+
+NEVER_ENDING_CMD = "@echo off\r\n:again\r\nping -n 2 127.0.0.1 >nul\r\ngoto again\r\n"
+
+
+def _processes_running(fragment: str) -> list[str]:
+    import subprocess
+
+    if os.name == "nt":
+        out = subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                "Get-CimInstance Win32_Process | ForEach-Object { $_.CommandLine }",
+            ],
+            capture_output=True,
+            text=True,
+        ).stdout
+    else:
+        out = subprocess.run(["ps", "-eo", "args"], capture_output=True, text=True).stdout
+    return [line for line in out.splitlines() if fragment in line]
+
+
+@pytest.mark.slow
+@pytest.mark.skipif(
+    os.environ.get("MELLON_SLOW_TESTS") != "1",
+    reason="takes 5 minutes: set MELLON_SLOW_TESTS=1 to run it",
+)
+def test_pdf_srs_70_pdf_program_stopped_after_300_s(tmp_path):
+    """MELLON-PDF-SRS-70: if the PDF program hasn't finished 300 s after its
+    start, Mellon stops it and ends the export: not before 300 s, soon after,
+    and the program no longer runs."""
+    root = small_repo(tmp_path / "repo")
+    bin_dir = tmp_path / "never-ending-pdf-program"
+    bin_dir.mkdir()
+    if os.name == "nt":
+        program = bin_dir / "tectonic.cmd"
+        program.write_text(NEVER_ENDING_CMD, encoding="ascii", newline="")
+    else:
+        program = bin_dir / "tectonic"
+        program.write_text("#!/bin/sh\nexec sleep 100000\n", encoding="ascii", newline="\n")
+        program.chmod(0o755)
+    start = time.monotonic()
+    res = mcp_export(root, "DOC", tmp_path / "out.pdf", env={"MELLON_TECTONIC": str(program)})
+    elapsed = time.monotonic() - start
+    assert res["ok"] is False, res
+    assert elapsed >= 300, f"the export ended after {elapsed:.0f} s, before the 300 s limit"
+    assert elapsed < 360, f"the export ended {elapsed:.0f} s after its start"
+    time.sleep(3)
+    assert _processes_running(str(bin_dir)) == [], "the PDF program still runs"
+
+
+@needs_pdf
+def test_pdf_srs_177_export_tool_changes_no_file_index_or_reference(tmp_path):
+    """MELLON-PDF-SRS-177: an export through the export tool, to a path in the
+    work tree outside the document folders, changes no working-copy file, the
+    index or a reference: git status shows only the PDF."""
+    root = _clean_repo_for_177(tmp_path / "repo")
+    (root / "out").mkdir()
+    before = _git_state(root, set())
+    res = mcp_export(root, "DOC", root / "out" / "doc.pdf")
+    assert res["ok"], res
+    assert pdf_status(root) == {"out/doc.pdf": pygit2.GIT_STATUS_WT_NEW}, pdf_status(root)
+    after = _git_state(root, {"out/doc.pdf"})
+    changed = sorted(k for k in set(before) | set(after) if before.get(k) != after.get(k))
+    assert changed == [], f"the export changed: {changed}"
+
+
+def test_pdf_srs_5_export_tool_exports_without_a_git_user_name(tmp_path):
+    """MELLON-PDF-SRS-5 (T10): the export tool exports with no git user.name
+    set, since an export makes no commit."""
+    import subprocess
+
+    root = small_repo(tmp_path / "repo")
+    home = tmp_path / "empty-home"
+    home.mkdir()
+    env = {
+        "HOME": str(home),
+        "USERPROFILE": str(home),
+        "HOMEDRIVE": home.drive or "",
+        "HOMEPATH": str(home)[len(home.drive):],
+        "XDG_CONFIG_HOME": str(home),
+        "GIT_CONFIG_GLOBAL": str(home / "none"),
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "PROGRAMDATA": str(home),
+        "MELLON_TECTONIC": str(pdf_standin(tmp_path)),
+    }
+    probe = subprocess.run(
+        [sys.executable, "-c", "import pygit2, sys; print('user.name' in pygit2.Repository(sys.argv[1]).config)", str(root)],
+        env={**os.environ, **env},
+        capture_output=True,
+        text=True,
+    )
+    if probe.stdout.strip() != "False":
+        pytest.skip(f"a git user.name is still visible to the server: {probe.stdout or probe.stderr}")
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out, env=env)
+    assert res["ok"] is True, res
+    assert out.read_bytes()[:5] == b"%PDF-"
+
+
+def test_pdf_srs_5_export_tool_exports_while_another_document_fails_to_load(tmp_path):
+    """MELLON-PDF-SRS-5 (T10): the export tool exports a document while another
+    document of the repository, not a parent, fails to load."""
+    root = small_repo(tmp_path / "repo")
+    pdf_write_doc(root, "OTHER", [obj("OTHER-1", "Other.")])
+    git_commit_all(root, "other")
+    (root / "OTHER" / "OTHER.xml").write_text("<document id=", encoding="utf-8")
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is True, res
+    assert out.read_bytes()[:5] == b"%PDF-"

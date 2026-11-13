@@ -1147,3 +1147,933 @@ def test_pdf_compiles_with_traceability_section(doc_folder: Path):
         parents={"PARENT": _parent_doc(_req("PARENT-42", "a"), _req("PARENT-43", "b"))},
     )
     assert blob.startswith(b"%PDF")
+
+
+# MELLON-PDF-SRS blind tests
+import collections  # noqa: E402
+
+from tests.pdf_support import (  # noqa: E402
+    FIGURES_WRITE_EMPTY_FILES,
+    PDF_PROGRAM,
+    Pdf,
+    _attrs_repo,
+    _body,
+    _broken_parent_repo,
+    _check_default_attributes,
+    _check_names_unloaded_parent,
+    _figure_repo,
+    _object_text,
+    git_commit_all,
+    heading,
+    horizontal_rules,
+    id_positions,
+    issue_repo,  # noqa: F401, F811 -- fixture
+    make_program,
+    mcp_calls,
+    mcp_export,
+    needs_pdf,
+    obj,
+    short,
+    squash,
+    strip_page_numbers,
+    write_doc,
+)
+
+
+A4_W, A4_H = 595.28, 841.89
+
+
+def header_texts(pdf: Pdf, index: int) -> list[str]:
+    """The text in the header of page `index`: above the topmost long rule in
+    the top quarter of the page, or else within 30 pt of the topmost text."""
+    frags = pdf.fragments(index)
+    if not frags:
+        return []
+    height = float(pdf.pages[index].mediabox.height)
+    rules = [r for r in horizontal_rules(pdf, index) if r[2] > 0.75 * height]
+    limit = max(r[2] for r in rules) if rules else max(y for _, _, y in frags) - 30
+    return [t.strip() for t, _, y in frags if y > limit]
+
+
+def words(text: str) -> collections.Counter:
+    return collections.Counter(text.split())
+
+
+@needs_pdf
+def test_pdf_srs_73_placeholder_when_the_figure_program_writes_an_empty_file(tmp_path):
+    """MELLON-PDF-SRS-73 and -75 (test case of MELLON-PDF-SRS-58): a figure the
+    figure program can't draw (it writes an empty figure PDF) is shown as a
+    placeholder that names the figure's file and says it isn't drawn."""
+    root = _figure_repo(tmp_path / "repo")
+    env = {"MELLON_DRAWIO": str(make_program(tmp_path / "fig", "drawio", FIGURES_WRITE_EMPTY_FILES))}
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out, env=env)
+    assert res["ok"], res
+    text = Pdf(out).flat()
+    match = re.search(r"DOC-1\.svg[^\]\n]{0,60}", text)
+    assert match, "no placeholder names the figure's file"
+    assert re.search(r"not\s+(rendered|drawn)", match.group(0), re.I), match.group(0)
+
+
+# ==========================================================================
+# Cover page
+# ==========================================================================
+
+COVER = dict(title="Kappa Cover Heading", author="Quinn Rhodes", date="2026-05-17")
+
+
+COVER_REV = "R5.4"
+
+
+@pytest.fixture(scope="module")
+def cover_pdfs(tmp_path_factory):
+    """One document exported with each cover field set, then with each of
+    title, author, date and revision empty in turn: {case: page 1 text}."""
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = tmp_path_factory.mktemp("cover") / "repo"
+    objs = [obj("DOC-1", "Body text of the document.")]
+    write_doc(root, "DOC", objs, **COVER)
+    git_commit_all(root, "doc")
+    cases = {
+        "full": (COVER, COVER_REV),
+        "title": ({**COVER, "title": ""}, COVER_REV),
+        "author": ({**COVER, "author": ""}, COVER_REV),
+        "date": ({**COVER, "date": ""}, COVER_REV),
+        "revision": (COVER, None),
+    }
+    calls = []
+    for case, (meta, rev) in cases.items():
+        calls.append(lambda meta=meta: write_doc(root, "DOC", objs, **meta))
+        args = {"doc_id": "DOC", "out_path": str(root.parent / f"{case}.pdf")}
+        if rev is not None:
+            args["rev"] = rev
+        calls.append(("export_document", args))
+    results = mcp_calls(root, calls)
+    assert all(r["ok"] for r in results), results
+    return {case: Pdf(root.parent / f"{case}.pdf").texts[0] for case in cases}
+
+
+@needs_pdf
+def test_pdf_srs_80_cover_shows_id_title_author_and_date(cover_pdfs):
+    """MELLON-PDF-SRS-80: the first page is a cover page showing the document
+    ID and the document's title, author and date."""
+    page1 = cover_pdfs["full"]
+    assert re.search(r"\bDOC\b(?!-)", page1), "no document ID on page 1"
+    for field in ("title", "author", "date"):
+        assert squash(COVER[field]) in squash(page1), f"page 1 doesn't show the {field}"
+
+
+def _field_left_out(cover_pdfs, case: str, value: str, *, labelled: bool) -> None:
+    full, empty = cover_pdfs["full"], cover_pdfs[case]
+    added = words(empty) - words(full)
+    assert not added, f"text shown only when the {case} is empty: {sorted(added)}"
+    assert squash(value) not in squash(empty)
+    if labelled:
+        lines = [l.strip() for l in full.splitlines() if l.strip()]
+        labels = [lines[i - 1] for i, l in enumerate(lines) if i and squash(l) == squash(value)]
+        assert labels, "precondition: the field has a label line on the full cover"
+        removed = words(full) - words(empty)
+        for label in labels:
+            for word in label.split():
+                assert removed[word] >= 1, f"the {case} field's label {label!r} is still shown"
+
+
+@needs_pdf
+def test_pdf_srs_82_empty_title_left_out(cover_pdfs):
+    """MELLON-PDF-SRS-82: when the title is empty, the cover leaves the field
+    out, with no placeholder text: nothing takes the title's place."""
+    _field_left_out(cover_pdfs, "title", COVER["title"], labelled=False)
+
+
+@needs_pdf
+def test_pdf_srs_82_empty_author_left_out(cover_pdfs):
+    """MELLON-PDF-SRS-82: when the author is empty, the cover leaves out the
+    author field, label and value, with no placeholder text."""
+    _field_left_out(cover_pdfs, "author", COVER["author"], labelled=True)
+
+
+@needs_pdf
+def test_pdf_srs_82_empty_date_left_out(cover_pdfs):
+    """MELLON-PDF-SRS-82: when the date is empty, the cover leaves out the date
+    field, label and value, with no placeholder text."""
+    _field_left_out(cover_pdfs, "date", COVER["date"], labelled=True)
+
+
+@needs_pdf
+def test_pdf_srs_82_empty_revision_left_out(cover_pdfs):
+    """MELLON-PDF-SRS-82: when the revision to show is empty (no revision label,
+    no issue), the cover leaves out the revision field, with no placeholder text."""
+    _field_left_out(cover_pdfs, "revision", COVER_REV, labelled=True)
+
+
+@pytest.fixture(scope="module")
+def issue_cover(issue_repo, tmp_path_factory):
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    out = tmp_path_factory.mktemp("issue-out") / "out.pdf"
+    res = mcp_export(issue_repo, "DOC", out)
+    assert res["ok"], res
+    return Pdf(out).texts[0]
+
+
+@needs_pdf
+def test_pdf_srs_84_export_tool_without_label_shows_current_issue(issue_cover):
+    """MELLON-PDF-SRS-84: with no revision label, the cover shows the
+    document's current issue as the revision."""
+    assert "4.2.10" in squash(issue_cover), f"current issue 4.2.10 not on the cover: {issue_cover!r}"
+
+
+@needs_pdf
+def test_pdf_srs_84_current_issue_is_the_highest_in_issue_order(issue_cover):
+    """MELLON-PDF-SRS-84, boundary of current issue: 4.2.10 comes after 4.2.9 in
+    issue order, so the cover doesn't show 4.2.9 as the revision."""
+    assert not re.search(r"4\.2\.9(?![0-9])", issue_cover), issue_cover
+
+
+@needs_pdf
+def test_pdf_srs_84_unreachable_issue_isnt_the_current_issue(issue_cover):
+    """MELLON-PDF-SRS-84, boundary of current issue: an issue tag on a commit
+    the latest commit doesn't reach isn't shown."""
+    assert "9.9.9" not in issue_cover, issue_cover
+
+
+@needs_pdf
+def test_pdf_srs_84_export_tool_shows_the_revision_label(issue_repo, tmp_path):
+    """MELLON-PDF-SRS-84: given the revision label X.1, the cover shows X.1 as
+    the revision."""
+    out = tmp_path / "out.pdf"
+    res = mcp_export(issue_repo, "DOC", out, rev="X.1")
+    assert res["ok"], res
+    assert "X.1" in squash(Pdf(out).texts[0])
+
+
+# ==========================================================================
+# Pages, order, headings, objects, Traceability: one structured document
+# ==========================================================================
+
+STRUCT_REV = "R7.3"
+
+
+STRUCT_LONG = " ".join(f"pad{i}" for i in range(1, 1300))
+
+
+STRUCT_MENTIONS = 40
+
+
+STRUCT_SECTIONS = [
+    ("1", "Alpha Section"),
+    ("1.1", "Alpha Sub One"),
+    ("1.2", "Alpha Sub Second"),
+    ("2", "Beta Section"),
+    ("2.1", "Beta Sub One"),
+    ("2.2", "Beta Sub Second"),
+    ("3", "Traceability"),
+]
+
+
+STRUCT_REQS = ["DOC-30", "DOC-11", "DOC-14", "DOC-5", "DOC-23", "DOC-40"]  # outline order
+
+
+STRUCT_HEADINGS = ["DOC-10", "DOC-2", "DOC-12", "DOC-13", "DOC-1", "DOC-20", "DOC-22"]
+
+
+@pytest.fixture(scope="module")
+def struct_pdf(tmp_path_factory):
+    """DOC: two level 1 headings, each with two level 2 headings, a level 3
+    heading, requirements whose IDs aren't in outline order, a parent PAR whose
+    outline isn't in ID order; exported with revision label R7.3."""
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = tmp_path_factory.mktemp("struct") / "repo"
+    write_doc(
+        root,
+        "PAR",
+        [
+            heading(
+                "PAR-0",
+                "Parent heading",
+                *(obj(f"PAR-{n}", f"Parent {n} text.") for n in (6, 3, 1, 4, 2, 7)),
+            )
+        ],
+    )
+    ack = short(git_commit_all(root, "parent"))
+    mentions = " ".join(f"see{i} DOC-11 and" for i in range(STRUCT_MENTIONS))
+    write_doc(
+        root,
+        "DOC",
+        [
+            heading(
+                "DOC-10",
+                "Alpha Section",
+                obj("DOC-30", "Alpha first requirement text.", links=[("PAR", "PAR-1", ack), ("PAR", "PAR-3", ack)]),
+                heading("DOC-2", "Alpha Sub One", obj("DOC-11", "Alpha sub one requirement text.", links=[("PAR", "PAR-1", ack)])),
+                heading("DOC-12", "Alpha Sub Second", heading("DOC-13", "Alpha Deep Third", obj("DOC-14", "Deep requirement text."))),
+            ),
+            heading(
+                "DOC-1",
+                "Beta Section",
+                heading("DOC-20", "Beta Sub One", obj("DOC-5", STRUCT_LONG, links=[("PAR", "PAR-4", ack)])),
+                heading(
+                    "DOC-22",
+                    "Beta Sub Second",
+                    obj("DOC-23", "Beta sub second requirement text."),
+                    obj("DOC-40", mentions),
+                ),
+            ),
+        ],
+        parents=("PAR",),
+    )
+    git_commit_all(root, "doc")
+    out = root.parent / "struct.pdf"
+    res = mcp_export(root, "DOC", out, rev=STRUCT_REV)
+    assert res["ok"], res
+    return Pdf(out)
+
+
+def _section_line(num: str, title: str) -> re.Pattern:
+    return re.compile(rf"^{re.escape(num)}\.?{re.escape(squash(title))}$")
+
+
+def _section_page(pdf: Pdf, num: str, title: str) -> int | None:
+    """1-based number of the first page after the contents whose text has the
+    section's title line."""
+    pattern = _section_line(num, title)
+    for index in range(2, len(pdf.texts)):
+        if any(pattern.match(squash(line)) for line in pdf.texts[index].splitlines()):
+            return index + 1
+    return None
+
+
+@needs_pdf
+def test_pdf_srs_98_pages_are_a4_portrait(struct_pdf):
+    """MELLON-PDF-SRS-98: each page of the exported PDF is A4 portrait,
+    595.28 by 841.89 points."""
+    assert len(struct_pdf.pages) >= 3
+    for index, page in enumerate(struct_pdf.pages, 1):
+        width, height = float(page.mediabox.width), float(page.mediabox.height)
+        if page.rotation % 180:
+            width, height = height, width
+        assert abs(width - A4_W) < 0.5 and abs(height - A4_H) < 0.5, f"page {index} is {width} x {height}"
+
+
+@needs_pdf
+def test_pdf_srs_99_contents_after_cover_lists_sections_with_pages(struct_pdf):
+    """MELLON-PDF-SRS-99: after the cover page comes a table of contents that
+    lists each numbered section of the top two levels, the Traceability section
+    included, with the page the section starts on."""
+    contents = [squash(line) for line in struct_pdf.texts[1].splitlines()]
+    for num, title in STRUCT_SECTIONS:
+        page = _section_page(struct_pdf, num, title)
+        assert page is not None, f"precondition: section {num} {title} isn't in the body"
+        entry = re.compile(rf"^{re.escape(num)}\.?{re.escape(squash(title))}\.*(\d+)$")
+        found = [m for m in map(entry.match, contents) if m]
+        assert found, f"the contents page doesn't list {num} {title}"
+        assert int(found[0].group(1)) == page, f"{num} {title}: listed on page {found[0].group(1)}, starts on {page}"
+
+
+def _bookmarks(pdf: Pdf):
+    flat = []
+
+    def walk(items):
+        for item in items:
+            if isinstance(item, list):
+                walk(item)
+            else:
+                flat.append((item.title, pdf.reader.get_destination_page_number(item) + 1))
+
+    walk(pdf.reader.outline)
+    return flat
+
+
+@needs_pdf
+def test_pdf_srs_100_bookmark_for_each_contents_entry(struct_pdf):
+    """MELLON-PDF-SRS-100: the exported PDF has a bookmark for each section the
+    table of contents lists, opening the page the section starts on."""
+    marks = [(re.sub(r"^[\d.]+", "", squash(t)), page) for t, page in _bookmarks(struct_pdf)]
+    for num, title in STRUCT_SECTIONS:
+        page = _section_page(struct_pdf, num, title)
+        assert (squash(title), page) in marks, f"no bookmark for {num} {title} on page {page}: {marks}"
+
+
+@needs_pdf
+def test_pdf_srs_101_header_shows_id_title_revision_and_date(struct_pdf):
+    """MELLON-PDF-SRS-101: each page after the cover shows in its header the
+    document ID, the title, the revision the cover shows and the date."""
+    assert STRUCT_REV in squash(struct_pdf.texts[0]), "precondition: the cover shows the revision"
+    for index in range(1, len(struct_pdf.pages)):
+        header = " ".join(header_texts(struct_pdf, index))
+        assert re.search(r"\bDOC\b(?!-)", header), f"page {index + 1}: no document ID in {header!r}"
+        assert squash("Blind Title").lower() in squash(header).lower(), f"page {index + 1}: no title in {header!r}"
+        assert STRUCT_REV in squash(header), f"page {index + 1}: no revision in {header!r}"
+        assert "2026-03-14" in header, f"page {index + 1}: no date in {header!r}"
+
+
+@needs_pdf
+def test_pdf_srs_105_search_finds_each_place_an_id_is_shown(struct_pdf):
+    """MELLON-PDF-SRS-105: a search for an object ID finds each place the PDF
+    shows it: DOC-11's own entry, its Traceability row, and the 40 places a
+    description names it (some at a line end)."""
+    text = " ".join(struct_pdf.texts)
+    text = re.sub(r"\s+", " ", text)
+    expected = STRUCT_MENTIONS + 2
+    assert len(id_positions(text, "DOC-11")) == expected, (
+        f"search finds DOC-11 {len(id_positions(text, 'DOC-11'))} times, the PDF shows it {expected} times"
+    )
+
+
+@needs_pdf
+def test_pdf_srs_109_objects_in_outline_order(struct_pdf):
+    """MELLON-PDF-SRS-109: the objects are shown in outline order, each object
+    before its sub-objects, not in object ID order."""
+    body = _body(struct_pdf)
+    trace = body.find("Traceability")
+    body = body[: trace if trace > 0 else len(body)]
+    markers = [
+        "AlphaSection",
+        "DOC-30",
+        "AlphaSubOne",
+        "DOC-11",
+        "AlphaSubSecond",
+        "AlphaDeepThird",
+        "DOC-14",
+        "BetaSection",
+        "BetaSubOne",
+        "DOC-5",
+        "BetaSubSecond",
+        "DOC-23",
+        "DOC-40",
+    ]
+    positions = []
+    for m in markers:
+        found = id_positions(body, m) if m.startswith("DOC-") else [body.find(m)]
+        assert found and found[0] >= 0, f"{m} isn't shown"
+        positions.append(found[0])
+    assert positions == sorted(positions), [m for _, m in sorted(zip(positions, markers))]
+
+
+GEN_WORDS = [
+    "alder", "birch", "cedar", "hazel", "larch", "maple", "olive", "rowan", "sumac", "holly",
+    "aspen", "elder", "pecan", "mango", "lemon", "guava", "acorn", "briar", "clove", "daisy",
+]
+
+
+def _generated_outline(seed: int):
+    """A seeded random outline of headings (under headings only, up to level 3)
+    and requirements (nested up to 2 deep), with shuffled object numbers.
+    Returns (outline, markers in outline order, {heading title: number})."""
+    import random
+
+    rng = random.Random(seed)
+    numbers = list(range(1, 201))
+    rng.shuffle(numbers)
+    headings = [0]
+    words = iter(rng.sample(GEN_WORDS, len(GEN_WORDS)))
+    markers: list[str] = []
+    expected: dict[str, str] = {}
+
+    def requirement(depth: int) -> dict:
+        oid = f"DOC-{numbers.pop()}"
+        markers.append(oid)
+        kids = [requirement(depth + 1) for _ in range(rng.randint(0, 1))] if depth < 2 else []
+        return obj(oid, f"Body text {len(markers)}.", children=tuple(kids))
+
+    def section(level: int, number: str) -> dict:
+        title = f"Part {next(words)}"
+        oid = f"DOC-{numbers.pop()}"
+        headings[0] += 1
+        markers.append(squash(title))
+        if level <= 2:
+            expected[title] = number
+        kids, sub = [], 0
+        for _ in range(rng.randint(1, 3)):
+            if level < 3 and rng.random() < 0.5 and headings[0] < 15:
+                sub += 1
+                kids.append(section(level + 1, f"{number}.{sub}"))
+            else:
+                kids.append(requirement(0))
+        return heading(oid, title, *kids)
+
+    outline = []
+    top = 0
+    for _ in range(3):
+        if rng.random() < 0.25:
+            outline.append(requirement(0))
+        top += 1
+        outline.append(section(1, str(top)))
+    return outline, markers, expected
+
+
+@pytest.fixture(scope="module", params=[11, 22, 33], ids=["seed11", "seed22", "seed33"])
+def generated_pdf(request, tmp_path_factory):
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    outline, markers, expected = _generated_outline(request.param)
+    root = tmp_path_factory.mktemp(f"generated{request.param}") / "repo"
+    write_doc(root, "DOC", outline)
+    git_commit_all(root, "doc")
+    out = root.parent / "generated.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    return Pdf(out), markers, expected
+
+
+@needs_pdf
+def test_pdf_srs_109_generated_outlines_shown_in_outline_order(generated_pdf):
+    """MELLON-PDF-SRS-109 (T11): for seeded random outlines, with object numbers
+    shuffled, each object is shown in outline order, before its sub-objects."""
+    pdf, markers, _ = generated_pdf
+    body = _body(pdf)
+    positions = []
+    for m in markers:
+        found = id_positions(body, m) if m.startswith("DOC-") else [body.find(m)]
+        assert found and found[0] >= 0, f"{m} isn't shown"
+        positions.append(found[0])
+    assert positions == sorted(positions), [m for _, m in sorted(zip(positions, markers))]
+
+
+@needs_pdf
+def test_pdf_srs_114_generated_outlines_number_top_two_heading_levels(generated_pdf):
+    """MELLON-PDF-SRS-114 (T11): for seeded random outlines, the headings of the
+    top two outline levels are numbered in outline order, 1, 2 at the top level
+    and k.1, k.2 under heading k; objects that aren't headings take no number."""
+    pdf, markers, expected = generated_pdf
+    for title, number in expected.items():
+        assert _section_page(pdf, number, title), f"heading {title!r} isn't numbered {number}"
+    numbered = re.compile(r"^\d+(\.\d+)*\.?\s")
+    for line in (l.strip() for t in pdf.texts[2:] for l in t.splitlines()):
+        for oid in (m for m in markers if m.startswith("DOC-")):
+            if id_positions(line, oid):
+                assert not numbered.match(line), f"{oid} is numbered: {line!r}"
+
+
+@needs_pdf
+def test_pdf_srs_114_top_two_heading_levels_numbered(struct_pdf):
+    """MELLON-PDF-SRS-114: the headings of the top two outline levels are
+    numbered in outline order 1, 1.1, 1.2, 2, 2.1, 2.2."""
+    for num, title in STRUCT_SECTIONS[:-1]:
+        assert _section_page(struct_pdf, num, title), f"no heading {num} {title}"
+
+
+@needs_pdf
+def test_pdf_srs_114_objects_other_than_headings_have_no_number(struct_pdf):
+    """MELLON-PDF-SRS-114: an object that isn't a heading gets no number."""
+    numbered = re.compile(r"^\d+(\.\d+)*\.?\s")
+    starts = {"DOC-30": "Alpha first", "DOC-11": "Alpha sub one", "DOC-14": "Deep requirement", "DOC-23": "Beta sub second"}
+    lines = [l.strip() for t in struct_pdf.texts[2:] for l in t.splitlines()]
+    trace = next(i for i, l in enumerate(lines) if squash(l).endswith("Traceability"))
+    for line in lines[:trace]:
+        for oid, start in starts.items():
+            if id_positions(line, oid) or start in line:
+                assert not numbered.match(line), f"{oid} is numbered: {line!r}"
+
+
+@needs_pdf
+def test_pdf_srs_119_object_id_above_description(struct_pdf):
+    """MELLON-PDF-SRS-119: an object that isn't a heading is shown with its ID
+    above its description."""
+    for oid, start in (("DOC-30", "Alpha first"), ("DOC-23", "Beta sub second")):
+        index = struct_pdf.page_of(start, 2)
+        assert index is not None
+        frags = struct_pdf.fragments(index)
+        id_y = [y for t, _, y in frags if id_positions(t, oid)]
+        desc_y = [y for t, _, y in frags if start in t]
+        assert id_y and desc_y, f"{oid}: ID or description not found on page {index + 1}"
+        assert max(id_y) > max(desc_y), f"{oid}: the ID isn't above the description"
+
+
+def pdf_trace_section(pdf: Pdf) -> str:
+    text = squash(strip_page_numbers("\n".join(pdf.texts[2:])))
+    starts = [m.end() for m in re.finditer(r"3\.?Traceability", text)]
+    assert starts, "no Traceability section"
+    return text[starts[0] :]
+
+
+@needs_pdf
+def test_pdf_srs_161_traceability_last_numbered_section_on_a_new_page(struct_pdf):
+    """MELLON-PDF-SRS-161: a document with a parent ends with a numbered
+    Traceability section that starts on a new page."""
+    page = _section_page(struct_pdf, "3", "Traceability")
+    assert page is not None, "no numbered Traceability section"
+    index = page - 1
+    frags = struct_pdf.fragments(index)
+    title_y = max(y for t, _, y in frags if "Traceability" in squash(t))
+    header = set(header_texts(struct_pdf, index))
+    above = [t.strip() for t, _, y in frags if y > title_y + 1 and t.strip() not in header]
+    assert not [t for t in above if not re.fullmatch(r"3\.?", t)], f"text above the section title: {above}"
+    after = pdf_trace_section(struct_pdf)
+    for _, title in STRUCT_SECTIONS[:-1]:
+        assert squash(title) not in after, f"section {title} comes after Traceability"
+    for start in ("Alphafirst", "Deeprequirement", "Betasubsecond", "pad1pad2"):
+        assert start not in after, f"object text {start} comes after Traceability"
+
+
+@needs_pdf
+def test_pdf_srs_167_rows_in_outline_order_with_each_parent_id(struct_pdf):
+    """MELLON-PDF-SRS-167: the Traceability section lists each object other than
+    a heading, in outline order, with the IDs of the parent objects it links
+    to (both of two), or 'none'."""
+    section = pdf_trace_section(struct_pdf)
+    rows = [id_positions(section, oid) for oid in STRUCT_REQS]
+    assert all(rows), f"objects missing from the list: {[o for o, r in zip(STRUCT_REQS, rows) if not r]}"
+    starts = [r[0] for r in rows]
+    assert starts == sorted(starts), "rows aren't in outline order"
+    for oid in STRUCT_HEADINGS:
+        assert not id_positions(section, oid), f"heading {oid} is listed"
+    row = dict(zip(STRUCT_REQS, [section[a:b] for a, b in zip(starts, starts[1:] + [len(section)])]))
+    assert id_positions(row["DOC-30"], "PAR-1") and id_positions(row["DOC-30"], "PAR-3"), row["DOC-30"]
+    assert "none" in row["DOC-14"].lower(), row["DOC-14"]
+    assert "none" in row["DOC-23"].lower(), row["DOC-23"]
+
+
+@needs_pdf
+def test_pdf_srs_170_uncovered_parent_objects_in_parent_outline_order(struct_pdf):
+    """MELLON-PDF-SRS-170: the uncovered objects of the parent are listed in the
+    parent's outline order (PAR-6, PAR-2, PAR-7), not in ID order."""
+    section = pdf_trace_section(struct_pdf)
+    found = {oid: id_positions(section, oid) for oid in ("PAR-6", "PAR-2", "PAR-7")}
+    assert all(len(p) == 1 for p in found.values()), found
+    order = sorted(found, key=lambda oid: found[oid][0])
+    assert order == ["PAR-6", "PAR-2", "PAR-7"], order
+
+
+@pytest.fixture(scope="module")
+def attrs_pdfs(tmp_path_factory):
+    """The attributes document exported with no attribute list and with ['rationale']."""
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = _attrs_repo(tmp_path_factory.mktemp("attrs") / "repo")
+    default, rationale = root.parent / "default.pdf", root.parent / "rationale.pdf"
+    results = mcp_calls(
+        root,
+        [
+            ("export_document", {"doc_id": "DOC", "out_path": str(default)}),
+            ("export_document", {"doc_id": "DOC", "out_path": str(rationale), "attrs": ["rationale"]}),
+        ],
+    )
+    assert all(r["ok"] for r in results), results
+    return {"default": Pdf(default), "rationale": Pdf(rationale)}
+
+
+@needs_pdf
+def test_pdf_srs_125_export_tool_default_attributes(attrs_pdfs):
+    """MELLON-PDF-SRS-125: with no attribute list, the export tool's PDF shows
+    the attributes type, status, priority and verification-method, in that
+    order, and no other (not rationale, not req-type)."""
+    _check_default_attributes(attrs_pdfs["default"])
+
+
+@needs_pdf
+def test_pdf_srs_122_attribute_without_value_left_out(attrs_pdfs):
+    """MELLON-PDF-SRS-122: below the description, the PDF shows each chosen
+    attribute the object has a value for (type, status), and leaves out one it
+    has no value for (priority, verification-method: no label, no empty value)."""
+    pdf = attrs_pdfs["default"]
+    part = _object_text(pdf, "DOC-2", None)
+    desc = part.find("Secondobjectwords.")
+    assert desc >= 0
+    after = part[desc:]
+    assert "Requirement" in after and "StatApproved" in after, f"type or status not shown below: {after!r}"
+    assert "priority" not in part.lower(), "a priority label is shown for an object without a priority"
+    assert "verification" not in part.lower(), "a verification-method label is shown without a value"
+    index = pdf.page_of("Second object words.", 2)
+    frags = pdf.fragments(index)
+    desc_y = max(y for t, _, y in frags if "Second object" in t)
+    status_y = [y for t, _, y in frags if "StatApproved" in t]
+    assert status_y and max(status_y) < desc_y, "status isn't below the description"
+
+
+@needs_pdf
+def test_pdf_srs_126_export_tool_shows_only_the_listed_attributes(attrs_pdfs):
+    """MELLON-PDF-SRS-126: given the list ['rationale'], the PDF shows rationale
+    and none of the object's other attributes."""
+    part = _object_text(attrs_pdfs["rationale"], "DOC-1", "DOC-2")
+    assert "RatUnique" in part, "rationale isn't shown"
+    for name, value in (("status", "StatDraft"), ("priority", "PrioHigh"), ("verification", "VmTest"), ("req-type", "RtFunctional")):
+        assert value not in part and name not in part.lower(), f"{name} is shown"
+    assert not re.search(r"type(?!-)", part.lower().replace("req-type", "")), "type is shown"
+
+
+# ==========================================================================
+# Text
+# ==========================================================================
+
+CHAR_CASES = {
+    "abcd": "abcd",
+    "efgh": "efgh",
+    "ijkl": "ijkl",
+    "mnop": "mnop",
+    "qrst": "qrst",
+    "uvwx": "uvwx",
+    "yz": "yzyz",
+    "ABCD": "ABCD",
+    "EFGH": "EFGH",
+    "IJKL": "IJKL",
+    "MNOP": "MNOP",
+    "QRST": "QRST",
+    "UVWX": "UVWX",
+    "YZ": "YZYZ",
+    "digits-0123": "0123",
+    "digits-4567": "4567",
+    "digits-89": "8989",
+    "underscore": "k_k",
+    "less-than": "k<k",
+    "greater-than": "k>k",
+    "percent": "k%k",
+    "ampersand": "k&k",
+    "tilde": "k~k",
+    "at": "k@k",
+    "equals": "k=k",
+    "open-paren": "k(k",
+    "close-paren": "k)k",
+    "slash": "k/k",
+    "colon": "k:k",
+    "semicolon": "k;k",
+    "comma": "k,k",
+    "full-stop": "k.k",
+    "exclamation": "k!k",
+    "single-hyphen": "k-k",
+}
+
+
+@pytest.fixture(scope="module")
+def chars_text(tmp_path_factory):
+    """Squashed text between the markers of a description holding each
+    character of MELLON-PDF-SRS-135."""
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = tmp_path_factory.mktemp("chars") / "repo"
+    desc = "BEGINMARK " + " ".join(CHAR_CASES.values()) + " ENDMARK"
+    write_doc(root, "DOC", [obj("DOC-1", desc)])
+    git_commit_all(root, "doc")
+    out = root.parent / "chars.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    text = squash(Pdf(out).text)
+    start, end = text.find("BEGINMARK"), text.find("ENDMARK")
+    assert 0 <= start < end, "the description's markers aren't shown"
+    return text[start + len("BEGINMARK") : end]
+
+
+@needs_pdf
+@pytest.mark.parametrize("case", list(CHAR_CASES), ids=list(CHAR_CASES))
+def test_pdf_srs_135_character_shown_as_held(chars_text, case):
+    """MELLON-PDF-SRS-135: in a description, the PDF shows each ASCII letter and
+    digit, each of _ < > % & ~ @ = ( ) / : ; , . ! and a single hyphen as the
+    document holds the character."""
+    token = CHAR_CASES[case]
+    assert token in chars_text, f"{token!r} isn't shown as held: {chars_text!r}"
+
+
+@needs_pdf
+def test_pdf_srs_135_description_shown_character_for_character(chars_text):
+    """MELLON-PDF-SRS-135: the whole description, whitespace aside, is shown
+    character for character as held."""
+    assert chars_text == squash(" ".join(CHAR_CASES.values()))
+
+
+@needs_pdf
+@pytest.mark.parametrize("start", ["[", "*"], ids=["bracket", "star"])
+def test_pdf_srs_135_letters_after_a_line_starting_with_bracket_or_star(tmp_path, start):
+    """MELLON-PDF-SRS-135 (rationale CF-P24): a description line that starts with
+    [ or * after a line break still shows its letters and digits as held."""
+    root = tmp_path / "repo"
+    write_doc(root, "DOC", [obj("DOC-1", f"First line here\n{start}Second line 42 here\nThird line")])
+    git_commit_all(root, "doc")
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    text = squash(Pdf(out).text)
+    for part in ("Firstlinehere", "Secondline42here", "Thirdline"):
+        assert part in text, f"{part!r} isn't shown"
+
+
+# ==========================================================================
+# Tables
+# ==========================================================================
+
+TABLE_HEADER_ROWS = [(True, ["HdrOneA", "HdrOneB"]), (True, ["HdrSecA", "HdrSecB"])]
+
+
+TABLE_BODY_ROWS = [(False, [f"B{i:03d}a", f"B{i:03d}b"]) for i in range(1, 81)]
+
+
+SPLIT_BODY_ROWS = [(False, [f"S{i:03d}a", f"S{i:03d}b"]) for i in range(1, 81)]
+
+
+@pytest.fixture(scope="module")
+def tables_pdf(tmp_path_factory):
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = tmp_path_factory.mktemp("tables") / "repo"
+    grid = [(False, [f"R{r}C{c}" for c in (1, 2, 3)]) for r in (1, 2, 3)]
+
+    def one_column(align, digit):
+        return {"cols": (align,), "rows": [(False, [digit]), (False, [digit * 8])]}
+
+    write_doc(
+        root,
+        "DOC",
+        [
+            obj("DOC-1", "Grid caption", type="Table", table={"cols": ("left", "left", "left"), "rows": grid}),
+            obj("DOC-2", "Left caption", type="Table", table=one_column("left", "1")),
+            obj("DOC-3", "Centre caption", type="Table", table=one_column("center", "2")),
+            obj("DOC-4", "Right caption", type="Table", table=one_column("right", "3")),
+            obj("DOC-5", "Long caption", type="Table", table={"cols": ("left", "left"), "rows": TABLE_HEADER_ROWS + TABLE_BODY_ROWS}),
+            obj(
+                "DOC-6",
+                "Split caption",
+                type="Table",
+                table={
+                    "cols": ("left", "left"),
+                    "rows": [(True, ["LeadA", "LeadB"]), (False, ["MidA", "MidB"]), (True, ["LaterA", "LaterB"])] + SPLIT_BODY_ROWS,
+                },
+            ),
+        ],
+    )
+    git_commit_all(root, "doc")
+    out = root.parent / "tables.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    return Pdf(out)
+
+
+@needs_pdf
+def test_pdf_srs_141_table_rows_and_cells_in_table_order(tables_pdf):
+    """MELLON-PDF-SRS-141: an object's table is shown with each of its rows and
+    cells, in the table's order (row by row)."""
+    body = _body(tables_pdf)
+    cells = [f"R{r}C{c}" for r in (1, 2, 3) for c in (1, 2, 3)]
+    positions = [body.find(c) for c in cells]
+    assert all(p >= 0 for p in positions), [c for c, p in zip(cells, positions) if p < 0]
+    assert positions == sorted(positions), "the cells aren't in the table's order"
+
+
+def _column_offset(pdf: Pdf, digit: str) -> float:
+    """x of the one-digit cell minus x of the eight-digit cell of a one-column table."""
+    for index in range(2, len(pdf.pages)):
+        frags = pdf.fragments(index)
+        narrow = [x for t, x, _ in frags if t.strip() == digit]
+        wide = [x for t, x, _ in frags if t.strip() == digit * 8]
+        if narrow and wide:
+            return narrow[0] - wide[0]
+    raise AssertionError(f"the {digit} table isn't shown")
+
+
+@needs_pdf
+def test_pdf_srs_146_cells_aligned_as_the_column_says(tables_pdf):
+    """MELLON-PDF-SRS-146: cells are aligned as their column's alignment says.
+    In one-column tables of a 1-digit and an 8-digit cell, the narrow cell starts
+    where the wide one does (left), 3.5 digits in (centre), 7 digits in (right)."""
+    left, centre, right = (_column_offset(tables_pdf, d) for d in "123")
+    assert abs(left) < 0.5, f"left column: narrow cell starts {left:.1f} pt from the wide one"
+    assert right > 5, f"right column: narrow cell starts {right:.1f} pt from the wide one"
+    assert abs(centre / right - 0.5) < 0.1, f"centre column offset {centre:.1f} pt, right {right:.1f} pt"
+
+
+def _continuation_pages(pdf: Pdf, body_prefix: str):
+    """For each page after the first that shows body rows starting with
+    `body_prefix`: (page index, fragments)."""
+    pages = []
+    for index in range(2, len(pdf.pages)):
+        frags = pdf.fragments(index)
+        if any(re.match(rf"{body_prefix}\d{{3}}a", t.strip()) for t, _, _ in frags):
+            pages.append((index, frags))
+    return pages[1:]
+
+
+@needs_pdf
+def test_pdf_srs_147_leading_header_rows_repeat_on_each_page(tables_pdf):
+    """MELLON-PDF-SRS-147: a table's leading header rows are repeated at the top
+    of each page the table continues onto (2 header rows, 80 body rows)."""
+    pages = _continuation_pages(tables_pdf, "B")
+    assert pages, "precondition: the table continues onto another page"
+    for index, frags in pages:
+        first_body = max(y for t, _, y in frags if re.match(r"B\d{3}a", t.strip()))
+        for header in ("HdrOneA", "HdrSecA"):
+            ys = [y for t, _, y in frags if header in squash(t)]
+            assert ys and max(ys) > first_body, f"page {index + 1}: header row {header} isn't above the rows"
+
+
+@needs_pdf
+def test_pdf_srs_147_leading_header_row_repeats_when_a_body_row_follows_it(tables_pdf):
+    """MELLON-PDF-SRS-147: with rows header, body, header, then 80 body rows, the
+    leading header row is repeated at the top of each page the table continues
+    onto."""
+    pages = _continuation_pages(tables_pdf, "S")
+    assert pages, "precondition: the table continues onto another page"
+    for index, frags in pages:
+        first_body = max(y for t, _, y in frags if re.match(r"S\d{3}a", t.strip()))
+        ys = [y for t, _, y in frags if "LeadA" in squash(t)]
+        assert ys and max(ys) > first_body, f"page {index + 1}: the leading header row isn't repeated"
+
+
+# ==========================================================================
+# Traceability section
+# ==========================================================================
+
+
+@pytest.fixture(scope="module")
+def two_parents_section(tmp_path_factory):
+    """DOC with parents UPA (3 objects) and UPB (5 objects): DOC-1 -> UPA-1,
+    DOC-2 -> UPB-1, DOC-3 -> UPA-2 and UPB-1, DOC-4 none, DOC-0 a heading."""
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    root = tmp_path_factory.mktemp("parents") / "repo"
+    write_doc(root, "UPA", [obj(f"UPA-{n}", f"Upper a {n}.") for n in (1, 2, 3)])
+    write_doc(root, "UPB", [obj(f"UPB-{n}", f"Upper b {n}.") for n in (1, 2, 3, 4, 5)])
+    ack = short(git_commit_all(root, "parents"))
+    write_doc(
+        root,
+        "DOC",
+        [
+            heading(
+                "DOC-0",
+                "Only Section",
+                obj("DOC-1", "Links to a.", links=[("UPA", "UPA-1", ack)]),
+                obj("DOC-2", "Links to b.", links=[("UPB", "UPB-1", ack)]),
+                obj("DOC-3", "Links to both.", links=[("UPA", "UPA-2", ack), ("UPB", "UPB-1", ack)]),
+                obj("DOC-4", "Links nowhere."),
+            )
+        ],
+        parents=("UPA", "UPB"),
+    )
+    git_commit_all(root, "doc")
+    out = root.parent / "parents.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    pdf = Pdf(out)
+    lines = strip_page_numbers("\n".join(pdf.texts[2:])).splitlines()
+    start = next(i for i, l in enumerate(lines) if squash(l).endswith("Traceability"))
+    return lines[start:]
+
+
+@needs_pdf
+def test_pdf_srs_163_outgoing_coverage_counts_an_object_once(two_parents_section):
+    """MELLON-PDF-SRS-163: the Traceability section states the direct outgoing
+    coverage by the parents: 3 of the 4 counted objects (DOC-3, linked to both
+    parents, counts once; the heading isn't counted)."""
+    text = " ".join(two_parents_section)
+    assert re.search(r"(?<![\d.])3 of 4(?![\d])", text), text
+    assert not re.search(r"(?<![\d.])4 of [45](?![\d])", text), text
+
+
+@needs_pdf
+def test_pdf_srs_164_incoming_coverage_for_each_parent(two_parents_section):
+    """MELLON-PDF-SRS-164: for each parent, the Traceability section states the
+    parent's direct incoming coverage by the document: UPA 2 of 3, UPB 1 of 5."""
+    for parent, count in (("UPA", "2 of 3"), ("UPB", "1 of 5")):
+        lines = [l for l in two_parents_section if re.search(rf"\b{parent}\b(?!-)", l) and count in l]
+        assert lines, f"no line states {parent}: {count}: {two_parents_section}"
+
+
+@needs_pdf
+def test_pdf_srs_172_export_tool_names_a_parent_that_didnt_load(tmp_path):
+    """MELLON-PDF-SRS-172: if a parent document has a load error, the export
+    succeeds and the Traceability section names the parent and states that it
+    didn't load (export tool)."""
+    root = _broken_parent_repo(tmp_path / "repo")
+    out = tmp_path / "out.pdf"
+    res = mcp_export(root, "DOC", out)
+    assert res["ok"], res
+    _check_names_unloaded_parent(Pdf(out))

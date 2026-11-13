@@ -585,3 +585,127 @@ def test_trace_srs_154_no_control_acknowledges_more_than_one_objects_links(tmp_p
     assert too_many == {}, f"controls that acknowledged more than one object's links: {too_many}"
     if selected:
         assert any(v == {("CHILD", "CHILD-1")} for v in results.values()), "setup: no control acknowledged CHILD-1"
+
+
+# MELLON-PDF-SRS blind tests
+from tests.pdf_support import (  # noqa: E402
+    _linked_repo,
+    git_commit_all,
+    gui,  # noqa: F401, F811 -- fixture
+    id_positions,
+    obj,
+    pdf_standin,
+    write_doc,
+)
+
+
+def test_pdf_srs_45_warning_before_save_dialog_for_a_broken_link(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-45: when the Export action starts on a document whose only
+    link problem is a broken outgoing link, the export warning is shown before
+    the save dialog, and it is about that link."""
+    root = _linked_repo(tmp_path / "repo", broken=True)
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "export"
+    gui.export(win, None)
+    assert gui.kinds()[:2] == ["box", "save"], f"expected the warning, then the save dialog: {gui.kinds()}"
+    warning = gui.events[0]
+    lines = (warning["text"] + "\n" + warning["info"] + "\n" + warning["detail"]).splitlines()
+    assert any("DOC-2" in line and "PAR-2" in line for line in lines), f"the broken link isn't listed: {lines}"
+
+
+def test_pdf_srs_45_no_warning_when_every_link_is_ok(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-45, other side: a document whose outgoing links are all OK
+    goes straight to the save dialog, with no export warning."""
+    root = _linked_repo(tmp_path / "repo", broken=False)
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.export(win, None)
+    assert gui.kinds()[:1] == ["save"], f"expected the save dialog first: {gui.kinds()}"
+    assert "box" not in gui.kinds(), "a warning was shown for a document with OK links only"
+
+
+def _many_suspects_repo(root: Path, count: int) -> tuple[Path, list[str]]:
+    targets = [f"PAR-{100 + i}" for i in range(1, count + 1)]
+    write_doc(root, "PAR", [obj(t, f"Parent {t}.") for t in targets])
+    git_commit_all(root, "parent")
+    write_doc(
+        root,
+        "DOC",
+        [obj(f"DOC-{i}", f"Child {i}.", links=[("PAR", t, None)]) for i, t in enumerate(targets, 1)],
+        parents=("PAR",),
+    )
+    git_commit_all(root, "doc")
+    return root, targets
+
+
+@pytest.mark.parametrize("count", [10, 11, 25], ids=["n10", "n11", "n25"])
+def test_pdf_srs_49_warning_lists_at_most_10_links(gui, tmp_path, monkeypatch, count):
+    """MELLON-PDF-SRS-49: the export warning lists at most 10 of the document's
+    suspect and broken outgoing links: all of them up to 10, and 10 of 11 or 25."""
+    root, targets = _many_suspects_repo(tmp_path / "repo", count)
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "cancel"
+    gui.export(win, None)
+    boxes = gui.of("box")
+    assert boxes, "no export warning was shown"
+    shown = boxes[0]["text"] + "\n" + boxes[0]["info"] + "\n" + boxes[0]["detail"]
+    listed = [t for t in targets if id_positions(shown, t)]
+    assert len(listed) == min(count, 10), f"{len(listed)} of {count} links listed"
+
+
+def _suspect_repo(root: Path) -> Path:
+    write_doc(root, "PAR", [obj("PAR-1", "Parent one.")])
+    git_commit_all(root, "parent")
+    write_doc(root, "DOC", [obj("DOC-1", "One.", links=[("PAR", "PAR-1", None)])], parents=("PAR",))
+    git_commit_all(root, "doc")
+    return root
+
+
+def test_pdf_srs_52_warning_offers_export_anyway_and_cancel(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-52: the export warning offers Export anyway and Cancel."""
+    root = _suspect_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "cancel"
+    gui.export(win, None)
+    boxes = gui.of("box")
+    assert boxes, "no export warning was shown"
+    assert "Export anyway" in boxes[0]["buttons"], boxes[0]["buttons"]
+    assert "Cancel" in boxes[0]["buttons"], boxes[0]["buttons"]
+
+
+def test_pdf_srs_52_cancel_is_the_default_button(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-52: Cancel is the export warning's default button."""
+    root = _suspect_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "cancel"
+    gui.export(win, None)
+    assert gui.of("box")[0]["default"] == "Cancel"
+
+
+def test_pdf_srs_52_enter_on_the_warning_ends_the_export(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-52 (with MELLON-PDF-SRS-37): pressing Enter on the export
+    warning presses Cancel: the export ends with no save dialog and no file."""
+    root = _suspect_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    out_dir = tmp_path / "exports"
+    out_dir.mkdir()
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "enter"
+    gui.export(win, out_dir / "doc.pdf")
+    assert gui.kinds() == ["box"], f"Enter didn't end the export: {gui.kinds()}"
+    assert list(out_dir.iterdir()) == []
+
+
+def test_pdf_srs_52_export_anyway_goes_on_to_the_save_dialog(gui, tmp_path, monkeypatch):
+    """MELLON-PDF-SRS-52 (with MELLON-PDF-SRS-22): Export anyway goes on to the
+    save dialog."""
+    root = _suspect_repo(tmp_path / "repo")
+    monkeypatch.setenv("MELLON_TECTONIC", str(pdf_standin(tmp_path)))
+    win = gui.open(root, "DOC")
+    gui.warning_choice = "export"
+    gui.export(win, None)
+    assert gui.kinds()[:2] == ["box", "save"], gui.kinds()

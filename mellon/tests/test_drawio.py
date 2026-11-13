@@ -461,3 +461,190 @@ def test_edit_srs_246_path_is_last_place(tmp_path, monkeypatch):
     assert find_drawio() is None
     _fake_program(places["path"])
     assert _same(find_drawio(), places["path"])
+
+
+# MELLON-PDF-SRS blind tests
+import re  # noqa: E402
+from xml.sax.saxutils import escape as _xml_escape  # noqa: E402
+
+from mellon.drawio import find_drawio, is_drawio_svg  # noqa: E402
+from tests.pdf_support import (  # noqa: E402
+    PDF_PROGRAM,
+    Pdf,
+    _body,
+    drawing,
+    git_commit_all,
+    horizontal_rules,
+    mcp_export,
+    needs_pdf,
+    obj,
+    plain_svg,
+    squash,
+    write_doc,
+)
+
+
+DRAWIO = find_drawio()
+
+
+needs_drawio = pytest.mark.skipif(
+    DRAWIO is None, reason="draw.io desktop wasn't found: install it or set MELLON_DRAWIO"
+)
+
+
+def drawio_svg(*pages: tuple[str, str], width: int = 160, height: int = 60) -> bytes:
+    """A draw.io figure whose diagram has one figure page per (name, label),
+    each page one box of width x height holding the label."""
+    diagrams = []
+    for i, (name, label) in enumerate(pages):
+        diagrams.append(
+            f'<diagram id="p{i}" name="{name}"><mxGraphModel><root>'
+            f'<mxCell id="0"/><mxCell id="1" parent="0"/>'
+            f'<mxCell id="b{i}" value="{label}" style="rounded=0;whiteSpace=wrap;html=1;" '
+            f'vertex="1" parent="1"><mxGeometry x="0" y="0" width="{width}" height="{height}" '
+            f'as="geometry"/></mxCell></root></mxGraphModel></diagram>'
+        )
+    mxfile = f'<mxfile host="Electron" pages="{len(pages)}">{"".join(diagrams)}</mxfile>'
+    first_label = pages[0][1]
+    # Double-quoted, as draw.io writes it: draw.io reads no diagram from a
+    # single-quoted content attribute.
+    content = _xml_escape(mxfile, {'"': "&quot;"})
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width + 2}px" height="{height + 2}px" '
+        f'viewBox="-0.5 -0.5 {width + 2} {height + 2}" content="{content}">'
+        f'<g><rect x="0" y="0" width="{width}" height="{height}" fill="#ffffff" stroke="#000000"/>'
+        f'<text x="10" y="30">{_xml_escape(first_label)}</text></g></svg>'
+    ).encode()
+
+
+# ==========================================================================
+# Figures (draw.io desktop and the PDF program)
+# ==========================================================================
+
+FIGURE_CAPTIONS = {
+    "DOC-3": "Caption of the multipage figure",
+    "DOC-1": "Caption of the drawio figure",
+    "DOC-5": "Caption of the tall figure",
+    "DOC-2": "Caption of the plain figure",
+    "DOC-4": "Caption of the wide figure",
+}  # in outline order
+
+
+@pytest.fixture(scope="module")
+def figures_export(tmp_path_factory):
+    if PDF_PROGRAM is None:
+        pytest.skip("the PDF program (tectonic) wasn't found: set MELLON_TECTONIC or put tectonic on PATH")
+    if DRAWIO is None:
+        pytest.skip("draw.io desktop wasn't found: install it or set MELLON_DRAWIO")
+    root = tmp_path_factory.mktemp("figures") / "repo"
+    figures = {
+        "DOC-3": drawio_svg(("Page-1", "PAGE-ONE"), ("Page-2", "PAGE-TWO")),
+        "DOC-1": drawio_svg(("Page-1", "ZORBLAX")),
+        "DOC-5": plain_svg(1000, 3000),
+        "DOC-2": plain_svg(240, 120),
+        "DOC-4": plain_svg(3000, 1000),
+    }
+    assert is_drawio_svg(figures["DOC-1"]) and is_drawio_svg(figures["DOC-3"])
+    assert not is_drawio_svg(figures["DOC-2"])
+    write_doc(root, "DOC", [obj(oid, caption, figure=figures[oid]) for oid, caption in FIGURE_CAPTIONS.items()])
+    git_commit_all(root, "doc")
+    out = root.parent / "figures.pdf"
+    res = mcp_export(root, "DOC", out, env={"MELLON_DRAWIO": DRAWIO})
+    assert res["ok"], res
+    return res, Pdf(out)
+
+
+@needs_pdf
+@needs_drawio
+def test_pdf_srs_149_figures_drawn_when_figure_program_found(figures_export):
+    """MELLON-PDF-SRS-149: with the figure program found and able to draw them,
+    the PDF draws each figure, draw.io and plain SVG alike: none reported as not
+    drawn, no placeholder, and the draw.io figure's label is in the PDF."""
+    res, pdf = figures_export
+    assert not res.get("unrendered_figures"), res
+    text = pdf.flat()
+    for oid in FIGURE_CAPTIONS:
+        assert f"{oid}.svg" not in text, f"a placeholder stands for {oid}'s figure"
+    assert "ZORBLAX" in text, "the draw.io figure's label isn't in the PDF"
+    drawn = sum(len(drawing(pdf, i)[1]) for i in range(len(pdf.pages)))
+    assert drawn == len(FIGURE_CAPTIONS), f"{drawn} figures drawn"
+
+
+def _captions(pdf: Pdf) -> list[tuple[int, str]]:
+    body = _body(pdf)
+    out = []
+    for oid, caption in FIGURE_CAPTIONS.items():
+        m = re.search(r"Figure(\d+):" + re.escape(squash(caption)), body)
+        out.append((int(m.group(1)) if m else -1, oid))
+    return out
+
+
+@needs_pdf
+@needs_drawio
+def test_pdf_srs_150_drawn_figures_numbered_from_1_in_order(figures_export):
+    """MELLON-PDF-SRS-150: drawn figures are numbered from 1 in the order they
+    appear (outline order, not ID order)."""
+    _, pdf = figures_export
+    numbers = [n for n, _ in _captions(pdf)]
+    assert numbers == list(range(1, len(FIGURE_CAPTIONS) + 1)), list(zip(numbers, FIGURE_CAPTIONS))
+
+
+@needs_pdf
+@needs_drawio
+def test_pdf_srs_152_figure_captioned_with_the_description_shown_once(figures_export):
+    """MELLON-PDF-SRS-152: on a requirement, the figure is shown in place of the
+    description, captioned 'Figure N:' and the description, which isn't shown
+    again."""
+    _, pdf = figures_export
+    body = _body(pdf)
+    for oid, caption in FIGURE_CAPTIONS.items():
+        assert re.search(r"Figure\d+:" + re.escape(squash(caption)), body), f"{oid}: no 'Figure N:' caption"
+        assert body.count(squash(caption)) == 1, f"{oid}: the description is shown more than once"
+
+
+def _text_area(pdf: Pdf, index: int) -> tuple[float, float, float, float]:
+    """(left, bottom, right, top) of page `index`'s text area: across the
+    page's long horizontal rules, between the header rule and the footer."""
+    rules = horizontal_rules(pdf, index)
+    assert rules, "precondition: the page draws rules that show the text width"
+    height = float(pdf.pages[index].mediabox.height)
+    left, right = min(r[0] for r in rules), max(r[1] for r in rules)
+    head = [r[2] for r in rules if r[2] > 0.75 * height]
+    top = max(head) if head else height
+    footer = [y for _, _, y in pdf.fragments(index) if y < 0.1 * height]
+    bottom = max(footer) if footer else 0.0
+    return left, bottom, right, top
+
+
+@needs_pdf
+@needs_drawio
+@pytest.mark.parametrize("oid, ratio", [("DOC-4", 3.0), ("DOC-5", 1 / 3)], ids=["wide", "tall"])
+def test_pdf_srs_154_large_figure_scaled_to_fit_keeping_proportions(figures_export, oid, ratio):
+    """MELLON-PDF-SRS-154: a figure wider (3000 x 1000 px) or taller
+    (1000 x 3000 px) than the text area is scaled down to fit the text area,
+    keeping its proportions."""
+    _, pdf = figures_export
+    caption = squash(FIGURE_CAPTIONS[oid])
+    index = next(i for i in range(2, len(pdf.pages)) if caption in squash(pdf.texts[i]))
+    forms = drawing(pdf, index)[1]
+    assert forms, f"precondition: {oid}'s figure is drawn on page {index + 1}"
+    candidates = [f for f in forms if abs((f["bbox"][2] - f["bbox"][0]) / (f["bbox"][3] - f["bbox"][1]) - ratio) / ratio < 0.02]
+    assert candidates, f"no drawn figure with the proportions {ratio:.2f}"
+    x0, y0, x1, y1 = candidates[0]["box"]
+    left, bottom, right, top = _text_area(pdf, index)
+    tol = 1.0
+    assert x0 >= left - tol and x1 <= right + tol, f"figure spans x {x0:.1f}..{x1:.1f}, text area {left:.1f}..{right:.1f}"
+    assert y0 >= bottom - tol and y1 <= top + tol, f"figure spans y {y0:.1f}..{y1:.1f}, text area {bottom:.1f}..{top:.1f}"
+    placed = (x1 - x0) / (y1 - y0)
+    assert abs(placed - ratio) / ratio < 0.02, f"placed with proportions {placed:.3f}, figure {ratio:.3f}"
+
+
+@needs_pdf
+@needs_drawio
+def test_pdf_srs_156_multipage_drawio_figure_draws_its_first_page(figures_export):
+    """MELLON-PDF-SRS-156: of a draw.io figure whose diagram has two figure
+    pages, the PDF draws the first: PAGE-ONE is in the PDF, PAGE-TWO isn't."""
+    _, pdf = figures_export
+    text = pdf.flat()
+    assert "PAGE-ONE" in text, "the first figure page isn't drawn"
+    assert "PAGE-TWO" not in text, "the second figure page is drawn"
