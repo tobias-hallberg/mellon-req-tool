@@ -912,3 +912,38 @@ def test_check_srs_90_102_each_load_error_has_file_and_line(tmp_path, monkeypatc
     errors = res["load_errors"]
     assert [(e["doc_id"], e["file"], e["line"]) for e in errors] == [
         ("CHILD", f"CHILD/{rel}", line_no)], errors
+
+
+def test_check_srs_147_149_one_reading_of_the_repository(tmp_path, capsys, monkeypatch):
+    """CV-CHECK-10, MELLON-CHECK-SRS-147 and -149: a file that changes while mellon-check
+    runs doesn't drop a document. CHILD has a suspect link; right after mellon-check first
+    reads the repository, a pull leaves conflict markers in CHILD's object file. Each
+    document is then either validated and scanned, or reported as a load error: CHILD's
+    suspect link is reported and the exit status is 1."""
+    import mellon.repo
+    import mellon.service.document as service_document
+
+    root = _blind_clean_check_repo(tmp_path / "repo")
+    _blind_write_doc(root, "PARENT", {
+        "PARENT-0": {"type": "Heading"},
+        "PARENT-1": {"type": "Requirement", "status": "Draft"},
+        "PARENT-2": {"type": "Requirement", "status": "Draft"},
+    }, descriptions={"PARENT-1": "Revised parent text"})
+    _blind_commit(root, "Revise PARENT-1")
+    child_obj = root / "CHILD" / "objects" / "CHILD-1.xml"
+    real_load_all = mellon.repo.load_all
+    reads = {"n": 0}
+
+    def load_all_then_pull(*args, **kwargs):
+        out = real_load_all(*args, **kwargs)
+        reads["n"] += 1
+        if reads["n"] == 1:
+            _blind_write(child_obj, child_obj.read_text(encoding="utf-8").replace(
+                "<description>", "<<<<<<< HEAD\n=======\n>>>>>>> other\n<description>"))
+        return out
+
+    monkeypatch.setattr(mellon.repo, "load_all", load_all_then_pull)
+    monkeypatch.setattr(service_document, "load_all", load_all_then_pull)
+    code, out, err = _blind_check_main(["--repo-root", str(root)], capsys, monkeypatch)
+    assert code == 1, (out, err)
+    assert any("CHILD" in line and "SUSPECT" in line for line in out.splitlines()), out

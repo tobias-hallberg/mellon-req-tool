@@ -15,11 +15,12 @@ import sys
 from pathlib import Path
 
 from . import __version__, git_ops
+from .git_ops import GitError
 from .link_index import from_scratch
 from .repo import DocLoadError
-from .service import DocumentService, ServiceError
-from .suspects import LinkState
-from .validator import link_not_allowed, link_target_missing
+from .service import DocumentService, ErrorCode, ServiceError
+from .suspects import LinkState, scan_document
+from .validator import link_not_allowed, link_target_missing, validate
 
 
 # Requirements: MELLON-CHECK-SRS-137
@@ -44,17 +45,25 @@ def _load_error_line(err: DocLoadError, root: Path) -> str:
 # Requirements: MELLON-CHECK-SRS-2, MELLON-CHECK-SRS-137, MELLON-CHECK-SRS-147,
 #   MELLON-CHECK-SRS-148, MELLON-CHECK-SRS-149
 def _problems(svc: DocumentService) -> tuple[list[str], int]:
-    """One line per problem, and the number of documents that loaded."""
+    """One line per problem, and the number of documents that loaded.
+
+    The repository is read once: each document is either validated and
+    scanned from that one reading, or reported as a load error, so a file
+    that changes while the check runs can't drop a document unreported.
+    """
     load_errors: list[DocLoadError] = []
-    validation = svc.validate_repo(load_errors=load_errors)
+    docs = svc.get_all_documents(load_errors=load_errors)
     lines = [_load_error_line(e, svc.repo_root) for e in load_errors]
-    for doc_id in sorted(validation):
-        lines += [f"{doc_id}: {e.code} {e.message}" for e in validation[doc_id]]
-    docs = svc.get_all_documents()
-    scan = svc.scan_suspects(None)
-    for doc_id in sorted(scan):
-        doc = docs[doc_id].document if doc_id in docs else None
-        for s in scan[doc_id]:
+    for doc_id in sorted(docs):
+        lines += [f"{doc_id}: {e.code} {e.message}" for e in validate(docs[doc_id].document)]
+    for doc_id in sorted(docs):
+        loaded = docs[doc_id]
+        doc = loaded.document
+        try:
+            statuses = scan_document(doc, loaded.folder)
+        except GitError as e:
+            raise ServiceError(ErrorCode.GIT, str(e)) from e
+        for s in statuses:
             if s.state is LinkState.OK:
                 continue
             # MELLON-CHECK-SRS-134: one line per check problem. A broken link
@@ -63,15 +72,13 @@ def _problems(svc: DocumentService) -> tuple[list[str], int]:
             # the document and its parents, MELLON-CHECK-SRS-33), gets no
             # second BROKEN line; one into a parent document has only the
             # BROKEN line.
-            if (
-                s.state is LinkState.BROKEN
-                and doc is not None
-                and (link_target_missing(doc, s.link) or link_not_allowed(doc, s.link))
+            if s.state is LinkState.BROKEN and (
+                link_target_missing(doc, s.link) or link_not_allowed(doc, s.link)
             ):
                 continue
             link = f"{s.source_id} -> {s.link.target_doc}/{s.link.target_id}"
             lines.append(f"{doc_id}: {s.state.name} {link} ({s.reason})")
-    return lines, len(validation)
+    return lines, len(docs)
 
 
 # Requirements: MELLON-CHECK-SRS-114, MELLON-CHECK-SRS-115, MELLON-CHECK-SRS-116,

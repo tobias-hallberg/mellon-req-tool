@@ -314,6 +314,14 @@ All notable changes to Mellon. The format follows
   list, where it used to show the first ten and "… and N more"
   (`MELLON-CHECK-SRS-79`).
 
+- **`mellon-check` reads the repository once.** It used to read it three
+  times (to validate, to list, to scan); a file that changed in between,
+  such as during a pull, could leave a document validated clean and then
+  skipped by the scan without a word, so the check could pass with a load
+  error and suspect links. Each document is now validated and scanned from
+  the one reading, or reported as a load error (`MELLON-CHECK-SRS-147`,
+  `-149`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**
