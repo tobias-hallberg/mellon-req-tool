@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-64">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_100_bookmark_for_each_contents_entry</attr>
+  <description>Same document; read the PDF's bookmarks. Expected: one bookmark per table of contents entry, with the same titles, each opening the section's page. Needs the PDF program.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-51">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_rendered_figure_in_card_takes_description_as_caption
+tests/test_export.py::test_render_latex_figure_caption_is_one_escaped_line
+tests/test_drawio.py::test_pdf_srs_152_figure_captioned_with_the_description_shown_once</attr>
+  <description>Export a requirement whose figure is drawn, with the description 'The system shall do X.', then with the description 'Signal flow &amp; timing' and a blank line and '(100% load)'. Expected: the figure takes the description's place, captioned with the description on one line; the description isn't printed again, and the attributes follow the figure.</description>
+</object>

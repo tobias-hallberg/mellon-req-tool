@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-73">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_drawio.py::test_pdf_srs_156_multipage_drawio_figure_draws_its_first_page</attr>
+  <description>With draw.io desktop, export a draw.io figure with two pages labelled PAGE-ONE and PAGE-TWO. Expected: the PDF's text holds PAGE-ONE and not PAGE-TWO. Needs draw.io desktop and the PDF program.</description>
+</object>

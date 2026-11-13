@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-29">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_export_document_reports_suspect_links
+tests/test_mcp_write.py::test_pdf_srs_54_result_lists_each_suspect_and_broken_link
+tests/test_mcp_write.py::test_pdf_srs_54_items_are_in_the_suspects_tool_form
+tests/test_mcp_write.py::test_pdf_srs_56_export_tool_exports_a_document_with_a_broken_link</attr>
+  <description>Call the export tool for a document with suspect outgoing links, and for a document with no outgoing links. Expected: the first export succeeds and writes the PDF; its result lists each suspect link with its source object and the state suspect, and its message states the number of suspect and broken links; the second result lists no links.</description>
+</object>

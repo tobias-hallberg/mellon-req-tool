@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_find_tectonic_frozen_prefers_bundled_tools
+tests/test_export.py::test_build_pdf_uses_bundled_cache_dir</attr>
+  <description>Look up the PDF program in an installed Mellon whose tools folder holds the PDF program and its package cache, with another copy on the search path; then remove the installed copy. Run the PDF program. Expected: the installed copy is used before the search path, and the installed package cache is passed to it; without the installed copy the search path's copy is used.</description>
+</object>

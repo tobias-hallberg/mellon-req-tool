@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_marks_unrendered_figures
+tests/test_export.py::test_render_latex_figure_placeholder_on_table_object
+tests/test_export.py::test_pdf_renders_figures_through_drawio
+tests/test_export.py::test_pdf_survives_drawio_failing_to_run
+tests/test_export.py::test_pdf_without_drawio_keeps_placeholders
+tests/test_drawio.py::test_export_pdfs_timeout_raises
+tests/test_export.py::test_pdf_srs_73_placeholder_when_the_figure_program_writes_an_empty_file</attr>
+  <description>Export a document whose heading, requirement and table object have figures, with no figure drawn; then with a figure program that draws only some figures, one that fails to run, one that doesn't finish in time, and none at all. Expected: each figure not drawn is replaced by the line '[Figure &lt;object ID&gt;.svg not rendered in PDF export]' (inside the requirement's entry, right after the heading's title, after the table); a drawn figure shows no placeholder.</description>
+</object>

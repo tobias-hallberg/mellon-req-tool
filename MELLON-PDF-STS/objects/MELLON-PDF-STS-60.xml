@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-60">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">analysis: Manual, because timings on shared CI runners are too noisy to gate on, and CI has no PDF program. Each run is recorded with the scale measurements; SCALING.md has 101 s at 1,000 objects on the reference machine.</attr>
+  <description>On the reference machine, with the installer's build and its PDF program, make the 1,000-object reference document and export it to PDF. Time the export from its start until the PDF is written. Run it several times, and record each time with the machine and the Mellon version. Expected: every run takes at most 150 s.</description>
+</object>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_unrendered_figures_lists_exported_objects_with_figures
+tests/test_export.py::test_unrendered_figures_skips_rendered_ones
+tests/test_export.py::test_pdf_renders_figures_through_drawio
+tests/test_export.py::test_pdf_survives_drawio_failing_to_run
+tests/test_export.py::test_pdf_without_drawio_keeps_placeholders
+tests/test_drawio.py::test_export_pdfs_one_run_and_per_figure_results
+tests/test_mcp_write.py::test_pdf_srs_61_result_lists_a_figure_the_figure_program_left_out</attr>
+  <description>Export a document whose heading and requirement both have figures, with a figure program that draws only the requirement's figure, one that fails to run, and none at all. Expected: the figure program is run once over the exported figures, in outline order; the objects reported as not drawn are exactly those whose figures the figure program didn't produce, in outline order, and a drawn figure is never reported; with no figures the figure program isn't run.</description>
+</object>

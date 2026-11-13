@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-71">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_drawio.py::test_pdf_srs_150_drawn_figures_numbered_from_1_in_order</attr>
+  <description>Export a document with three drawn figures (stand-in figure program) with the PDF program. Expected: their captions read Figure 1, Figure 2, Figure 3 in the order they appear. Needs the PDF program.</description>
+</object>

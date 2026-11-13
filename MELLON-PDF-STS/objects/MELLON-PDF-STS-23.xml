@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-23">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_includes_text_typed_just_before
+tests/test_gui_export.py::test_pdf_srs_10_export_action_shows_uncommitted_changes
+tests/test_mcp_write.py::test_pdf_srs_10_export_tool_shows_uncommitted_changes</attr>
+  <description>Enable editing in a Document Editor, select an object, type new description text and, without leaving the field, run Export. Expected: the exported document holds the typed text, and so does the object's file in the working copy, uncommitted.</description>
+</object>

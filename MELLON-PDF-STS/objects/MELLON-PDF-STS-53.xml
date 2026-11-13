@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-53">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_traceability_link_table_and_uncovered
+tests/test_export.py::test_render_latex_traceability_needs_parents
+tests/test_export.py::test_pdf_passes_parents_through
+tests/test_export.py::test_pdf_compiles_with_traceability_section
+tests/test_export.py::test_pdf_srs_161_traceability_last_numbered_section_on_a_new_page</attr>
+  <description>Export a document that declares the parent PARENT, with PARENT given; export it with no parent document given, and a copy that declares no parent; produce the PDF with the PDF program present. Expected: with the parent the PDF ends with a Traceability section after the last object; without parents there is no Traceability section; the PDF is produced.</description>
+</object>

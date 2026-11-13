@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_includes_metadata_and_outline
+tests/test_export.py::test_pdf_srs_119_object_id_above_description</attr>
+  <description>Export a document with the requirement DOC-1 'The system shall do X.'. Expected: the requirement is an entry headed by its ID DOC-1, with its description in the entry.</description>
+</object>

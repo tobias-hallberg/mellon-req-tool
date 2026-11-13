@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_build_pdf_raises_when_tectonic_missing
+tests/test_export.py::test_build_pdf_unrunnable_binary_raises_tectonic_error
+tests/test_export.py::test_build_pdf_failure_raises_once
+tests/test_export.py::test_build_pdf_cold_cache_offline_gets_a_hint</attr>
+  <description>Produce a PDF with the PDF program not found; with a program path that can't be run; with a program that exits with status 1; and with a program that reports its package isn't cached and it can't reach the internet. Expected: each ends the export with an error whose reason says, in turn, that the PDF program wasn't found (naming it), that it couldn't be run (naming it), that it exited 1, and that it needs internet access; the program is run once.</description>
+</object>

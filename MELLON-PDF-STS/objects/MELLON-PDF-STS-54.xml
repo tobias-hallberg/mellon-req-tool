@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_passes_parents
+tests/test_mcp_write.py::test_export_document_passes_parents</attr>
+  <description>Run Export in a Document Editor on VCU3-SRS, which declares VCU3-SyRS; call the export tool for CHILD, which declares PARENT, and for PARENT, which declares no parent. Expected: the GUI export and CHILD's export are given the declared parent document, so the PDF gets its Traceability section; PARENT's export is given no parent.</description>
+</object>

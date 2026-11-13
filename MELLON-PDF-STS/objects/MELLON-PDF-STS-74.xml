@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-74">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_pdf_srs_177_export_action_changes_no_file_index_or_reference
+tests/test_mcp_write.py::test_pdf_srs_177_export_tool_changes_no_file_index_or_reference</attr>
+  <description>In a clean git repository, export a document through the export tool and through the Export action to a path outside the document folders. Expected: afterwards git status shows only the PDF, and the index file and each reference are byte-for-byte unchanged. With the PDF program, so that its temporary files are exercised.</description>
+</object>

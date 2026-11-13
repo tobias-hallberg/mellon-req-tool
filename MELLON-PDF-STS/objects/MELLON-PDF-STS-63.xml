@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-63">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_99_contents_after_cover_lists_sections_with_pages</attr>
+  <description>Export a document with headings at levels 1, 2 and 3 and a parent document, with the PDF program; read page 2's text. Expected: a table of contents follows the cover, listing each level 1 and level 2 heading and the Traceability section, with its number and the page each starts on. Needs the PDF program.</description>
+</object>

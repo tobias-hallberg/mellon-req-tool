@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_table_latex_repeats_leading_header_rows
+tests/test_export.py::test_render_table_latex_repeats_leading_header_rows_before_a_later_header_row
+tests/test_export.py::test_render_table_latex_no_repeating_head[trailing]
+tests/test_export.py::test_render_table_latex_no_repeating_head[rowspan-into-body]
+tests/test_export.py::test_render_table_latex_no_repeating_head[rowspan-into-body-then-split]
+tests/test_export.py::test_render_table_latex_no_repeating_head[none]
+tests/test_export.py::test_pdf_srs_147_leading_header_rows_repeat_on_each_page
+tests/test_export.py::test_pdf_srs_147_leading_header_row_repeats_when_a_body_row_follows_it</attr>
+  <description>Export tables with two leading header rows (the first a merged cell over both columns) over a body row; with a header row, a body row, a later header row and more body rows; with a header row only below the body; with a header cell spanning into the body, alone and followed by a later header row; with no header row. Expected: the first two tables repeat their leading header rows at the top of each page they continue onto, and the second keeps its later header row as a row of the body; the others repeat no row.</description>
+</object>

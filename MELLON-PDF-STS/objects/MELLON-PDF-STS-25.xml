@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_export_document_refuses_bad_out_path[out/report]
+tests/test_mcp_write.py::test_export_document_refuses_bad_out_path[out/report.txt]
+tests/test_mcp_write.py::test_export_document_refuses_bad_out_path[.git/report.pdf]
+tests/test_mcp_write.py::test_export_document_refuses_bad_out_path[out/../.git/hooks/report.pdf]
+tests/test_mcp_write.py::test_pdf_srs_26_export_tool_refuses_a_name_not_ending_in_pdf
+tests/test_mcp_write.py::test_pdf_srs_26_export_tool_accepts_a_name_ending_in_pdf
+tests/test_mcp_write.py::test_pdf_srs_27_export_tool_refuses_a_path_inside_dot_git
+tests/test_mcp_write.py::test_pdf_srs_27_export_tool_accepts_a_file_beside_dot_git</attr>
+  <description>Call the export tool with each of the output paths out/report, out/report.txt, .git/report.pdf and out/../.git/hooks/report.pdf. Expected: each call is refused with an error result, no PDF is produced, and no file named report* is written anywhere in the repository.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-69">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_114_generated_outlines_number_top_two_heading_levels
+tests/test_export.py::test_pdf_srs_114_top_two_heading_levels_numbered
+tests/test_export.py::test_pdf_srs_114_objects_other_than_headings_have_no_number</attr>
+  <description>Export a document with two level 1 headings, each with two level 2 headings and non-heading objects, with the PDF program. Expected: the headings read 1, 1.1, 1.2, 2, 2.1, 2.2 in outline order, and no non-heading object has a number. Needs the PDF program.</description>
+</object>

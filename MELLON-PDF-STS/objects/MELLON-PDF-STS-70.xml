@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-70">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_125_export_tool_default_attributes
+tests/test_gui_export.py::test_pdf_srs_125_export_action_default_attributes</attr>
+  <description>Export through the Export action and through the export tool with no attribute list, a requirement with values for type, status, priority, verification-method and rationale. Expected: exactly type, status, priority and verification-method are shown, in that order, and rationale isn't. Today a test checks only that rationale isn't among the defaults.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_export_document_rev_plumbing
+tests/test_mcp_write.py::test_export_document_writes_pdf</attr>
+  <description>Call the export tool with the revision label B.2, then with an empty label, and for a document in a repository with no issues and no label. Expected: with B.2 the result and the export use B.2; with the empty label, and with no issue, no revision is used.</description>
+</object>

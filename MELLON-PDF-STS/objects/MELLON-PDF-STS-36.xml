@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_build_pdf_subprocess_hygiene
+tests/test_export.py::test_build_pdf_timeout_raises_tectonic_error
+tests/test_mcp_write.py::test_pdf_srs_70_pdf_program_stopped_after_300_s</attr>
+  <description>Produce a PDF with a stand-in PDF program, once finishing and once not finishing within its limit. Expected: the program is run with a 300 s limit, no console window and no input; when the limit passes, the export ends with an error saying the PDF program didn't finish within 300 s, and the program isn't run again.</description>
+</object>

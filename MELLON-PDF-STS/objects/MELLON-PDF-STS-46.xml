@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_escape_latex_specials
+tests/test_export.py::test_render_latex_figure_caption_is_one_escaped_line
+tests/test_export.py::test_pdf_srs_135_character_shown_as_held
+tests/test_export.py::test_pdf_srs_135_description_shown_character_for_character
+tests/test_export.py::test_pdf_srs_135_letters_after_a_line_starting_with_bracket_or_star</attr>
+  <description>Export text holding each character that the PDF program treats as markup, and 'a &amp; b', '100% pure', a backslash before '&amp;', and a figure caption 'Signal flow &amp; timing (100% load)'. Expected: each character is handed to the PDF program so that it prints as typed, once: a backslash followed by '&amp;' stays two characters.</description>
+</object>

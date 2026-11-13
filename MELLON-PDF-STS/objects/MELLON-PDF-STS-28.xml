@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_link_warning_lists_links_and_defaults_to_cancel
+tests/test_gui_suspect.py::test_pdf_srs_49_warning_lists_at_most_10_links
+tests/test_gui_suspect.py::test_pdf_srs_52_warning_offers_export_anyway_and_cancel
+tests/test_gui_suspect.py::test_pdf_srs_52_cancel_is_the_default_button
+tests/test_gui_suspect.py::test_pdf_srs_52_enter_on_the_warning_ends_the_export
+tests/test_gui_suspect.py::test_pdf_srs_52_export_anyway_goes_on_to_the_save_dialog</attr>
+  <description>Show the export warning for more suspect links than the warning lists, and read it. Expected: the warning states the number of suspect and broken links, lists links as 'source → target document/target ID: suspect' up to its limit and ends with '… and N more' for the rest; Cancel is the default button, and closing the warning without a button cancels the export.</description>
+</object>

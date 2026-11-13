@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-59">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Inspection</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">5 Person</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Export with a released Mellon a document with one table of 4 columns aligned left, centre, right and left, a header row, 60 body rows so the table crosses a page break, a cell spanning 2 columns, a cell spanning 3 rows that the page break cuts, and a cell spanning 2 rows whose text is taller than the 2 rows. Open the PDF and print it. Expected: each merged cell is drawn as one cell across exactly its columns or rows, with no rule through it and its text whole, including the cell the page break cuts and the cell taller than its rows; the text of each column sits left, centred or right as set.</description>
+</object>

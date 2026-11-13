@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_rendered_figure_on_heading_has_bare_number
+tests/test_export.py::test_render_latex_rendered_figure_on_table_has_bare_number</attr>
+  <description>Export a heading with a drawn figure, and a table object with a drawn figure. Expected: the figure follows the heading's title, and the table, with an empty caption text, so only the figure number shows.</description>
+</object>

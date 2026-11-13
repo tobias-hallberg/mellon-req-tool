@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-55">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_traceability_link_table_and_uncovered
+tests/test_export.py::test_render_latex_traceability_untraced_and_non_parent_links
+tests/test_export.py::test_pdf_srs_163_outgoing_coverage_counts_an_object_once
+tests/test_export.py::test_pdf_srs_164_incoming_coverage_for_each_parent</attr>
+  <description>Export DOC (a heading and DOC-1, which links to PARENT-42) against PARENT (a heading over PARENT-42 and PARENT-43); then with DOC-1's link pointing to a document that isn't a parent. Expected: first, '1 of 1 objects link to a parent document.' and 'PARENT: 1 of 2 objects have a link from this document.'; then '0 of 1 objects link to a parent document.'. Headings aren't counted.</description>
+</object>

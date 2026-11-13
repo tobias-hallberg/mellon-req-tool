@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_surfaces_tectonic_error
+tests/test_gui_export.py::test_export_write_error_is_shown_in_a_dialog
+tests/test_mcp_write.py::test_export_document_tectonic_error_is_in_band
+tests/test_gui_export.py::test_pdf_srs_65_export_action_reports_a_failure_with_its_reason
+tests/test_mcp_write.py::test_pdf_srs_65_export_tool_reports_a_failure_with_its_reason</attr>
+  <description>Run Export with a PDF program that fails with the message 'tectonic exploded', and with an output folder that doesn't exist; call the export tool with a PDF program that isn't found. Expected: the Document Editor shows an error message holding the PDF program's reason, or that the file couldn't be written, with 'Export failed.' in the status bar and no file written; the export tool returns an error result, not an exception, naming the PDF program.</description>
+</object>

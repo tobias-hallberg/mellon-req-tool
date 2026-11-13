@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-19">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_action_visible_and_enabled
+tests/test_gui_export.py::test_export_writes_pdf_to_selected_path
+tests/test_gui_export.py::test_pdf_srs_2_export_action_writes_pdf_of_the_open_document</attr>
+  <description>Open a document in a Document Editor and look at the Export action. Choose an output path in the save dialog and run Export, with the PDF program replaced by a stand-in that returns a fixed PDF. Expected: the Export action is enabled, and the file at the chosen output path holds the PDF the stand-in made for the open document.</description>
+</object>

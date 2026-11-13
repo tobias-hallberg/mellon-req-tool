@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_warns_about_suspect_links_first
+tests/test_gui_export.py::test_export_skips_warning_without_link_problems
+tests/test_gui_suspect.py::test_pdf_srs_45_warning_before_save_dialog_for_a_broken_link
+tests/test_gui_suspect.py::test_pdf_srs_45_no_warning_when_every_link_is_ok</attr>
+  <description>Run Export on a document with suspect outgoing links, and on a document with no link problems. Expected: with suspect links the export warning is shown, for the open document and with its suspect links, before the save dialog; with no link problems no warning is shown and the PDF is written.</description>
+</object>

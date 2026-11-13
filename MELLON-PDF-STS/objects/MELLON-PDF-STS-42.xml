@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-42">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_includes_metadata_and_outline
+tests/test_export.py::test_render_latex_collapses_newlines_in_headings_and_captions</attr>
+  <description>Export a document whose top-level heading reads 'Top heading', then with a blank line inside the heading's text. Expected: the heading is a section title reading 'Top heading', on one line.</description>
+</object>

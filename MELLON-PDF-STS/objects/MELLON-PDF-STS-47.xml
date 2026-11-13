@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_table_latex_basic
+tests/test_export.py::test_render_latex_includes_table_object
+tests/test_export.py::test_render_table_latex_guards_leading_bracket_and_star
+tests/test_export.py::test_render_table_latex_escapes_cell_text
+tests/test_export.py::test_render_table_latex_collapses_newlines_in_cells
+tests/test_export.py::test_render_latex_collapses_newlines_in_headings_and_captions
+tests/test_export.py::test_pdf_srs_141_table_rows_and_cells_in_table_order</attr>
+  <description>Export a table object: a header row Signal | Latency over a body row; rows whose first cell starts with '[1]', '* ' or ' [2]'; a cell holding '100% &amp; rising_fast'; a header cell and a caption holding blank lines. Expected: the table shows each row and cell, the header row above the rule that ends the header, rows starting with '[' or '*' kept whole, the special characters kept; the object's description is shown in bold as the table's caption, and the object isn't shown as a requirement entry.</description>
+</object>

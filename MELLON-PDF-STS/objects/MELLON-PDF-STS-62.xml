@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-62">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_98_pages_are_a4_portrait</attr>
+  <description>Export a document long enough for 3 pages with the PDF program; read each page's media box. Expected: each page is 595.28 by 841.89 points, portrait. Needs the PDF program.</description>
+</object>

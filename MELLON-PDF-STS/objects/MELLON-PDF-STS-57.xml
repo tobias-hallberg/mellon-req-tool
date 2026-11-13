@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-57">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_traceability_link_table_and_uncovered
+tests/test_export.py::test_render_latex_traceability_untraced_and_non_parent_links
+tests/test_export.py::test_pdf_srs_170_uncovered_parent_objects_in_parent_outline_order</attr>
+  <description>Export DOC against PARENT as above, then with DOC-1's only link going outside the parents. Expected: the uncovered list for PARENT names PARENT-43, without its text, and not PARENT-42 or the heading PARENT-0; once the link goes elsewhere, PARENT-42 is listed as uncovered.</description>
+</object>

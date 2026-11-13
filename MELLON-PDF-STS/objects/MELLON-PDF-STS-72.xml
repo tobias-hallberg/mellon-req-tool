@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-72">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_drawio.py::test_pdf_srs_154_large_figure_scaled_to_fit_keeping_proportions</attr>
+  <description>Export with the PDF program a requirement whose figure is 3 times wider than the text area, and one 3 times taller. Expected: each figure's placed box lies inside the text area, and its width-to-height ratio equals the figure's (read from the page's drawing commands). Today the test only checks that a PDF is produced. Needs the PDF program.</description>
+</object>

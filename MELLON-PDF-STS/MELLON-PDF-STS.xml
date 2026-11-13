@@ -42,5 +42,100 @@
     <attribute name="automated-tests" kind="text" required="false" label="Automated Tests"/>
     <attribute name="rationale" kind="text" required="false" label="Rationale"/>
   </attributes>
-  <outline/>
+  <outline>
+    <ref id="MELLON-PDF-STS-0">
+      <ref id="MELLON-PDF-STS-1">
+        <ref id="MELLON-PDF-STS-19"/>
+        <ref id="MELLON-PDF-STS-20"/>
+        <ref id="MELLON-PDF-STS-21"/>
+        <ref id="MELLON-PDF-STS-22"/>
+        <ref id="MELLON-PDF-STS-61"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-2">
+        <ref id="MELLON-PDF-STS-23"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-3">
+        <ref id="MELLON-PDF-STS-24"/>
+        <ref id="MELLON-PDF-STS-25"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-4">
+        <ref id="MELLON-PDF-STS-26"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-5">
+        <ref id="MELLON-PDF-STS-27"/>
+        <ref id="MELLON-PDF-STS-28"/>
+        <ref id="MELLON-PDF-STS-29"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-6">
+        <ref id="MELLON-PDF-STS-30"/>
+        <ref id="MELLON-PDF-STS-31"/>
+        <ref id="MELLON-PDF-STS-32"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-7">
+        <ref id="MELLON-PDF-STS-33"/>
+        <ref id="MELLON-PDF-STS-34"/>
+        <ref id="MELLON-PDF-STS-35"/>
+        <ref id="MELLON-PDF-STS-36"/>
+        <ref id="MELLON-PDF-STS-37"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-PDF-STS-8">
+      <ref id="MELLON-PDF-STS-9">
+        <ref id="MELLON-PDF-STS-38"/>
+        <ref id="MELLON-PDF-STS-39"/>
+        <ref id="MELLON-PDF-STS-40"/>
+        <ref id="MELLON-PDF-STS-41"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-10">
+        <ref id="MELLON-PDF-STS-62"/>
+        <ref id="MELLON-PDF-STS-63"/>
+        <ref id="MELLON-PDF-STS-64"/>
+        <ref id="MELLON-PDF-STS-65"/>
+        <ref id="MELLON-PDF-STS-66"/>
+        <ref id="MELLON-PDF-STS-67"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-PDF-STS-11">
+      <ref id="MELLON-PDF-STS-12">
+        <ref id="MELLON-PDF-STS-42"/>
+        <ref id="MELLON-PDF-STS-68"/>
+        <ref id="MELLON-PDF-STS-69"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-13">
+        <ref id="MELLON-PDF-STS-43"/>
+        <ref id="MELLON-PDF-STS-44"/>
+        <ref id="MELLON-PDF-STS-45"/>
+        <ref id="MELLON-PDF-STS-70"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-14">
+        <ref id="MELLON-PDF-STS-46"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-15">
+        <ref id="MELLON-PDF-STS-47"/>
+        <ref id="MELLON-PDF-STS-48"/>
+        <ref id="MELLON-PDF-STS-49"/>
+        <ref id="MELLON-PDF-STS-59"/>
+      </ref>
+      <ref id="MELLON-PDF-STS-16">
+        <ref id="MELLON-PDF-STS-50"/>
+        <ref id="MELLON-PDF-STS-51"/>
+        <ref id="MELLON-PDF-STS-52"/>
+        <ref id="MELLON-PDF-STS-71"/>
+        <ref id="MELLON-PDF-STS-72"/>
+        <ref id="MELLON-PDF-STS-73"/>
+      </ref>
+    </ref>
+    <ref id="MELLON-PDF-STS-17">
+      <ref id="MELLON-PDF-STS-53"/>
+      <ref id="MELLON-PDF-STS-54"/>
+      <ref id="MELLON-PDF-STS-55"/>
+      <ref id="MELLON-PDF-STS-56"/>
+      <ref id="MELLON-PDF-STS-57"/>
+      <ref id="MELLON-PDF-STS-58"/>
+    </ref>
+    <ref id="MELLON-PDF-STS-18">
+      <ref id="MELLON-PDF-STS-60"/>
+      <ref id="MELLON-PDF-STS-74"/>
+    </ref>
+  </outline>
 </document>

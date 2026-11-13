@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-68">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_109_objects_in_outline_order
+tests/test_export.py::test_pdf_srs_109_generated_outlines_shown_in_outline_order</attr>
+  <description>Export a document whose outline is DOC-10 &gt; (DOC-3, DOC-2 &gt; DOC-11), DOC-1, so outline order differs from ID order. Expected: the objects appear in the order DOC-10, DOC-3, DOC-2, DOC-11, DOC-1 (in what the export is given, and in the PDF's text with the PDF program).</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_table_latex_colspan
+tests/test_export.py::test_render_table_latex_rowspan
+tests/test_export.py::test_render_table_latex_basic
+tests/test_export.py::test_pdf_srs_146_cells_aligned_as_the_column_says</attr>
+  <description>Export a table with a cell spanning two columns, a cell spanning two rows, and columns aligned left and right. Expected: the wide cell spans both columns, the tall cell spans both rows with the covered position in the second row left empty, and the columns are aligned left and right.</description>
+</object>

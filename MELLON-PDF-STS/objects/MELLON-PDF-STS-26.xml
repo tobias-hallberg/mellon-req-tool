@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-26">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_warns_about_suspect_links_first
+tests/test_gui_export.py::test_export_cancelled_when_dialog_returns_empty
+tests/test_gui_export.py::test_link_warning_lists_links_and_defaults_to_cancel</attr>
+  <description>Run Export and cancel the export warning; run Export and cancel the save dialog; show the export warning and close it without pressing a button. Expected: each time the export ends with no PDF produced or written, the status bar says the export was cancelled, and closing the warning counts as Cancel.</description>
+</object>

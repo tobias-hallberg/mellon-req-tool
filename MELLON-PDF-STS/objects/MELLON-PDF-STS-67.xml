@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-67">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_105_search_finds_each_place_an_id_is_shown</attr>
+  <description>Export a document whose object IDs include one placed so it falls at a line end, with the PDF program; extract the text with a PDF text reader. Expected: a search for each object ID finds it at each place it is shown (body and Traceability section). Needs the PDF program.</description>
+</object>

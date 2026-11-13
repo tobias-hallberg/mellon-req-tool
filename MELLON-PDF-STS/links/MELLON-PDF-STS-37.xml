@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-PDF-STS-37">
+  <link target-doc="MELLON-PDF-SRS" target-id="MELLON-PDF-SRS-73" type="verifies" ack="034ecfd"/>
+  <link target-doc="MELLON-PDF-SRS" target-id="MELLON-PDF-SRS-75" type="verifies" ack="034ecfd"/>
+</links>

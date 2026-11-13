@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-66">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_104_pages_after_cover_show_their_number_and_the_total
+tests/test_export.py::test_pdf_srs_104_contents_page_numbers_match_the_printed_page_numbers</attr>
+  <description>Export a document of N pages (N at least 3) with the PDF program; read each page's text. Expected: page k (k = 2..N) shows k and N. Expected to fail today: the rationale records the cover and contents both saying Page 1 and the total one short (CF-P39). Needs the PDF program.</description>
+</object>

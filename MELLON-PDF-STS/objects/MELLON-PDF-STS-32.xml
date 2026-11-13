@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-32">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_export_document_lists_unrendered_figures
+tests/test_mcp_write.py::test_export_document_rendered_figures_are_not_listed
+tests/test_mcp_write.py::test_pdf_srs_62_result_says_the_figure_program_was_not_found
+tests/test_mcp_write.py::test_pdf_srs_62_result_doesnt_say_not_found_when_the_program_is_found</attr>
+  <description>Call the export tool for a document with one figure, once with draw.io desktop missing and once with each figure drawn. Expected: with draw.io missing the result lists the object's ID among the figures not drawn, says the figure program wasn't found, and the message counts 1 figure not rendered; with each figure drawn the result lists no figure.</description>
+</object>

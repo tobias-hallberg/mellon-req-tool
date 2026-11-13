@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_traceability_link_table_and_uncovered
+tests/test_export.py::test_render_latex_traceability_untraced_and_non_parent_links
+tests/test_export.py::test_render_latex_traceability_escapes_ids
+tests/test_export.py::test_pdf_srs_167_rows_in_outline_order_with_each_parent_id</attr>
+  <description>Export DOC against PARENT as above; then with DOC-1 linking only outside its parents; then with an object DOC_1 that has no link. Expected: the link list has the row DOC-1 | PARENT-42, no row for the heading, no object text and no link state; with the link outside the parents, DOC-1 | none and the other document's object isn't named; the row DOC_1 | none shows the underscore as typed.</description>
+</object>

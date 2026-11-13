@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_rev_kwarg
+tests/test_export.py::test_pdf_srs_84_export_tool_without_label_shows_current_issue
+tests/test_export.py::test_pdf_srs_84_current_issue_is_the_highest_in_issue_order
+tests/test_export.py::test_pdf_srs_84_unreachable_issue_isnt_the_current_issue
+tests/test_export.py::test_pdf_srs_84_export_tool_shows_the_revision_label
+tests/test_gui_export.py::test_pdf_srs_84_export_action_shows_current_issue</attr>
+  <description>Export a document with the revision label C.04. Expected: the cover gets C.04 as the revision.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_renders_figures_through_drawio
+tests/test_export.py::test_pdf_compiles_with_a_rendered_figure
+tests/test_drawio.py::test_export_pdfs_one_run_and_per_figure_results
+tests/test_drawio.py::test_pdf_srs_149_figures_drawn_when_figure_program_found</attr>
+  <description>Export a document with a draw.io figure and a plain SVG figure through a figure program stand-in that produces figure PDFs; then, with the PDF program present, a figure far larger than the page. Expected: the figure program is given the draw.io figure as it is and the plain SVG wrapped as a picture of its own size; each drawn figure is placed in the PDF and none is reported as not drawn; the real PDF is produced.</description>
+</object>

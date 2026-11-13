@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-61">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_pdf_srs_3_ctrl_e_starts_the_export</attr>
+  <description>Open a Document Editor offscreen; check that the Export action's shortcut equals Ctrl+E, then send Ctrl+E to the window with the save dialog answered by a stub. Expected: the export starts (the save dialog is asked for). Today only the tooltip text is checked. Needs neither the PDF program nor draw.io.</description>
+</object>

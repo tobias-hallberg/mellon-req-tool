@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_attribute_subset
+tests/test_export.py::test_render_latex_rendered_figure_in_card_takes_description_as_caption
+tests/test_export.py::test_pdf_srs_122_attribute_without_value_left_out
+tests/test_export.py::test_pdf_srs_126_export_tool_shows_only_the_listed_attributes</attr>
+  <description>Export a document whose requirement has the rationale 'because': with no list of attributes; with the list type, status, rationale; and with a drawn figure on the requirement. Expected: with no list the rationale isn't shown; with the list it is shown as rationale 'because' in the attribute row below the description; under a drawn figure the attribute row is still shown.</description>
+</object>

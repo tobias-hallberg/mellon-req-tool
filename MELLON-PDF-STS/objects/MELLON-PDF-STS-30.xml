@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_names_objects_whose_figures_are_not_rendered
+tests/test_gui_export.py::test_export_with_rendered_figures_shows_no_notice
+tests/test_gui_export.py::test_export_without_figures_shows_no_figure_notice
+tests/test_gui_export.py::test_pdf_srs_58_notice_lists_a_figure_the_figure_program_left_out
+tests/test_gui_export.py::test_pdf_srs_59_notice_says_the_figure_program_was_not_found
+tests/test_gui_export.py::test_pdf_srs_59_notice_doesnt_say_not_found_when_the_program_fails</attr>
+  <description>Give an object of the open document a figure and run Export with draw.io desktop missing, the figure left undrawn; run Export with each figure drawn; run Export on a document without figures. Expected: the first export shows one notice of figures not drawn, naming the object and saying that the figure program couldn't be found; the other two exports show no notice.</description>
+</object>

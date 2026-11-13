@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-22">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_export.py::test_export_runs_off_the_gui_thread_one_at_a_time
+tests/test_gui_export.py::test_pdf_srs_7_windows_respond_to_input_while_an_export_runs</attr>
+  <description>Start an export from a Document Editor with a stand-in PDF program that doesn't finish until the test releases it. While it runs, keep the window's event loop running and press Export again. Expected: the PDF is produced off the window's event loop, so the window keeps handling events during the export; Export is disabled and a second press reports that an export is already running; after the release the PDF is written and Export is enabled again.</description>
+</object>

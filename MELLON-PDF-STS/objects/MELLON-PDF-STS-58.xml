@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_traceability_all_covered_and_missing_parent
+tests/test_export.py::test_pdf_srs_172_export_tool_names_a_parent_that_didnt_load
+tests/test_gui_export.py::test_pdf_srs_172_export_action_names_a_parent_that_didnt_load</attr>
+  <description>Export DOC, which declares PARENT, without PARENT among the loaded parent documents. Expected: the Traceability section says 'PARENT could not be loaded' and still lists DOC-1 | PARENT-42.</description>
+</object>

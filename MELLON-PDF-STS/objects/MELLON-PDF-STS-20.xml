@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-20">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_compiles_for_fixture_doc
+tests/test_export.py::test_pdf_compiles_awkward_inputs_and_sets_pdf_info
+tests/test_export.py::test_pdf_compiles_with_minimal_metadata
+tests/test_mcp_write.py::test_pdf_srs_5_export_tool_exports_without_a_git_user_name
+tests/test_mcp_write.py::test_pdf_srs_5_export_tool_exports_while_another_document_fails_to_load</attr>
+  <description>Export a two-object document with the PDF program present: as it is; with a heading that starts with '[' and holds a blank line, table rows that start with '[' and '*', a figure that isn't drawn, a non-ASCII title and author and the character '₁'; and with empty title, author and date. Expected: each export gives a PDF file that starts with %PDF-, the first over 1 KB.</description>
+</object>

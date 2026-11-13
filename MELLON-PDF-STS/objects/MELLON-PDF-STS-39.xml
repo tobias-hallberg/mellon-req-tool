@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_render_latex_includes_metadata_and_outline
+tests/test_export.py::test_syrs_class_has_no_stamped_placeholders
+tests/test_export.py::test_pdf_compiles_with_minimal_metadata
+tests/test_export.py::test_render_latex_empty_title_sets_no_subject
+tests/test_export.py::test_pdf_srs_82_empty_title_left_out
+tests/test_export.py::test_pdf_srs_82_empty_author_left_out
+tests/test_export.py::test_pdf_srs_82_empty_date_left_out
+tests/test_export.py::test_pdf_srs_82_empty_revision_left_out</attr>
+  <description>Export a document with no revision label and no issue; export one with empty title, author and date with the PDF program present; read the cover page's built-in text. Expected: no revision is given to the cover; the PDF is produced; the built-in text holds none of the old fixed values (a project name, 'Document Owner', 'Internal Use Only', '29148', 'DOC-SYRS-XXXX', 'A.00', '2026-01-01').</description>
+</object>

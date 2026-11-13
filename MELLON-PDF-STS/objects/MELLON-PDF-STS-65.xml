@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_101_header_shows_id_title_revision_and_date</attr>
+  <description>Export a 3-page document with ID, title, revision label and date, with the PDF program; read each page's header text. Expected: each page after the cover shows the ID, title, revision and date. Needs the PDF program.</description>
+</object>

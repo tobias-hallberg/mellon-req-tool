@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-21">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_mcp_write.py::test_export_document_writes_pdf
+tests/test_mcp_write.py::test_export_document_absolute_out_path
+tests/test_mcp_write.py::test_export_document_real_compile</attr>
+  <description>Call the MCP server's export tool for a document with a relative output path, then with an absolute output path, and once with the real PDF program. Expected: each call succeeds; the PDF is written at the output path, a relative path being read from the repository root; the result names that path and the number of bytes written; the real run writes a file that starts with %PDF.</description>
+</object>
