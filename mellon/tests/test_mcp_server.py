@@ -407,6 +407,29 @@ def test_mcp_srs_10_exit_2_writes_reason_and_absolute_path(case, level, tmp_path
     assert re.search(r"[A-Za-z]{3,}", rest), f"no reason beside the path in {stderr[-600:]!r}"
 
 
+def test_mcp_srs_10_path_on_one_line_whatever_handler_the_mcp_library_installed(tmp_path, capsys, monkeypatch):
+    """MELLON-MCP-SRS-10, -15: the MCP library gives the root logger its own
+    handler when `rich` can be imported, and that one wraps lines at 80
+    columns, splitting a long path. The refusal still names the absolute path
+    on one line of standard error, whichever packages are installed."""
+    import logging
+
+    from mellon.mcp import server
+
+    class Wrapping(logging.Handler):
+        def emit(self, record):
+            text = record.getMessage()
+            sys.stderr.write("\n".join(text[i:i + 30] for i in range(0, len(text), 30)) + "\n")
+
+    monkeypatch.setattr(logging.getLogger(), "handlers", [Wrapping()])
+    missing = tmp_path / "a-folder-name-long-enough-to-be-wrapped" / "and-one-more-part"
+
+    assert server.main(["--repo-root", str(missing)]) == 2
+
+    lines = capsys.readouterr().err.splitlines()
+    assert any(str(missing.resolve()) in line for line in lines), f"path split over lines: {lines}"
+
+
 # ---------------------------------------------------------------------------
 # A repository without documents, log levels: MELLON-MCP-SRS-11, -12, -15, -120, -121
 # ---------------------------------------------------------------------------

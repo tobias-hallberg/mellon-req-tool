@@ -2632,12 +2632,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    # MELLON-MCP-SRS-120: FastMCP("mellon") above already gave the root logger
-    # a stderr handler (format "%(message)s") at INFO, so basicConfig() only
-    # adds one if that ever stops. The level goes on the root logger, which
-    # every logger in the process defers to, the MCP library's included.
-    logging.basicConfig(stream=sys.stderr, format="%(message)s")
-    logging.getLogger().setLevel(args.log_level)
+    # MELLON-MCP-SRS-10, -15, -120: one plain stderr handler, "%(message)s",
+    # whatever FastMCP("mellon") above installed. When `rich` can be imported
+    # the MCP library installs its own handler, which wraps lines at 80
+    # columns and splits a long path over several lines. The level goes on
+    # the root logger, which every logger in the process defers to, the MCP
+    # library's included.
+    root_logger = logging.getLogger()
+    for old in list(root_logger.handlers):
+        root_logger.removeHandler(old)
+    handler = logging.StreamHandler(sys.stderr)
+    handler.setFormatter(logging.Formatter("%(message)s"))
+    root_logger.addHandler(handler)
+    root_logger.setLevel(args.log_level)
 
     repo_root = args.repo_root or Path(
         os.environ.get("CLAUDE_PROJECT_DIR") or Path.cwd()

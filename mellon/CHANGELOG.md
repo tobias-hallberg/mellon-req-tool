@@ -96,6 +96,11 @@ All notable changes to Mellon. The format follows
 
 ### Fixed
 
+- **The MCP server's log lines are whole whichever packages are installed.**
+  When the Python package `rich` could be imported, the MCP library logged
+  through it, wrapping each line at 80 columns, so the absolute path in a
+  refusal or in the serving line was split over several lines. The server now
+  logs through one plain handler of its own (`MELLON-MCP-SRS-10`, `-15`).
 - **An object ID is no longer given out again after the highest-numbered
   object is deleted.** Before, the next new object took the deleted one's ID,
   so links on other branches, History, Compare and issued PDFs named a
