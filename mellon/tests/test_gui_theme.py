@@ -244,15 +244,7 @@ def test_system_columns_never_hidden(window):
 from PySide6.QtCore import Qt  # noqa: E402
 from PySide6.QtGui import QPalette, QStyleHints  # noqa: E402
 
-from tests.gui_support import (  # noqa: E402
-    SRS,
-    STS,
-    SYRS,
-    _explorer_of_main,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
-    run_main,  # noqa: F401, F811 -- fixture
-)
+from tests.gui_support import SRS, STS, SYRS, _explorer_of_main  # noqa: E402
 
 
 # --------------------------------------------------------------------------- themes at start

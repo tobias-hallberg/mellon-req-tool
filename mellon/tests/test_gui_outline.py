@@ -361,15 +361,12 @@ import pytest  # noqa: E402
 from tests.edit_support import (  # noqa: E402
     V,
     all_object_ids,
-    commit_all,  # noqa: F401, F811 -- fixture
     find_action,
-    modals,  # noqa: F401, F811 -- fixture
     open_editor_window,
     select,
     sub_objects,
     vcu_repo,
 )
-from tests.store_support import git_env  # noqa: E402,F401,F811
 
 
 def test_edit_srs_113_new_sibling_goes_directly_after_selected(qtbot, tmp_path, modals, commit_all):
@@ -411,13 +408,7 @@ import re  # noqa: E402
 from PySide6.QtCore import Qt  # noqa: E402
 from PySide6.QtTest import QTest  # noqa: E402
 
-from tests.gui_support import (  # noqa: E402
-    SRS,
-    _description,
-    _outline,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
-)
+from tests.gui_support import SRS, _description, _outline  # noqa: E402
 
 
 # --------------------------------------------------------------------------- outline pane and selection

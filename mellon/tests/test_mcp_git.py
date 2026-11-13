@@ -1100,7 +1100,6 @@ from tests.trace_support import (  # noqa: E402
     _outside_repo,
     _under,
     call,
-    mcp,  # noqa: F401, F811 -- fixture
     recorded_paths,
 )
 
@@ -1268,7 +1267,6 @@ from tests.ver_support import (  # noqa: E402
     _clear,
     _commit,
     _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _head,
     _init,
     _install_hooks,
@@ -1289,7 +1287,6 @@ from tests.ver_support import (  # noqa: E402
     _two_status_commits,
     _unborn_doc,
     _write,
-    only_repo_git_config,  # noqa: F401, F811 -- fixture
 )
 
 

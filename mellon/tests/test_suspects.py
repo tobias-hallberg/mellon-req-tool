@@ -679,7 +679,6 @@ from tests.trace_support import (  # noqa: E402
     _under,
     basic_repo,
     link_status,
-    mcp,  # noqa: F401, F811 -- fixture
     recorded_paths,
 )
 

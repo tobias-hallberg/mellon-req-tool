@@ -174,7 +174,6 @@ from tests.ver_support import (  # noqa: E402
     _button,
     _commit as ver_commit,
     _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _make_doc_repo,
     _make_repo,
     _manifest,
@@ -187,7 +186,6 @@ from tests.ver_support import (  # noqa: E402
     _unmerged,
     _write,
     _xml,
-    ui,  # noqa: F401, F811 -- fixture
 )
 
 

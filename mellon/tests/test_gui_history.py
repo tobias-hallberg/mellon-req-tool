@@ -316,13 +316,11 @@ from PySide6.QtWidgets import QAbstractItemView, QTabWidget  # noqa: E402
 from mellon.gui.panels.history_tab import HistoryTab  # noqa: E402
 from tests.ver_support import (  # noqa: E402
     _button,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _grid_index,
     _make_repo,
     _open_editor,
     _texts,
     _two_status_commits,
-    ui,  # noqa: F401, F811 -- fixture
 )
 
 

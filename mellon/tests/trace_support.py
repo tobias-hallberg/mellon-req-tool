@@ -327,10 +327,15 @@ def recorded_paths(root):
     root_s = str(Path(root).resolve())
     allowed = {os.path.abspath(p) for p in (sys.prefix, sys.base_prefix, sys.exec_prefix)}
     allowed.add(str(Path(mellon.__file__).resolve().parent))
+    # Resolving a path inside the repository looks up each folder above it
+    # with lstat on Linux (os.path.realpath). That reads a folder's entry in
+    # its parent and opens nothing, so lstat of the root's own ancestors is
+    # allowed; opening, listing or stat-ing one is still refused.
+    ancestors = {os.path.normcase(str(p)) for p in Path(root_s).parents}
     seen: list[str] = []
     outside: list[str] = []
 
-    def note(p):
+    def note(p, *, lstat=False):
         if isinstance(p, int) or p is None:
             return
         try:
@@ -338,13 +343,15 @@ def recorded_paths(root):
         except TypeError:
             return
         seen.append(s)
+        if lstat and os.path.normcase(os.path.abspath(s)) in ancestors:
+            return
         if not _under(s, root_s) and not any(_under(s, a) for a in allowed):
             outside.append(s)
             raise FileNotFoundError(2, "refused by the test: outside the repository", s)
 
-    def wrap(fn):
+    def wrap(fn, lstat=False):
         def inner(p, *a, **k):
-            note(p)
+            note(p, lstat=lstat)
             return fn(p, *a, **k)
         return inner
 
@@ -360,7 +367,7 @@ def recorded_paths(root):
         (os.path, "isdir"), (os.path, "islink"), (os.path, "getsize"), (os.path, "getmtime"),
         (os.path, "realpath"), (etree, "parse"), (pygit2, "discover_repository"),
     ]:
-        patch(obj, name, wrap(getattr(obj, name)))
+        patch(obj, name, wrap(getattr(obj, name), lstat=(obj is os and name == "lstat")))
     orig_repo_init = pygit2.Repository.__init__
 
     def repo_init(self, path=None, *a, **k):

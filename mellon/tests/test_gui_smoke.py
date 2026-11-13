@@ -541,16 +541,9 @@ def test_check_srs_9_validate_action_changes_no_working_copy_file(qtbot, tmp_pat
 # MELLON-STORE-SRS blind tests
 from tests.store_support import (  # noqa: E402
     CONFLICTED_DOC_1,
-    clone_with_doc,  # noqa: F401, F811 -- fixture
-    code_only_repo,  # noqa: F401, F811 -- fixture
-    detached_repo,  # noqa: F401, F811 -- fixture
     git_commit_all,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
-    gui,  # noqa: F401, F811 -- fixture
     make_doc,
-    uncommitted_repo,  # noqa: F401, F811 -- fixture
-    unopenable_repo,  # noqa: F401, F811 -- fixture
     write,
 )
 
@@ -629,7 +622,6 @@ from tests.ver_support import (  # noqa: E402
     _activate,
     _commit,
     _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _head,
     _make_repo,
     _obj,
@@ -740,9 +732,6 @@ from tests.gui_support import (  # noqa: E402
     _snapshot_diff,
     _start_export,
     _write as gui_write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    gui_version_run,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 

@@ -10,7 +10,26 @@ from pathlib import Path
 import pygit2
 import pytest
 
-from tests.compare_support import _build_canon_repo, _build_rev_repo
+# The support modules' fixtures, for every test module: a test takes one
+# by name, without importing it. pdf_support comes first: it and
+# store_support both define `gui`, the later plugin's is the default, and
+# the modules that want PDF's import it.
+pytest_plugins = [
+    "tests.pdf_support",
+    "tests.edit_b_support",
+    "tests.edit_support",
+    "tests.gui_support",
+    "tests.mcp_stdio_support",
+    "tests.store_support",
+    "tests.trace_support",
+    "tests.ver_support",
+]
+# Their asserts get pytest's detail too. They import one another, so all of
+# them are registered before the first one is imported.
+pytest.register_assert_rewrite("tests.compare_support", *pytest_plugins)
+
+from tests.compare_support import _build_canon_repo, _build_rev_repo  # noqa: E402
+
 
 
 def _ensure_req_test_fixture() -> None:

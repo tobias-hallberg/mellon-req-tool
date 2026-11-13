@@ -45,8 +45,6 @@ from tests.gui_support import (  # noqa: E402
     _snapshot,
     _snapshot_diff,
     _system_columns_ok,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 

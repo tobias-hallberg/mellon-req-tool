@@ -1341,8 +1341,11 @@ def test_check_srs_86_mcp_stdio_results_match_in_process(blind_mcp_root, clean_w
 # MELLON-EDIT-SRS blind tests (1-175)
 import json  # noqa: E402
 
-from tests.edit_support import counted_repo, commit_all, parts_repo, tools  # noqa: E402,F401 -- commit_all is a fixture
-from tests.store_support import git_env, mcp_at  # noqa: E402,F401,F811 -- fixtures
+from tests.edit_support import (  # noqa: E402,F401 -- commit_all is a fixture
+    counted_repo,
+    parts_repo,
+    tools,
+)
 
 BASE_KEYS = {"doc_id", "folder", "object_count", "link_count", "current_issue"}
 PARTS = {"metadata", "parents", "attributes", "outline", "views", "filters"}
@@ -1416,18 +1419,12 @@ from tests.store_support import (  # noqa: E402
     MCP_EXE,
     _norm,
     changed,
-    clone_with_doc,  # noqa: F401, F811 -- fixture
-    code_only_repo,  # noqa: F401, F811 -- fixture
-    detached_repo,  # noqa: F401, F811 -- fixture
     git,
     mcp_stdio,
     no_identity_env,
     not_in_work_tree,
-    read_only_repo,  # noqa: F401, F811 -- fixture
     run_program,
     snapshot,
-    uncommitted_repo,  # noqa: F401, F811 -- fixture
-    unopenable_repo,  # noqa: F401, F811 -- fixture
 )
 
 
@@ -1556,7 +1553,6 @@ from tests.edit_b_support import (  # noqa: E402
     _server,
     git_commit_all,
     git_init,
-    mcp_root,  # noqa: F401, F811 -- fixture
     write_doc,
 )
 
@@ -1765,7 +1761,6 @@ from tests.trace_support import (  # noqa: E402
     basic_repo,
     call,
     link_status,
-    mcp,  # noqa: F401, F811 -- fixture
     recorded_paths,
     remove_from_working_copy,
 )
@@ -2049,15 +2044,7 @@ def test_trace_srs_200_coverage_report_defaults(tmp_path, mcp):
 
 
 # MELLON-VER-SRS blind tests
-from tests.ver_support import (  # noqa: E402
-    _branch,
-    _commit,
-    _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
-    _mcp_root,
-    _obj,
-    _write,
-)
+from tests.ver_support import _branch, _commit, _git, _mcp_root, _obj, _write  # noqa: E402
 
 
 # ==========================================================================

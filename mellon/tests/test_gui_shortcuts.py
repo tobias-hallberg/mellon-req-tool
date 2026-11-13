@@ -41,8 +41,6 @@ from tests.gui_support import (
     _snapshot_diff,
     _stale_shown,
     _uncommitted_change,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 

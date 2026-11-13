@@ -1167,7 +1167,6 @@ from tests.pdf_support import (  # noqa: E402
     heading,
     horizontal_rules,
     id_positions,
-    issue_repo,  # noqa: F401, F811 -- fixture
     make_program,
     mcp_calls,
     mcp_export,

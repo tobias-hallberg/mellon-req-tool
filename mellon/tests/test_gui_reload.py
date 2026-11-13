@@ -36,11 +36,8 @@ from tests.store_support import (  # noqa: E402 -- MELLON-STORE-SRS blind tests
     _svg_file,
     changed,
     git_commit_all,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
-    gui,  # noqa: F401, F811 -- fixture
     make_doc,
-    read_only_repo,  # noqa: F401, F811 -- fixture
     snapshot,
     write,
 )
@@ -857,8 +854,6 @@ from tests.gui_support import (  # noqa: E402
     _svg_file as gui_svg_file,
     _uncommitted_change,
     _write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 

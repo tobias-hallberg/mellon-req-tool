@@ -171,14 +171,7 @@ def test_apply_view_applies_column_order_from_xml(window):
 # Written blind from MELLON-EDIT-SRS and the public signatures (docs/specification.md,
 # step 7). Helpers are in tests/edit_support.py, which builds on tests/store_support.py.
 
-from tests.edit_support import (  # noqa: E402
-    commit_all,  # noqa: F401, F811 -- fixture
-    grid_ids,
-    modals,  # noqa: F401, F811 -- fixture
-    open_editor_window,
-    write_doc,
-)
-from tests.store_support import git_env  # noqa: E402,F401,F811
+from tests.edit_support import grid_ids, open_editor_window, write_doc  # noqa: E402
 
 
 def test_edit_srs_122_grid_rows_follow_outline_preorder(qtbot, tmp_path, modals, commit_all):
@@ -389,15 +382,7 @@ def test_edit_srs_333_column_header_hides_and_shows_attribute_column(
 
 
 # MELLON-GUI-SRS blind tests
-from tests.gui_support import (  # noqa: E402
-    SRS,
-    _choose_view,
-    _manifest,
-    _system_columns_ok,
-    _write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
-)
+from tests.gui_support import SRS, _choose_view, _manifest, _system_columns_ok, _write  # noqa: E402
 
 
 @pytest.mark.parametrize("view", ["no_attributes", "two_attributes"])

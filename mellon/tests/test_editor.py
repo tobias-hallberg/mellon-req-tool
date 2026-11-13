@@ -77,10 +77,8 @@ from tests.store_support import (  # MELLON-STORE-SRS blind tests
     _write_text,
     changed,
     git_commit_all,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
     make_doc,
-    slug_doc,  # noqa: F401, F811 -- fixture
     snapshot,
     write,
 )
@@ -2781,7 +2779,6 @@ from tests.edit_support import (  # noqa: E402
     assert_link_kept,
     basic_repo,
     child_parent_repo,
-    commit_all,  # noqa: F401, F811 -- fixture
     commit_new_repo,
     create_default_doc,
     delete_repo,
@@ -2789,7 +2786,7 @@ from tests.edit_support import (  # noqa: E402
     obj_file,
     tools,
 )
-from tests.store_support import changed, git_env, mcp_at, snapshot  # noqa: E402,F401,F811
+from tests.store_support import changed, snapshot  # noqa: E402,F401,F811
 
 
 def test_edit_srs_10_every_other_letter_case_refused_by_the_library(tmp_path):
@@ -3099,7 +3096,6 @@ from tests.trace_support import (  # noqa: E402
     basic_repo as trace_basic_repo,
     call,
     disk_links,
-    mcp,  # noqa: F401, F811 -- fixture
     refused,
     snapshot as trace_snapshot,
 )

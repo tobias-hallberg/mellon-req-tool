@@ -62,12 +62,6 @@ from tests.mcp_stdio_support import (
     without_roots,
     write_lf,
 )
-from tests.mcp_stdio_support import (  # noqa: F401 - module fixtures
-    ident_home,
-    neutral_dir,
-    plain_template,
-    rich_template,
-)
 
 pytestmark = requires_mellon_mcp
 

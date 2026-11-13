@@ -3367,7 +3367,6 @@ from PySide6.QtWidgets import QComboBox  # noqa: E402
 from tests.ver_support import (  # noqa: E402
     _activate,
     _description,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _grid_index,
     _head,
     _inspector_description,
@@ -3377,7 +3376,6 @@ from tests.ver_support import (  # noqa: E402
     _texts,
     _type_into,
     _write,
-    ui,  # noqa: F401, F811 -- fixture
 )
 
 

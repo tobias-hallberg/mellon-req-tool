@@ -24,11 +24,7 @@ from tests.store_support import (  # MELLON-STORE-SRS blind tests
     _EXE,
     changed,
     git,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
-    mcp_at,  # noqa: F401, F811 -- fixture
-    read_only_repo,  # noqa: F401, F811 -- fixture
-    slug_doc,  # noqa: F401, F811 -- fixture
     snapshot,
 )
 
@@ -1817,13 +1813,11 @@ from tests.edit_support import (  # noqa: E402
     assert_link_kept,
     basic_repo,
     child_parent_repo,
-    commit_all,  # noqa: F401, F811 -- fixture
     copy_repo,
     delete_repo,
     manifest_attr,
     manifest_options,
     mcp_refused,
-    no_git_user,  # noqa: F401, F811 -- fixture
     obj_file,
     order_repo,
     read_obj,
@@ -1832,7 +1826,7 @@ from tests.edit_support import (  # noqa: E402
     with_figure,
     write_doc,
 )
-from tests.store_support import changed, git_env, mcp_at, mcp_stdio, snapshot  # noqa: E402,F401,F811
+from tests.store_support import changed, mcp_stdio, snapshot  # noqa: E402,F401,F811
 
 
 @pytest.mark.parametrize("value", ["draft", "APPROVED"])
@@ -2253,19 +2247,14 @@ from tests.mcp_stdio_support import (  # noqa: E402
     clone_of,
     failed,
     fold,
-    ident_home,  # noqa: F401, F811 -- fixture
     mcp_server,
-    neutral_dir,  # noqa: F401, F811 -- fixture
     payload,
-    plain_template,  # noqa: F401, F811 -- fixture
     rel_paths,
     requires_mellon_mcp,
-    rich_template,  # noqa: F401, F811 -- fixture
     show,
     succeeded,
     write_calls,
     write_lf,
-    write_run,  # noqa: F401, F811 -- fixture
 )
 
 
@@ -2560,7 +2549,6 @@ from tests.edit_b_support import (  # noqa: E402
     _table,
     _table_doc,
     changed_files,
-    mcp_root,  # noqa: F401, F811 -- fixture
     outline_tree,
     tree_hashes,
 )
@@ -2829,7 +2817,6 @@ from tests.trace_support import (  # noqa: E402
     basic_repo as trace_basic_repo,
     call,
     disk_links,
-    mcp,  # noqa: F401, F811 -- fixture
     refused,
     snapshot as trace_snapshot,
 )
@@ -3250,7 +3237,6 @@ from tests.ver_support import (  # noqa: E402
     _changed,
     _description,
     _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _head,
     _install_hooks,
     _make_repo,
@@ -3262,7 +3248,6 @@ from tests.ver_support import (  # noqa: E402
     _tree,
     _work_files,
     _write,
-    only_repo_git_config,  # noqa: F401, F811 -- fixture
 )
 
 

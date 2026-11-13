@@ -542,11 +542,10 @@ from tests.pdf_support import (  # noqa: E402
     _status,
     _uncommitted_repo,
     git_commit_all,
-    gui,  # noqa: F401, F811 -- fixture
+    gui,
     heading,
     hide_drawio,
     id_positions,
-    issue_repo,  # noqa: F401, F811 -- fixture
     make_program,
     needs_pdf,
     obj,

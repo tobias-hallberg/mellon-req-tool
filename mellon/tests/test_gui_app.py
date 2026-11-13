@@ -139,14 +139,11 @@ from PySide6.QtGui import QAction  # noqa: E402
 from mellon.loader import load_document  # noqa: E402
 from tests.edit_support import (  # noqa: E402
     basic_repo,
-    commit_all,  # noqa: F401, F811 -- fixture
     explorer,
     explorer_doc_ids,
     manifest_root,
-    modals,  # noqa: F401, F811 -- fixture
     new_document_handler,
 )
-from tests.store_support import git_env  # noqa: E402,F401,F811
 
 
 def test_edit_srs_18_project_explorer_new_document_creates_it(qtbot, tmp_path, modals, commit_all):
@@ -214,10 +211,6 @@ from tests.gui_support import (  # noqa: E402
     _start_export,
     _visible_explorers,
     _write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    gui_version_run,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
-    run_main,  # noqa: F401, F811 -- fixture
 )
 
 

@@ -741,8 +741,6 @@ def test_object_id_without_a_number_leaves_the_merged_number(tmp_path):
 
 
 # MELLON-VER-SRS blind tests
-import stat  # noqa: E402
-
 from tests.ver_support import (  # noqa: E402
     SVG_BLUE,
     _attr,
@@ -751,7 +749,6 @@ from tests.ver_support import (  # noqa: E402
     _commit as ver_commit,
     _description,
     _git as ver_git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _index_entries,
     _links,
     _make_doc_repo,
@@ -968,13 +965,20 @@ def _resolve_fails_partway(tmp_path: Path) -> tuple[Path, Path, list[str]]:
 
     before = _work_files(root, "DOC")
     stuck = root / files[1]
-    stuck.chmod(stat.S_IREAD)
-    try:
-        with pytest.raises(Exception):
+    real_replace = merge._replace_file
+
+    def refuse_stuck(path, data, **kwargs):
+        # What Windows does for a read-only file. Linux replaces a read-only
+        # file (only the folder's permission counts), so chmod can't stand in.
+        if Path(path) == stuck:
+            raise PermissionError(13, "refused by the test", str(path))
+        return real_replace(path, data, **kwargs)
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(merge, "_replace_file", refuse_stuck)
+        with pytest.raises(PermissionError):
             merge.resolve(root, edits=edits)
-        written = sorted(_changed(before, _work_files(root, "DOC")))
-    finally:
-        stuck.chmod(stat.S_IREAD | stat.S_IWRITE)
+    written = sorted(_changed(before, _work_files(root, "DOC")))
     assert written and files[1] not in written, f"setup: the first resolution didn't fail partway ({written})"
 
     merge.resolve(root, edits=edits)

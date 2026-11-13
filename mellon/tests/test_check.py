@@ -733,16 +733,10 @@ from tests.store_support import (  # noqa: E402
     CHECK_EXE,
     _norm,
     changed,
-    clone_with_doc,  # noqa: F401, F811 -- fixture
-    detached_repo,  # noqa: F401, F811 -- fixture
     git,
-    git_env,  # noqa: F401, F811 -- fixture
     not_in_work_tree,
-    read_only_repo,  # noqa: F401, F811 -- fixture
     run_program,
     snapshot,
-    uncommitted_repo,  # noqa: F401, F811 -- fixture
-    unopenable_repo,  # noqa: F401, F811 -- fixture
 )
 
 

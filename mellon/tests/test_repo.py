@@ -38,7 +38,6 @@ from tests.store_support import (  # MELLON-STORE-SRS blind tests
     load_with_errors,
     make_doc,
     manifest_xml,
-    mcp_at,  # noqa: F401, F811 -- fixture
     object_xml,
     write,
 )
@@ -489,12 +488,7 @@ def test_store_srs_119_links_source_must_match_file_name(tmp_path):
 import random  # noqa: E402
 
 from mellon.service.document import DocumentService  # noqa: E402
-from tests.trace_support import (  # noqa: E402
-    EXPECTED_INCOMING_PARENT_1,
-    Repo,
-    _three_document_repo,
-    mcp,  # noqa: F401, F811 -- fixture
-)
+from tests.trace_support import EXPECTED_INCOMING_PARENT_1, Repo, _three_document_repo  # noqa: E402
 
 
 @pytest.mark.parametrize("layer", ["library", "service"])

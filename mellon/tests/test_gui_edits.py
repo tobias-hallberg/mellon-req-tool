@@ -19,9 +19,7 @@ from tests.store_support import (  # MELLON-STORE-SRS blind tests
     _svg_file,
     changed,
     git_commit_all,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
-    gui,  # noqa: F401, F811 -- fixture
     links_xml,
     make_doc,
     snapshot,
@@ -1093,7 +1091,6 @@ from tests.edit_support import (  # noqa: E402
     child_parent_repo,
     choose_in_combo,
     combo_items,
-    commit_all,  # noqa: F401, F811 -- fixture
     current_id,
     delete_repo,
     edit_repo,
@@ -1110,7 +1107,6 @@ from tests.edit_support import (  # noqa: E402
     manifest_attr,
     manifest_options,
     middle_row,
-    modals,  # noqa: F401, F811 -- fixture
     obj_file,
     open_cell_editor,
     open_editor_window,
@@ -1121,11 +1117,10 @@ from tests.edit_support import (  # noqa: E402
     required_control,
     select,
     type_into,
-    us_locale,  # noqa: F401, F811 -- fixture
     widget_text,
     write_doc,
 )
-from tests.store_support import changed, git_env, mcp_at, snapshot  # noqa: E402,F401,F811
+from tests.store_support import changed, snapshot  # noqa: E402,F401,F811
 
 
 # --- Metadata, parents and attributes in the Properties dialog --------------------------
@@ -1635,8 +1630,6 @@ from tests.gui_support import (  # noqa: E402
     _obj_file,
     _open_menu,
     _shown,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 
@@ -1707,6 +1700,10 @@ def _top_row_id(gui_gui, ed) -> str:
 def _scroll_to_top(gui_gui, ed, oid):
     tv = gui_gui.table(ed)
     m = tv.model()
+    # The grid must be taller than its view, or only the first row can be at
+    # the top: Linux's offscreen screen is tall enough to show every row.
+    ed.resize(ed.width(), 360)
+    gui_gui.app.processEvents()
     tv.scrollTo(m.index(gui_gui.row(ed, oid), gui_gui.col(ed, "ID")), QAbstractItemView.ScrollHint.PositionAtTop)
     gui_gui.app.processEvents()
     assert _top_row_id(gui_gui, ed) == oid, "precondition: the row is at the top"

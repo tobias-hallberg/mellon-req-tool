@@ -24,9 +24,7 @@ from tests.store_support import (  # MELLON-STORE-SRS blind tests
     _shows_load_error,
     git,
     git_commit_all,
-    git_env,  # noqa: F401, F811 -- fixture
     git_init,
-    gui,  # noqa: F401, F811 -- fixture
     make_doc,
     write,
 )
@@ -1300,7 +1298,6 @@ def test_store_srs_167_commit_dialog_put_back_failing_partway(gui, tmp_path, git
 # MELLON-VER-SRS blind tests
 import hashlib  # noqa: E402
 import re  # noqa: E402
-import stat  # noqa: E402
 import warnings  # noqa: E402
 
 from PySide6.QtCore import Qt  # noqa: E402
@@ -1338,7 +1335,6 @@ from tests.ver_support import (  # noqa: E402
     _dates,
     _description,
     _git,
-    _git_cli_home,  # noqa: F401, F811 -- fixture
     _grid_index,
     _head,
     _index_entries,
@@ -1368,8 +1364,6 @@ from tests.ver_support import (  # noqa: E402
     _work_files,
     _write,
     _xml,
-    only_repo_git_config,  # noqa: F401, F811 -- fixture
-    ui,  # noqa: F401, F811 -- fixture
 )
 
 
@@ -1980,16 +1974,23 @@ def test_ver_srs_211_discard_completes_when_run_again_after_failing_partway(tmp_
     (root / "CHILD/objects/CHILD-1.xml").unlink()
     _write(root / "CHILD/CHILD.xml", _manifest("CHILD", ["CHILD-0", "CHILD-2"], parents=("PARENT",), title="Child", next_number=3))
     stuck = root / "CHILD/objects/CHILD-2.xml"
-    stuck.chmod(stat.S_IREAD)
+    real_unlink = Path.unlink
+
+    def refuse_stuck(self, *args, **kwargs):
+        # What Windows does for a read-only file. Linux deletes a read-only
+        # file (only the folder's permission counts), so chmod can't stand in.
+        if os.path.abspath(self) == os.path.abspath(stuck):
+            raise PermissionError(13, "refused by the test", str(self))
+        return real_unlink(self, *args, **kwargs)
+
     w = _open_editor(qtbot, root)
-    try:
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(Path, "unlink", refuse_stuck)
         _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
-        assert stuck.exists(), "the first discard didn't fail"
-        restored = [p for p in ("CHILD/CHILD.xml", "CHILD/objects/CHILD-0.xml", "CHILD/objects/CHILD-1.xml")
-                    if (root / p).exists() and (root / p).read_bytes() == head_files[p]]
-        partway = bool(restored)
-    finally:
-        stuck.chmod(stat.S_IREAD | stat.S_IWRITE)
+    assert stuck.exists(), "the first discard didn't fail"
+    restored = [p for p in ("CHILD/CHILD.xml", "CHILD/objects/CHILD-0.xml", "CHILD/objects/CHILD-1.xml")
+                if (root / p).exists() and (root / p).read_bytes() == head_files[p]]
+    partway = bool(restored)
 
     _discard(qtbot, ui, w, QMessageBox.StandardButton.Discard)
 
@@ -2115,8 +2116,6 @@ from tests.gui_support import (  # noqa: E402
     _stale_shown,
     _uncommitted_change,
     _write as gui_write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 

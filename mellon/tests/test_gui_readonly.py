@@ -390,8 +390,6 @@ from tests.gui_support import (  # noqa: E402
     _svg_file,
     _uncommitted_change,
     _write,
-    gui_gui,  # noqa: F401, F811 -- fixture
-    repo,  # noqa: F401, F811 -- fixture
 )
 
 
