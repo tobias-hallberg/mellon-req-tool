@@ -2,8 +2,8 @@
 <object id="MELLON-STORE-SRS-229">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: CF-S19, D14, review Q17, and the Compare code review's V22. A crafted branch could make Mellon show, return or export a file outside the repository, or block on a pipe or device. Decided on 2026-11-10.</attr>
+  <attr name="rationale">derived: CF-S19, D14, review Q17, and the Compare code review's V22. A crafted branch could make Mellon show, return or export a file outside the repository, or block on a pipe or device. Decided on 2026-11-10. Accepted on 2026-11-13 as a security fix after the code view (CV-TRACE-07: a document folder that was a link to another project made that project's objects show as incoming links and in traces); to confirm with the person (open question Q20).</attr>
   <description>If a document's folder or an entry inside the folder is a symbolic link, junction, pipe, socket or device, Mellon shall report a load error for the document without opening that entry.</description>
 </object>
