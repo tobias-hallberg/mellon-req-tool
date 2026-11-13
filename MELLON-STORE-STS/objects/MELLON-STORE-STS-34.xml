@@ -10,6 +10,7 @@
 tests/test_repo.py::test_load_all_records_semantic_load_error_without_hint
 tests/test_loader.py::test_parse_bytes_errors_name_the_path
 tests/test_repo.py::test_store_srs_30_missing_end_tag_isnt_called_a_merge_conflict
-tests/test_repo.py::test_store_srs_29_load_error_names_file_and_line</attr>
+tests/test_repo.py::test_store_srs_29_load_error_names_file_and_line
+tests/test_repo.py::test_store_srs_30_only_three_markers_in_order_are_a_merge_conflict</attr>
   <description>Leave conflict markers (lines &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD, =======, &gt;&gt;&gt;&gt;&gt;&gt;&gt; feature) in DOC's object file DOC-1.xml, the first marker on line 3, and read the repository. Then give the same file a well-formed object whose id is DOC-2 and read again. Also read an object file's content '&lt;object id=' as stored at a version. Then break DOC's files in each other way the loader rejects: an enum attribute without options, a parent, attribute or ref element without its required XML attribute, a duplicate attr element, a cell span of 0, a link without a type, and an XML syntax error. Expected: the first load error names document DOC, the file and line 3, reports an XML parse error and ends '(unresolved merge conflict?)'. The second names the file, the line of the object element and the id mismatch, and doesn't mention a merge conflict. The third names the file's path. Each of the others names the document, the file and the line of the offending element.</description>
 </object>

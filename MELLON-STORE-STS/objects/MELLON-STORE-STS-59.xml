@@ -18,6 +18,7 @@ tests/test_schema.py::test_rowspan_past_bottom_flagged
 tests/test_schema.py::test_no_columns_with_rows_flagged
 tests/test_schema.py::test_overlapping_spans_offset_ok
 tests/test_schema.py::test_empty_table_ok
-tests/test_repo.py::test_store_srs_113_table_that_doesnt_tile_is_load_error</attr>
+tests/test_repo.py::test_store_srs_113_table_that_doesnt_tile_is_load_error
+tests/test_schema.py::test_store_srs_111_113_cell_spanning_over_a_row_span_is_an_error</attr>
   <description>Read an object file whose table has two col elements and a row with one cell. Then check the tiling of tables: a 2x2 rectangle; one cell spanning 3 columns of 3; a cell spanning 2 rows beside a normal cell, with one cell in the next row; a 2x2 block plus a third column; a cell spanning 3 columns of 2; a row with one cell of 3 columns; a row with 3 cells of 2 columns; a cell spanning 3 rows of 1; rows with no col element; a second row holding two cells where the first row's cell spans 2 rows; a table with no columns and no rows. Expected: the file is a load error for its geometry. The rectangle, the full-width span, the row span with one cell in the next row, the block and the empty table tile; each other table is reported, and the second-row case only with two cells.</description>
 </object>

@@ -166,6 +166,16 @@ def table_geometry_errors(table: "Table") -> list[str]:
                     f"overflowing table width {ncols}"
                 )
                 cs = ncols - col  # clamp so the walk can finish
+            # MELLON-STORE-SRS-111, -113: the cell covers columns col..col+cs-1;
+            # one a row span from above still covers would be covered twice.
+            overlapped = [k for k in range(col + 1, col + cs) if carry[k] > 0]
+            if overlapped:
+                errors.append(
+                    f"row {r}: cell at column {col} overlaps a row span from "
+                    f"above at column {overlapped[0]}"
+                )
+                for k in overlapped:
+                    carry[k] -= 1
             if rs > 1:
                 for k in range(col, col + cs):
                     carry[k] = rs - 1

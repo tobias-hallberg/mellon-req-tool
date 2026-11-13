@@ -44,7 +44,9 @@ class DocLoadError:
 
 
 # Requirements: MELLON-STORE-SRS-30
-_CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
+# Conflict markers (docs/definitions.md): a line starting with <<<<<<<, a
+# later line starting with =======, and a later line starting with >>>>>>>.
+_CONFLICT_MARKER = re.compile(rb"^<{7}.*?^={7}.*?^>{7}", re.MULTILINE | re.DOTALL)
 
 
 def _error_file(err: LoaderError) -> Path | None:

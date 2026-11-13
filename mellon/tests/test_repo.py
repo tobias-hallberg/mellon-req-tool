@@ -581,3 +581,23 @@ def test_store_srs_29_load_error_names_file_and_line(two_doc_repo, case):
     load_all(root, load_errors=errors)
     (err,) = errors
     assert (err.doc_id, err.file, err.line) == ("DOC", doc / rel, line), err.message
+
+
+@pytest.mark.parametrize("markers", [
+    pytest.param("<<<<<<< HEAD\n", id="opening-line-only"),
+    pytest.param(">>>>>>> other\n=======\n<<<<<<< HEAD\n", id="out-of-order"),
+])
+def test_store_srs_30_only_three_markers_in_order_are_a_merge_conflict(two_doc_repo,
+                                                                        markers):
+    """CV-STORE-20, MELLON-STORE-SRS-30 with the definition of conflict markers (a
+    <<<<<<< line, a later ======= line and a later >>>>>>> line): a load error for a
+    file holding only some of them, or in another order, doesn't say merge conflict."""
+    root, _parent, doc, _c1 = two_doc_repo
+    bad = doc / "objects" / "DOC-1.xml"
+    bad.write_text('<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+                   + markers, encoding="utf-8")
+    errors: list[DocLoadError] = []
+    load_all(root, load_errors=errors)
+    (err,) = errors
+    assert err.file == bad
+    assert "merge conflict" not in err.message, err.message

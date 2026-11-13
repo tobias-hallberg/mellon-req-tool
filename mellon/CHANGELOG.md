@@ -322,6 +322,18 @@ All notable changes to Mellon. The format follows
   the one reading, or reported as a load error (`MELLON-CHECK-SRS-147`,
   `-149`).
 
+- **A table whose cell spans over a row span from above is a load error.**
+  A cell whose column span crossed a column still covered by a row span from
+  an earlier row was accepted: one grid position was covered twice and one
+  left empty, and the grid, the table editor and the PDF drew it by guessing.
+  The loader, the editor and validation now report it
+  (`MELLON-STORE-SRS-111`, `-113`).
+- **The merge-conflict note needs all three conflict markers.** A load error
+  was labelled "(unresolved merge conflict?)" for a file holding only a
+  `<<<<<<<` line. The note is now added only when the file holds a
+  `<<<<<<<` line, a later `=======` line and a later `>>>>>>>` line, as the
+  definition of conflict markers says (`MELLON-STORE-SRS-30`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**
