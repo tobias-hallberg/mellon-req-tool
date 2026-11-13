@@ -3239,3 +3239,79 @@ def test_store_srs_208_empty_value_keeps_its_bytes_on_a_later_rewrite(tmp_path):
     before = path.read_bytes()
     editor.set_attribute(folder, obj_id, "note", "kept")
     assert path.read_bytes() == before
+
+
+def _fail_mid_copy(monkeypatch):
+    """Make a byte copy between files fail after the destination is opened, as a full
+    disk would: os.sendfile and shutil.copyfileobj raise."""
+    import errno
+    import shutil
+
+    def no_space(*_a, **_k):
+        raise OSError(errno.ENOSPC, "No space left on device")
+
+    monkeypatch.setattr(os, "sendfile", no_space, raising=False)
+    monkeypatch.setattr(shutil, "copyfileobj", no_space)
+
+
+_STOP_AT_FIRST_WRITE = r"""
+import os, shutil, sys
+from pathlib import Path
+from mellon import editor
+
+folder, obj_id, src = Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3])
+
+def stop(*_a, **_k):
+    os._exit(9)
+
+real_write_bytes = Path.write_bytes
+
+def half_then_stop(self, data):
+    real_write_bytes(self, data[: len(data) // 2])
+    os._exit(9)
+
+# The process stops at the first write of the figure's bytes, however they are
+# written: a byte copy between files, or a write of the bytes read.
+os.sendfile = stop
+shutil.copyfileobj = stop
+Path.write_bytes = half_then_stop
+editor.set_figure(folder, obj_id, src)
+"""
+
+
+def test_store_srs_167_figure_write_stopped_leaves_old_or_new_figure(tmp_path):
+    """CV-STORE-06, MELLON-STORE-SRS-167: if Mellon stops while it replaces a figure,
+    the figure file holds its old content or the new content in full."""
+    import subprocess
+    import sys
+
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    editor.set_figure(folder, obj_id, _write_svg(tmp_path / "old.svg"))
+    dest = figure_path(folder, obj_id)
+    before = dest.read_bytes()
+    new = _write_svg(tmp_path / "new.svg",
+                     _VALID_SVG.replace(b'fill="blue"', b'fill="red"' + b" " * 5000))
+    proc = subprocess.run([sys.executable, "-c", _STOP_AT_FIRST_WRITE, str(folder), obj_id,
+                           str(new)], capture_output=True, text=True, timeout=120)
+    assert proc.returncode == 9, proc.stderr
+    assert dest.read_bytes() in (before, new.read_bytes())
+
+
+def test_store_srs_167_failed_figure_copy_leaves_no_copy(tmp_path, monkeypatch):
+    """CV-STORE-06, MELLON-STORE-SRS-167 (with -174): copying an object with its figure
+    while the figure's copy fails leaves no half-written figure file."""
+    from mellon.service import DocumentService, ServiceError
+
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    editor.set_figure(folder, obj_id, _write_svg(tmp_path / "f.svg"))
+    svc = DocumentService(tmp_path)
+    _fail_mid_copy(monkeypatch)
+    try:
+        svc.copy_object(folder.name, obj_id)
+    except (OSError, ServiceError):
+        pass
+    figures = sorted((folder / "figures").iterdir())
+    for f in figures:
+        assert f.read_bytes() == figure_path(folder, obj_id).read_bytes(), f

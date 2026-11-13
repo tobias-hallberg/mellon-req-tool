@@ -796,10 +796,18 @@ def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
             f"got <{src_root.tag}>: {src_path}"
         )
 
-    dest = figure_path(folder, obj_id)
+    copy_figure_file(src_path, figure_path(folder, obj_id))
+
+
+# Requirements: MELLON-STORE-SRS-167
+def copy_figure_file(src_path: Path, dest: Path) -> None:
+    """Copy a figure file's bytes to `dest` through a temporary sibling and
+    `os.replace`, so a failed write or a stop during it leaves `dest` holding
+    its old content or the new content in full. `dest` is journaled."""
+    data = Path(src_path).read_bytes()
     dest.parent.mkdir(parents=True, exist_ok=True)
     _touch(dest)
-    shutil.copyfile(src_path, dest)
+    _replace_file(dest, data)
 
 
 # Requirements: MELLON-EDIT-SRS-240

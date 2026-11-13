@@ -349,6 +349,17 @@ All notable changes to Mellon. The format follows
   turned links to it suspect. Mellon now writes the one form `<x/>`
   (`MELLON-STORE-SRS-208`).
 
+- **Acknowledging a link writes the links file with 2-space indentation.**
+  A links file indented another way kept that indentation when a link in it
+  was acknowledged, so the next edit re-indented it in a later commit
+  (`MELLON-STORE-SRS-190`).
+- **A figure is written whole or not at all.** Attaching or replacing a
+  figure, and copying an object with its figure, wrote straight into the
+  figure file, so a stop or a full disk part-way left a truncated SVG and
+  lost the draw.io diagram in it; a copy's figure also wasn't undone when
+  the copy failed. Figures now go through a temporary file that replaces
+  the old one, and the copy is journaled (`MELLON-STORE-SRS-167`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

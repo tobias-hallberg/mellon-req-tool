@@ -9,6 +9,7 @@
   <attr name="automated-tests">tests/test_editor.py::test_set_table_canonical_two_space_indent
 tests/test_editor.py::test_emptied_outline_parent_has_no_whitespace_residue[move_object]
 tests/test_editor.py::test_emptied_outline_parent_has_no_whitespace_residue[delete_object]
-tests/test_editor.py::test_store_srs_190_two_space_indentation_per_level</attr>
+tests/test_editor.py::test_store_srs_190_two_space_indentation_per_level
+tests/test_suspects.py::test_store_srs_190_acknowledging_writes_the_two_space_indent</attr>
   <description>Set a table on an object and look at the object file; empty an outline ref by moving or deleting its only child and look at the manifest. Expected: table at 2 spaces, columns at 4, col at 6; the emptied ref is written as &lt;ref id="DOC-0"/&gt; with no whitespace left inside it.</description>
 </object>

@@ -1189,7 +1189,6 @@ class DocumentService:
 
         new_ids: list[str] = []
         try:
-            import shutil
             for _ in range(count):
                 new_id = editor.create_object(
                     folder, parent_id=effective_parent, description=source.description
@@ -1206,9 +1205,9 @@ class DocumentService:
                             link.target_doc, link.target_id, link.type,
                         )
                 if copy_figure and has_figure:
-                    dst = folder / "figures" / f"{new_id}.svg"
-                    dst.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(source_figure_path, dst)
+                    editor.copy_figure_file(
+                        source_figure_path, folder / "figures" / f"{new_id}.svg"
+                    )
                 new_ids.append(new_id)
         except EditorError as e:
             self._reload(doc_id)
