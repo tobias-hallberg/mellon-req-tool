@@ -595,3 +595,29 @@ def test_trace_srs_178_trace_view_shows_trace_up_and_trace_down(tmp_path, qtbot)
     assert len(up) == 1 and len(down) == 1, f"sections: {list(sections)}"
     assert "SYS-1" in up[0] and "STS-1" not in up[0], up[0]
     assert "STS-1" in down[0] and "SYS-1" not in down[0], down[0]
+
+
+# MELLON-STORE-SRS-230 (CV-TRACE-08): a parent document ID read from the
+# manifest is never turned into a path; the picker lists only documents that
+# loaded, so a parent naming a share or another project's folder is not looked at.
+def test_store_srs_230_link_picker_lists_no_folder_outside_the_repository(qtbot, tmp_path):
+    from mellon.gui.dialogs.link_picker import TARGET_ROLE, LinkPicker
+    from mellon.gui.main_window import DocumentEditorWindow
+    from mellon.service.document import DocumentService
+    from tests.trace_support import Repo, object_xml, recorded_paths
+
+    base = tmp_path / "w"
+    (base / "OUT" / "objects").mkdir(parents=True)
+    (base / "OUT" / "objects" / "OUT-1.xml").write_text(object_xml("OUT-1", "outside"), encoding="utf-8")
+    r = Repo(base / "repo")
+    r.add_doc("PARENT", {"PARENT-1": "p1"})
+    r.add_doc("CHILD", {"CHILD-1": "c1", "CHILD-2": "c2"},
+              parents=["PARENT", "../OUT", (base / "OUT").as_posix(), "//127.0.0.1/mellon-test-share"])
+    r.commit("documents")
+    w = DocumentEditorWindow("CHILD", DocumentService(r.root, cache=True))
+    qtbot.addWidget(w)
+    with recorded_paths(r.root) as (_seen, outside):
+        dlg = LinkPicker(w.controller, "CHILD", "CHILD-1")
+    assert outside == [], f"the link picker asked for paths outside the repository: {outside}"
+    targets = {dlg._model.item(row).data(TARGET_ROLE) for row in range(dlg._model.rowCount())}
+    assert targets == {("PARENT", "PARENT-1"), ("CHILD", "CHILD-2")}, targets

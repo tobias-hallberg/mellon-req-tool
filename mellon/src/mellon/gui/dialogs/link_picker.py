@@ -42,7 +42,7 @@ def _object_ids_on_disk(folder: Path) -> set[str]:
             return {
                 e.name[: -len(".xml")]
                 for e in entries
-                if e.name.endswith(".xml") and e.is_file()
+                if e.name.endswith(".xml") and e.is_file(follow_symlinks=False)
             }
     except OSError:
         return set()
@@ -104,10 +104,16 @@ class LinkPicker(QDialog):
 
     # --- population + filter -------------------------------------------
 
+    # Requirements: MELLON-STORE-SRS-230, MELLON-TRACE-SRS-6
     def _populate(self) -> None:
         svc = self._controller.require_service()
         source = svc.get_document(self._source_doc)
-        allowed = {self._source_doc, *source.parents}
+        objects = list(svc.all_objects())
+        # MELLON-STORE-SRS-230: a parent ID is read from the manifest, so it
+        # only picks among the documents that loaded (folders directly under
+        # the root); it is never made into a path itself.
+        loaded = {doc_id for doc_id, _obj_id, _title in objects}
+        allowed = {self._source_doc, *source.parents} & loaded
         # MELLON-TRACE-SRS-6: the documents shown can be older than the disk,
         # so leave out each object whose file is gone from the working copy;
         # creating the link would be refused. One listing per document.
@@ -116,7 +122,7 @@ class LinkPicker(QDialog):
             doc_id: _object_ids_on_disk(root / doc_id) if root is not None else None
             for doc_id in allowed
         }
-        for doc_id, obj_id, title in svc.all_objects():
+        for doc_id, obj_id, title in objects:
             if doc_id not in allowed:
                 continue  # source doc may only link to itself or its parents
             if doc_id == self._source_doc and obj_id == self._source_id:
