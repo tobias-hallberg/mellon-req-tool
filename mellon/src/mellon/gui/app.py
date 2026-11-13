@@ -20,12 +20,13 @@ from pathlib import Path
 
 from PySide6.QtCore import QCoreApplication, QStandardPaths, Qt, QThread, QThreadPool
 from PySide6.QtGui import QFont, QGuiApplication
-from PySide6.QtWidgets import QApplication, QMessageBox
+from PySide6.QtWidgets import QApplication
 
 from .. import __version__
 from . import branding
 from .project_explorer_window import ProjectExplorerWindow
 from .theme import ThemeManager
+from . import plain
 
 
 # Requirements: MELLON-GUI-SRS-24
@@ -92,7 +93,7 @@ def _install_excepthook() -> Path:
             return
         state["open"], state["last"] = True, now
         try:
-            QMessageBox.critical(
+            plain.critical(
                 None,
                 "Unexpected error",
                 f"{exc_type.__name__}: {exc}\n\nDetails were written to:\n{log_path}",

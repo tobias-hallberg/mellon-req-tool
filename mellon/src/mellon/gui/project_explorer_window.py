@@ -20,7 +20,6 @@ from PySide6.QtWidgets import (
     QListWidgetItem,
     QMainWindow,
     QMenu,
-    QMessageBox,
     QPushButton,
     QSplitter,
     QStatusBar,
@@ -44,6 +43,7 @@ from .main_window import DocumentEditorWindow
 from .models.project_tree import ProjectTreeModel
 from .settings import make_settings
 from .theme import ThemeManager, build_theme_menu
+from . import plain
 
 
 _DOC_ID_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -167,7 +167,7 @@ class ProjectExplorerWindow(QMainWindow):
         self._status = QStatusBar(self)
         self.setStatusBar(self._status)
         self._status.showMessage("Open a repository to get started — File → Open Repo…")
-        self._git_cell = QLabel()
+        self._git_cell = plain.label()  # MELLON-VER-SRS-380: a branch name is anyone's text
         self._git_cell.setStyleSheet("padding: 0 6px; color: palette(mid);")
         self._status.addPermanentWidget(self._git_cell)
 
@@ -309,7 +309,7 @@ class ProjectExplorerWindow(QMainWindow):
             plan = merge.plan(root)
         except merge.MergeError as e:
             self._refresh_merge_banner()
-            QMessageBox.warning(self, "Resolve merge", str(e))
+            plain.warning(self, "Resolve merge", str(e))
             return
         dlg = MergeDialog(root, plan, self)
         if dlg.exec() != QDialog.DialogCode.Accepted:
@@ -448,7 +448,7 @@ class ProjectExplorerWindow(QMainWindow):
         self._open_document(doc_id)
 
     def _show_load_error(self, doc_id: str, details: str) -> None:
-        QMessageBox.warning(
+        plain.warning(
             self,
             "Document failed to load",
             f"{doc_id} could not be loaded:\n\n{details}\n\n"
@@ -477,7 +477,7 @@ class ProjectExplorerWindow(QMainWindow):
         try:
             self.controller.require_service().create_document(doc_id, title=dlg.title())
         except ServiceError as e:
-            QMessageBox.warning(self, "Create document failed", str(e))
+            plain.warning(self, "Create document failed", str(e))
             return
         self._project_model.refresh()
         if self.controller.root is not None:
@@ -521,7 +521,7 @@ class ProjectExplorerWindow(QMainWindow):
             # No repo is open now; don't keep listing the previous one's docs.
             self._project_model.refresh()
             self._status.showMessage(f"Failed to open {root}")
-        QMessageBox.warning(self, "Could not open repository", message)
+        plain.warning(self, "Could not open repository", message)
 
     # Requirements: MELLON-GUI-SRS-115, MELLON-VER-SRS-182, MELLON-VER-SRS-375
     def _refresh_git_cell(self) -> None:

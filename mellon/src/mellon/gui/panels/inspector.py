@@ -41,6 +41,7 @@ from ..controller import RepoController
 from ..delegates import misfit_message
 from ..models.objects_grid import STALE_EDIT_MESSAGE
 from ..theme import ThemeManager
+from .. import plain
 
 
 class Inspector(QWidget):
@@ -66,10 +67,11 @@ class Inspector(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
         self.setMinimumWidth(0)
 
-        self._id_label = QLabel()
+        # Requirements: MELLON-GUI-SRS-122
+        self._id_label = plain.label()
         self._id_label.setStyleSheet("font-weight: bold; font-size: 10pt;")
         self._id_label.setWordWrap(False)
-        self._breadcrumb = QLabel()
+        self._breadcrumb = plain.label()
         self._breadcrumb.setStyleSheet("color: palette(mid);")
         self._breadcrumb.setWordWrap(True)
         self._empty = QLabel(self.EMPTY_MESSAGE)
@@ -237,7 +239,9 @@ class Inspector(QWidget):
             label_text = f"{label_text}:"
 
             if self._read_only:
-                self._attrs_form.addRow(label_text, QLabel(value))
+                # MELLON-GUI-SRS-122: a value or name holding markup shows as written.
+                value_label = plain.label(value)
+                self._attrs_form.addRow(plain.form_label(label_text, value_label), value_label)
                 continue
 
             if schema is not None and schema.kind in ("enum", "boolean"):
@@ -257,14 +261,14 @@ class Inspector(QWidget):
                 cb.currentIndexChanged.connect(
                     lambda _i, n=name, w=cb: self._commit_attr(n, w)
                 )
-                self._attrs_form.addRow(label_text, cb)
+                self._attrs_form.addRow(plain.form_label(label_text, cb), cb)
                 self._attr_widgets[name] = cb
             else:
                 le = QLineEdit(value)
                 le.editingFinished.connect(
                     lambda n=name, w=le: self._commit_attr(n, w)
                 )
-                self._attrs_form.addRow(label_text, le)
+                self._attrs_form.addRow(plain.form_label(label_text, le), le)
                 self._attr_widgets[name] = le
 
     def _populate_description(self, text: str) -> None:
@@ -290,7 +294,7 @@ class Inspector(QWidget):
         else:
             self._incoming.addItem(QListWidgetItem("(none)"))
 
-    # Requirements: MELLON-TRACE-SRS-90, MELLON-TRACE-SRS-135
+    # Requirements: MELLON-GUI-SRS-122, MELLON-TRACE-SRS-90, MELLON-TRACE-SRS-135
     def _add_outgoing_row(self, status) -> None:
         """Build a compound row widget for one outgoing link.
 
@@ -315,14 +319,14 @@ class Inspector(QWidget):
         else:
             tag_color = tokens["err"]
         label = QLabel(
-            f'{link.type}  →  {link.target_doc}/{link.target_id}  '
+            f'{plain.esc(link.type)}  →  {plain.esc(link.target_doc)}/{plain.esc(link.target_id)}  '
             f'<span style="color:{tag_color}; font-weight:600;">[{tag}]</span>'
         )
         label.setTextFormat(Qt.TextFormat.RichText)
         label.setWordWrap(True)
         label.setMinimumWidth(0)
         if status.reason and state != "ok":
-            label.setToolTip(status.reason)
+            label.setToolTip(plain.text(status.reason))
         layout.addWidget(label, 1)
 
         if (

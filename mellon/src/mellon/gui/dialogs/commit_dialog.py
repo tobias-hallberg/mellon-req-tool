@@ -43,6 +43,7 @@ from PySide6.QtWidgets import (
 
 from ...git_ops import tag_name_error
 from ...service import DocCommitPreview
+from .. import plain
 
 
 _ISSUE_RE = re.compile(r"^\d+(\.\d+)*$")
@@ -66,7 +67,9 @@ class CommitDialog(QDialog):
         self.setWindowTitle(f"Commit — {preview.doc_id}")
         self.resize(560, 600)
 
-        self._title = QLabel(f"Commit changes to {preview.doc_id}")
+        # Requirements: MELLON-GUI-SRS-122 (the document ID and typed tag
+        # names show as written)
+        self._title = plain.label(f"Commit changes to {preview.doc_id}")
         self._title.setStyleSheet("font-weight: bold; font-size: 10pt;")
 
         self._message_label = QLabel("Commit message")
@@ -80,7 +83,7 @@ class CommitDialog(QDialog):
 
         self._issue_edit = QLineEdit(preview.prefill_issue)
         self._issue_edit.setPlaceholderText("none")
-        issue_tip = (
+        issue_tip = plain.text(
             "Leave the issue as it is for a plain commit. Change it (for "
             "example 2 → 3) to cut a new issue: the commit is then tagged "
             f"{preview.doc_id}-issue-<n>."
@@ -91,7 +94,7 @@ class CommitDialog(QDialog):
         self._date_edit.setPlaceholderText("YYYY-MM-DD")
 
         # What the issue field will do; kept current by `_refresh_ok`.
-        self._issue_hint = QLabel()
+        self._issue_hint = plain.label()
         self._issue_hint.setStyleSheet("color: palette(mid); font-size: 9pt;")
         self._issue_hint.setToolTip(issue_tip)
 
@@ -151,7 +154,7 @@ class CommitDialog(QDialog):
                 item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self._upstream_list.addItem(item)
 
-        self._meta_error = QLabel("")
+        self._meta_error = plain.label("")
         self._meta_error.setStyleSheet(
             "color: palette(highlight); font-size: 9pt;"
         )

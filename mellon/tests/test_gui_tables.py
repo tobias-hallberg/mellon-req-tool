@@ -204,7 +204,7 @@ def test_inline_widget_blocks_invalid_commit(qtbot, monkeypatch) -> None:
     monkeypatch.setattr(w, "to_table", lambda: bad)
     warned = {"n": 0}
     monkeypatch.setattr(
-        inline_table.QMessageBox, "warning", lambda *a, **k: warned.__setitem__("n", 1)
+        inline_table.plain.QMessageBox, "warning", lambda *a, **k: warned.__setitem__("n", 1)
     )
     fired = {"n": 0}
     w.commit_requested.connect(lambda: fired.__setitem__("n", 1))
