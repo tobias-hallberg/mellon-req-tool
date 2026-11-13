@@ -23,7 +23,8 @@ from lxml import etree
 
 from .git_ops import discover_repo
 from .link_index import current_hashes
-from .schema import Document, Link, is_object_id
+from .loader import entry_problem
+from .schema import Document, Link, is_document_id, is_object_id
 
 
 class LinkState(str, Enum):
@@ -126,14 +127,26 @@ def target_exists(repo_root: Path, target_doc: str, target_id: str) -> bool:
     """
     if not is_object_id(target_doc, target_id):
         return False
-    return (repo_root / target_doc / "objects" / f"{target_id}.xml").is_file()
+    folder = repo_root / target_doc
+    path = folder / "objects" / f"{target_id}.xml"
+    # MELLON-STORE-SRS-229, MELLON-TRACE-SRS-79: a linked folder or file is
+    # not followed, so its target doesn't exist.
+    if entry_problem(folder) or entry_problem(folder / "objects") or entry_problem(path):
+        return False
+    return path.is_file()
 
 
 def _object_files(repo_root: Path, target_doc: str) -> set[str]:
     """Names of the files in a document's `objects` folder."""
+    folder = repo_root / target_doc
+    if not is_document_id(target_doc) or entry_problem(folder) or entry_problem(folder / "objects"):
+        return set()
     try:
-        with os.scandir(repo_root / target_doc / "objects") as entries:
-            return {e.name for e in entries if e.is_file()}
+        with os.scandir(folder / "objects") as entries:
+            return {
+                e.name for e in entries
+                if e.is_file(follow_symlinks=False) and not e.is_junction()
+            }
     except OSError:
         return set()
 

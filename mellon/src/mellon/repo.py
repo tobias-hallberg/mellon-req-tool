@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .git_ops import GitError, discover_repo
-from .loader import LoaderError, has_manifest, load_document
+from .loader import LoaderError, entry_problem, has_manifest, load_document
 from .schema import Document, Link
 
 
@@ -47,10 +47,19 @@ class DocLoadError:
 _CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
 
 
+# Requirements: MELLON-STORE-SRS-30, MELLON-STORE-SRS-229
 def _error_file(err: LoaderError) -> Path | None:
-    # Most loader messages start with "<path>: ".
+    # Most loader messages start with "<path>: ". Others start with text from
+    # the file (an attribute name), which can hold ": " and "..": a path with a
+    # ".." part, or a link, is never taken, so the message can't make Mellon
+    # name or read a file outside the document.
     head, sep, _rest = str(err).partition(": ")
-    return Path(head) if sep and Path(head).is_file() else None
+    if not sep:
+        return None
+    path = Path(head)
+    if ".." in path.parts or entry_problem(path) is not None:
+        return None
+    return path if path.is_file() else None
 
 
 # Requirements: MELLON-STORE-SRS-30
@@ -103,7 +112,9 @@ def discover_documents(repo_root: str | Path) -> list[Path]:
         raise LoaderError(f"cannot read repo root {repo_root}: {e}") from e
     out: list[Path] = []
     for child in children:
-        if not child.is_dir() or child.name.startswith("."):
+        # MELLON-STORE-SRS-229: a link or junction isn't followed, so it isn't
+        # found to be a document.
+        if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
         # MELLON-STORE-SRS-18: <folder name>.xml, letter case included.
         if has_manifest(child):
@@ -126,7 +137,7 @@ def doc_folder_names(repo_root: str | Path) -> frozenset[str]:
     except OSError:
         return frozenset()
     for child in children:
-        if not child.is_dir() or child.name.startswith("."):
+        if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
         if has_manifest(child):
             out.add(child.name)
@@ -155,10 +166,14 @@ def folders_fingerprint(
                     for entry in entries:
                         key = f"{prefix}{entry.name}"
                         try:
-                            if entry.is_dir(follow_symlinks=False):
+                            # Links aren't followed (MELLON-STORE-SRS-229).
+                            if entry.is_symlink() or entry.is_junction():
+                                st = entry.stat(follow_symlinks=False)
+                                out.add((key, st.st_mtime_ns, st.st_size))
+                            elif entry.is_dir(follow_symlinks=False):
                                 stack.append((entry.path, f"{key}/"))
-                            elif entry.is_file():
-                                st = entry.stat()
+                            elif entry.is_file(follow_symlinks=False):
+                                st = entry.stat(follow_symlinks=False)
                                 out.add((key, st.st_mtime_ns, st.st_size))
                         except OSError:
                             continue

@@ -946,3 +946,69 @@ def test_store_srs_217_whitespace_at_ends_removed_on_read(tmp_path, where):
         content = object_xml("DOC-1", table=f"<columns><col/></columns><row><cell>{padded}</cell></row>")
     write(folder / "objects" / "DOC-1.xml", content)
     assert _read_text(folder, where) == "text"
+
+
+# MELLON-STORE-SRS-229 (CV-TRACE-07): a document's folder, or an entry in it,
+# that is a link, junction, pipe or device is a load error, and isn't opened.
+from tests.trace_support import Repo, dir_link, file_link, linked_document_repo  # noqa: E402
+
+
+def _one_doc(tmp_path: Path) -> Repo:
+    r = Repo(tmp_path / "repo", git=False)
+    r.add_doc("D", {"D-1": "one", "D-2": "two"})
+    return r
+
+
+def test_store_srs_229_document_folder_that_is_a_link_is_a_load_error(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    with pytest.raises(LoaderError, match="junction|symbolic link"):
+        load_document(r.root / "EVIL")
+
+
+@pytest.mark.parametrize("sub", ["objects", "links", "figures", "views", "filters"])
+def test_store_srs_229_subfolder_that_is_a_link_is_a_load_error(tmp_path: Path, sub: str) -> None:
+    r = _one_doc(tmp_path)
+    elsewhere = tmp_path / "elsewhere" / sub
+    if sub == "objects":
+        elsewhere.parent.mkdir()
+        shutil.move(str(r.root / "D" / "objects"), str(elsewhere))
+    else:
+        elsewhere.mkdir(parents=True)
+    dir_link(r.root / "D" / sub, elsewhere)
+    with pytest.raises(LoaderError, match="junction|symbolic link") as e:
+        load_document(r.root / "D")
+    assert sub in str(e.value)
+
+
+@pytest.mark.parametrize("rel", ["objects/D-3.xml", "D.xml", "figures/D-1.svg"])
+def test_store_srs_229_file_that_is_a_link_is_a_load_error(tmp_path: Path, rel: str) -> None:
+    r = _one_doc(tmp_path)
+    outside = tmp_path / "outside" / Path(rel).name
+    outside.parent.mkdir()
+    source = r.root / "D" / ("D.xml" if rel == "D.xml" else "objects/D-1.xml")
+    outside.write_bytes(source.read_bytes() if rel != "figures/D-1.svg" else b"<svg/>")
+    if rel == "D.xml":
+        (r.root / "D" / "D.xml").unlink()
+    file_link(r.root / "D" / rel, outside)
+    with pytest.raises(LoaderError, match="symbolic link"):
+        load_document(r.root / "D")
+
+
+def test_store_srs_229_plain_document_still_loads(tmp_path: Path) -> None:
+    r = _one_doc(tmp_path)
+    (r.root / "D" / "figures").mkdir()
+    (r.root / "D" / "figures" / "D-1.svg").write_bytes(b"<svg/>")
+    doc = load_document(r.root / "D")
+    assert set(doc.objects) == {"D-1", "D-2"}
+    assert doc.objects["D-1"].figure_path == "figures/D-1.svg"
+
+
+def test_store_srs_229_entry_problem_names_each_kind(tmp_path: Path) -> None:
+    plain = tmp_path / "plain.txt"
+    plain.write_text("x")
+    assert loader.entry_problem(plain) is None
+    assert loader.entry_problem(tmp_path) is None
+    assert loader.entry_problem(tmp_path / "missing") is None
+    (tmp_path / "plain-folder").mkdir()
+    link = dir_link(tmp_path / "link", tmp_path / "plain-folder")
+    assert loader.entry_problem(link) in ("is a junction", "is a symbolic link")

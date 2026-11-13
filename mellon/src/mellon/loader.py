@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import dataclasses
 import os
+import stat
 import time
 from collections.abc import Callable
 from pathlib import Path, PurePath, PurePosixPath
@@ -58,11 +59,13 @@ def load_document(folder: str | Path) -> Document:
     filename must be `<folder_name>.xml` inside that folder.
     """
     folder = Path(folder)
+    _refuse_special(folder)
     if not folder.is_dir():
         raise LoaderError(f"Not a directory: {folder}")
 
     doc_id = folder.name
     manifest_path = folder / f"{doc_id}.xml"
+    _refuse_special(manifest_path)
     if not has_manifest(folder):
         raise LoaderError(f"Manifest not found: {manifest_path}")
 
@@ -78,7 +81,12 @@ def load_document(folder: str | Path) -> Document:
         manifest_stat,
         _parse_manifest,
     )
-    rules = _parse_rules_file(folder / f"{doc_id}.rules.xml")
+    rules_path = folder / f"{doc_id}.rules.xml"
+    _refuse_special(rules_path)
+    rules = _parse_rules_file(rules_path)
+
+    for sub_name in _SUBFOLDERS:
+        _refuse_special(folder / sub_name)
 
     objects_dir = folder / "objects"
     objects: dict[str, RequirementObject] = {}
@@ -91,11 +99,12 @@ def load_document(folder: str | Path) -> Document:
     figures_dir = folder / "figures"
     if figures_dir.is_dir():
         with os.scandir(figures_dir) as entries:
-            figure_stems = {
-                os.path.splitext(e.name)[0]
-                for e in entries
-                if _has_suffix(e.name, ".svg") and e.is_file()
-            }
+            figures = [e for e in entries if _has_suffix(e.name, ".svg")]
+        for e in figures:
+            _refuse_special_entry(e)
+        figure_stems = {
+            os.path.splitext(e.name)[0] for e in figures if e.is_file(follow_symlinks=False)
+        }
         for obj_id in figure_stems & objects.keys():
             objects[obj_id] = dataclasses.replace(
                 objects[obj_id], figure_path=f"figures/{obj_id}.svg"
@@ -114,6 +123,7 @@ def load_document(folder: str | Path) -> Document:
     if views_dir.is_dir():
         seen_slugs: set[str] = set()
         for path in sorted(views_dir.glob("*.xml")):
+            _refuse_special(path)
             view = _parse_view(path)
             if view.slug in seen_slugs:
                 raise LoaderError(f"Duplicate view slug {view.slug!r} in {views_dir}")
@@ -125,6 +135,7 @@ def load_document(folder: str | Path) -> Document:
     if filters_dir.is_dir():
         seen_filter_slugs: set[str] = set()
         for path in sorted(filters_dir.glob("*.xml")):
+            _refuse_special(path)
             filt = _parse_filter(path)
             if filt.slug in seen_filter_slugs:
                 raise LoaderError(
@@ -157,6 +168,8 @@ def has_manifest(folder: str | Path) -> bool:
     """
     folder = Path(folder)
     name = f"{folder.name}.xml"
+    if entry_problem(folder) or entry_problem(folder / name):
+        return False
     if not (folder / name).is_file():
         return False
     try:
@@ -277,11 +290,56 @@ def _has_suffix(name: str, suffix: str) -> bool:
     return os.path.normcase(name).endswith(suffix)
 
 
+# The folders a document holds; each is read as a plain folder, never as a link.
+_SUBFOLDERS = ("objects", "figures", "links", "views", "filters")
+
+
+# Requirements: MELLON-STORE-SRS-229
+def entry_problem(path: str | Path) -> str | None:
+    """Why Mellon won't open the folder entry at ``path``: it is a symbolic
+    link, a junction, or something other than a plain file or folder (a pipe,
+    a socket, a device). None for a plain file or folder, or when nothing is
+    there. Nothing is followed: ``lstat`` reads the entry itself.
+    """
+    try:
+        st = os.lstat(path)
+    except (OSError, ValueError):
+        return None
+    if stat.S_ISLNK(st.st_mode):
+        return "is a symbolic link"
+    if getattr(st, "st_reparse_tag", 0) == stat.IO_REPARSE_TAG_MOUNT_POINT:
+        return "is a junction"
+    if not (stat.S_ISREG(st.st_mode) or stat.S_ISDIR(st.st_mode)):
+        return "is not a plain file or folder"
+    return None
+
+
+def _refuse_special(path: Path) -> None:
+    why = entry_problem(path)
+    if why is not None:
+        raise LoaderError(f"{path}: {why}; Mellon doesn't open it")
+
+
+def _refuse_special_entry(entry: os.DirEntry) -> None:
+    """``_refuse_special`` for a listed entry, from what the listing says."""
+    if entry.is_symlink():
+        why = "is a symbolic link"
+    elif entry.is_junction():
+        why = "is a junction"
+    elif entry.is_file(follow_symlinks=False) or entry.is_dir(follow_symlinks=False):
+        return
+    else:
+        why = "is not a plain file or folder"
+    raise LoaderError(f"{entry.path}: {why}; Mellon doesn't open it")
+
+
 def _parse_folder(folder: Path, parse: Callable[[Path], _T]) -> list[_T]:
     """`parse` each `*.xml` file in `folder`, in sorted order, reusing what's
     kept for that folder. Kept entries of files that are gone are dropped."""
     with os.scandir(folder) as entries:
         found = [e for e in entries if _has_suffix(e.name, ".xml")]
+    for entry in found:
+        _refuse_special_entry(entry)
     found.sort(key=lambda e: os.path.normcase(e.name))
     key = os.path.abspath(folder)
     old = _folders.get(key, {})

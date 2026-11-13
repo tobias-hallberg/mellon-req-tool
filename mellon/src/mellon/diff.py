@@ -48,6 +48,7 @@ from .git_ops import (
 from .loader import (
     LoaderError,
     _has_suffix,  # the loader's own rule, so a compare sees the files it loads
+    entry_problem,
     parse_links_bytes,
     parse_manifest_bytes,
     parse_object_bytes,
@@ -643,12 +644,18 @@ class _DiskSide(_Side):
         self.names = {}
         self.manifest = None
         self._data: dict[tuple[str, str], bytes | OSError] = {}
+        # MELLON-STORE-SRS-229: a linked folder isn't followed.
+        for path in (folder, *(folder / sub for sub, _ in _SUBFOLDERS)):
+            why = entry_problem(path)
+            if why is not None:
+                raise GitError(f"{path}: {why}; Mellon doesn't open it")
         # As in git: the document is there when its folder is, manifest or not.
         self.present = folder.is_dir()
         if not self.present:
             return
+        manifest = folder / f"{doc_id}.xml"
         try:
-            self.manifest = (folder / f"{doc_id}.xml").read_bytes()
+            self.manifest = None if entry_problem(manifest) else manifest.read_bytes()
         except OSError:
             self.manifest = None
         targets = {"objects": self.objects, "links": self.links, "figures": self.figures}
@@ -662,7 +669,9 @@ class _DiskSide(_Side):
                     continue
                 stem = entry.name[: -len(suffix)]
                 try:
-                    if not entry.is_file():
+                    if entry.is_symlink() or entry.is_junction():
+                        raise OSError(f"{entry.path}: is a link; Mellon doesn't open it")
+                    if not entry.is_file(follow_symlinks=False):
                         continue
                     with open(entry.path, "rb") as f:
                         data: bytes | OSError = f.read()
