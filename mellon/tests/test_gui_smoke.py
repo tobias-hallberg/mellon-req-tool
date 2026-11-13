@@ -1137,3 +1137,15 @@ def test_check_srs_2_validate_action_reports_a_load_error_after_the_window_opene
     assert len(shown) == 1, shown
     assert "VCU3-SRS-10.xml" in shown[0][1], shown[0]
     assert "merge conflict" in shown[0][1], shown[0]
+
+
+def test_store_srs_7_bare_repository_advice_names_no_root(tmp_path):
+    """CV-STORE-16, MELLON-STORE-SRS-7: the GUI's advice for a bare repository doesn't
+    tell the user to open the folder above it."""
+    import pygit2
+
+    from mellon.gui.controller import _repo_root_advice
+
+    bare = tmp_path / "reqs.git"
+    pygit2.init_repository(str(bare), bare=True)
+    assert "Open " + str(tmp_path) not in _repo_root_advice(bare.resolve())

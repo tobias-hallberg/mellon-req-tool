@@ -51,7 +51,10 @@ def _repo_root_advice(path: Path) -> str:
     repository git cannot open).
     """
     try:
-        _repo, git_root = discover_repo(path)
+        repo, git_root = discover_repo(path)
+        # A bare repository has no work tree: no root to open instead.
+        if repo.is_bare:
+            raise GitError("bare repository")
     except GitError:
         return (
             "Mellon opens the root folder of a git clone: the folder that "

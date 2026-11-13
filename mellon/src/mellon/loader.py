@@ -130,7 +130,7 @@ def load_document(folder: str | Path) -> Document:
     views: list[View] = []
     if views_dir.is_dir():
         seen_slugs: set[str] = set()
-        for path in sorted(views_dir.glob("*.xml")):
+        for path in _xml_files(views_dir):
             view = _parse_view(path)
             if view.slug in seen_slugs:
                 raise LoaderError(f"Duplicate view slug {view.slug!r} in {views_dir}")
@@ -141,7 +141,7 @@ def load_document(folder: str | Path) -> Document:
     filters: list[Filter] = []
     if filters_dir.is_dir():
         seen_filter_slugs: set[str] = set()
-        for path in sorted(filters_dir.glob("*.xml")):
+        for path in _xml_files(filters_dir):
             filt = _parse_filter(path)
             if filt.slug in seen_filter_slugs:
                 raise LoaderError(
@@ -293,9 +293,18 @@ def _cached_parse(
     return parsed
 
 
+# Requirements: MELLON-STORE-SRS-81, MELLON-STORE-SRS-129
 def _has_suffix(name: str, suffix: str) -> bool:
-    # normcase: `*.xml` also matches `A.XML` on Windows, as a glob does there.
-    return os.path.normcase(name).endswith(suffix)
+    # Letter case counts on every system, as for the manifest's name
+    # (MELLON-STORE-SRS-18): `A.XML` is no object file on Windows either, so
+    # Windows and Linux read the same objects and figures.
+    return name.endswith(suffix)
+
+
+def _xml_files(folder: Path) -> list[Path]:
+    """The `*.xml` files of `folder`, letter case included, sorted."""
+    with os.scandir(folder) as entries:
+        return sorted(Path(e.path) for e in entries if _has_suffix(e.name, ".xml"))
 
 
 def _parse_folder(folder: Path, parse: Callable[[Path], _T]) -> list[_T]:

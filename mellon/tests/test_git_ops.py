@@ -1189,3 +1189,22 @@ def test_log_for_path_includes_commit_oid(tmp_git: Path) -> None:
         assert "commit_oid" in entry
         assert len(entry["commit_oid"]) == 40
         assert entry["commit_oid"].startswith(entry["short_hash"])
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_12_bare_repository_is_outside_a_work_tree(tmp_path):
+    """CV-STORE-16, MELLON-STORE-SRS-12 and -7: a bare repository folder has no work
+    tree. The refusal says the folder is outside a git work tree, not that it is a
+    subfolder of one, and names no root to open instead."""
+    from mellon.git_ops import check_repo_root
+
+    bare = tmp_path / "reqs.git"
+    pygit2.init_repository(str(bare), bare=True)
+    reason = check_repo_root(bare)
+    assert reason is not None
+    assert "not the root of its git work tree" not in reason, reason
+    assert "work tree" in reason, reason
+    assert str(tmp_path) + ")" not in reason, reason
+

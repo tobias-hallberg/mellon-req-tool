@@ -383,6 +383,17 @@ All notable changes to Mellon. The format follows
   a full refresh; the next listing now reads the repository again and shows
   the load error (`MELLON-STORE-SRS-27`, `-68`, `-120`).
 
+- **Windows and Linux read the same object, figure, view and filter files.**
+  On Windows `objects/DOC-7.XML` was read as object DOC-7 and
+  `figures/DOC-0.SVG` as DOC-0's figure; on Linux CI neither was, so the
+  same commit checked differently. The `.xml` and `.svg` suffixes now count
+  letter case everywhere, as the manifest's name already did
+  (`MELLON-STORE-SRS-81`, `-129`).
+- **Opening a bare repository is refused as outside a work tree.** It was
+  called a subfolder of a work tree rooted in the folder above it, and the
+  GUI offered to open that folder, which then wasn't a git repository at
+  all (`MELLON-STORE-SRS-7`, `-12`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

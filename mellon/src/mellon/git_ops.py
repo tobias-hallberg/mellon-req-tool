@@ -501,6 +501,13 @@ def check_repo_root(root: str | Path) -> str | None:
             f"{root}: cannot open git repository: HEAD names {head.target!r}, "
             f"not a ref under refs/"
         )
+    # MELLON-STORE-SRS-12: a bare repository has no work tree at all, so it
+    # isn't a subfolder of one either.
+    if repo.is_bare:
+        return (
+            f"{root} is not inside a git work tree: it is a bare repository "
+            f"(clone it with your git client and open the clone)"
+        )
     if Path(root).resolve() != git_root:
         return (
             f"{root} is not the root of its git work tree ({git_root}); "
