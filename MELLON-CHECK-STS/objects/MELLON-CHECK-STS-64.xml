@@ -6,6 +6,7 @@
   <attr name="execution">Automated</attr>
   <attr name="rung">1 Unit</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
-  <attr name="automated-tests">tests/test_validator.py::test_check_srs_66_link_demands_of_several_rules_add_up</attr>
+  <attr name="automated-tests">tests/test_validator.py::test_check_srs_66_link_demands_of_several_rules_add_up
+tests/test_validator.py::test_check_srs_66_one_missing_link_named_by_two_rules_is_one_error</attr>
   <description>Document CHILD with parents PARENT and GRAND; rule 1 type Requirement requires a link to PARENT; rule 2 status Approved requires a link to GRAND. An Approved requirement linking only to PARENT: exactly one RULE_LINK_REQUIRED_MISSING (for GRAND); linking only to GRAND: one (for PARENT); to both: none; to neither: two. A Draft requirement linking only to PARENT: none.</description>
 </object>

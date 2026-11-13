@@ -1010,3 +1010,19 @@ def test_store_srs_81_129_file_suffix_letter_case_counts_on_every_system(tmp_pat
     loaded = load_document(doc)
     assert sorted(loaded.objects) == ["DOC-0"]
     assert loaded.objects["DOC-0"].figure_path is None
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-STORE-SRS-149: an attr rule with a listed operator that no attribute "
+    "kind takes (present) is a load error; waiting on Q19 (CV-STORE-19)"))
+def test_store_srs_149_listed_operator_that_fits_no_kind_still_loads(tmp_path):
+    """CV-STORE-19, MELLON-STORE-SRS-148 and -149: present is one of SRS-148's codes, and
+    an operator that doesn't fit the attribute tested still loads (SRS-149)."""
+    doc = tmp_path / "DOC"
+    (doc / "filters").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC"/>\n', encoding="utf-8")
+    (doc / "filters" / "p.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<filter name="p">\n'
+        '  <rule kind="attr" attr="type" op="present"/>\n</filter>\n', encoding="utf-8")
+    load_document(doc)
