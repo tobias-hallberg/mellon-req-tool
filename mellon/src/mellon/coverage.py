@@ -109,11 +109,17 @@ def coverage_report(
                     incoming_index.get(link.target_id, 0) + 1
                 )
 
+    # MELLON-CHECK-SRS-107, -108: count each object of the document once, in
+    # outline order, then the objects the outline leaves out. An outline that
+    # names an object twice, or misses one, doesn't change the counts.
+    ordered: dict[str, None] = dict.fromkeys(
+        obj_id for obj_id in source.iter_outline_ids() if obj_id in source.objects
+    )
+    ordered.update(dict.fromkeys(sorted(source.objects)))
+
     rows: list[CoverageRow] = []
-    for obj_id in source.iter_outline_ids():
-        obj = source.objects.get(obj_id)
-        if obj is None:
-            continue
+    for obj_id in ordered:
+        obj = source.objects[obj_id]
         if not include_headings and obj.attrs.get("type") == "Heading":
             continue
 

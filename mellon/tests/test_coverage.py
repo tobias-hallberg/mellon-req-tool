@@ -381,3 +381,29 @@ def test_trace_srs_184_transitive_coverage_follows_a_chain_in_the_reports_direct
     assert _rows(coverage_report(docs, "STS", "SYS", direction="outgoing")) == {"STS-1": False, "STS-2": False}
     assert _rows(coverage_report(docs, "SYS", "STS", direction="incoming", transitive=True)) == {"SYS-1": True, "SYS-2": False}
     assert _rows(coverage_report(docs, "SYS", "STS", direction="incoming")) == {"SYS-1": False, "SYS-2": False}
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+@pytest.mark.parametrize("direction", ["outgoing", "incoming"])
+def test_check_srs_107_108_each_object_counted_once(tmp_path, direction) -> None:
+    """CV-CHECK-06, MELLON-CHECK-SRS-107 and -108: the counts are of the document's
+    objects. C's outline names C-1 twice and leaves C-2 out; C-2 links to P-1. C has
+    2 objects, 1 linking to P; P has 1 object, linked to by C."""
+    p = tmp_path / "P"
+    c = tmp_path / "C"
+    _write_manifest(p, "P", ["P-1"])
+    _write_obj(p, "P-1", "Parent requirement")
+    _write_manifest(c, "C", ["C-1", "C-1"])
+    _write_obj(c, "C-1", "Child one")
+    _write_obj(c, "C-2", "Child two")
+    _write_link(c, "C-2", "P", "P-1", "satisfies")
+    docs = _docs_fixture([p, c])
+    if direction == "outgoing":
+        report = coverage_report(docs, "C", "P", direction="outgoing")
+        assert (report.total, report.covered) == (2, 1)
+        assert sorted(r.source_id for r in report.rows) == ["C-1", "C-2"]
+    else:
+        report = coverage_report(docs, "P", "C", direction="incoming")
+        assert (report.total, report.covered) == (1, 1)

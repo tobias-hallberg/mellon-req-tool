@@ -675,6 +675,8 @@ def repo_health() -> dict:
         For deeper analysis, call `coverage_report` directly.
       - `total_validation_errors`, `total_suspect_count`, `total_broken_count`
         for at-a-glance health.
+      - `suspect_scan_error`: null, or why the suspect scan couldn't run (no
+        git repository); then every suspect and broken count is null, not 0.
       - `load_errors[]`: `{doc_id, file, line, message}` for each document
         that failed to load. Such a document is missing from every other
         field, so a non-empty list means the rest is incomplete.

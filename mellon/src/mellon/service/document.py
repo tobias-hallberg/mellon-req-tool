@@ -423,13 +423,18 @@ class DocumentService:
         `load_errors` (as in `get_all_documents`).
         """
         docs = self.get_all_documents(load_errors=load_errors)
-        # Pull repo-wide suspects (returns dict[doc_id, [LinkStatus]]). Falls
-        # back to empty when the repo isn't a git repo — that's fine, we still
-        # want validation + counts.
+        # Pull repo-wide suspects (returns dict[doc_id, [LinkStatus]]). When
+        # the scan can't run (no git repository, or it moved away), the
+        # validation and the other counts still stand, but MELLON-CHECK-SRS-97
+        # and -101: the suspect and broken counts are null, never 0, and
+        # `suspect_scan_error` says why.
+        suspect_scan: dict[str, list[LinkStatus]] | None
+        scan_error: str | None = None
         try:
             suspect_scan = self.scan_suspects(None)
-        except ServiceError:
-            suspect_scan = {}
+        except ServiceError as e:
+            suspect_scan = None
+            scan_error = e.message
 
         documents: list[dict] = []
         total_validation_errors = 0
@@ -440,14 +445,15 @@ class DocumentService:
             loaded = docs[doc_id]
             doc = loaded.document
             errors = validate(doc)
-            statuses = suspect_scan.get(doc_id, [])
-            suspect = sum(
-                1 for s in statuses if s.state is LinkState.SUSPECT
-            )
-            broken = sum(1 for s in statuses if s.state is LinkState.BROKEN)
             total_validation_errors += len(errors)
-            total_suspect_count += suspect
-            total_broken_count += broken
+            suspect: int | None = None
+            broken: int | None = None
+            if suspect_scan is not None:
+                statuses = suspect_scan.get(doc_id, [])
+                suspect = sum(1 for s in statuses if s.state is LinkState.SUSPECT)
+                broken = sum(1 for s in statuses if s.state is LinkState.BROKEN)
+                total_suspect_count += suspect
+                total_broken_count += broken
             documents.append(
                 {
                     "doc_id": doc_id,
@@ -468,46 +474,41 @@ class DocumentService:
                 if parent_id not in docs:
                     continue
                 # child -> parent (outgoing): "does each child obj justify itself?"
-                try:
-                    out_report = _coverage_report(
-                        docs, doc_id, parent_id, direction="outgoing"
-                    )
-                    coverage_rows.append(
-                        {
-                            "source_doc": doc_id,
-                            "target_doc": parent_id,
-                            "direction": "outgoing",
-                            "total": out_report.total,
-                            "covered": out_report.covered,
-                            "coverage_percent": out_report.coverage_percent,
-                        }
-                    )
-                except Exception:  # pragma: no cover — defensive
-                    pass
+                out_report = _coverage_report(
+                    docs, doc_id, parent_id, direction="outgoing"
+                )
+                coverage_rows.append(
+                    {
+                        "source_doc": doc_id,
+                        "target_doc": parent_id,
+                        "direction": "outgoing",
+                        "total": out_report.total,
+                        "covered": out_report.covered,
+                        "coverage_percent": out_report.coverage_percent,
+                    }
+                )
                 # parent -> child (incoming): "is each parent obj verified by a child?"
-                try:
-                    in_report = _coverage_report(
-                        docs, parent_id, doc_id, direction="incoming"
-                    )
-                    coverage_rows.append(
-                        {
-                            "source_doc": parent_id,
-                            "target_doc": doc_id,
-                            "direction": "incoming",
-                            "total": in_report.total,
-                            "covered": in_report.covered,
-                            "coverage_percent": in_report.coverage_percent,
-                        }
-                    )
-                except Exception:  # pragma: no cover — defensive
-                    pass
+                in_report = _coverage_report(
+                    docs, parent_id, doc_id, direction="incoming"
+                )
+                coverage_rows.append(
+                    {
+                        "source_doc": parent_id,
+                        "target_doc": doc_id,
+                        "direction": "incoming",
+                        "total": in_report.total,
+                        "covered": in_report.covered,
+                        "coverage_percent": in_report.coverage_percent,
+                    }
+                )
 
         return {
             "documents": documents,
             "coverage": coverage_rows,
             "total_validation_errors": total_validation_errors,
-            "total_suspect_count": total_suspect_count,
-            "total_broken_count": total_broken_count,
+            "total_suspect_count": None if suspect_scan is None else total_suspect_count,
+            "total_broken_count": None if suspect_scan is None else total_broken_count,
+            "suspect_scan_error": scan_error,
         }
 
     def scan_suspects(self, doc_id: str | None = None) -> dict[str, list[LinkStatus]]:

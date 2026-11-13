@@ -6,6 +6,7 @@
   <attr name="execution">Automated</attr>
   <attr name="rung">3 GUI and MCP</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
-  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_97_repo_health_suspect_count_is_own_outgoing_links</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_97_repo_health_suspect_count_is_own_outgoing_links
+tests/test_service.py::test_check_srs_97_101_repo_health_never_counts_a_failed_scan_as_zero</attr>
   <description>On a copy of req-test, whose 6 suspect links are all outgoing links of VCU3-SRS to VCU3-SyRS: repo_health gives VCU3-SRS 6, VCU3-SyRS 0 (the 6 are its incoming links) and VCU3-STS 0. Acknowledge 2 of the 6 with ack_suspects by link key and commit: VCU3-SRS 4.</description>
 </object>

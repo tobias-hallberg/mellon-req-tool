@@ -294,6 +294,17 @@ All notable changes to Mellon. The format follows
   repository root (`MELLON-STORE-SRS-29`, `MELLON-CHECK-SRS-90`, `-102`,
   `-137`).
 
+- **Coverage counts each object once.** An outline that named an object
+  twice counted it twice, and an object the outline left out wasn't counted,
+  in `repo_health`'s coverage rows, MCP `coverage_report` and the PDF. Each
+  object of the document is now counted once, in outline order and then the
+  objects the outline leaves out (`MELLON-CHECK-SRS-107`, `-108`).
+- **`repo_health` no longer reports 0 suspect links when it couldn't look.**
+  When the suspect scan failed (no git repository, or `.git` moved after the
+  server started), each suspect and broken count read 0. They are now
+  `null`, and the new `suspect_scan_error` says why (`MELLON-CHECK-SRS-97`,
+  `-101`). A failing coverage row is no longer silently left out either.
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

@@ -1706,3 +1706,22 @@ def test_copy_with_a_link_to_a_missing_target_is_refused_before_writing(tmp_path
     assert trace_snapshot(r.root) == before
     (new_id,) = svc.copy_object("CHILD", "CHILD-1", copy_links=False).value
     assert new_id not in load_document(r.root / "CHILD").links
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+def test_check_srs_97_101_repo_health_never_counts_a_failed_scan_as_zero(git_repo: Path):
+    """CV-CHECK-09, MELLON-CHECK-SRS-97 and -101: when the suspect scan can't run (the
+    repository's .git is gone after the service started), repo_health doesn't return
+    0 suspect links; it returns no counts and says why."""
+    svc = DocumentService(git_repo)
+    before = svc.repo_health()
+    assert before["total_suspect_count"] >= 0
+    (git_repo / ".git").rename(git_repo / "moved.git")
+    health = svc.repo_health()
+    assert health["total_suspect_count"] is None, health
+    assert health["total_broken_count"] is None, health
+    assert all(d["suspect_count"] is None and d["broken_count"] is None
+               for d in health["documents"]), health["documents"]
+    assert health["suspect_scan_error"], health
