@@ -3354,3 +3354,28 @@ def test_store_srs_214_control_character_is_named(tmp_path, where):
                 FilterRule(kind="attr", attr=bad, op="eq", value="x")])
         else:
             editor.add_parent(folder, bad)
+
+
+@pytest.mark.parametrize("link_type", [""])
+def test_store_srs_120_empty_link_type_is_refused(tmp_path, link_type):
+    """CV-STORE-10, MELLON-STORE-SRS-120 with -27: a link's type attribute holds the
+    link type; a link with an empty type would make its links file a load error, so
+    it isn't written."""
+    folder = new_document(tmp_path)
+    a, b = populate(folder, 2)
+    with pytest.raises(editor.EditorError):
+        editor.add_link(folder, a, folder.name, b, link_type)
+    assert not (folder / "links" / f"{a}.xml").exists()
+    load_document(folder)
+
+
+@pytest.mark.parametrize("parent", ["", "../X", "A B"])
+def test_store_srs_68_parent_that_isnt_a_document_id_is_refused(tmp_path, parent):
+    """CV-STORE-10, MELLON-STORE-SRS-68 with -27: a parent element's doc attribute holds
+    the parent's document ID; an empty or impossible ID isn't written."""
+    folder = new_document(tmp_path)
+    manifest = folder / f"{folder.name}.xml"
+    before = manifest.read_bytes()
+    with pytest.raises(editor.EditorError):
+        editor.add_parent(folder, parent)
+    assert manifest.read_bytes() == before

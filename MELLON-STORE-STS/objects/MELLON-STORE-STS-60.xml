@@ -8,6 +8,7 @@
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
 tests/test_editor.py::test_add_link_allows_self_link
-tests/test_editor.py::test_remove_link_keeps_file_when_other_links_remain</attr>
+tests/test_editor.py::test_remove_link_keeps_file_when_other_links_remain
+tests/test_editor.py::test_store_srs_120_empty_link_type_is_refused</attr>
   <description>Read links/DOC-1.xml with source DOC-1 and one link to PARENT/PARENT-42 of type satisfies. Add a link from DOC-0 to DOC-1 of type refines; add a second link from DOC-1 and remove the first. Expected: DOC-1's link reads with its target document, target ID and type; DOC-0's new link reads back as added; DOC-1 keeps the one remaining link.</description>
 </object>

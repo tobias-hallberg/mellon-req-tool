@@ -11,6 +11,7 @@ tests/test_repo.py::test_load_all_records_merge_conflict_as_load_error
 tests/test_repo.py::test_load_all_records_unreadable_file_as_load_error
 tests/test_loader.py::test_unreadable_file_is_loader_error
 tests/test_loader.py::test_folder_named_like_an_object_stays_an_error
-tests/test_service.py::test_get_all_documents_reports_load_errors</attr>
+tests/test_service.py::test_get_all_documents_reports_load_errors
+tests/test_service.py::test_store_srs_27_document_unreadable_after_an_edit_stays_listed</attr>
   <description>In a repository holding documents DOC and PARENT, leave conflict markers in one of DOC's object files and list the repository's documents. Separately, put a folder named like an object file (objects/DOC-9.xml) in DOC, standing for a file that can't be opened, and read the repository, then read DOC twice. Expected: DOC is still listed, with a load error, and PARENT reads normally; reading DOC itself fails with a message saying the file can't be read, on each read.</description>
 </object>

@@ -374,6 +374,15 @@ All notable changes to Mellon. The format follows
   name or a parent document ID is named** in the refusal, as in the other
   stored text, instead of lxml's general message (`MELLON-STORE-SRS-214`).
 
+- **A link without a type, and a parent that isn't a document ID, are
+  refused before anything is written.** MCP `add_link` with an empty
+  `link_type`, or `add_parent` with an empty or impossible ID, wrote a file
+  the loader then rejected, so the whole document stopped loading while the
+  call reported failure. And when a document failed to load again after an
+  edit, the GUI's cached document list dropped it without a load error until
+  a full refresh; the next listing now reads the repository again and shows
+  the load error (`MELLON-STORE-SRS-27`, `-68`, `-120`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

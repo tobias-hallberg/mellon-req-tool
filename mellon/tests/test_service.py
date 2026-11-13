@@ -1746,3 +1746,25 @@ def test_store_srs_98_date_value_other_iso_forms_are_refused(tmp_path, value):
         svc.update_object("DOC", obj_id, attrs={"due": value})
     assert ei.value.code is ErrorCode.VALIDATION
     assert path.read_bytes() == before
+
+
+def test_store_srs_27_document_unreadable_after_an_edit_stays_listed(tmp_path, monkeypatch):
+    """CV-STORE-10, MELLON-STORE-SRS-27: when a document can't be read after an edit
+    (here the edit leaves a file the loader rejects), the cached document list doesn't
+    lose it: the document is listed with its load error."""
+    from mellon import editor
+
+    folder = editor.create_document(tmp_path, "DOC")
+    obj_id = editor.create_object(folder, description="x")
+    svc = DocumentService(tmp_path, cache=True)
+    assert set(svc.get_all_documents()) == {"DOC"}
+
+    def breaks_the_file(folder, obj_id, text):
+        (folder / "objects" / f"{obj_id}.xml").write_text("<object id=", encoding="utf-8")
+
+    monkeypatch.setattr(editor, "set_description", breaks_the_file)
+    with pytest.raises(ServiceError):
+        svc.set_description("DOC", obj_id, "y")
+    errors: list = []
+    docs = svc.get_all_documents(load_errors=errors)
+    assert "DOC" in docs or [e.doc_id for e in errors] == ["DOC"], (list(docs), errors)

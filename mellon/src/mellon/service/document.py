@@ -278,7 +278,14 @@ class DocumentService:
                 self._cache.forget_document(doc_id)
             else:
                 self._cache.invalidate([doc_id])
-        return self._load(doc_id)
+        try:
+            return self._load(doc_id)
+        except ServiceError:
+            # MELLON-STORE-SRS-27: the document is gone from the cache; don't
+            # let the cached list go on without it or its load error.
+            if self._cache is not None:
+                self._cache.mark_incomplete()
+            raise
 
     def _docs_of(self, paths: Iterable[Path]) -> tuple[str, ...]:
         """Ids of the document folders `paths` lie in, sorted."""

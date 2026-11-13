@@ -883,6 +883,13 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
 def add_parent(folder: Path, parent_doc: str) -> None:
     """Add a `<parent doc=...>` reference to the manifest's `<parents>`."""
     parent_doc = _sanitize_text(parent_doc, "parent document ID")
+    # MELLON-STORE-SRS-68, -27: the doc attribute holds a document ID; an
+    # empty one is a load error for the whole manifest.
+    if not _DOC_ID_RE.match(parent_doc):
+        raise EditorError(
+            f"invalid parent document ID {parent_doc!r}: "
+            "use letters, digits, hyphens, underscores"
+        )
     doc = load_document(folder)
     if parent_doc == doc.id:
         raise EditorError(f"cannot add {doc.id!r} as a parent of itself")
@@ -1409,6 +1416,10 @@ def add_link(
     already exists (same target-doc + target-id on source).
     """
     link_type = _sanitize_text(link_type, "link type")
+    # MELLON-STORE-SRS-120, -27: a link without a type is a load error for its
+    # links file, so it is never written.
+    if not link_type:
+        raise EditorError("link type cannot be empty")
     doc = load_document(folder)
     if source_id not in doc.objects:
         raise EditorError(f"no object {source_id!r} in document {doc.id!r}")
