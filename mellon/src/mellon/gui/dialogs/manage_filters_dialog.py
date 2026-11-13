@@ -98,6 +98,7 @@ class ManageFiltersDialog(QDialog):
         self._rename_btn.setEnabled(has_selection)
         self._delete_btn.setEnabled(has_selection)
 
+    # Requirements: MELLON-EDIT-SRS-288
     def _rename_selected(self) -> None:
         slug = self._selected_slug()
         if slug is None:
@@ -128,6 +129,7 @@ class ManageFiltersDialog(QDialog):
             return
         self._reload()
 
+    # Requirements: MELLON-EDIT-SRS-289
     def _delete_selected(self) -> None:
         slug = self._selected_slug()
         if slug is None:

@@ -135,6 +135,7 @@ class _State:
     conflicted: tuple[str, ...]
 
 
+# Requirements: MELLON-VER-SRS-309, MELLON-VER-SRS-310
 def _open(root: Path) -> _State:
     try:
         repo, git_root = discover_repo(root)
@@ -164,6 +165,7 @@ def _open(root: Path) -> _State:
     )
 
 
+# Requirements: MELLON-VER-SRS-325
 def _doc_files(repo: pygit2.Repository, tree: pygit2.Tree) -> Files:
     """Every file of every document folder (`X/` holding `X/X.xml`) in `tree`."""
     files: Files = {}
@@ -269,6 +271,7 @@ def _description(obj_data: bytes | None, limit: int | None = None) -> str:
 # --- renumbering -----------------------------------------------------------------
 
 
+# Requirements: MELLON-VER-SRS-331
 def _find_renumbered(st: _State) -> list[Renumbered]:
     out: list[Renumbered] = []
     for doc in _doc_ids(st.ours, st.theirs):
@@ -333,6 +336,7 @@ def _max_number(doc: str, *id_maps: Mapping[str, str]) -> int:
     return max((n for n in numbers if n is not None), default=-1)
 
 
+# Requirements: MELLON-VER-SRS-331
 def _added_time(st: _State, tip: pygit2.Commit, path: str) -> int:
     """Commit time of the first commit on `tip`'s side that has `path`."""
     walker = st.repo.walk(
@@ -349,6 +353,7 @@ def _added_time(st: _State, tip: pygit2.Commit, path: str) -> int:
     return tip.commit_time
 
 
+# Requirements: MELLON-VER-SRS-337, MELLON-VER-SRS-338, MELLON-VER-SRS-339
 def _renumber(files: Files, renames: Mapping[tuple[str, str], str]) -> Files:
     """`files` as if the renamed objects had their new ids from the start.
 
@@ -409,6 +414,7 @@ class _Hand:
     deleted_on: Side | None = None
 
 
+# Requirements: MELLON-VER-SRS-314, MELLON-VER-SRS-345, MELLON-VER-SRS-353, MELLON-VER-SRS-354
 def _three_way(
     b: Mapping[str, str | None],
     o: Mapping[str, str | None],
@@ -480,6 +486,7 @@ def _object_label(key: str) -> str:
     return {"description": "Text", "table": "Table"}.get(key, key)
 
 
+# Requirements: MELLON-VER-SRS-314
 def _merge_object(
     b: bytes | None, o: bytes, t: bytes, edits: Mapping[str, str], hand: _Hand
 ) -> bytes:
@@ -510,6 +517,7 @@ def _merge_object(
     return _dump(root)
 
 
+# Requirements: MELLON-VER-SRS-315, MELLON-VER-SRS-316, MELLON-VER-SRS-317
 def _merge_links(b: bytes | None, o: bytes | None, t: bytes | None) -> bytes | None:
     """Links merge as a set keyed by target. A link changed on both sides
     (another type or ack) keeps ours; one deleted and changed on the other
@@ -550,6 +558,7 @@ def _links_of(data: bytes | None) -> tuple[str | None, dict[tuple, dict]]:
     return root.get("source"), links
 
 
+# Requirements: MELLON-VER-SRS-319
 def _merge_manifest(
     b: bytes | None,
     o: bytes,
@@ -576,6 +585,7 @@ def _merge_manifest(
     return _dump(root)
 
 
+# Requirements: MELLON-VER-SRS-321, MELLON-VER-SRS-346, MELLON-VER-SRS-349
 def _merge_properties(
     b: bytes | None, o: bytes, t: bytes, edits: Mapping[str, str], hand: _Hand
 ) -> etree._Element:
@@ -703,6 +713,7 @@ def _preorder(nodes: list[_Node]) -> Iterator[str]:
         yield from _preorder(sub)
 
 
+# Requirements: MELLON-VER-SRS-319, MELLON-VER-SRS-320
 def _merge_outline(
     base: list[_Node], ours: list[_Node], theirs: list[_Node]
 ) -> list[_Node]:
@@ -810,6 +821,8 @@ class _Outcome:
     outside: list[str]
 
 
+# Requirements: MELLON-VER-SRS-309, MELLON-VER-SRS-313, MELLON-VER-SRS-325, MELLON-VER-SRS-339,
+#   MELLON-VER-SRS-345, MELLON-VER-SRS-349, MELLON-VER-SRS-350
 def _compute(
     st: _State,
     edits: Mapping[str, Mapping[str, str]],
@@ -910,6 +923,7 @@ def _merged_file(st: _State, results: Mapping[str, bytes | None], path: str):
     return staged if staged is not None else st.ours.get(path)
 
 
+# Requirements: MELLON-VER-SRS-352
 def _traces(
     st: _State, results: Mapping[str, bytes | None], obj_path: str
 ) -> tuple[Linked, ...]:
@@ -937,6 +951,7 @@ def _git_merged(st: _State, path: str) -> bytes | None:
     return st.repo[entry.id].data
 
 
+# Requirements: MELLON-VER-SRS-296
 def pending(root: str | Path) -> tuple[str, ...] | None:
     """The conflicted paths of the merge in progress at `root`; None when
     no merge is in progress (or `root` isn't in a git repository)."""
@@ -949,6 +964,7 @@ def pending(root: str | Path) -> tuple[str, ...] | None:
     return _conflicted_paths(repo)
 
 
+# Requirements: MELLON-VER-SRS-300
 def _conflicted_paths(repo: pygit2.Repository) -> tuple[str, ...]:
     conflicts = repo.index.conflicts
     if conflicts is None:
@@ -987,6 +1003,7 @@ def plan(root: str | Path) -> MergePlan:
     )
 
 
+# Requirements: MELLON-VER-SRS-360, MELLON-VER-SRS-366
 def resolve(
     root: str | Path,
     *,

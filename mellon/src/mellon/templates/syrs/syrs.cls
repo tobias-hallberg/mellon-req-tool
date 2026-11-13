@@ -2,6 +2,9 @@
 %% Modernized formal aesthetic, A4, automotive flavor (ISO 26262)
 %% Compile with XeLaTeX or LuaLaTeX (for Inter / IBM Plex Mono)
 %% Falls back to lmodern if those fonts aren't installed.
+%% Requirements: MELLON-PDF-SRS-80, MELLON-PDF-SRS-82, MELLON-PDF-SRS-98, MELLON-PDF-SRS-99,
+%%   MELLON-PDF-SRS-100, MELLON-PDF-SRS-101, MELLON-PDF-SRS-104, MELLON-PDF-SRS-105,
+%%   MELLON-PDF-SRS-114, MELLON-PDF-SRS-150, MELLON-PDF-SRS-154
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{syrs}[2026/04/27 System Requirements Specification class]

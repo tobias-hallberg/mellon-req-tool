@@ -40,6 +40,7 @@ from ..dialogs.object_at_commit import ObjectAtCommitDialog
 _HASH_ROLE = Qt.ItemDataRole.UserRole + 1
 
 
+# Requirements: MELLON-VER-SRS-220
 class HistoryTab(QWidget):
     # A commit's short hash: compare the document there with the latest commit.
     compare_requested = Signal(str)
@@ -48,6 +49,7 @@ class HistoryTab(QWidget):
 
     COLUMNS = ("Hash", "Issue", "Date", "Author", "Message")
 
+    # Requirements: MELLON-VER-SRS-228
     def __init__(self, controller: RepoController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._controller = controller
@@ -183,6 +185,7 @@ class HistoryTab(QWidget):
         self._populate_table(commits)
         self._stack.setCurrentWidget(self._content)
 
+    # Requirements: MELLON-VER-SRS-220
     def _populate_table(self, commits: list[dict]) -> None:
         self._table.setRowCount(len(commits))
         cols = self.COLUMNS
@@ -237,6 +240,7 @@ class HistoryTab(QWidget):
         short_hash = items[0].data(_HASH_ROLE)
         return short_hash if isinstance(short_hash, str) and short_hash else None
 
+    # Requirements: MELLON-VER-SRS-228
     def _view_at_commit(self) -> None:
         if self._current_doc_id is None or self._current_obj_id is None:
             return

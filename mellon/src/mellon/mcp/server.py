@@ -59,6 +59,7 @@ from .serialize import (
 
 log = logging.getLogger("mellon.mcp")
 
+# Requirements: MELLON-MCP-SRS-21, MELLON-MCP-SRS-37
 mcp = FastMCP("mellon")
 # FastMCP 1.x has no `version` kwarg; without this, serverInfo reports the
 # mcp SDK's version instead of Mellon's.
@@ -75,6 +76,7 @@ class _State:
 
 # `error_type` strings agents see on the wire. Kept stable across the service
 # refactor — tests pin these values.
+# Requirements: MELLON-MCP-SRS-52, MELLON-MCP-SRS-53, MELLON-MCP-SRS-54
 _ERROR_TYPE_BY_CODE: dict[ErrorCode, str] = {
     ErrorCode.NOT_FOUND: "EditorError",
     ErrorCode.VALIDATION: "EditorError",
@@ -95,6 +97,7 @@ def _require_root() -> Path:
     return _State.repo_root
 
 
+# Requirements: MELLON-MCP-SRS-2
 def _svc() -> DocumentService:
     """Return the active service, building or rebuilding it if the root or
     read-only flag changed.
@@ -123,16 +126,19 @@ class _Refusal(Exception):
     error_type = "Refusal"
 
 
+# Requirements: MELLON-MCP-SRS-100
 class _ReadOnlyRefusal(_Refusal):
     error_type = _ERROR_TYPE_BY_CODE[ErrorCode.READ_ONLY]  # "PermissionError"
 
 
+# Requirements: MELLON-MCP-SRS-53
 class _NoDocument(_Refusal, ValueError):
     """A doc_id names no document. A ValueError, which read tools raise."""
 
     error_type = _ERROR_TYPE_BY_CODE[ErrorCode.NOT_FOUND]  # "EditorError"
 
 
+# Requirements: MELLON-MCP-SRS-45
 def _refusing_tool(*refusals: type[_Refusal]):
     """`@mcp.tool()` for a tool that returns each of `refusals` as
     `{ok: False, affected_files: [], message, error, error_type}`, the shape
@@ -159,12 +165,15 @@ def _refusing_tool(*refusals: type[_Refusal]):
 
 # MELLON-MCP-SRS-45, -53, -100: a write tool returns its read-only refusal and
 # a doc_id that names no document as a failure result, not a tool error.
+# Requirements: MELLON-MCP-SRS-35
 _write_tool = _refusing_tool(_ReadOnlyRefusal, _NoDocument)
 # MELLON-MCP-SRS-100: commit_changes and export_document aren't write tools;
 # only their read-only refusal is a failure result.
+# Requirements: MELLON-MCP-SRS-99
 _changing_tool = _refusing_tool(_ReadOnlyRefusal)
 
 
+# Requirements: MELLON-MCP-SRS-99, MELLON-MCP-SRS-101
 def _guard_write() -> None:
     """Enforce --read-only at the MCP boundary.
 
@@ -178,6 +187,7 @@ def _guard_write() -> None:
         )
 
 
+# Requirements: MELLON-MCP-SRS-112
 def _require_doc(doc_id: str) -> Path:
     """Resolve `doc_id` to its folder; raise `_NoDocument` if the doc is missing.
 
@@ -201,6 +211,7 @@ def _require_doc(doc_id: str) -> Path:
     return folder
 
 
+# Requirements: MELLON-MCP-SRS-67
 def _rel(path: Path) -> str:
     return path.resolve().relative_to(_require_root()).as_posix()
 
@@ -214,12 +225,14 @@ def _rels(paths) -> list[str]:
     return [_rel(Path(p)) for p in paths]
 
 
+# Requirements: MELLON-MCP-SRS-44
 def _write_result(*, affected: list[str], message: str, **extra: Any) -> dict:
     out: dict = {"ok": True, "affected_files": affected, "message": message}
     out.update(extra)
     return out
 
 
+# Requirements: MELLON-MCP-SRS-45
 def _service_error_result(err: ServiceError, *, message: str) -> dict:
     return {
         "ok": False,
@@ -230,6 +243,7 @@ def _service_error_result(err: ServiceError, *, message: str) -> dict:
     }
 
 
+# Requirements: MELLON-EDIT-SRS-193, MELLON-EDIT-SRS-195, MELLON-EDIT-SRS-197
 def _flat_outline(doc, nodes=None, level: int = 0, levels: int | None = None) -> list[dict]:
     """Pre-order rows for `nodes` (default: the whole outline), `levels` deep.
 
@@ -273,6 +287,7 @@ def _outline_node(nodes, ref_id: str, depth: int = 0):
     return None, 0
 
 
+# Requirements: MELLON-TRACE-SRS-170
 def _trim_tree(edges: list[dict], depth_left: int) -> list[dict]:
     if depth_left <= 0:
         return [dict(e, children=[]) for e in edges]
@@ -284,6 +299,7 @@ def _trim_tree(edges: list[dict], depth_left: int) -> list[dict]:
 # --- Read tools ------------------------------------------------------------
 
 
+# Requirements: MELLON-EDIT-SRS-55, MELLON-MCP-SRS-34, MELLON-STORE-SRS-41, MELLON-VER-SRS-250
 @mcp.tool()
 def list_documents(include: list[str] | None = None) -> list[dict]:
     """List every document in the configured repo (compact by default).
@@ -326,6 +342,7 @@ def list_documents(include: list[str] | None = None) -> list[dict]:
     return out
 
 
+# Requirements: MELLON-VER-SRS-251
 @mcp.tool()
 def show_document(doc_id: str, include: list[str] | None = None) -> dict:
     """Manifest-level detail for one document (compact by default).
@@ -349,6 +366,7 @@ def show_document(doc_id: str, include: list[str] | None = None) -> dict:
     )
 
 
+# Requirements: MELLON-EDIT-SRS-260, MELLON-EDIT-SRS-266
 @mcp.tool()
 def search_objects(
     query: str,
@@ -442,6 +460,7 @@ def show_object(doc_id: str, obj_id: str) -> dict:
     }
 
 
+# Requirements: MELLON-TRACE-SRS-175
 @mcp.tool()
 def inspect_object(
     doc_id: str,
@@ -543,6 +562,7 @@ def inspect_object(
     return result
 
 
+# Requirements: MELLON-EDIT-SRS-193, MELLON-EDIT-SRS-194, MELLON-MCP-SRS-34, MELLON-MCP-SRS-39
 @mcp.tool()
 def outline(
     doc_id: str,
@@ -577,6 +597,7 @@ def outline(
     return _flat_outline(doc, node.children, level + 1, depth)
 
 
+# Requirements: MELLON-CHECK-SRS-3, MELLON-CHECK-SRS-86, MELLON-CHECK-SRS-87
 @mcp.tool()
 def validate_document(doc_id: str) -> dict:
     """Run schema validation on a document.
@@ -595,6 +616,7 @@ def validate_document(doc_id: str) -> dict:
     }
 
 
+# Requirements: MELLON-CHECK-SRS-89, MELLON-CHECK-SRS-90, MELLON-CHECK-SRS-91, MELLON-CHECK-SRS-94
 @mcp.tool()
 def validate_repo() -> dict:
     """Run schema validation on every document; aggregate the results.
@@ -632,6 +654,7 @@ def validate_repo() -> dict:
     }
 
 
+# Requirements: MELLON-CHECK-SRS-102
 @mcp.tool()
 def repo_health() -> dict:
     """One-call snapshot of the repo: counts, validation, suspects, coverage.
@@ -664,6 +687,7 @@ def repo_health() -> dict:
     return result
 
 
+# Requirements: MELLON-TRACE-SRS-74, MELLON-TRACE-SRS-104, MELLON-TRACE-SRS-105
 @mcp.tool()
 def suspects(doc_id: str | None = None) -> list[dict]:
     """Scan outgoing links for OK / SUSPECT / BROKEN state.
@@ -694,6 +718,8 @@ def suspects(doc_id: str | None = None) -> list[dict]:
     return results
 
 
+# Requirements: MELLON-TRACE-SRS-168, MELLON-TRACE-SRS-169, MELLON-TRACE-SRS-170,
+#   MELLON-TRACE-SRS-171, MELLON-TRACE-SRS-172
 @mcp.tool()
 def trace(
     doc_id: str,
@@ -731,6 +757,7 @@ def trace(
     return result
 
 
+# Requirements: MELLON-TRACE-SRS-37
 @mcp.tool()
 def incoming_links(doc_id: str, obj_id: str) -> list[dict]:
     """Every link across the repo that points AT (doc_id, obj_id)."""
@@ -742,6 +769,7 @@ def incoming_links(doc_id: str, obj_id: str) -> list[dict]:
     ]
 
 
+# Requirements: MELLON-TRACE-SRS-200
 @mcp.tool()
 def coverage_report(
     source_doc: str,
@@ -795,6 +823,7 @@ def coverage_report(
 # --- Write tools -----------------------------------------------------------
 
 
+# Requirements: MELLON-EDIT-SRS-117, MELLON-VER-SRS-171
 @_write_tool
 def new_object(
     doc_id: str,
@@ -882,6 +911,7 @@ def new_object(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-138
 @_write_tool
 def set_attribute(
     doc_id: str,
@@ -913,6 +943,7 @@ def set_attribute(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-139
 @_write_tool
 def edit_description(
     doc_id: str,
@@ -937,6 +968,7 @@ def edit_description(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-140
 @_write_tool
 def update_object(
     doc_id: str,
@@ -1022,6 +1054,7 @@ def update_object(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-143, MELLON-EDIT-SRS-152
 @_write_tool
 def copy_object(
     doc_id: str,
@@ -1082,6 +1115,7 @@ def copy_object(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-155
 @_write_tool
 def bulk_set_attribute(
     doc_id: str,
@@ -1135,6 +1169,7 @@ def bulk_set_attribute(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-232, MELLON-EDIT-SRS-236, MELLON-MCP-SRS-112, MELLON-MCP-SRS-115
 @_write_tool
 def set_figure(
     doc_id: str,
@@ -1172,6 +1207,7 @@ def set_figure(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-240
 @_write_tool
 def clear_figure(
     doc_id: str,
@@ -1249,6 +1285,7 @@ def _table_from_dict(data: Any) -> Table:
     return Table(columns=tuple(columns), rows=tuple(rows))
 
 
+# Requirements: MELLON-EDIT-SRS-203
 @_write_tool
 def set_table(
     doc_id: str,
@@ -1293,6 +1330,7 @@ def set_table(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-204
 @_write_tool
 def clear_table(
     doc_id: str,
@@ -1323,6 +1361,7 @@ def clear_table(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-36
 @_write_tool
 def edit_metadata(
     doc_id: str,
@@ -1349,6 +1388,7 @@ def edit_metadata(
     ))
 
 
+# Requirements: MELLON-MCP-SRS-35, MELLON-VER-SRS-171, MELLON-VER-SRS-265
 @_write_tool
 def tag_issue(doc_id: str, issue: str) -> dict:
     """Create the `<doc_id>-issue-<issue>` lightweight tag at HEAD.
@@ -1372,6 +1412,7 @@ def tag_issue(doc_id: str, issue: str) -> dict:
     )
 
 
+# Requirements: MELLON-EDIT-SRS-45
 @_write_tool
 def add_parent_doc(
     doc_id: str,
@@ -1392,6 +1433,7 @@ def add_parent_doc(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-46
 @_write_tool
 def remove_parent_doc(
     doc_id: str,
@@ -1421,6 +1463,7 @@ def remove_parent_doc(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-76
 @_write_tool
 def add_attr_option(
     doc_id: str,
@@ -1442,6 +1485,7 @@ def add_attr_option(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-60, MELLON-EDIT-SRS-67
 @_write_tool
 def define_attribute(
     doc_id: str,
@@ -1507,6 +1551,7 @@ def define_attribute(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-91
 @_write_tool
 def change_attribute_required(
     doc_id: str,
@@ -1536,6 +1581,7 @@ def change_attribute_required(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-96
 @_write_tool
 def delete_attribute(
     doc_id: str,
@@ -1564,6 +1610,7 @@ def delete_attribute(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-81
 @_write_tool
 def remove_attr_option(
     doc_id: str,
@@ -1593,6 +1640,7 @@ def remove_attr_option(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-337
 @_write_tool
 def manage_view(
     doc_id: str,
@@ -1718,6 +1766,7 @@ def manage_view(
     }
 
 
+# Requirements: MELLON-EDIT-SRS-19
 @_write_tool
 def create_document(
     doc_id: str,
@@ -1770,6 +1819,7 @@ def create_document(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-187
 @_write_tool
 def move_object(
     doc_id: str,
@@ -1807,6 +1857,7 @@ def move_object(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-189
 @_write_tool
 def reorder_outline(
     doc_id: str,
@@ -1842,6 +1893,7 @@ def reorder_outline(
     ))
 
 
+# Requirements: MELLON-TRACE-SRS-14, MELLON-TRACE-SRS-19
 @_write_tool
 def add_link(
     source_doc: str,
@@ -1874,6 +1926,7 @@ def add_link(
     ))
 
 
+# Requirements: MELLON-TRACE-SRS-27, MELLON-TRACE-SRS-28
 @_write_tool
 def remove_link(
     source_doc: str,
@@ -1912,6 +1965,7 @@ def remove_link(
     ))
 
 
+# Requirements: MELLON-EDIT-SRS-170, MELLON-MCP-SRS-67, MELLON-VER-SRS-107
 @_write_tool
 def delete_object(
     doc_id: str,
@@ -1954,6 +2008,8 @@ def delete_object(
     ))
 
 
+# Requirements: MELLON-MCP-SRS-67, MELLON-TRACE-SRS-138, MELLON-TRACE-SRS-139,
+#   MELLON-TRACE-SRS-140, MELLON-TRACE-SRS-141, MELLON-TRACE-SRS-142, MELLON-TRACE-SRS-155
 @_write_tool
 def ack_suspects(
     doc_id: str,
@@ -2078,6 +2134,7 @@ def ack_suspects(
 _COMMIT_TRAILER = "Via: mellon-mcp"
 
 
+# Requirements: MELLON-VER-SRS-174
 def _with_trailer(message: str) -> str:
     """Append the standard `Via: mellon-mcp` trailer to a commit message."""
     stripped = message.rstrip()
@@ -2085,6 +2142,9 @@ def _with_trailer(message: str) -> str:
     return f"{stripped}{sep}{_COMMIT_TRAILER}\n"
 
 
+# Requirements: MELLON-MCP-SRS-79, MELLON-MCP-SRS-81, MELLON-MCP-SRS-87, MELLON-MCP-SRS-91,
+#   MELLON-MCP-SRS-94, MELLON-VER-SRS-107, MELLON-VER-SRS-172, MELLON-VER-SRS-173,
+#   MELLON-VER-SRS-176
 def _auto_commit_if_requested(commit_message: str | None, result: dict) -> dict:
     """Commit affected_files with the standard trailer when commit_message is set.
 
@@ -2119,6 +2179,7 @@ def _auto_commit_if_requested(commit_message: str | None, result: dict) -> dict:
     return result
 
 
+# Requirements: MELLON-VER-SRS-230
 def _parse_object_xml(xml_text: str) -> dict:
     """Extract id / attrs / description from an object-file XML blob."""
     root = etree.fromstring(xml_text.encode("utf-8"))
@@ -2134,6 +2195,7 @@ def _parse_object_xml(xml_text: str) -> dict:
     }
 
 
+# Requirements: MELLON-TRACE-SRS-118
 _REVIEW_MAX_COMMITS = 20
 
 
@@ -2144,6 +2206,7 @@ def _table_xml(xml_text: str) -> bytes | None:
     return None if table is None else etree.tostring(table, method="c14n")
 
 
+# Requirements: MELLON-TRACE-SRS-119, MELLON-TRACE-SRS-120
 def _changed_fields(
     repo, target_rel: str, figure_rel: str, ref_a: str, ref_b: str
 ) -> list[str] | None:
@@ -2174,6 +2237,8 @@ def _changed_fields(
     return changed
 
 
+# Requirements: MELLON-MCP-SRS-36, MELLON-VER-SRS-102, MELLON-VER-SRS-105, MELLON-VER-SRS-126,
+#   MELLON-VER-SRS-174, MELLON-VER-SRS-176
 @_changing_tool
 def commit_changes(
     message: str,
@@ -2206,6 +2271,7 @@ def commit_changes(
     }
 
 
+# Requirements: MELLON-VER-SRS-222
 @mcp.tool()
 def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
     """Recent commits on HEAD's history that changed this object's file or
@@ -2227,6 +2293,7 @@ def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
         return []
 
 
+# Requirements: MELLON-VER-SRS-229
 @mcp.tool()
 def show_object_at(doc_id: str, obj_id: str, commit_ref: str) -> dict:
     """Parsed object as it looked at `commit_ref`."""
@@ -2245,6 +2312,7 @@ def show_object_at(doc_id: str, obj_id: str, commit_ref: str) -> dict:
     return parsed
 
 
+# Requirements: MELLON-MCP-SRS-36
 @mcp.tool()
 def compare_document(
     doc_id: str,
@@ -2297,6 +2365,9 @@ def compare_document(
     return document_diff_to_dict(diff, max_changes=max(0, max_changes))
 
 
+# Requirements: MELLON-TRACE-SRS-79, MELLON-TRACE-SRS-115, MELLON-TRACE-SRS-116,
+#   MELLON-TRACE-SRS-117, MELLON-TRACE-SRS-118, MELLON-TRACE-SRS-120, MELLON-TRACE-SRS-122,
+#   MELLON-TRACE-SRS-123
 @mcp.tool()
 def review_suspect_link(
     source_doc: str,
@@ -2459,6 +2530,9 @@ def review_suspect_link(
     }
 
 
+# Requirements: MELLON-MCP-SRS-36, MELLON-MCP-SRS-112, MELLON-MCP-SRS-115, MELLON-PDF-SRS-5,
+#   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-56, MELLON-PDF-SRS-61,
+#   MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
 @_changing_tool
 def export_document(
     doc_id: str,
@@ -2603,6 +2677,11 @@ def export_document(
 # --- Entrypoint ------------------------------------------------------------
 
 
+# Requirements: MELLON-MCP-SRS-2, MELLON-MCP-SRS-3, MELLON-MCP-SRS-5, MELLON-MCP-SRS-6,
+#   MELLON-MCP-SRS-8, MELLON-MCP-SRS-9, MELLON-MCP-SRS-11, MELLON-MCP-SRS-12, MELLON-MCP-SRS-15,
+#   MELLON-MCP-SRS-20, MELLON-MCP-SRS-23, MELLON-MCP-SRS-25, MELLON-MCP-SRS-98, MELLON-MCP-SRS-105,
+#   MELLON-MCP-SRS-117, MELLON-MCP-SRS-118, MELLON-MCP-SRS-120, MELLON-MCP-SRS-121,
+#   MELLON-STORE-SRS-5, MELLON-STORE-SRS-13
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="mellon-mcp",

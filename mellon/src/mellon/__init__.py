@@ -3,6 +3,7 @@
 from importlib.metadata import PackageNotFoundError, version as _dist_version
 
 try:
+    # Requirements: MELLON-GUI-SRS-8
     __version__ = _dist_version("mellon")
 except PackageNotFoundError:  # running from a bare source tree
     __version__ = "0+unknown"

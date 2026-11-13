@@ -158,6 +158,7 @@ def words_html(text_a: str, text_b: str, side: str, tokens: dict[str, str]) -> s
     return "".join(out)
 
 
+# Requirements: MELLON-VER-SRS-51
 def table_html(table: Table | None) -> str:
     if table is None:
         return "<i>(no table)</i>"

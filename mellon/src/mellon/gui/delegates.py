@@ -94,6 +94,7 @@ class AttrDelegate(QStyledItemDelegate):
         self._controller = controller
         self._attr_name = attr_name
 
+    # Requirements: MELLON-EDIT-SRS-130, MELLON-EDIT-SRS-131
     def createEditor(self, parent, option, index):
         attr = self._attribute_for_current_doc()
         if attr is None:
@@ -131,6 +132,7 @@ class AttrDelegate(QStyledItemDelegate):
             return
         super().setEditorData(editor, index)
 
+    # Requirements: MELLON-EDIT-SRS-132, MELLON-EDIT-SRS-133, MELLON-EDIT-SRS-134
     def setModelData(self, editor, model, index):
         if isinstance(editor, QComboBox):
             model.setData(index, editor.currentText(), Qt.ItemDataRole.EditRole)
@@ -273,6 +275,7 @@ class StateGutterDelegate(QStyledItemDelegate):
     _SIZE = 9  # marker bounding-box side
     _HALF_V_SPACING = 6  # vertical distance from cell centre to each marker
 
+    # Requirements: MELLON-TRACE-SRS-83
     def paint(self, painter, option, index):
         super().paint(painter, option, index)
         states = index.data(OBJ_LINK_STATES_ROLE)
@@ -308,6 +311,7 @@ class StateGutterDelegate(QStyledItemDelegate):
             )
         painter.restore()
 
+    # Requirements: MELLON-TRACE-SRS-84
     def _draw_marker(self, painter, cx, cy, state, colors, *, pointing_left):
         painter.setBrush(colors[state])
         half = self._SIZE / 2
@@ -390,6 +394,8 @@ class _GridDescriptionEditor(QTextEdit):
         # +1 guards against off-by-one clipping on the last wrapped line.
         return int(doc.size().height()) + 1
 
+    # Requirements: MELLON-EDIT-SRS-126, MELLON-EDIT-SRS-127, MELLON-GUI-SRS-165,
+    #   MELLON-GUI-SRS-166
     def keyPressEvent(self, event) -> None:  # type: ignore[override]
         key = event.key()
         mods = event.modifiers()
@@ -516,6 +522,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         self._preview_table: InlineTableWidget | None = None
         self._text_heights: dict[tuple[str, int, str], int] = {}
 
+    # Requirements: MELLON-EDIT-SRS-256, MELLON-EDIT-SRS-257
     def _thumbnail(self, figure_path: str, target_width: int) -> QPixmap | None:
         """Render `figure_path` to a `QPixmap` sized to fit `target_width`.
 
@@ -584,6 +591,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
             self._text_heights[key] = height
         return height
 
+    # Requirements: MELLON-EDIT-SRS-136, MELLON-GUI-SRS-67
     def sizeHint(self, option, index):
         table = index.data(OBJ_TABLE_ROLE)
         if table is not None:
@@ -614,6 +622,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
                 h += pm.height() + _FIGURE_GAP
         return QSize(option.rect.width(), h)
 
+    # Requirements: MELLON-EDIT-SRS-254
     def paint(self, painter, option, index):
         table = index.data(OBJ_TABLE_ROLE)
         if table is not None:
@@ -679,6 +688,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         thumb_y = option.rect.top() + _GRID_CELL_PADDING_V + text_h + gap
         painter.drawPixmap(thumb_x, thumb_y, pm)
 
+    # Requirements: MELLON-EDIT-SRS-209
     def _paint_table(self, painter, option, index, table) -> None:
         # Background (selection / hover / alt-row) via the style.
         opt = QStyleOptionViewItem(option)
@@ -741,6 +751,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         thumb_y = rect.top() + _GRID_CELL_PADDING_V + text_h + gap
         return QRect(thumb_x, thumb_y, pm.width(), pm.height())
 
+    # Requirements: MELLON-EDIT-SRS-127
     def createEditor(self, parent, option, index):
         if index.data(OBJ_TABLE_ROLE) is not None:
             ed = InlineTableWidget(parent)
@@ -784,6 +795,7 @@ class MultiLineTextDelegate(QStyledItemDelegate):
         ed.document().contentsChanged.connect(lambda: self._grow(ed))
         return ed
 
+    # Requirements: MELLON-GUI-SRS-165
     def _commit_and_close(self, editor) -> None:
         self.commitData.emit(editor)
         self.closeEditor.emit(

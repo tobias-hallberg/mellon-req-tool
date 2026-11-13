@@ -76,6 +76,7 @@ class DocumentPropertiesDialog(QDialog):
         layout.addWidget(tabs)
         layout.addWidget(buttons)
 
+    # Requirements: MELLON-EDIT-SRS-38
     def done(self, result: int) -> None:  # type: ignore[override]
         # Close, Esc and the title-bar X all land here. The Metadata tab only
         # writes on Apply (the other tabs apply immediately), so ask before
@@ -101,6 +102,7 @@ class DocumentPropertiesDialog(QDialog):
 
 
 class MetadataTab(QWidget):
+    # Requirements: MELLON-EDIT-SRS-35
     def __init__(
         self,
         controller: RepoController,
@@ -157,6 +159,7 @@ class MetadataTab(QWidget):
     def has_unapplied_changes(self) -> bool:
         return self._current_values() != self._initial
 
+    # Requirements: MELLON-EDIT-SRS-35
     def _on_apply(self) -> None:
         svc = self._controller.require_service()
         current = self._current_values()
@@ -228,6 +231,7 @@ class ParentsTab(QWidget):
         existing = set(doc.parents)
         return [d for d in sibs if d != self._doc_id and d not in existing]
 
+    # Requirements: MELLON-EDIT-SRS-43
     def _on_add(self) -> None:
         doc = self._controller.document(self._doc_id)
         candidates = self._candidates(doc)
@@ -253,6 +257,7 @@ class ParentsTab(QWidget):
         self._reload()
         self._status.setText(f"Added parent {choice}.")
 
+    # Requirements: MELLON-EDIT-SRS-44
     def _on_remove(self) -> None:
         item = self._list.currentItem()
         if item is None:
@@ -382,6 +387,7 @@ class AttributesTab(QWidget):
             0, self, lambda name=data[1]: self._set_required(name, required)
         )
 
+    # Requirements: MELLON-EDIT-SRS-92
     def _set_required(self, attr_name: str, required: bool) -> None:
         doc = self._controller.document(self._doc_id)
         attr = doc.attribute(attr_name)
@@ -417,6 +423,7 @@ class AttributesTab(QWidget):
         state = "required" if required else "optional"
         self._status.setText(f"{attr_name} is now {state}.")
 
+    # Requirements: MELLON-EDIT-SRS-59
     def _on_add_attribute(self) -> None:
         doc = self._controller.document(self._doc_id)
         existing = {a.name for a in doc.attributes}
@@ -434,6 +441,7 @@ class AttributesTab(QWidget):
         self._reload()
         self._status.setText(f"Added attribute {dlg.name()}.")
 
+    # Requirements: MELLON-EDIT-SRS-97
     def _on_delete_attribute(self) -> None:
         attr_name = self._selected_attr_name()
         if attr_name is None:
@@ -464,6 +472,7 @@ class AttributesTab(QWidget):
         self._reload()
         self._status.setText(f"Deleted attribute {attr_name}.")
 
+    # Requirements: MELLON-EDIT-SRS-77
     def _on_add_option(self) -> None:
         attr_name = self._selected_attr_name()
         if attr_name is None:
@@ -492,6 +501,7 @@ class AttributesTab(QWidget):
         self._reload()
         self._status.setText(f"Added option {text} to {attr_name}.")
 
+    # Requirements: MELLON-EDIT-SRS-82
     def _on_remove_option(self) -> None:
         sel = self._selected_option()
         if sel is None:

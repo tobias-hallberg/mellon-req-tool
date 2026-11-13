@@ -47,6 +47,7 @@ _loaded_gitdirs: set[str] = set()
 _use_disk = True
 
 
+# Requirements: MELLON-CHECK-SRS-127, MELLON-TRACE-SRS-43, MELLON-TRACE-SRS-68
 def current_hashes(
     repo: pygit2.Repository, target_doc: str, ids: Iterable[str] = ()
 ) -> dict[str, str | None]:
@@ -98,6 +99,7 @@ def current_hashes(
     return hashes
 
 
+# Requirements: MELLON-CHECK-SRS-124
 @contextlib.contextmanager
 def from_scratch() -> Iterator[None]:
     """Inside this block, nothing kept earlier or on disk is used, and nothing
@@ -116,6 +118,8 @@ def from_scratch() -> Iterator[None]:
             _known.clear()
 
 
+# Requirements: MELLON-TRACE-SRS-4, MELLON-TRACE-SRS-49, MELLON-TRACE-SRS-57, MELLON-TRACE-SRS-59,
+#   MELLON-TRACE-SRS-60, MELLON-TRACE-SRS-62, MELLON-TRACE-SRS-63
 def _walk(
     repo: pygit2.Repository,
     head: pygit2.Commit,
@@ -207,6 +211,7 @@ def _names(repo: pygit2.Repository, tree: pygit2.Tree, rel: str, suffix: str) ->
     }
 
 
+# Requirements: MELLON-TRACE-SRS-58, MELLON-TRACE-SRS-61
 def _changed_units(
     repo: pygit2.Repository,
     old: pygit2.Oid | None,

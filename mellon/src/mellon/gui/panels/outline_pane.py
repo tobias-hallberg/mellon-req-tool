@@ -72,6 +72,7 @@ class OutlinePane(QWidget):
 
     # --- click handlers ------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-53
     def _on_outline_clicked(self, index) -> None:
         obj_id = OutlineModel.obj_id_from_index(index)
         doc_id = self._controller.current_doc_id()
@@ -81,6 +82,7 @@ class OutlinePane(QWidget):
     def _on_document_selected(self, doc_id: str) -> None:
         self.outline_view.expandAll()
 
+    # Requirements: MELLON-GUI-SRS-54
     def _on_external_selection(self, doc_id: str, obj_id: str) -> None:
         idx = self._find_outline_index(obj_id)
         if idx is not None:

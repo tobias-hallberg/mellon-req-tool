@@ -120,6 +120,7 @@ _NOT_FOUND_SUBSTRINGS = (
 )
 
 
+# Requirements: MELLON-MCP-SRS-52
 def _classify_editor_error(err: EditorError) -> ServiceError:
     msg = str(err)
     lower = msg.lower()
@@ -138,6 +139,7 @@ def _load_error(err: LoaderError) -> ServiceError:
     return ServiceError(ErrorCode.LOAD, load_error_message(err))
 
 
+# Requirements: MELLON-MCP-SRS-54
 def _classify_write_error(err: ValueError | OSError) -> ServiceError:
     """lxml refuses text it can't serialize with ValueError; disk failures are OSError."""
     if isinstance(err, OSError):
@@ -150,6 +152,7 @@ def _classify_write_error(err: ValueError | OSError) -> ServiceError:
 ChangeListener = Callable[[str, str, editor.Journal], None]
 
 
+# Requirements: MELLON-EDIT-SRS-341, MELLON-EDIT-SRS-344
 def _recorded(method):
     """Record the files a write method changes and pass them to the change
     listeners (the GUI's undo). A call made inside another recorded call
@@ -187,6 +190,7 @@ class DocumentService:
             Used by `mellon-mcp --read-only`.
     """
 
+    # Requirements: MELLON-MCP-SRS-104
     def __init__(
         self,
         repo_root: str | Path | None,
@@ -224,12 +228,14 @@ class DocumentService:
             )
         return self._repo_root
 
+    # Requirements: MELLON-MCP-SRS-101, MELLON-STORE-SRS-210
     def _require_write(self) -> None:
         if self._read_only:
             raise ServiceError(
                 ErrorCode.READ_ONLY, "this DocumentService is read-only"
             )
 
+    # Requirements: MELLON-STORE-SRS-223
     def _doc_folder(self, doc_id: str) -> Path:
         root = self._require_repo_root()
         try:
@@ -244,6 +250,7 @@ class DocumentService:
             )
         return folder
 
+    # Requirements: MELLON-CHECK-SRS-2, MELLON-CHECK-SRS-87
     def _load(self, doc_id: str) -> LoadedDoc:
         """Load or fetch `doc_id` from cache. Raises on disk / parse errors."""
         if self._cache is not None:
@@ -310,6 +317,7 @@ class DocumentService:
         docs = self.get_all_documents(load_errors=load_errors)
         return [docs[k] for k in sorted(docs.keys())]
 
+    # Requirements: MELLON-TRACE-SRS-1
     def get_all_documents(
         self, *, load_errors: list[DocLoadError] | None = None
     ) -> dict[str, LoadedDoc]:
@@ -355,6 +363,7 @@ class DocumentService:
             return ""
         return git_current_issue(repo, doc_id)
 
+    # Requirements: MELLON-PDF-SRS-172
     def parent_documents(self, doc_id: str) -> dict[str, Document]:
         """The declared parent documents of `doc_id` that load, keyed by id:
         what the PDF's Traceability section needs (see `export.pdf`). A
@@ -377,9 +386,11 @@ class DocumentService:
             )
         return obj
 
+    # Requirements: MELLON-CHECK-SRS-9
     def validate_document(self, doc_id: str) -> list[ValidationError]:
         return validate(self._load(doc_id).document)
 
+    # Requirements: MELLON-CHECK-SRS-2
     def validate_repo(
         self, *, load_errors: list[DocLoadError] | None = None
     ) -> dict[str, list[ValidationError]]:
@@ -396,6 +407,9 @@ class DocumentService:
             out[doc_id] = validate(loaded.document)
         return out
 
+    # Requirements: MELLON-CHECK-SRS-96, MELLON-CHECK-SRS-97, MELLON-CHECK-SRS-100,
+    #   MELLON-CHECK-SRS-101, MELLON-CHECK-SRS-103, MELLON-CHECK-SRS-104, MELLON-CHECK-SRS-105,
+    #   MELLON-CHECK-SRS-106, MELLON-CHECK-SRS-107, MELLON-CHECK-SRS-108
     def repo_health(
         self, *, load_errors: list[DocLoadError] | None = None
     ) -> dict:
@@ -564,6 +578,7 @@ class DocumentService:
             )
         return trace_down(docs, doc_id, obj_id)
 
+    # Requirements: MELLON-TRACE-SRS-33
     def incoming_links(
         self, target_doc: str, target_id: str
     ) -> list[tuple[str, str, Link]]:
@@ -679,6 +694,7 @@ class DocumentService:
             raise ServiceError(ErrorCode.VALIDATION, str(e)) from e
         return root
 
+    # Requirements: MELLON-VER-SRS-60
     def compare_document(self, doc_id: str, ref_a: str, ref_b: str) -> DocumentDiff:
         """What changed in `doc_id` from version `ref_a` to `ref_b`; see
         `diff.compare_document`. `diff.WORKING_COPY` is the files on disk.
@@ -742,6 +758,7 @@ class DocumentService:
     # project has no transaction infrastructure and adding it just for these
     # tools would be invasive.
 
+    # Requirements: MELLON-EDIT-SRS-8, MELLON-EDIT-SRS-10
     @staticmethod
     def _validate_value_for_attr(attr, value: str) -> None:
         """Kind-check `value` against `attr`. Empty value is always accepted.
@@ -792,6 +809,7 @@ class DocumentService:
                     f"an ISO 8601 date (YYYY-MM-DD)",
                 ) from e
 
+    # Requirements: MELLON-EDIT-SRS-9
     def _validate_attr_pair(self, doc: Document, name: str, value: str) -> None:
         """Raise `ServiceError(VALIDATION)` if `(name, value)` doesn't fit the schema.
 
@@ -822,6 +840,7 @@ class DocumentService:
         except EditorError as e:
             raise _classify_editor_error(e) from e
 
+    # Requirements: MELLON-TRACE-SRS-5, MELLON-TRACE-SRS-6
     def _validate_composite_links(
         self, doc: Document, links: list[dict], *, require_type: bool
     ) -> list[tuple[str, str, str | None]]:
@@ -888,6 +907,8 @@ class DocumentService:
             out.append((target_doc, target_id, link_type))
         return out
 
+    # Requirements: MELLON-EDIT-SRS-12, MELLON-EDIT-SRS-117, MELLON-EDIT-SRS-119,
+    #   MELLON-TRACE-SRS-24
     @_recorded
     def create_object_full(
         self,
@@ -973,6 +994,8 @@ class DocumentService:
             description_changed=bool(description),
         )
 
+    # Requirements: MELLON-EDIT-SRS-12, MELLON-EDIT-SRS-140, MELLON-EDIT-SRS-141,
+    #   MELLON-TRACE-SRS-7, MELLON-TRACE-SRS-24, MELLON-TRACE-SRS-29
     @_recorded
     def update_object(
         self,
@@ -1087,6 +1110,8 @@ class DocumentService:
             description_changed=description_changed,
         )
 
+    # Requirements: MELLON-EDIT-SRS-143, MELLON-EDIT-SRS-146, MELLON-EDIT-SRS-147,
+    #   MELLON-EDIT-SRS-150, MELLON-EDIT-SRS-151
     @_recorded
     def copy_object(
         self,
@@ -1193,6 +1218,7 @@ class DocumentService:
             value=new_ids, refreshed=refreshed, affected_docs=(doc_id,)
         )
 
+    # Requirements: MELLON-EDIT-SRS-12, MELLON-EDIT-SRS-155, MELLON-EDIT-SRS-156
     @_recorded
     def bulk_set_attribute(
         self,
@@ -1271,6 +1297,7 @@ class DocumentService:
         refreshed = self._reload(doc_id).document
         return MutationResult(value=doc_id, refreshed=refreshed, affected_docs=(doc_id,))
 
+    # Requirements: MELLON-EDIT-SRS-4
     @_recorded
     def set_attribute(
         self, doc_id: str, obj_id: str, name: str, value: str
@@ -1440,6 +1467,7 @@ class DocumentService:
         refreshed = self._reload(doc_id).document
         return MutationResult(value=None, refreshed=refreshed, affected_docs=(doc_id,))
 
+    # Requirements: MELLON-EDIT-SRS-68, MELLON-EDIT-SRS-69
     @_recorded
     def add_attribute(
         self,
@@ -1892,6 +1920,7 @@ class DocumentService:
 
     # --- git commit ----------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-102
     def commit(
         self, message: str, paths: Iterable[str] | None = None
     ) -> CommitResult:
@@ -1908,6 +1937,7 @@ class DocumentService:
         paths_out: tuple[Path, ...] = tuple(Path(p) for p in paths) if paths else ()
         return CommitResult(short_hash=short_hash, paths=paths_out)
 
+    # Requirements: MELLON-GUI-SRS-117, MELLON-VER-SRS-102
     def uncommitted_document_paths(self) -> list[str]:
         """Uncommitted paths inside the document folders, repo-relative and
         sorted; other files in the git work tree don't count. A document
@@ -1946,6 +1976,7 @@ class DocumentService:
         folder_rel = folder.resolve().relative_to(root).as_posix()
         return bool(dirty_paths_under(repo, folder_rel))
 
+    # Requirements: MELLON-VER-SRS-190
     def discard_document_changes(self, doc_id: str) -> tuple[str, ...]:
         """Throw away every uncommitted change inside `doc_id`'s folder.
 
@@ -1984,6 +2015,8 @@ class DocumentService:
                     # Have the next repo-wide load report why it fails.
                     self._cache.invalidate_all()
 
+    # Requirements: MELLON-VER-SRS-146, MELLON-VER-SRS-147, MELLON-VER-SRS-149, MELLON-VER-SRS-160,
+    #   MELLON-VER-SRS-163, MELLON-VER-SRS-257
     def prepare_document_commit(self, doc_id: str) -> DocCommitPreview:
         """Compute paths, affected req-ids, default message, and parent warnings.
 
@@ -2070,6 +2103,7 @@ class DocumentService:
             upstream_warnings=tuple(self._upstream_warnings(doc_id, repo)),
         )
 
+    # Requirements: MELLON-VER-SRS-283
     def _upstream_warnings(self, doc_id: str, repo) -> list[str]:
         """Open points in the documents `doc_id` links up to, transitively.
 
@@ -2126,6 +2160,7 @@ class DocumentService:
                 out.append(f"{pid} — {errors} validation error(s)")
         return out
 
+    # Requirements: MELLON-VER-SRS-150
     def _dirty_parents(self, doc_id: str, repo) -> list[str]:
         """Sorted parent doc ids that currently have working-tree changes.
 
@@ -2155,6 +2190,8 @@ class DocumentService:
                 out.append(parent_id)
         return out
 
+    # Requirements: MELLON-VER-SRS-99, MELLON-VER-SRS-258, MELLON-VER-SRS-260, MELLON-VER-SRS-272,
+    #   MELLON-VER-SRS-288, MELLON-VER-SRS-292
     def commit_document(
         self,
         doc_id: str,
@@ -2230,6 +2267,7 @@ class DocumentService:
             repo_tag_error=repo_tag_error,
         )
 
+    # Requirements: MELLON-VER-SRS-265
     def tag_issue(self, doc_id: str, issue: str) -> str:
         """Create `<doc_id>-issue-<issue>` at HEAD. Returns the tag name.
 
@@ -2259,6 +2297,7 @@ class DocumentService:
                 raise ServiceError(ErrorCode.VALIDATION, msg) from e
             raise ServiceError(ErrorCode.GIT, msg) from e
 
+    # Requirements: MELLON-VER-SRS-280
     def tag_head(self, doc_id: str, name: str, message: str = "") -> str:
         """Tag HEAD `name`, annotated with `message`. Returns the name.
 

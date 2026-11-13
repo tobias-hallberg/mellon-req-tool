@@ -25,9 +25,11 @@ from .schema import (
 )
 
 # Ten ASCII characters YYYY-MM-DD; `[0-9]` takes no other script's digits.
+# Requirements: MELLON-CHECK-SRS-21
 _DATE_FORM = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}")
 
 
+# Requirements: MELLON-EDIT-SRS-134, MELLON-STORE-SRS-64, MELLON-STORE-SRS-98
 def is_date(text: str) -> bool:
     """True when `text` is ten ASCII characters YYYY-MM-DD naming a Gregorian
     date from 0001-01-01 to 9999-12-31.
@@ -46,6 +48,7 @@ def is_date(text: str) -> bool:
     return True
 
 
+# Requirements: MELLON-CHECK-SRS-3
 @dataclass(frozen=True, slots=True)
 class ValidationError:
     code: str
@@ -55,6 +58,7 @@ class ValidationError:
         return f"[{self.code}] {self.message}"
 
 
+# Requirements: MELLON-CHECK-SRS-4, MELLON-CHECK-SRS-9, MELLON-CHECK-SRS-32
 def validate(doc: Document) -> list[ValidationError]:
     """Return a list of problems found in `doc`. Empty = valid."""
     errors: list[ValidationError] = []
@@ -69,6 +73,7 @@ def validate(doc: Document) -> list[ValidationError]:
     return errors
 
 
+# Requirements: MELLON-STORE-SRS-64
 def _check_metadata(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     date_value = doc.metadata.date
@@ -100,6 +105,7 @@ def _check_next_number(doc: Document) -> list[ValidationError]:
     ]
 
 
+# Requirements: MELLON-CHECK-SRS-26, MELLON-CHECK-SRS-27, MELLON-CHECK-SRS-28
 def _check_outline(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     outline_ids = doc.iter_outline_ids()
@@ -133,6 +139,7 @@ def _check_outline(doc: Document) -> list[ValidationError]:
     return errors
 
 
+# Requirements: MELLON-CHECK-SRS-12, MELLON-CHECK-SRS-13, MELLON-CHECK-SRS-14
 def _check_attrs(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     schema = {a.name: a for a in doc.attributes}
@@ -171,6 +178,8 @@ def value_fits(attr, value: str) -> bool:
     return _check_attr_value("", attr, value) is None
 
 
+# Requirements: MELLON-CHECK-SRS-16, MELLON-CHECK-SRS-20, MELLON-CHECK-SRS-22, MELLON-CHECK-SRS-24,
+#   MELLON-EDIT-SRS-133, MELLON-STORE-SRS-93, MELLON-STORE-SRS-97, MELLON-STORE-SRS-98
 def _check_attr_value(obj_id, attr, value: str) -> "ValidationError | None":
     """Type-check a non-empty attribute value against its declared kind.
 
@@ -268,6 +277,7 @@ def _check_tables(doc: Document) -> list[ValidationError]:
     return errors
 
 
+# Requirements: MELLON-CHECK-SRS-32, MELLON-CHECK-SRS-34
 def link_target_missing(doc: Document, link: Link) -> bool:
     """True when `link`, an outgoing link of `doc`, is reported as
     LINK_TARGET_MISSING: its target is in `doc` and isn't one of its objects.
@@ -278,6 +288,7 @@ def link_target_missing(doc: Document, link: Link) -> bool:
     return link.target_doc == doc.id and link.target_id not in doc.objects
 
 
+# Requirements: MELLON-CHECK-SRS-34
 def _check_links(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     for source, link_list in doc.links.items():
@@ -300,6 +311,7 @@ def _check_links(doc: Document) -> list[ValidationError]:
     return errors
 
 
+# Requirements: MELLON-CHECK-SRS-33
 def _check_link_policy(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     allowed = {doc.id, *doc.parents}
@@ -324,6 +336,8 @@ def _attr_has_value(obj: RequirementObject, name: str, expected: str) -> bool:
     return name in obj.attrs and obj.attrs[name] == expected
 
 
+# Requirements: MELLON-CHECK-SRS-52, MELLON-CHECK-SRS-53, MELLON-CHECK-SRS-54, MELLON-CHECK-SRS-56,
+#   MELLON-CHECK-SRS-57, MELLON-STORE-SRS-161, MELLON-STORE-SRS-162
 def _rule_matches(rule: Rule, obj: RequirementObject, has_link: bool) -> bool:
     for key, expected in rule.conditions.items():
         if key == "requirement-type":
@@ -341,6 +355,7 @@ def _rule_matches(rule: Rule, obj: RequirementObject, has_link: bool) -> bool:
     return True
 
 
+# Requirements: MELLON-CHECK-SRS-51, MELLON-CHECK-SRS-63
 def effective_directives(
     rules: tuple[Rule, ...], obj: RequirementObject, has_link: bool
 ) -> dict[str, str]:
@@ -352,6 +367,8 @@ def effective_directives(
     return out
 
 
+# Requirements: MELLON-CHECK-SRS-51, MELLON-CHECK-SRS-56, MELLON-CHECK-SRS-57, MELLON-CHECK-SRS-59,
+#   MELLON-CHECK-SRS-61, MELLON-CHECK-SRS-62, MELLON-CHECK-SRS-64
 def _check_rules(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
     if not doc.rules:
@@ -392,6 +409,7 @@ def _check_rules(doc: Document) -> list[ValidationError]:
     return errors
 
 
+# Requirements: MELLON-CHECK-SRS-66
 def _effective_link_directives(rules, obj, has_link):
     """Accumulate link directives from every matching rule."""
     out = []

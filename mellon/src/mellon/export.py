@@ -30,6 +30,7 @@ _BLOCK_START, _BLOCK_END = "((* ", " *))"
 _VAR_START, _VAR_END = "(((", ")))"
 _COMMENT_START, _COMMENT_END = "((# ", " #))"
 
+# Requirements: MELLON-PDF-SRS-125
 _DEFAULT_ATTRS: tuple[str, ...] = (
     "type",
     "status",
@@ -37,6 +38,7 @@ _DEFAULT_ATTRS: tuple[str, ...] = (
     "verification-method",
 )
 
+# Requirements: MELLON-PDF-SRS-135
 _LATEX_ESCAPE: dict[str, str] = {
     "\\": r"\textbackslash{}",
     "&": r"\&",
@@ -55,6 +57,7 @@ _LATEX_ESCAPE: dict[str, str] = {
 # re-escaped on a later pass.
 _LATEX_TRANSLATE = str.maketrans(_LATEX_ESCAPE)
 
+# Requirements: MELLON-PDF-SRS-114
 _HEADING_BY_DEPTH: dict[int, str] = {
     1: r"\syrssection",
     2: r"\syrssubsection",
@@ -63,6 +66,7 @@ _HEADING_BY_DEPTH: dict[int, str] = {
 }
 
 
+# Requirements: MELLON-PDF-SRS-135
 def escape_latex(s: str) -> str:
     """Escape LaTeX-significant characters in arbitrary text."""
     return s.translate(_LATEX_TRANSLATE)
@@ -84,9 +88,11 @@ def _heading_macro(depth: int) -> str:
     return _HEADING_BY_DEPTH.get(depth, r"\subparagraph")
 
 
+# Requirements: MELLON-PDF-SRS-146
 _COL_ALIGN: dict[str, str] = {"left": "l", "center": "c", "right": "r"}
 
 
+# Requirements: MELLON-PDF-SRS-141, MELLON-PDF-SRS-145, MELLON-PDF-SRS-146
 def render_table_latex(table: Table) -> str:
     """Render a ``Table`` to a LaTeX ``longtable`` with booktabs rules.
 
@@ -182,6 +188,7 @@ def render_table_latex(table: Table) -> str:
     return "\n".join(lines)
 
 
+# Requirements: MELLON-PDF-SRS-109
 def _flatten_outline(
     nodes: tuple[OutlineNode, ...], depth: int = 1
 ) -> list[tuple[int, str]]:
@@ -193,6 +200,7 @@ def _flatten_outline(
     return out
 
 
+# Requirements: MELLON-PDF-SRS-75
 def _figure_note(obj: RequirementObject) -> str:
     """Placeholder line printed where an attached figure couldn't be rendered.
 
@@ -205,6 +213,7 @@ def _figure_note(obj: RequirementObject) -> str:
     return f"[Figure {name} not rendered in PDF export]"
 
 
+# Requirements: MELLON-PDF-SRS-58
 def unrendered_figures(
     doc: Document, figures: Mapping[str, str] | None = None
 ) -> list[str]:
@@ -227,6 +236,7 @@ def unrendered_figures(
     return list(dict.fromkeys(ids))
 
 
+# Requirements: MELLON-PDF-SRS-73, MELLON-PDF-SRS-109, MELLON-PDF-SRS-122
 def _build_items(
     doc: Document,
     attrs: tuple[str, ...],
@@ -277,6 +287,8 @@ def _is_heading(obj: RequirementObject) -> bool:
     return obj.attrs.get("type") == "Heading"
 
 
+# Requirements: MELLON-PDF-SRS-163, MELLON-PDF-SRS-164, MELLON-PDF-SRS-167, MELLON-PDF-SRS-170,
+#   MELLON-PDF-SRS-172
 def _build_trace(
     doc: Document, parents: Mapping[str, Document]
 ) -> dict[str, object]:
@@ -376,6 +388,7 @@ def _make_env() -> jinja2.Environment:
     return env
 
 
+# Requirements: MELLON-PDF-SRS-80, MELLON-PDF-SRS-161, MELLON-PDF-SRS-162
 def render_latex(
     doc: Document,
     *,
@@ -440,6 +453,7 @@ def _tectonic_in(folder: Path) -> str | None:
     return None
 
 
+# Requirements: MELLON-GUI-SRS-184, MELLON-PDF-SRS-69
 def _find_tectonic() -> str | None:
     """Locate the tectonic binary.
 
@@ -470,6 +484,7 @@ def _find_tectonic() -> str | None:
 
 # Wall clock limit. A first-ever export on a cold cache downloads the TeX
 # support files it needs, so this is generous.
+# Requirements: MELLON-PDF-SRS-70
 _TECTONIC_TIMEOUT_S = 300
 
 # A pre-seeded TeX cache shipped next to the binary (the installer's
@@ -477,6 +492,7 @@ _TECTONIC_TIMEOUT_S = 300
 _CACHE_DIR_NAME = "tectonic-cache"
 
 
+# Requirements: MELLON-GUI-SRS-184, MELLON-MCP-SRS-117, MELLON-PDF-SRS-69, MELLON-PDF-SRS-70
 def _run_tectonic(
     tectonic: str, args: list[str]
 ) -> subprocess.CompletedProcess[str]:
@@ -514,6 +530,7 @@ def _run_tectonic(
         raise TectonicError(f"could not run tectonic at {tectonic}: {e}") from e
 
 
+# Requirements: MELLON-PDF-SRS-66, MELLON-PDF-SRS-177
 def build_pdf(tex: str, assets: Mapping[str, Path] | None = None) -> bytes:
     """Compile a LaTeX source string to PDF bytes via tectonic.
 
@@ -567,6 +584,7 @@ def build_pdf(tex: str, assets: Mapping[str, Path] | None = None) -> bytes:
         return pdf_path.read_bytes()
 
 
+# Requirements: MELLON-PDF-SRS-73, MELLON-PDF-SRS-149
 def _render_figures(
     doc: Document, folder: Path, out_dir: Path
 ) -> tuple[dict[str, str], dict[str, Path]]:
@@ -602,6 +620,7 @@ def _render_figures(
     return figures, assets
 
 
+# Requirements: MELLON-PDF-SRS-5, MELLON-PDF-SRS-177, MELLON-PDF-SRS-179
 def pdf(
     doc: Document,
     *,

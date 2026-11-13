@@ -43,6 +43,7 @@ def describe_load_error(err: DocLoadError) -> str:
     return f"{where}\n{message}"
 
 
+# Requirements: MELLON-STORE-SRS-7
 def _repo_root_advice(path: Path) -> str:
     """What to do about a folder `git_ops.check_repo_root` refused.
 
@@ -132,7 +133,7 @@ class _EditorService:
     """The shared `DocumentService` as one Document Editor's controller hands
     it out: every write method first runs the controller's write check, which
     refuses the write when a file the window read changed on disk since
-    (MELLON-GUI-SRS-109, MELLON-STORE-SRS-182). What the write leaves on disk
+    (MELLON-GUI-SRS-109). What the write leaves on disk
     is then what the window last wrote. Everything else passes through."""
 
     def __init__(self, controller: RepoController) -> None:
@@ -140,6 +141,7 @@ class _EditorService:
         # window's Python objects alive.
         self._controller_ref = weakref.ref(controller)
 
+    # Requirements: MELLON-GUI-SRS-109
     def __getattr__(self, name: str):
         controller = self._controller_ref()
         if controller is None or controller._service is None:
@@ -268,6 +270,7 @@ class RepoController(QObject):
 
     # --- loading --------------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-95, MELLON-STORE-SRS-5
     def open_repo(self, root: str | Path) -> bool:
         """Load every document under `root`. Returns True on success.
 
@@ -366,6 +369,7 @@ class RepoController(QObject):
         if outline_ids:
             self.select_object(doc_id, outline_ids[0])
 
+    # Requirements: MELLON-STORE-SRS-38
     def reload_document(self, doc_id: str) -> None:
         """Invalidate the cached copy of `doc_id` and tell listeners to rebuild.
 
@@ -397,6 +401,7 @@ class RepoController(QObject):
             if first is not None:
                 self.select_object(doc_id, first)
 
+    # Requirements: MELLON-GUI-SRS-57
     def refresh_object(self, doc_id: str, obj_id: str) -> None:
         """Tell listeners one object's fields changed, after a service write.
 
@@ -410,6 +415,7 @@ class RepoController(QObject):
 
     # --- disk freshness ---------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-96
     def _watched_folders(self) -> list[Path]:
         """Folders whose on-disk state the current document depends on.
 
@@ -484,6 +490,7 @@ class RepoController(QObject):
             return False
         return disk_contents(self._watched_folders()) != self._disk_snapshot
 
+    # Requirements: MELLON-EDIT-SRS-250, MELLON-GUI-SRS-98
     def changed_figures(self) -> frozenset[str] | None:
         """Disk check that lets in-place figure edits through.
 
@@ -635,6 +642,7 @@ class RepoController(QObject):
             return "suspect"
         return "ok"
 
+    # Requirements: MELLON-TRACE-SRS-83
     def build_link_states(self, doc_id: str) -> dict[str, tuple[str, str]]:
         """Per-object `(outgoing, incoming)` link state for every obj in `doc_id`.
 
@@ -698,6 +706,7 @@ class RepoController(QObject):
 
         return result
 
+    # Requirements: MELLON-VER-SRS-203
     def in_last_commit(self, doc_id: str) -> bool:
         """True when `doc_id`'s folder is in HEAD: there is a committed
         version for "Discard uncommitted changes" to go back to."""
@@ -776,6 +785,7 @@ class RepoController(QObject):
 
     # --- richer views ----------------------------------------------------
 
+    # Requirements: MELLON-TRACE-SRS-34
     def object_view(self, doc_id: str, obj_id: str) -> ObjectView:
         svc = self.require_service()
         doc = svc.get_document(doc_id)
@@ -817,6 +827,7 @@ class RepoController(QObject):
 
     # --- git history -----------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-217
     def object_history(
         self, doc_id: str, obj_id: str, max_entries: int = 20
     ) -> list[dict]:
@@ -962,6 +973,7 @@ class RepoController(QObject):
         document has nothing to commit). Pass-through to the service."""
         return self.require_service().tag_head(doc_id, name, message)
 
+    # Requirements: MELLON-VER-SRS-230
     def object_at_commit(
         self, doc_id: str, obj_id: str, commit_ref: str
     ) -> ObjectAtCommit:
@@ -1030,6 +1042,7 @@ class RepoController(QObject):
         )
 
 
+# Requirements: MELLON-VER-SRS-230
 def _parse_historical_object(xml_text: str, expected_id: str) -> RequirementObject:
     root = etree.fromstring(xml_text.encode("utf-8"))
     if root.tag != "object":

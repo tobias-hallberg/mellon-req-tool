@@ -27,7 +27,9 @@ from typing import Iterable
 import pygit2
 
 
+# Requirements: MELLON-GUI-SRS-115, MELLON-STORE-SRS-122, MELLON-VER-SRS-67, MELLON-VER-SRS-176
 SHORT_HASH_LEN = 7
+# Requirements: MELLON-VER-SRS-243
 _ISSUE_RE = re.compile(r"^\d+(\.\d+)*$")
 _ISSUE_TAG_INFIX = "-issue-"
 
@@ -74,6 +76,7 @@ def last_commit_for_path(repo: pygit2.Repository, rel_path: str) -> str | None:
     return last_commit_for_paths(repo, [rel_path])
 
 
+# Requirements: MELLON-TRACE-SRS-59, MELLON-TRACE-SRS-60
 def last_commit_for_paths(
     repo: pygit2.Repository, paths: Iterable[str]
 ) -> str | None:
@@ -131,6 +134,7 @@ def git_user_name(repo: pygit2.Repository) -> str | None:
         return None
 
 
+# Requirements: MELLON-VER-SRS-112, MELLON-VER-SRS-113, MELLON-VER-SRS-115
 def _resolve_signature(repo: pygit2.Repository) -> pygit2.Signature:
     """Signature from `user.name` / `user.email` in the git config.
 
@@ -169,6 +173,7 @@ def _sequencer_in_progress(repo: pygit2.Repository) -> bool:
     return bool(words) and words[0] in ("pick", "p", "revert")
 
 
+# Requirements: MELLON-VER-SRS-117, MELLON-VER-SRS-118, MELLON-VER-SRS-120
 def _refuse_during_merge(repo: pygit2.Repository, then: str) -> None:
     """Raise GitError while a merge (or rebase, cherry-pick, ...) is unfinished."""
     if (
@@ -182,6 +187,7 @@ def _refuse_during_merge(repo: pygit2.Repository, then: str) -> None:
         )
 
 
+# Requirements: MELLON-VER-SRS-121
 def _refuse_while_index_locked(repo: pygit2.Repository, then: str) -> None:
     """Raise GitError while another git program holds the index lock."""
     if (Path(repo.path) / "index.lock").exists():
@@ -191,6 +197,10 @@ def _refuse_while_index_locked(repo: pygit2.Repository, then: str) -> None:
         )
 
 
+# Requirements: MELLON-MCP-SRS-81, MELLON-VER-SRS-91, MELLON-VER-SRS-92, MELLON-VER-SRS-93,
+#   MELLON-VER-SRS-94, MELLON-VER-SRS-105, MELLON-VER-SRS-115, MELLON-VER-SRS-117,
+#   MELLON-VER-SRS-121, MELLON-VER-SRS-123, MELLON-VER-SRS-125, MELLON-VER-SRS-131,
+#   MELLON-VER-SRS-374
 def commit(
     repo_root: str | Path,
     message: str,
@@ -271,6 +281,7 @@ def commit(
     return _short(oid)
 
 
+# Requirements: MELLON-MCP-SRS-115, MELLON-VER-SRS-92
 def _selected_files(
     repo: pygit2.Repository,
     root: Path,
@@ -325,6 +336,8 @@ def _special_entry_under(
     return None
 
 
+# Requirements: MELLON-VER-SRS-190, MELLON-VER-SRS-191, MELLON-VER-SRS-193, MELLON-VER-SRS-194,
+#   MELLON-VER-SRS-205, MELLON-VER-SRS-208, MELLON-VER-SRS-211
 def discard_paths(repo: pygit2.Repository, paths: Iterable[str]) -> list[str]:
     """Put everything under `paths` back to HEAD, in the work tree and index.
 
@@ -429,6 +442,7 @@ _REPLACE_ATTEMPTS = 5
 _REPLACE_RETRY_DELAY = 0.05  # seconds
 
 
+# Requirements: MELLON-STORE-SRS-167, MELLON-STORE-SRS-171
 def _replace_file(path: Path, data: bytes, *, executable: bool = False) -> None:
     """Write `data` to a temp sibling and `os.replace` it over `path`.
 
@@ -457,6 +471,9 @@ def _replace_file(path: Path, data: bytes, *, executable: bool = False) -> None:
         raise
 
 
+# Requirements: MELLON-CHECK-SRS-117, MELLON-MCP-SRS-8, MELLON-MCP-SRS-10, MELLON-STORE-SRS-5,
+#   MELLON-STORE-SRS-6, MELLON-STORE-SRS-7, MELLON-STORE-SRS-8, MELLON-STORE-SRS-12,
+#   MELLON-STORE-SRS-14, MELLON-STORE-SRS-15
 def check_repo_root(root: str | Path) -> str | None:
     """Why `root` can't be used as a mellon repo root, or None when it can.
 
@@ -604,6 +621,7 @@ def head_doc_folder_names(
     return frozenset(out)
 
 
+# Requirements: MELLON-VER-SRS-375
 def head_summary(repo: pygit2.Repository) -> tuple[str | None, str | None]:
     """Return `(branch_name, short_hash)` for the repository's current HEAD.
 
@@ -650,11 +668,13 @@ _UNCOMMITTED_MASK = (
 _SIDE_FILE_PREFIXES = (".$", "~$")
 
 
+# Requirements: MELLON-VER-SRS-184
 def is_side_file(path: str) -> bool:
     """True for an editor side file (`.$*` / `~$*`), judged by its name."""
     return path.replace("\\", "/").rsplit("/", 1)[-1].startswith(_SIDE_FILE_PREFIXES)
 
 
+# Requirements: MELLON-GUI-SRS-117, MELLON-VER-SRS-146, MELLON-VER-SRS-184
 def dirty_paths_under(
     repo: pygit2.Repository, folder_rel: str
 ) -> list[str]:
@@ -687,6 +707,7 @@ def dirty_paths_under(
     return out
 
 
+# Requirements: MELLON-TRACE-SRS-117, MELLON-VER-SRS-62, MELLON-VER-SRS-217, MELLON-VER-SRS-222
 def log_for_path(
     repo: pygit2.Repository,
     rel_path: str | Iterable[str],
@@ -759,6 +780,7 @@ def log_for_path(
 # --- issue tags -----------------------------------------------------------
 
 
+# Requirements: MELLON-VER-SRS-243
 def validate_issue(value: str) -> None:
     """Raise `GitError` if `value` isn't a non-empty dot-separated numeric
     sequence. Accepts '1', '1.2', '12.23.54'; rejects '', 'draft', '1.2.x'."""
@@ -788,6 +810,7 @@ def _issue_key(issue: str) -> tuple[int, ...]:
     return tuple(int(p) for p in issue.split("."))
 
 
+# Requirements: MELLON-VER-SRS-239
 def _issue_tag_ref(doc_id: str, issue: str) -> str:
     return f"refs/tags/{doc_id}{_ISSUE_TAG_INFIX}{issue}"
 
@@ -807,6 +830,7 @@ def _is_ancestor(
     return base == ancestor_oid
 
 
+# Requirements: MELLON-CHECK-SRS-105, MELLON-VER-SRS-250
 def current_issue(repo: pygit2.Repository, doc_id: str) -> str:
     """Highest issue tag for `doc_id` reachable from HEAD.
 
@@ -902,6 +926,8 @@ def issue_tags_by_commit(repo: pygit2.Repository, doc_id: str) -> dict[str, str]
     return {oid: pair[1] for oid, pair in by_commit.items()}
 
 
+# Requirements: MELLON-VER-SRS-239, MELLON-VER-SRS-245, MELLON-VER-SRS-247, MELLON-VER-SRS-290,
+#   MELLON-VER-SRS-374
 def create_issue_tag(
     repo: pygit2.Repository,
     doc_id: str,
@@ -948,6 +974,7 @@ def tag_names(repo: pygit2.Repository) -> tuple[str, ...]:
     )
 
 
+# Requirements: MELLON-VER-SRS-273, MELLON-VER-SRS-274, MELLON-VER-SRS-275
 def tag_name_error(name: str, existing: Iterable[str]) -> str:
     """Why `name` can't be a new tag, or "" when it can.
 
@@ -975,6 +1002,7 @@ def tag_name_error(name: str, existing: Iterable[str]) -> str:
     return ""
 
 
+# Requirements: MELLON-VER-SRS-272, MELLON-VER-SRS-290
 def create_tag(
     repo: pygit2.Repository,
     name: str,

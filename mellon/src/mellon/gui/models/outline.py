@@ -106,6 +106,7 @@ class OutlineModel(QStandardItemModel):
         if item.text() != label:
             item.setText(label)
 
+    # Requirements: MELLON-GUI-SRS-47
     def _item_for(self, node: OutlineNode, doc: Document) -> QStandardItem:
         item = QStandardItem()
         self._set_label(item, node.ref_id, doc)

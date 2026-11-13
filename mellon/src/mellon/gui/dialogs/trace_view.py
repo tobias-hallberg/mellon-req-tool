@@ -66,6 +66,7 @@ class TraceView(QDialog):
 
     # --- population -----------------------------------------------------
 
+    # Requirements: MELLON-TRACE-SRS-178
     def _populate(self, doc_id: str, obj_id: str) -> None:
         svc = self._controller.require_service()
 

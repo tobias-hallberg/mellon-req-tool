@@ -21,6 +21,7 @@ from ..branding import about_pixmap
 
 
 class AboutDialog(QDialog):
+    # Requirements: MELLON-GUI-SRS-141
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("About Mellon")

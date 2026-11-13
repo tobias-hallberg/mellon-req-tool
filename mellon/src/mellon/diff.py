@@ -197,6 +197,7 @@ class ObjectDelta:
             and self.figure is None
         )
 
+    # Requirements: MELLON-VER-SRS-24
     @property
     def only_link_reviews(self) -> bool:
         """True when the only change is to link acknowledgements."""
@@ -396,6 +397,7 @@ class Version:
     kind: str
 
 
+# Requirements: MELLON-VER-SRS-62
 def document_versions(
     repo_root: str | Path, doc_id: str, *, max_commits: int = 200
 ) -> list[Version]:
@@ -585,6 +587,7 @@ def _resolve_commit(repo: pygit2.Repository, ref: str) -> pygit2.Commit:
 
 
 class _GitSide(_Side):
+    # Requirements: MELLON-VER-SRS-87
     def __init__(self, repo: pygit2.Repository, doc_id: str, ref: str) -> None:
         commit = _resolve_commit(repo, ref)
         self._repo = repo
@@ -695,6 +698,7 @@ class _Reader:
         self._objects: dict[str, tuple[RequirementObject | None, str | None]] = {}
         self._links: dict[str, tuple[tuple[Link, ...], str | None]] = {}
 
+    # Requirements: MELLON-VER-SRS-27
     def obj(self, obj_id: str) -> tuple[RequirementObject | None, str | None]:
         hit = self._objects.get(obj_id)
         if hit is None:
@@ -922,6 +926,7 @@ def _display_order(
 # --- public entry point ---------------------------------------------------
 
 
+# Requirements: MELLON-VER-SRS-20, MELLON-VER-SRS-22
 def compare_document(
     repo_root: str | Path,
     doc_id: str,

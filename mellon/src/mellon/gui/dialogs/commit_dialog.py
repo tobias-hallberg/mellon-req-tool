@@ -54,6 +54,8 @@ def _issue_key(issue: str) -> tuple[int, ...]:
 
 
 class CommitDialog(QDialog):
+    # Requirements: MELLON-VER-SRS-146, MELLON-VER-SRS-149, MELLON-VER-SRS-150, MELLON-VER-SRS-160,
+    #   MELLON-VER-SRS-163, MELLON-VER-SRS-257
     def __init__(
         self,
         preview: DocCommitPreview,
@@ -256,6 +258,8 @@ class CommitDialog(QDialog):
 
         self._refresh_ok()
 
+    # Requirements: MELLON-VER-SRS-161, MELLON-VER-SRS-165, MELLON-VER-SRS-243, MELLON-VER-SRS-245,
+    #   MELLON-VER-SRS-273
     def _metadata_error(self) -> str:
         issue = self._issue_edit.text().strip()
         # Empty means "no issue tag" (a document without one yet).
@@ -317,6 +321,7 @@ class CommitDialog(QDialog):
             text = "no issue yet; enter one to cut the first issue"
         self._issue_hint.setText(text)
 
+    # Requirements: MELLON-VER-SRS-283
     def _refresh_tag_warning(self) -> None:
         """Show the upstream open points while a tag is entered. They cover
         the direct parents too, so the parent warning steps aside meanwhile."""
@@ -329,11 +334,13 @@ class CommitDialog(QDialog):
             self._warning_label.setVisible(not show)
             self._warning_list.setVisible(not show)
 
+    # Requirements: MELLON-VER-SRS-279
     def tag_only(self) -> bool:
         """Nothing to commit and a tag entered: OK tags the current commit
         instead of committing."""
         return not self._has_changes() and bool(self.tag())
 
+    # Requirements: MELLON-VER-SRS-261
     def _refresh_ok(self) -> None:
         ok_btn = self._buttons.button(QDialogButtonBox.StandardButton.Ok)
         self._refresh_issue_hint()

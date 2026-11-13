@@ -24,6 +24,8 @@ class FilterError(Exception):
 # Per-kind operator allow-list. Single source of truth; loader, dialog, and
 # evaluator all read from this. "is-empty" / "is-not-empty" check whether the
 # attribute value is missing or blank, regardless of kind.
+# Requirements: MELLON-EDIT-SRS-292, MELLON-EDIT-SRS-293, MELLON-EDIT-SRS-294, MELLON-EDIT-SRS-295,
+#   MELLON-EDIT-SRS-296
 OPS_BY_KIND: dict[str, tuple[str, ...]] = {
     "enum":    ("eq", "ne", "is-empty", "is-not-empty"),
     "text":    ("contains", "not-contains", "starts-with",
@@ -81,6 +83,7 @@ def valid_ops_for_kind(kind: str) -> tuple[str, ...]:
 IncomingProvider = Callable[[str], Iterable[str]]
 
 
+# Requirements: MELLON-EDIT-SRS-284, MELLON-EDIT-SRS-285, MELLON-EDIT-SRS-286
 def evaluate(
     doc: Document,
     filt: Filter,
@@ -120,6 +123,7 @@ def evaluate(
     return matched
 
 
+# Requirements: MELLON-EDIT-SRS-286
 def _with_ancestors(doc: Document, matched: set[str]) -> set[str]:
     """Union every matched id's outline ancestor chain back into the set."""
     out = set(matched)
@@ -146,6 +150,7 @@ def _match(
     raise FilterError(f"unknown rule kind {rule.kind!r}")
 
 
+# Requirements: MELLON-EDIT-SRS-292, MELLON-EDIT-SRS-297, MELLON-EDIT-SRS-301, MELLON-EDIT-SRS-303
 def _match_attr(rule: FilterRule, obj, doc: Document) -> bool:
     if not rule.attr:
         raise FilterError("attr rule missing attribute name")
@@ -210,6 +215,7 @@ def _match_attr(rule: FilterRule, obj, doc: Document) -> bool:
     raise FilterError(f"operator {op!r} not implemented for {kind}")
 
 
+# Requirements: MELLON-EDIT-SRS-300, MELLON-STORE-SRS-151
 def _compare_numeric(value: float, op: str, target: str, kind: str) -> bool:
     cast = int if kind == "integer" else float
     if op == "between":
@@ -234,6 +240,7 @@ def _compare_numeric(value: float, op: str, target: str, kind: str) -> bool:
     raise FilterError(f"operator {op!r} not implemented for numeric")
 
 
+# Requirements: MELLON-EDIT-SRS-300, MELLON-STORE-SRS-150, MELLON-STORE-SRS-151
 def _compare_date(value: date, op: str, target: str) -> bool:
     if op == "between":
         lo_s, hi_s = target.split("|", 1) if "|" in target else (target, target)
@@ -258,6 +265,7 @@ def _compare_date(value: date, op: str, target: str) -> bool:
     raise FilterError(f"operator {op!r} not implemented for date")
 
 
+# Requirements: MELLON-STORE-SRS-150
 def _split_range(target: str, cast):
     if "|" not in target:
         raise FilterError(f"between requires '<lo>|<hi>', got {target!r}")
@@ -268,6 +276,7 @@ def _split_range(target: str, cast):
         raise FilterError(f"invalid range {target!r}: {e}") from e
 
 
+# Requirements: MELLON-EDIT-SRS-307, MELLON-EDIT-SRS-310, MELLON-STORE-SRS-147
 def _match_has_outgoing(rule: FilterRule, obj_id: str, doc: Document) -> bool:
     if rule.op not in LINK_OPS:
         raise FilterError(f"has-outgoing op must be present|absent, got {rule.op!r}")
@@ -279,6 +288,7 @@ def _match_has_outgoing(rule: FilterRule, obj_id: str, doc: Document) -> bool:
     return has_match if rule.op == "present" else not has_match
 
 
+# Requirements: MELLON-EDIT-SRS-309, MELLON-EDIT-SRS-310
 def _match_has_incoming(
     rule: FilterRule,
     obj_id: str,

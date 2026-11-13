@@ -88,6 +88,7 @@ TOKENS: dict[ResolvedTheme, dict[str, str]] = {
 # --- Resolution -----------------------------------------------------------
 
 
+# Requirements: MELLON-GUI-SRS-125
 def resolve(choice: ThemeName) -> ResolvedTheme:
     """Collapse `"system"` to an actual `"dark"` or `"light"` palette."""
     if choice in ("dark", "light"):
@@ -392,6 +393,7 @@ class ThemeManager(QObject):
 
     # --- public API ---------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-127
     def load_choice(self) -> ThemeName:
         """Read the persisted choice, defaulting to 'system' on first run.
 
@@ -410,6 +412,7 @@ class ThemeManager(QObject):
     def current_tokens(self) -> dict[str, str]:
         return tokens_for(self._choice)
 
+    # Requirements: MELLON-GUI-SRS-126
     def apply(self, choice: ThemeName, *, persist: bool = True) -> None:
         """Apply `choice` to the live QApplication and (optionally) persist.
 
@@ -432,6 +435,7 @@ class ThemeManager(QObject):
 # --- Theme menu helper ---------------------------------------------------
 
 
+# Requirements: MELLON-GUI-SRS-125
 def build_theme_menu(parent_menu: QMenu, parent_obj: QObject) -> dict[str, QAction]:
     """Add a `&Theme` submenu under `parent_menu` and return its actions.
 

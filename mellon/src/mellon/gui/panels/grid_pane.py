@@ -59,6 +59,7 @@ from ..theme import ThemeManager
 from ...schema import Table, TableCell, TableColumn, TableRow
 
 
+# Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-EDIT-SRS-245
 def drawio_action_text(figure_path: str | None) -> tuple[str, str | None]:
     """Label for the draw.io figure action, and why it's unavailable.
 
@@ -124,6 +125,8 @@ class _ObjectsProxy(QSortFilterProxyModel):
     def matchSet(self) -> frozenset[str] | None:
         return self._match_set
 
+    # Requirements: MELLON-EDIT-SRS-271, MELLON-EDIT-SRS-274, MELLON-TRACE-SRS-93,
+    #   MELLON-TRACE-SRS-94
     def filterAcceptsRow(self, src_row: int, parent: QModelIndex) -> bool:
         model: ObjectsGridModel = self.sourceModel()  # type: ignore[assignment]
 
@@ -206,6 +209,7 @@ class _OutlineTableView(QTableView):
     def _forget_kept_editor(self) -> None:
         self._kept_editor = None
 
+    # Requirements: MELLON-GUI-SRS-151, MELLON-GUI-SRS-152
     def keyPressEvent(self, event) -> None:  # type: ignore[override]
         if self.state() != QTableView.State.EditingState:
             if event.matches(QKeySequence.StandardKey.Paste):
@@ -301,6 +305,7 @@ class SuspectBanner(QWidget):
         self._suspect_only_btn.setIcon(icons.icon("suspect_filter"))
         self._ack_selected_btn.setIcon(icons.icon("ack"))
 
+    # Requirements: MELLON-TRACE-SRS-91
     def set_count(self, n: int) -> None:
         if n <= 0:
             self.setVisible(False)
@@ -324,6 +329,7 @@ class FilterPill(QWidget):
     edit_clicked = Signal()
     clear_clicked = Signal()
 
+    # Requirements: MELLON-EDIT-SRS-315
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setObjectName("FilterPill")
@@ -539,6 +545,7 @@ class GridPane(QWidget):
     # A message for the window's status bar about an edit the pane refused.
     edit_refused = Signal(str)
 
+    # Requirements: MELLON-EDIT-SRS-136, MELLON-GUI-SRS-52, MELLON-GUI-SRS-67
     def __init__(self, controller: RepoController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._controller = controller
@@ -703,6 +710,7 @@ class GridPane(QWidget):
         self._empty_add_btn.setIcon(icons.icon("new_sibling"))
         self._filter_clear_btn.setIcon(icons.icon("filter_clear"))
 
+    # Requirements: MELLON-GUI-SRS-159
     def focus_filter(self) -> None:
         self.filter_box.setFocus()
         self.filter_box.selectAll()
@@ -769,6 +777,7 @@ class GridPane(QWidget):
                 )
                 return
 
+    # Requirements: MELLON-GUI-SRS-84
     def set_read_only(self, on: bool) -> None:
         """Enter/leave read-only mode for the grid + its banner.
 
@@ -784,6 +793,7 @@ class GridPane(QWidget):
         self.read_only_banner.setVisible(bool(on))
         self._empty_add_btn.setEnabled(not on)
 
+    # Requirements: MELLON-EDIT-SRS-116, MELLON-GUI-SRS-68
     def _build_empty_state(self) -> QWidget:
         widget = QWidget()
         layout = QVBoxLayout(widget)
@@ -801,6 +811,7 @@ class GridPane(QWidget):
         layout.addStretch(2)
         return widget
 
+    # Requirements: MELLON-EDIT-SRS-321, MELLON-GUI-SRS-69
     def _build_filter_empty_state(self) -> QWidget:
         widget = QWidget()
         layout = QVBoxLayout(widget)
@@ -817,6 +828,7 @@ class GridPane(QWidget):
         layout.addStretch(2)
         return widget
 
+    # Requirements: MELLON-EDIT-SRS-321, MELLON-GUI-SRS-68
     def _update_empty_state(self) -> None:
         doc_id = self._controller.current_doc_id()
         has_doc = doc_id is not None
@@ -832,6 +844,7 @@ class GridPane(QWidget):
             return
         self._stack.setCurrentWidget(self.table)
 
+    # Requirements: MELLON-GUI-SRS-69
     def clear_all_filters(self) -> None:
         """Clear the text filter, the suspect-only toggle, and the saved filter."""
         self.filter_box.clear()
@@ -840,6 +853,7 @@ class GridPane(QWidget):
 
     # --- saved filter (DOORS-style multi-rule) -------------------------
 
+    # Requirements: MELLON-EDIT-SRS-314, MELLON-EDIT-SRS-315, MELLON-EDIT-SRS-323
     def apply_filter(self, filt) -> None:
         """Activate a saved Filter on the grid.
 
@@ -885,6 +899,7 @@ class GridPane(QWidget):
         self._update_empty_state()
         self.active_filter_changed.emit(filt)
 
+    # Requirements: MELLON-EDIT-SRS-316
     def clear_active_filter(self) -> None:
         """Deactivate the saved filter for the session (file is preserved)."""
         self.apply_filter(None)
@@ -938,6 +953,7 @@ class GridPane(QWidget):
             f"{self._SETTINGS_KEY}/{doc_id}", sorted(hidden)
         )
 
+    # Requirements: MELLON-GUI-SRS-65
     def _apply_hidden_columns(self, hidden: set[str]) -> None:
         for col_index in range(self._model.columnCount()):
             if not self._model.is_user_attribute_column(col_index):
@@ -984,6 +1000,7 @@ class GridPane(QWidget):
         bucket = self._read_active_bucket(doc_id)
         return None if bucket == _DEFAULT_BUCKET else bucket
 
+    # Requirements: MELLON-EDIT-SRS-322, MELLON-EDIT-SRS-326
     def apply_view(
         self, slug: str | None, visible: tuple[str, ...] | list[str] | set[str]
     ) -> None:
@@ -1118,6 +1135,7 @@ class GridPane(QWidget):
                 out.append(name)
         return out
 
+    # Requirements: MELLON-EDIT-SRS-335
     def _on_section_moved(self, _logical: int, old_visual: int, new_visual: int) -> None:
         """Persist the new column order, or revert moves that cross the
         system/user-attribute boundary (system columns must stay leftmost)."""
@@ -1142,6 +1160,7 @@ class GridPane(QWidget):
             return
         self._persist_current_order()
 
+    # Requirements: MELLON-EDIT-SRS-335, MELLON-GUI-SRS-91
     def _persist_current_order(self) -> None:
         doc_id = self._controller.current_doc_id()
         if not doc_id:
@@ -1274,6 +1293,7 @@ class GridPane(QWidget):
     def is_suspect_only(self) -> bool:
         return self._proxy.suspectOnly()
 
+    # Requirements: MELLON-EDIT-SRS-319, MELLON-GUI-SRS-58
     def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
         """Re-fit the edited row, and re-run the saved filter: the edit may
         have changed what it matches."""
@@ -1293,6 +1313,7 @@ class GridPane(QWidget):
         self._model.refresh_link_states()
         self._refresh_banner()
 
+    # Requirements: MELLON-EDIT-SRS-251
     def refresh_figures(self) -> None:
         """Repaint after figure files were rewritten in place on disk.
 
@@ -1305,6 +1326,7 @@ class GridPane(QWidget):
         self.table.viewport().update()
         self.table.resizeRowsToContents()
 
+    # Requirements: MELLON-TRACE-SRS-91
     def _refresh_banner(self, *_args) -> None:
         doc_id = self._controller.current_doc_id()
         if doc_id is None:
@@ -1312,6 +1334,7 @@ class GridPane(QWidget):
             return
         self.banner.set_count(self._controller.suspect_count(doc_id))
 
+    # Requirements: MELLON-GUI-SRS-54
     def _on_row_changed(self, current, _previous) -> None:
         if not current.isValid():
             return
@@ -1323,6 +1346,7 @@ class GridPane(QWidget):
             if self._controller.current_obj_id() != obj_id:
                 self._controller.select_object(doc_id, obj_id)
 
+    # Requirements: MELLON-GUI-SRS-53
     def _on_external_selection(self, doc_id: str, obj_id: str) -> None:
         if self._controller.current_doc_id() != doc_id:
             return
@@ -1395,6 +1419,7 @@ class GridPane(QWidget):
 
     # --- figure operations (shared by context menu, toolbar, double-click) --
 
+    # Requirements: MELLON-EDIT-SRS-230
     def attach_figure(self, doc_id: str, obj_id: str) -> None:
         path_str, _ = QFileDialog.getOpenFileName(
             self,
@@ -1414,6 +1439,7 @@ class GridPane(QWidget):
             return
         self._controller.reload_document(doc_id)
 
+    # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-GUI-SRS-217
     def edit_figure_in_drawio(self, doc_id: str, obj_id: str) -> None:
         """Open `obj_id`'s figure in draw.io desktop.
 
@@ -1447,6 +1473,7 @@ class GridPane(QWidget):
         except drawio.DrawioError as e:
             QMessageBox.warning(self, "Could not start draw.io", str(e))
 
+    # Requirements: MELLON-EDIT-SRS-238
     def clear_figure(self, doc_id: str, obj_id: str) -> None:
         choice = QMessageBox.question(
             self,
@@ -1491,6 +1518,7 @@ class GridPane(QWidget):
             self.table.setCurrentIndex(proxy_idx)
             self.table.edit(proxy_idx)
 
+    # Requirements: MELLON-EDIT-SRS-200
     def insert_table(self, doc_id: str, obj_id: str) -> None:
         """Attach a default 2x2 table (one header row) to `obj_id`."""
         svc = self._controller.service
@@ -1510,6 +1538,7 @@ class GridPane(QWidget):
             return
         self._controller.reload_document(doc_id)
 
+    # Requirements: MELLON-EDIT-SRS-201
     def remove_table(self, doc_id: str, obj_id: str) -> None:
         choice = QMessageBox.question(
             self,
@@ -1530,6 +1559,7 @@ class GridPane(QWidget):
             return
         self._controller.reload_document(doc_id)
 
+    # Requirements: MELLON-EDIT-SRS-255
     def view_figure(self, doc_id: str, obj_id: str) -> None:
         """Open the object's figure full-size. No-op if none is attached."""
         path = self.figure_abs_path(obj_id)

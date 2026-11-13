@@ -39,6 +39,7 @@ class _SvgView(QWidget):
     def is_valid(self) -> bool:
         return self._renderer.isValid()
 
+    # Requirements: MELLON-EDIT-SRS-256
     def paintEvent(self, event) -> None:  # noqa: N802 (Qt override)
         if not self._renderer.isValid():
             return

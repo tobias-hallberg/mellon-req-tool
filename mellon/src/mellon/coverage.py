@@ -67,6 +67,9 @@ class CoverageReport:
     coverage_percent: float
 
 
+# Requirements: MELLON-CHECK-SRS-107, MELLON-CHECK-SRS-108, MELLON-TRACE-SRS-182,
+#   MELLON-TRACE-SRS-183, MELLON-TRACE-SRS-184, MELLON-TRACE-SRS-186, MELLON-TRACE-SRS-188,
+#   MELLON-TRACE-SRS-197
 def coverage_report(
     docs: dict[str, LoadedDoc],
     source_doc: str,
@@ -167,6 +170,7 @@ def coverage_report(
     )
 
 
+# Requirements: MELLON-TRACE-SRS-184
 def _reaches(
     edges: tuple[TraceEdge, ...], target_doc: str, link_type: str | None
 ) -> bool:

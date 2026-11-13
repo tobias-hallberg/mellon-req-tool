@@ -22,6 +22,8 @@ from .suspects import LinkState
 from .validator import link_target_missing
 
 
+# Requirements: MELLON-CHECK-SRS-2, MELLON-CHECK-SRS-137, MELLON-CHECK-SRS-147,
+#   MELLON-CHECK-SRS-148, MELLON-CHECK-SRS-149
 def _problems(svc: DocumentService) -> tuple[list[str], int]:
     """One line per problem, and the number of documents that loaded."""
     load_errors: list[DocLoadError] = []
@@ -51,6 +53,10 @@ def _problems(svc: DocumentService) -> tuple[list[str], int]:
     return lines, len(validation)
 
 
+# Requirements: MELLON-CHECK-SRS-114, MELLON-CHECK-SRS-115, MELLON-CHECK-SRS-116,
+#   MELLON-CHECK-SRS-117, MELLON-CHECK-SRS-124, MELLON-CHECK-SRS-127, MELLON-CHECK-SRS-134,
+#   MELLON-CHECK-SRS-146, MELLON-CHECK-SRS-147, MELLON-CHECK-SRS-148, MELLON-CHECK-SRS-149,
+#   MELLON-STORE-SRS-12, MELLON-STORE-SRS-210
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="mellon-check",

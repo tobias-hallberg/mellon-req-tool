@@ -79,6 +79,7 @@ def _decode_content(content: str) -> str:
     return content
 
 
+# Requirements: MELLON-EDIT-SRS-245, MELLON-STORE-SRS-132
 def is_drawio_svg(data: bytes) -> bool:
     """True when ``data`` is an SVG with an editable draw.io diagram in it."""
     root = _parse(data)
@@ -281,6 +282,7 @@ def _label_text_area(fo: etree._Element, fallback: etree._Element) -> etree._Ele
     return area
 
 
+# Requirements: MELLON-EDIT-SRS-257
 def qt_svg(data: bytes) -> bytes:
     """``data`` rewritten so QtSvg draws a draw.io SVG the way draw.io does.
 
@@ -331,6 +333,7 @@ def qt_svg(data: bytes) -> bytes:
     return etree.tostring(root, xml_declaration=True, encoding="UTF-8")
 
 
+# Requirements: MELLON-EDIT-SRS-246, MELLON-GUI-SRS-217
 def find_drawio() -> str | None:
     """Locate the draw.io desktop executable.
 
@@ -452,6 +455,7 @@ def _wrap_plain_svg(data: bytes) -> str | None:
     )
 
 
+# Requirements: MELLON-MCP-SRS-117
 def _run_drawio(exe: str, args: list[str]) -> subprocess.CompletedProcess[str]:
     creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     try:
@@ -472,6 +476,7 @@ def _run_drawio(exe: str, args: list[str]) -> subprocess.CompletedProcess[str]:
         raise DrawioError(f"could not run draw.io at {exe}: {e}") from e
 
 
+# Requirements: MELLON-PDF-SRS-149, MELLON-PDF-SRS-156
 def export_pdfs(exe: str, svgs: Sequence[Path], out_dir: Path) -> dict[int, Path]:
     """Render figures to cropped vector PDFs in one draw.io run.
 

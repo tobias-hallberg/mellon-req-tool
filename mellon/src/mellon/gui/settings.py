@@ -16,6 +16,7 @@ ORG = "mellon"
 APP = "mellon"
 
 
+# Requirements: MELLON-EDIT-SRS-318, MELLON-GUI-SRS-134
 def make_settings() -> QSettings:
     # `QSettings(ORG, APP)` would always use the native store (the registry
     # on Windows), ignoring `setDefaultFormat`; this honours it, so tests can

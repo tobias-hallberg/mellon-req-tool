@@ -46,6 +46,7 @@ from ..theme import ThemeManager
 class Inspector(QWidget):
     EMPTY_MESSAGE = "Select a requirement to view details."
 
+    # Requirements: MELLON-EDIT-SRS-126
     def __init__(self, controller: RepoController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._controller = controller
@@ -167,6 +168,7 @@ class Inspector(QWidget):
         if doc_id == self._current_doc_id and obj_id == self._current_obj_id:
             self._repopulate()
 
+    # Requirements: MELLON-EDIT-SRS-124, MELLON-GUI-SRS-55
     def _repopulate(self) -> None:
         if self._current_doc_id is None or self._current_obj_id is None:
             return
@@ -209,6 +211,7 @@ class Inspector(QWidget):
             return  # doc no longer loads / object gone: the next reload says so
         self._populate_links(view)
 
+    # Requirements: MELLON-EDIT-SRS-131, MELLON-EDIT-SRS-135, MELLON-GUI-SRS-71, MELLON-GUI-SRS-73
     def _populate_attrs(self, doc_id: str, attrs: dict[str, str]) -> None:
         self._clear_form(self._attrs_form)
         self._attr_widgets = {}
@@ -268,6 +271,7 @@ class Inspector(QWidget):
         self._description.setPlainText(text)
         self._description.setReadOnly(self._read_only)
 
+    # Requirements: MELLON-TRACE-SRS-34
     def _populate_links(self, view) -> None:
         self._outgoing.clear()
         if view.outgoing:
@@ -286,6 +290,7 @@ class Inspector(QWidget):
         else:
             self._incoming.addItem(QListWidgetItem("(none)"))
 
+    # Requirements: MELLON-TRACE-SRS-90, MELLON-TRACE-SRS-135
     def _add_outgoing_row(self, status) -> None:
         """Build a compound row widget for one outgoing link.
 
@@ -341,6 +346,7 @@ class Inspector(QWidget):
         self._outgoing.addItem(item)
         self._outgoing.setItemWidget(item, row)
 
+    # Requirements: MELLON-TRACE-SRS-135
     def _acknowledge_link(self, status) -> None:
         """Write @ack=<current_hash> on the single suspect link."""
         doc_id = self._current_doc_id
@@ -361,6 +367,7 @@ class Inspector(QWidget):
         self._controller.edit_succeeded.emit(doc_id, obj_id, "ack")
         self._controller.reload_document(doc_id)
 
+    # Requirements: MELLON-TRACE-SRS-100
     def _on_link_activated(self, item: QListWidgetItem) -> None:
         payload = item.data(Qt.ItemDataRole.UserRole + 1)
         if not isinstance(payload, tuple) or len(payload) != 2:
@@ -368,6 +375,7 @@ class Inspector(QWidget):
         target_doc, target_id = payload
         self._controller.select_object(target_doc, target_id)
 
+    # Requirements: MELLON-TRACE-SRS-26, MELLON-TRACE-SRS-101
     def _on_outgoing_menu(self, pos: QPoint) -> None:
         item = self._outgoing.itemAt(pos)
         if item is None:
@@ -456,6 +464,7 @@ class Inspector(QWidget):
 
     # --- auto-commit ---------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-71
     def eventFilter(self, obj, event):  # type: ignore[override]
         if obj is self._description and event.type() == QEvent.Type.FocusOut:
             self._commit_description()
@@ -470,6 +479,7 @@ class Inspector(QWidget):
                 self._commit_attr(name, widget)
         self._commit_description()
 
+    # Requirements: MELLON-EDIT-SRS-5, MELLON-EDIT-SRS-125
     def _commit_attr(self, name: str, widget: QWidget) -> None:
         if (
             self._read_only
@@ -524,6 +534,7 @@ class Inspector(QWidget):
         # signal that got us here (a use-after-free crash).
         QTimer.singleShot(0, self, lambda: self._controller.refresh_object(doc_id, obj_id))
 
+    # Requirements: MELLON-EDIT-SRS-5, MELLON-EDIT-SRS-125, MELLON-GUI-SRS-49
     def _commit_description(self) -> None:
         if (
             self._read_only

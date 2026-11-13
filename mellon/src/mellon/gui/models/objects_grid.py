@@ -25,6 +25,7 @@ from ...service import ServiceError
 from ..controller import RepoController
 
 
+# Requirements: MELLON-EDIT-SRS-327, MELLON-GUI-SRS-65
 SYSTEM_COLUMNS: tuple[str, ...] = ("state", "id", "heading_or_text", "type")
 # Labels for the "virtual" grid columns that don't map to real attributes.
 # The "type" column reads from `obj.attrs["type"]`, so its label comes from
@@ -34,6 +35,7 @@ SYSTEM_LABELS: dict[str, str] = {
     "id": "ID",
     "heading_or_text": "Description",
 }
+# Requirements: MELLON-EDIT-SRS-327
 _NEVER_HIDEABLE: frozenset[str] = frozenset(SYSTEM_COLUMNS)
 
 OBJ_ID_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -62,6 +64,7 @@ _STATE_LABELS = {"ok": "OK", "suspect": "suspect", "broken": "broken"}
 # Shown when an edit is refused because the document changed on disk under
 # the window (the "Changed on disk" banner is up). Writing now could overwrite
 # the external change with the window's cached view.
+# Requirements: MELLON-GUI-SRS-104
 STALE_EDIT_MESSAGE = "Changed on disk. Reload first (F5)."
 
 
@@ -71,6 +74,7 @@ class _Row:
     heading_or_text: str
 
 
+# Requirements: MELLON-EDIT-SRS-73, MELLON-GUI-SRS-66
 def _columns_for_doc(doc: Document | None) -> tuple[tuple[str, ...], tuple[str, ...]]:
     """Return (column-names, header-labels) for `doc`.
 
@@ -116,6 +120,7 @@ class ObjectsGridModel(QAbstractTableModel):
         controller.document_selected.connect(self._rebuild)
         controller.object_changed.connect(self._on_object_changed)
 
+    # Requirements: MELLON-GUI-SRS-87
     def set_read_only(self, on: bool) -> None:
         """Strip ItemIsEditable from `flags()` and refuse `setData` writes
         while read-only is on."""
@@ -266,11 +271,13 @@ class ObjectsGridModel(QAbstractTableModel):
                 self._unloadable = True
         return self._shown_doc
 
+    # Requirements: MELLON-TRACE-SRS-94
     def _state_for(self, obj_id: str) -> str:
         # Read from the per-row map: the suspect-only filter asks for every row.
         outgoing = self._link_states.get(obj_id, ("none", "none"))[0]
         return outgoing if outgoing in ("suspect", "broken") else "ok"
 
+    # Requirements: MELLON-GUI-SRS-91
     def flags(self, index: QModelIndex) -> Qt.ItemFlag:
         if not index.isValid():
             return Qt.ItemFlag.NoItemFlags
@@ -285,6 +292,8 @@ class ObjectsGridModel(QAbstractTableModel):
             return base  # nothing on disk to write the edit to
         return base | Qt.ItemFlag.ItemIsEditable
 
+    # Requirements: MELLON-EDIT-SRS-5, MELLON-EDIT-SRS-123, MELLON-EDIT-SRS-137, MELLON-GUI-SRS-49,
+    #   MELLON-GUI-SRS-76, MELLON-GUI-SRS-104
     def setData(
         self,
         index: QModelIndex,
@@ -334,6 +343,7 @@ class ObjectsGridModel(QAbstractTableModel):
 
     # --- population -----------------------------------------------------
 
+    # Requirements: MELLON-EDIT-SRS-122
     def _rebuild(self, doc_id: str) -> None:
         self.beginResetModel()
         self._doc_id = doc_id
@@ -349,6 +359,7 @@ class ObjectsGridModel(QAbstractTableModel):
         self._dirty_ids = self._controller.build_dirty_ids(doc_id)
         self.endResetModel()
 
+    # Requirements: MELLON-EDIT-SRS-137, MELLON-GUI-SRS-57, MELLON-GUI-SRS-58
     def _on_object_changed(self, doc_id: str, obj_id: str) -> None:
         """Update one row in place: no reset, so scroll and selection survive."""
         row = self._row_by_id.get(obj_id)
@@ -425,6 +436,7 @@ class ObjectsGridModel(QAbstractTableModel):
         return self._row_by_id.get(obj_id, -1)
 
 
+# Requirements: MELLON-EDIT-SRS-122, MELLON-GUI-SRS-64
 def _walk(doc: Document):
     """Pre-order walk of `doc.outline` yielding `_Row`s."""
 

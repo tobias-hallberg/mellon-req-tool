@@ -60,6 +60,7 @@ class _RuleRow(QWidget):
     remove_requested = Signal(object)  # passes self
     changed = Signal()  # emitted on any user-visible change
 
+    # Requirements: MELLON-EDIT-SRS-283
     def __init__(
         self,
         attributes: tuple[Attribute, ...],
@@ -176,6 +177,7 @@ class _RuleRow(QWidget):
         # the dialog doesn't surface it, but treat unknowns as text.
         return "text"
 
+    # Requirements: MELLON-EDIT-SRS-282
     def _ops_for_current(self) -> tuple[str, ...]:
         kind = self._current_kind()
         if kind in ("__link_out__", "__link_in__"):
@@ -296,6 +298,7 @@ class _RuleRow(QWidget):
         elif target is self._line_value:
             self._line_value.setText(rule.value or "")
 
+    # Requirements: MELLON-EDIT-SRS-281
     def to_rule(self) -> FilterRule | None:
         """Materialise the row as a `FilterRule`, or None when not selectable."""
         kind_marker = self.attr_combo.currentData()
@@ -341,6 +344,7 @@ class FilterDialog(QDialog):
     # Emitted when the user clicks OK (persist to filters/<slug>.xml + apply + close).
     save_and_apply_requested = Signal(object)
 
+    # Requirements: MELLON-EDIT-SRS-287
     def __init__(
         self,
         attributes: tuple[Attribute, ...],
@@ -475,6 +479,7 @@ class FilterDialog(QDialog):
 
     # --- assembly + validation ------------------------------------------
 
+    # Requirements: MELLON-EDIT-SRS-278
     def _revalidate(self) -> None:
         text = self._name_edit.text().strip()
         ok_for_save = bool(text) and text.casefold() not in self._existing_names

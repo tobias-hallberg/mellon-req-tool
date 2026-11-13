@@ -40,6 +40,7 @@ def trace_down(
     return _walk_down(docs, doc_id, obj_id, frozenset())
 
 
+# Requirements: MELLON-TRACE-SRS-158, MELLON-TRACE-SRS-160
 def _walk_up(
     docs: dict[str, LoadedDoc],
     doc_id: str,
@@ -67,6 +68,7 @@ def _walk_up(
     return tuple(out)
 
 
+# Requirements: MELLON-TRACE-SRS-159, MELLON-TRACE-SRS-160
 def _walk_down(
     docs: dict[str, LoadedDoc],
     doc_id: str,

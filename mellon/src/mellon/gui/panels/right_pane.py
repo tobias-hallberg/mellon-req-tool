@@ -19,6 +19,7 @@ from .inspector import Inspector
 
 
 class RightPane(QWidget):
+    # Requirements: MELLON-GUI-SRS-45
     def __init__(self, controller: RepoController, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         # Mirror the grid pane: child labels' minimumSizeHint would otherwise

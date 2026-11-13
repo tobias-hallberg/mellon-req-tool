@@ -96,6 +96,7 @@ class ManageViewsDialog(QDialog):
         self._rename_btn.setEnabled(has_selection)
         self._delete_btn.setEnabled(has_selection)
 
+    # Requirements: MELLON-EDIT-SRS-331
     def _rename_selected(self) -> None:
         slug = self._selected_slug()
         if slug is None:
@@ -126,6 +127,7 @@ class ManageViewsDialog(QDialog):
             return
         self._reload()
 
+    # Requirements: MELLON-EDIT-SRS-332
     def _delete_selected(self) -> None:
         slug = self._selected_slug()
         if slug is None:

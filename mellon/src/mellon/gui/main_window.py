@@ -67,6 +67,7 @@ _INSPECTOR_VISIBLE_KEY = "document_editor/inspector_visible"
 _INSPECTOR_WIDTH_KEY = "document_editor/inspector_width"
 _EXPORT_DIR_KEY = "document_editor/export_dir"
 # Links listed in the pre-export suspect warning before "… and N more".
+# Requirements: MELLON-PDF-SRS-49
 _LINK_WARNING_ROWS = 10
 
 _OUTLINE_DEFAULT_WIDTH = 280
@@ -98,6 +99,7 @@ class _ExportSignals(QObject):
     crashed = Signal(object)  # unexpected exception, re-raised on the GUI thread
 
 
+# Requirements: MELLON-PDF-SRS-7
 class _ExportJob(QRunnable):
     """Render a document to PDF and write the file, off the GUI thread.
 
@@ -123,6 +125,7 @@ class _ExportJob(QRunnable):
         self._target = target
         self._parents = parents
 
+    # Requirements: MELLON-PDF-SRS-2, MELLON-PDF-SRS-65
     def run(self) -> None:
         missing: list[str] = []
         try:
@@ -157,6 +160,9 @@ class DocumentEditorWindow(QMainWindow):
     window_closed = Signal(str)  # emitted with doc_id on close
     read_only_changed = Signal(bool)
 
+    # Requirements: MELLON-EDIT-SRS-116, MELLON-EDIT-SRS-317, MELLON-EDIT-SRS-349,
+    #   MELLON-EDIT-SRS-350, MELLON-GUI-SRS-45, MELLON-GUI-SRS-82, MELLON-GUI-SRS-85,
+    #   MELLON-GUI-SRS-86, MELLON-GUI-SRS-133, MELLON-GUI-SRS-137, MELLON-VER-SRS-5
     def __init__(
         self,
         doc_id: str,
@@ -271,7 +277,7 @@ class DocumentEditorWindow(QMainWindow):
 
         # --- attach service and select document -------------------------
         self.controller.attach_service(service)
-        # MELLON-GUI-SRS-109, MELLON-STORE-SRS-182: every write this window
+        # MELLON-GUI-SRS-109: every write this window
         # makes first checks that nothing it read changed on disk.
         self.controller.set_write_check(self._check_before_write)
         self.controller.select_document(doc_id)
@@ -317,6 +323,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- close -----------------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-133
     def closeEvent(self, event: QCloseEvent) -> None:
         s = make_settings()
         doc_id = self._doc_id
@@ -336,6 +343,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- disk freshness ---------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-96, MELLON-TRACE-SRS-96
     def event(self, e: QEvent) -> bool:  # type: ignore[override]
         # Re-check on-disk freshness whenever the user comes back to this
         # window — the moment they'd start acting on possibly-stale data.
@@ -348,6 +356,8 @@ class DocumentEditorWindow(QMainWindow):
             self._check_head_moved()
         return super().event(e)
 
+    # Requirements: MELLON-EDIT-SRS-250, MELLON-EDIT-SRS-359, MELLON-GUI-SRS-96, MELLON-GUI-SRS-98,
+    #   MELLON-GUI-SRS-108
     def _check_disk_freshness(self) -> None:
         # A figure saved in place (by draw.io, after "Edit in draw.io") is
         # picked up without the banner; anything else changed means stale.
@@ -364,13 +374,15 @@ class DocumentEditorWindow(QMainWindow):
             self._check_disk_freshness()
         return self.grid_pane.is_stale()
 
+    # Requirements: MELLON-GUI-SRS-109
     def _check_before_write(self) -> None:
         """The controller's write check: refuse a write whose files changed
-        on disk since this window read them (MELLON-STORE-SRS-182). The
+        on disk since this window read them (MELLON-GUI-SRS-109). The
         caller reports the refusal; the typed text stays where it is."""
         if self._changed_on_disk():
             raise ServiceError(ErrorCode.CONFLICT, STALE_EDIT_MESSAGE)
 
+    # Requirements: MELLON-EDIT-SRS-354, MELLON-TRACE-SRS-96
     def _check_head_moved(self) -> None:
         """Re-read the grid's link states when HEAD moved since they were
         last read. A commit — in this window, another window or a git
@@ -397,6 +409,7 @@ class DocumentEditorWindow(QMainWindow):
         self.right_pane.history.refresh()
         self._refresh_action_states()
 
+    # Requirements: MELLON-EDIT-SRS-353
     def _set_stale(self, on: bool) -> None:
         """Show/hide the "Changed on disk" banner. While it's up, edits are
         refused (no auto-reload) so cached text can't overwrite the change."""
@@ -405,6 +418,8 @@ class DocumentEditorWindow(QMainWindow):
         if on:
             self._clear_undo()  # the files are no longer what the steps left
 
+    # Requirements: MELLON-EDIT-SRS-351, MELLON-GUI-SRS-87, MELLON-GUI-SRS-105,
+    #   MELLON-STORE-SRS-37, MELLON-STORE-SRS-38, MELLON-STORE-SRS-40
     def _reload_from_disk(self) -> None:
         """Drop every cache and re-read this document from disk.
 
@@ -448,6 +463,10 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- menu ------------------------------------------------------------
 
+    # Requirements: MELLON-EDIT-SRS-277, MELLON-EDIT-SRS-342, MELLON-EDIT-SRS-343,
+    #   MELLON-EDIT-SRS-347, MELLON-GUI-SRS-83, MELLON-GUI-SRS-105, MELLON-GUI-SRS-140,
+    #   MELLON-GUI-SRS-159, MELLON-GUI-SRS-160, MELLON-GUI-SRS-161, MELLON-GUI-SRS-162,
+    #   MELLON-GUI-SRS-163, MELLON-VER-SRS-189
     def _build_menus(self) -> QMenu:
         menu = QMenu(self)
         menu.setMinimumWidth(260)
@@ -566,6 +585,11 @@ class DocumentEditorWindow(QMainWindow):
             tb.addSeparator()
         self._hamburger_btn = ham
 
+    # Requirements: MELLON-CHECK-SRS-79, MELLON-EDIT-SRS-159, MELLON-GUI-SRS-149,
+    #   MELLON-GUI-SRS-150, MELLON-GUI-SRS-151, MELLON-GUI-SRS-152, MELLON-GUI-SRS-153,
+    #   MELLON-GUI-SRS-154, MELLON-GUI-SRS-155, MELLON-GUI-SRS-156, MELLON-GUI-SRS-157,
+    #   MELLON-GUI-SRS-158, MELLON-GUI-SRS-167, MELLON-PDF-SRS-2, MELLON-PDF-SRS-3,
+    #   MELLON-TRACE-SRS-16, MELLON-TRACE-SRS-177, MELLON-VER-SRS-141, MELLON-VER-SRS-142
     def _build_toolbar(self) -> None:
         tb = QToolBar("Outline", self)
         tb.setMovable(False)
@@ -754,6 +778,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- action-state refresh ------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-89, MELLON-GUI-SRS-90, MELLON-VER-SRS-145, MELLON-VER-SRS-279
     def _refresh_action_states(self, *_args) -> None:
         doc_id = self.controller.current_doc_id()
         obj_id = self.controller.current_obj_id()
@@ -817,6 +842,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- read-only toggle ----------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-86
     def _on_read_only_toggled(self, on: bool) -> None:
         # MELLON-GUI-SRS-74: the Read-only action saves the pending edits
         # first; read-only mode itself drops what is left in the fields.
@@ -860,6 +886,7 @@ class DocumentEditorWindow(QMainWindow):
             default_width=_INSPECTOR_DEFAULT_WIDTH,
         )
 
+    # Requirements: MELLON-GUI-SRS-46
     def _set_pane_visible(
         self,
         visible: bool,
@@ -910,6 +937,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- mutation handlers ---------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-74
     def flush_pending_edits(self) -> None:
         """Commit an open grid cell editor and pending Inspector text.
 
@@ -920,6 +948,8 @@ class DocumentEditorWindow(QMainWindow):
         self.grid_pane.commit_open_editor()
         self.inspector.commit_pending()
 
+    # Requirements: MELLON-GUI-SRS-74, MELLON-GUI-SRS-91, MELLON-GUI-SRS-104, MELLON-GUI-SRS-111,
+    #   MELLON-STORE-SRS-39, MELLON-VER-SRS-143, MELLON-VER-SRS-144, MELLON-VER-SRS-145
     def _prepare_edit(self, *, check_disk: bool = True) -> bool:
         """Preamble for every mutating action; False means don't run it.
 
@@ -951,6 +981,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- undo / redo ----------------------------------------------------
 
+    # Requirements: MELLON-EDIT-SRS-341, MELLON-EDIT-SRS-360
     def _on_files_changed(self, doc_id: str, label: str, changes: Journal) -> None:
         """Service change listener: an edit to this document is an undo step."""
         if doc_id != self._doc_id:
@@ -967,6 +998,7 @@ class DocumentEditorWindow(QMainWindow):
         self._redo_steps.clear()
         self._refresh_undo_actions()
 
+    # Requirements: MELLON-EDIT-SRS-344, MELLON-EDIT-SRS-361, MELLON-STORE-SRS-39
     def _refresh_undo_actions(self) -> None:
         usable = not self._read_only and not self.grid_pane.is_stale()
         for act, steps, verb in (
@@ -976,6 +1008,8 @@ class DocumentEditorWindow(QMainWindow):
             act.setEnabled(usable and bool(steps))
             act.setText(f"&{verb} {steps[-1][0]}" if steps else f"&{verb}")
 
+    # Requirements: MELLON-EDIT-SRS-342, MELLON-EDIT-SRS-343, MELLON-EDIT-SRS-345,
+    #   MELLON-EDIT-SRS-348, MELLON-EDIT-SRS-358
     def _replay_step(self, *, undo: bool) -> None:
         """Undo the newest step (or redo the newest undone one): the files it
         changed go back to their bytes before (after) it. Refused, and the
@@ -1022,6 +1056,7 @@ class DocumentEditorWindow(QMainWindow):
             f"{'Undid' if undo else 'Redid'} {label}.", 4000
         )
 
+    # Requirements: MELLON-EDIT-SRS-113
     def _new_sibling(self) -> None:
         if not self._prepare_edit():
             return
@@ -1045,6 +1080,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.select_object(doc_id, new_id)
         self._status.showMessage(f"Created {new_id}", 3000)
 
+    # Requirements: MELLON-EDIT-SRS-114, MELLON-EDIT-SRS-115
     def _new_child(self) -> None:
         if not self._prepare_edit():
             return
@@ -1082,6 +1118,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.select_object(doc_id, new_id)
         self._status.showMessage(f"Created {new_id}", 3000)
 
+    # Requirements: MELLON-EDIT-SRS-180
     def _indent(self) -> None:
         if not self._prepare_edit():
             return
@@ -1103,6 +1140,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.reload_document(doc_id)
         self.controller.select_object(doc_id, sel)
 
+    # Requirements: MELLON-EDIT-SRS-181
     def _outdent(self) -> None:
         if not self._prepare_edit():
             return
@@ -1132,6 +1170,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.reload_document(doc_id)
         self.controller.select_object(doc_id, sel)
 
+    # Requirements: MELLON-EDIT-SRS-178
     def _move_up(self) -> None:
         if not self._prepare_edit():
             return
@@ -1150,6 +1189,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.reload_document(doc_id)
         self.controller.select_object(doc_id, sel)
 
+    # Requirements: MELLON-EDIT-SRS-179
     def _move_down(self) -> None:
         if not self._prepare_edit():
             return
@@ -1168,6 +1208,7 @@ class DocumentEditorWindow(QMainWindow):
         self.controller.reload_document(doc_id)
         self.controller.select_object(doc_id, sel)
 
+    # Requirements: MELLON-EDIT-SRS-160
     def _confirm_delete(self, obj_id: str) -> bool:
         # Always asked, though Ctrl+Z brings the object back: a delete can
         # also strip links in other documents.
@@ -1181,6 +1222,8 @@ class DocumentEditorWindow(QMainWindow):
         box.setDefaultButton(QMessageBox.StandardButton.Cancel)
         return box.exec() == QMessageBox.StandardButton.Ok
 
+    # Requirements: MELLON-EDIT-SRS-159, MELLON-EDIT-SRS-160, MELLON-EDIT-SRS-162,
+    #   MELLON-EDIT-SRS-164
     def _delete_selected(self) -> None:
         if not self._prepare_edit():
             return
@@ -1243,6 +1286,7 @@ class DocumentEditorWindow(QMainWindow):
             5000,
         )
 
+    # Requirements: MELLON-TRACE-SRS-16
     def _add_link(self) -> None:
         if not self._prepare_edit():
             return
@@ -1271,6 +1315,7 @@ class DocumentEditorWindow(QMainWindow):
             f"Linked {sel} --[{link_type}]--> {target_doc}/{target_id}", 4000
         )
 
+    # Requirements: MELLON-TRACE-SRS-177
     def _show_trace(self) -> None:
         self._save_pending_edits()  # MELLON-GUI-SRS-74
         doc_id = self.controller.current_doc_id()
@@ -1282,6 +1327,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- compare ----------------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-2
     def open_compare(
         self, from_ref: str | None = None, to_ref: str | None = None
     ) -> CompareDialog:
@@ -1377,6 +1423,7 @@ class DocumentEditorWindow(QMainWindow):
 
     # --- suspect review -------------------------------------------------
 
+    # Requirements: MELLON-TRACE-SRS-152, MELLON-TRACE-SRS-154
     def _ack_selected(self) -> None:
         if not self._prepare_edit():
             return
@@ -1453,6 +1500,8 @@ class DocumentEditorWindow(QMainWindow):
         self._figure_menu = menu
         return button
 
+    # Requirements: MELLON-EDIT-SRS-230, MELLON-EDIT-SRS-238, MELLON-EDIT-SRS-245,
+    #   MELLON-EDIT-SRS-255
     def _populate_figure_menu(self) -> None:
         self._figure_menu.clear()
         doc_id = self.controller.current_doc_id()
@@ -1534,6 +1583,9 @@ class DocumentEditorWindow(QMainWindow):
         obj = self.controller.document(doc_id).objects.get(obj_id)
         return doc_id, obj_id, obj
 
+    # Requirements: MELLON-EDIT-SRS-200, MELLON-EDIT-SRS-201, MELLON-EDIT-SRS-213,
+    #   MELLON-EDIT-SRS-215, MELLON-EDIT-SRS-216, MELLON-EDIT-SRS-218, MELLON-EDIT-SRS-221,
+    #   MELLON-EDIT-SRS-224, MELLON-EDIT-SRS-226, MELLON-EDIT-SRS-227
     def _populate_table_menu(self) -> None:
         self._table_menu.clear()
         doc_id, obj_id, obj = self._selected_object()
@@ -1652,6 +1704,7 @@ class DocumentEditorWindow(QMainWindow):
         self._views_menu = menu
         return button
 
+    # Requirements: MELLON-EDIT-SRS-325, MELLON-EDIT-SRS-329, MELLON-EDIT-SRS-331
     def _populate_views_menu(self) -> None:
         self._views_menu.clear()
         try:
@@ -1686,10 +1739,12 @@ class DocumentEditorWindow(QMainWindow):
         )
         self._views_menu.addAction(manage_act)
 
+    # Requirements: MELLON-EDIT-SRS-325
     def _apply_view(self, slug: str, visible: tuple[str, ...]) -> None:
         self.grid_pane.apply_view(slug, visible)
         self._status.showMessage(f"Applied view {slug!r}", 3000)
 
+    # Requirements: MELLON-EDIT-SRS-329
     def _new_view(self) -> None:
         if self._read_only:
             return
@@ -1747,6 +1802,7 @@ class DocumentEditorWindow(QMainWindow):
         self._filters_menu = menu
         return button
 
+    # Requirements: MELLON-EDIT-SRS-313
     def _populate_filters_menu(self) -> None:
         self._filters_menu.clear()
         try:
@@ -1802,6 +1858,7 @@ class DocumentEditorWindow(QMainWindow):
         dlg = ManageFiltersDialog(self.controller, self._doc_id, self)
         dlg.exec()
 
+    # Requirements: MELLON-EDIT-SRS-313
     def _apply_filter_by_slug(self, slug: str) -> None:
         try:
             doc = self.controller.document(self._doc_id)
@@ -1891,6 +1948,7 @@ class DocumentEditorWindow(QMainWindow):
         # mirrors filt.slug into QSettings (or clears the entry when slug=="").
         self.grid_pane.apply_filter(filt)
 
+    # Requirements: MELLON-EDIT-SRS-277
     def _dialog_save(self, filt, seed):
         """Persist the filter; return the on-disk Filter, or None on failure.
 
@@ -1956,6 +2014,7 @@ class DocumentEditorWindow(QMainWindow):
             # → _on_active_filter_changed clears the QSettings entry.
             self.grid_pane.clear_active_filter()
 
+    # Requirements: MELLON-EDIT-SRS-317
     def _restore_active_filter(self, doc_id: str) -> None:
         # Re-apply whatever filter the user had active for this doc last time.
         slug = self._read_active_filter(doc_id)
@@ -1979,6 +2038,7 @@ class DocumentEditorWindow(QMainWindow):
         s = _settings.make_settings()
         return str(s.value(f"{self._ACTIVE_FILTER_PREFIX}/{doc_id}", "") or "")
 
+    # Requirements: MELLON-EDIT-SRS-318
     def _persist_active_filter(self, doc_id: str, slug: str) -> None:
         from . import settings as _settings
         s = _settings.make_settings()
@@ -2024,6 +2084,9 @@ class DocumentEditorWindow(QMainWindow):
         doc_name = doc.metadata.title or self._doc_id
         self.setWindowTitle(f"{doc_name} — Document Explorer — Mellon")
 
+    # Requirements: MELLON-GUI-SRS-88, MELLON-VER-SRS-126, MELLON-VER-SRS-135, MELLON-VER-SRS-141,
+    #   MELLON-VER-SRS-143, MELLON-VER-SRS-144, MELLON-VER-SRS-153, MELLON-VER-SRS-164,
+    #   MELLON-VER-SRS-167, MELLON-VER-SRS-292
     def _commit_current_doc(self) -> None:
         if not self._prepare_edit():
             return
@@ -2176,6 +2239,7 @@ class DocumentEditorWindow(QMainWindow):
             )
         self._set_read_only(True)
 
+    # Requirements: MELLON-GUI-SRS-88, MELLON-VER-SRS-153, MELLON-VER-SRS-280
     def _tag_current_commit(self, doc_id: str, name: str, message: str) -> None:
         """The commit dialog's Tag with nothing to commit: tag HEAD."""
         try:
@@ -2209,6 +2273,7 @@ class DocumentEditorWindow(QMainWindow):
         except Exception:  # noqa: BLE001 — no repo, HEAD unreadable
             return False
 
+    # Requirements: MELLON-VER-SRS-202, MELLON-VER-SRS-203, MELLON-VER-SRS-204
     def _refresh_discard_action(self) -> None:
         """Enable "Discard uncommitted changes…" for a writable document that
         has uncommitted changes and a last commit to go back to."""
@@ -2222,6 +2287,8 @@ class DocumentEditorWindow(QMainWindow):
                 enabled = False
         self._discard_act.setEnabled(enabled)
 
+    # Requirements: MELLON-EDIT-SRS-352, MELLON-VER-SRS-195, MELLON-VER-SRS-196,
+    #   MELLON-VER-SRS-202, MELLON-VER-SRS-211
     def _discard_document_changes(self) -> None:
         """Put this document's folder back to its last commit, after asking.
 
@@ -2296,6 +2363,7 @@ class DocumentEditorWindow(QMainWindow):
             return []
         return [s for s in scan[doc_id] if s.state is not LinkState.OK]
 
+    # Requirements: MELLON-PDF-SRS-45, MELLON-PDF-SRS-49, MELLON-PDF-SRS-52
     def _ask_export_despite_links(
         self, doc_id: str, problems: list[LinkStatus]
     ) -> bool:
@@ -2323,6 +2391,8 @@ class DocumentEditorWindow(QMainWindow):
         box.exec()
         return box.clickedButton() is export
 
+    # Requirements: MELLON-PDF-SRS-7, MELLON-PDF-SRS-10, MELLON-PDF-SRS-22, MELLON-PDF-SRS-37,
+    #   MELLON-PDF-SRS-45, MELLON-PDF-SRS-84
     def _export_current_doc(self) -> None:
         if self.is_exporting():
             self._status.showMessage("An export is already running.", 4000)
@@ -2394,6 +2464,7 @@ class DocumentEditorWindow(QMainWindow):
         assert ctx is not None
         return ctx
 
+    # Requirements: MELLON-PDF-SRS-58, MELLON-PDF-SRS-59
     def _on_export_finished(self, size: int, missing: list) -> None:
         doc_id, target = self._end_export()
         make_settings().setValue(
@@ -2419,17 +2490,20 @@ class DocumentEditorWindow(QMainWindow):
                 "marks each):\n\n" + ", ".join(missing) + f"\n\n{why}",
             )
 
+    # Requirements: MELLON-PDF-SRS-65
     def _on_export_failed(self, message: str) -> None:
         self._end_export()
         self._status.showMessage("Export failed.", 6000)
         QMessageBox.critical(self, "Export failed", message)
 
+    # Requirements: MELLON-GUI-SRS-20
     def _on_export_crashed(self, error: object) -> None:
         self._end_export()
         self._status.showMessage("Export failed.", 6000)
         # Unexpected: leave it to the excepthook (log file + dialog).
         raise error  # type: ignore[misc]
 
+    # Requirements: MELLON-CHECK-SRS-9, MELLON-CHECK-SRS-79
     def _validate_current_doc(self) -> None:
         self._save_pending_edits()  # MELLON-GUI-SRS-74
         doc_id = self.controller.current_doc_id()
@@ -2456,6 +2530,8 @@ class DocumentEditorWindow(QMainWindow):
             f"{doc_id}: {len(errors)} validation error(s).", 6000
         )
 
+    # Requirements: MELLON-GUI-SRS-115, MELLON-GUI-SRS-117, MELLON-GUI-SRS-118, MELLON-VER-SRS-183,
+    #   MELLON-VER-SRS-376, MELLON-VER-SRS-377
     def _refresh_git_cell(self) -> None:
         root = self.controller.root
         self._git_head = None

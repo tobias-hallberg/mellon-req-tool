@@ -54,6 +54,7 @@ class EditorError(Exception):
     """Raised when an editor operation can't proceed (bad inputs, conflicts)."""
 
 
+# Requirements: MELLON-STORE-SRS-189
 _XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>\n'
 
 
@@ -61,8 +62,10 @@ _XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>\n'
 # engine, coverage, and export). Information and Note are the default
 # non-structural types. Documents that contain requirements add "Requirement"
 # to their own type schema along with a RequirementType attribute.
+# Requirements: MELLON-EDIT-SRS-25
 DEFAULT_TYPE_OPTIONS = ("Heading", "Information", "Note")
 
+# Requirements: MELLON-EDIT-SRS-25
 DEFAULT_ATTR_SCHEMA: list[dict] = [
     {"name": "type", "kind": "enum", "required": True, "options": list(DEFAULT_TYPE_OPTIONS)},
     {"name": "rationale", "kind": "text", "required": False},
@@ -70,6 +73,7 @@ DEFAULT_ATTR_SCHEMA: list[dict] = [
 
 
 # Default rule set: Heading objects carry no body content.
+# Requirements: MELLON-EDIT-SRS-26
 DEFAULT_RULES: list[dict] = [
     {"when": {"type": "Heading"},
      "then": [("rationale", "forbidden")]},
@@ -80,6 +84,8 @@ _REPLACE_ATTEMPTS = 5
 _REPLACE_RETRY_DELAY = 0.05  # seconds
 
 
+# Requirements: MELLON-EDIT-SRS-4, MELLON-STORE-SRS-167, MELLON-STORE-SRS-171,
+#   MELLON-STORE-SRS-187, MELLON-STORE-SRS-188, MELLON-STORE-SRS-192, MELLON-STORE-SRS-208
 def _write_tree(tree: etree._ElementTree, path: Path) -> None:
     """Serialize an lxml tree with a canonical header and trailing newline.
 
@@ -161,6 +167,7 @@ class Journal:
         files that couldn't be restored."""
         return _put_files(reversed(list(self.before.items())))
 
+    # Requirements: MELLON-EDIT-SRS-345
     def revert(self) -> None:
         """Undo a sealed journal: back to the before state.
 
@@ -175,6 +182,7 @@ class Journal:
         guard as `revert`."""
         self._switch(self.before, self.after, "redo")
 
+    # Requirements: MELLON-EDIT-SRS-345, MELLON-EDIT-SRS-356
     def _switch(
         self,
         expect: dict[Path, bytes | None],
@@ -208,6 +216,7 @@ def _read_or_none(path: Path) -> bytes | None:
         return None
 
 
+# Requirements: MELLON-EDIT-SRS-346
 def _keep_next_numbers(
     now: dict[Path, bytes | None], target: dict[Path, bytes | None]
 ) -> dict[Path, bytes]:
@@ -304,6 +313,7 @@ def journal_open() -> bool:
     return bool(_JOURNALS.get())
 
 
+# Requirements: MELLON-STORE-SRS-174
 @contextlib.contextmanager
 def journal(*, rollback: bool = True) -> Iterator[Journal]:
     """Record every file the editor writes or deletes inside the block.
@@ -334,6 +344,7 @@ def journal(*, rollback: bool = True) -> Iterator[Journal]:
 _F = TypeVar("_F", bound=Callable)
 
 
+# Requirements: MELLON-STORE-SRS-174
 def _atomic(fn: _F) -> _F:
     """Run an editor mutation inside a rollback journal: if it raises, every
     file it touched is put back."""
@@ -350,9 +361,12 @@ def _atomic(fn: _F) -> _F:
 # pasted from Word or PDFs carries \x0b (manual line break) and \x0c (page
 # break), so those become newlines; anything else is refused up front. CRLF
 # and lone CR (Windows clients) become LF too, so no `&#13;` lands in diffs.
+# Requirements: MELLON-STORE-SRS-214, MELLON-STORE-SRS-215
 _XML_ILLEGAL_C0_RE = re.compile(r"[\x00-\x08\x0e-\x1f]")
 
 
+# Requirements: MELLON-STORE-SRS-89, MELLON-STORE-SRS-212, MELLON-STORE-SRS-213,
+#   MELLON-STORE-SRS-214
 def _sanitize_text(value: str, what: str) -> str:
     """Return user text safe to store in XML, or raise EditorError naming the bad character."""
     value = value.replace("\r\n", "\n").replace("\r", "\n")
@@ -366,6 +380,7 @@ def _sanitize_text(value: str, what: str) -> str:
     return value
 
 
+# Requirements: MELLON-STORE-SRS-226
 def _child_path(folder: Path, name: str) -> Path:
     """Return `folder / name`, refusing a name that would resolve outside `folder`."""
     # MELLON-STORE-SRS-223, -226: refuse a name with a path separator or a
@@ -401,6 +416,7 @@ def _next_object_number(doc: Document) -> int:
     return max(whole_number(doc.next_object_number) or 0, highest + 1)
 
 
+# Requirements: MELLON-EDIT-SRS-1, MELLON-EDIT-SRS-2, MELLON-EDIT-SRS-119, MELLON-STORE-SRS-81
 @_atomic
 def create_object(
     folder: Path,
@@ -436,9 +452,12 @@ def create_object(
     return new_id
 
 
+# Requirements: MELLON-EDIT-SRS-21
 _DOC_ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
 
 
+# Requirements: MELLON-EDIT-SRS-20, MELLON-EDIT-SRS-21, MELLON-EDIT-SRS-23, MELLON-EDIT-SRS-26,
+#   MELLON-EDIT-SRS-27
 def create_document(
     root: Path,
     doc_id: str,
@@ -483,6 +502,7 @@ def create_document(
     return folder
 
 
+# Requirements: MELLON-EDIT-SRS-20, MELLON-EDIT-SRS-30, MELLON-EDIT-SRS-31
 def _write_manifest(
     folder: Path,
     doc_id: str,
@@ -545,6 +565,8 @@ def _write_rules_file(folder: Path, doc_id: str, rules: list[dict]) -> None:
     _write_tree(tree, folder / f"{doc_id}.rules.xml")
 
 
+# Requirements: MELLON-EDIT-SRS-8, MELLON-EDIT-SRS-9, MELLON-EDIT-SRS-10, MELLON-STORE-SRS-84,
+#   MELLON-STORE-SRS-93, MELLON-STORE-SRS-190
 @_atomic
 def set_attribute(folder: Path, obj_id: str, attr_name: str, value: str) -> None:
     """Set `attr_name = value` on an object, validated against the manifest schema.
@@ -597,6 +619,7 @@ def set_attribute(folder: Path, obj_id: str, attr_name: str, value: str) -> None
     _write_tree(tree, obj_path)
 
 
+# Requirements: MELLON-EDIT-SRS-139, MELLON-STORE-SRS-87, MELLON-STORE-SRS-89
 @_atomic
 def set_description(folder: Path, obj_id: str, text: str) -> None:
     """Replace the <description> text of an object. Multiline is fine."""
@@ -618,6 +641,7 @@ def set_description(folder: Path, obj_id: str, text: str) -> None:
     _write_tree(tree, obj_path)
 
 
+# Requirements: MELLON-EDIT-SRS-205, MELLON-EDIT-SRS-206, MELLON-EDIT-SRS-207, MELLON-STORE-SRS-113
 def _validate_table(table: Table) -> None:
     """Raise EditorError unless `table` has valid alignments, spans, and tiling."""
     for col in table.columns:
@@ -638,6 +662,8 @@ def _validate_table(table: Table) -> None:
         raise EditorError("inconsistent table geometry: " + "; ".join(problems))
 
 
+# Requirements: MELLON-STORE-SRS-100, MELLON-STORE-SRS-103, MELLON-STORE-SRS-105,
+#   MELLON-STORE-SRS-108
 def _build_table_element(table: Table) -> etree._Element:
     """Serialize a Table into a fresh `<table>` lxml element.
 
@@ -662,6 +688,7 @@ def _build_table_element(table: Table) -> etree._Element:
     return table_el
 
 
+# Requirements: MELLON-EDIT-SRS-203, MELLON-STORE-SRS-90, MELLON-STORE-SRS-115
 @_atomic
 def set_table(folder: Path, obj_id: str, table: Table) -> None:
     """Replace (or create) an object's `<table>`, placed after `<description>`.
@@ -693,6 +720,7 @@ def set_table(folder: Path, obj_id: str, table: Table) -> None:
     _write_tree(tree, obj_path)
 
 
+# Requirements: MELLON-EDIT-SRS-204
 @_atomic
 def clear_table(folder: Path, obj_id: str) -> bool:
     """Remove an object's `<table>` if present. Returns True iff one was removed."""
@@ -716,11 +744,14 @@ def clear_table(folder: Path, obj_id: str) -> bool:
 _SVG_NS = "http://www.w3.org/2000/svg"
 
 
+# Requirements: MELLON-STORE-SRS-129
 def figure_path(folder: Path, obj_id: str) -> Path:
     """Return the on-disk path where `obj_id`'s figure would live (whether or not it exists)."""
     return _child_path(folder / "figures", f"{obj_id}.svg")
 
 
+# Requirements: MELLON-EDIT-SRS-232, MELLON-EDIT-SRS-233, MELLON-STORE-SRS-130,
+#   MELLON-STORE-SRS-133
 @_atomic
 def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
     """Attach an SVG figure to `obj_id` by copying `src_path` into `figures/<obj_id>.svg`.
@@ -761,6 +792,7 @@ def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
     shutil.copyfile(src_path, dest)
 
 
+# Requirements: MELLON-EDIT-SRS-240
 @_atomic
 def clear_figure(folder: Path, obj_id: str) -> bool:
     """Remove `obj_id`'s figure file if it exists. Returns True iff a file was removed.
@@ -789,9 +821,11 @@ def _remove_figure_file(path: Path) -> bool:
     return True
 
 
+# Requirements: MELLON-STORE-SRS-65
 _METADATA_FIELDS = ("title", "author", "date")
 
 
+# Requirements: MELLON-EDIT-SRS-36
 @_atomic
 def set_metadata(folder: Path, field: str, value: str) -> None:
     """Set one metadata field on the manifest. Creates the element if missing.
@@ -829,6 +863,7 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-45, MELLON-EDIT-SRS-47, MELLON-STORE-SRS-68
 @_atomic
 def add_parent(folder: Path, parent_doc: str) -> None:
     """Add a `<parent doc=...>` reference to the manifest's `<parents>`."""
@@ -854,6 +889,7 @@ def add_parent(folder: Path, parent_doc: str) -> None:
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-46, MELLON-EDIT-SRS-51
 @_atomic
 def remove_parent(folder: Path, parent_doc: str) -> bool:
     """Remove a `<parent doc=...>` from the manifest. Returns True if removed.
@@ -881,6 +917,7 @@ def remove_parent(folder: Path, parent_doc: str) -> bool:
     return True
 
 
+# Requirements: MELLON-EDIT-SRS-75, MELLON-EDIT-SRS-78, MELLON-EDIT-SRS-80
 @_atomic
 def add_attr_option(folder: Path, attr_name: str, option: str) -> None:
     """Append a new enum option to an existing enum attribute."""
@@ -918,10 +955,14 @@ def add_attr_option(folder: Path, attr_name: str, option: str) -> None:
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-61
 _ATTR_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
+# Requirements: MELLON-EDIT-SRS-64
 _ATTR_KINDS = ("enum", "text", "integer", "real", "boolean", "date")
 
 
+# Requirements: MELLON-EDIT-SRS-60, MELLON-EDIT-SRS-61, MELLON-EDIT-SRS-63, MELLON-EDIT-SRS-64,
+#   MELLON-EDIT-SRS-66, MELLON-STORE-SRS-69, MELLON-STORE-SRS-75
 @_atomic
 def add_attribute(
     folder: Path,
@@ -983,6 +1024,7 @@ def add_attribute(
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-93
 @_atomic
 def change_attribute_required(folder: Path, name: str, required: bool) -> None:
     """Flip the `required` flag on an existing attribute.
@@ -1015,6 +1057,7 @@ def change_attribute_required(folder: Path, name: str, required: bool) -> None:
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-98, MELLON-EDIT-SRS-99, MELLON-EDIT-SRS-100
 @_atomic
 def delete_attribute(folder: Path, name: str) -> list[Path]:
     """Remove an attribute declaration and cascade to objects + rules.
@@ -1087,6 +1130,7 @@ def delete_attribute(folder: Path, name: str) -> list[Path]:
     return written
 
 
+# Requirements: MELLON-EDIT-SRS-83
 @_atomic
 def remove_attr_option(folder: Path, attr_name: str, option: str) -> list[Path]:
     """Remove an enum option from a manifest attribute and blank matching values.
@@ -1157,6 +1201,7 @@ def remove_attr_option(folder: Path, attr_name: str, option: str) -> list[Path]:
     return written
 
 
+# Requirements: MELLON-EDIT-SRS-176, MELLON-EDIT-SRS-177
 @_atomic
 def move_object(
     folder: Path,
@@ -1261,6 +1306,7 @@ def move_object(
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-EDIT-SRS-190
 @_atomic
 def set_outline(folder: Path, ordering: list[dict]) -> None:
     """Rewrite the manifest's `<outline>` to match `ordering` in one pass.
@@ -1325,6 +1371,9 @@ def set_outline(folder: Path, ordering: list[dict]) -> None:
     _write_tree(tree, manifest)
 
 
+# Requirements: MELLON-STORE-SRS-117, MELLON-STORE-SRS-118, MELLON-STORE-SRS-120,
+#   MELLON-STORE-SRS-122, MELLON-STORE-SRS-125, MELLON-TRACE-SRS-3, MELLON-TRACE-SRS-4,
+#   MELLON-TRACE-SRS-5, MELLON-TRACE-SRS-7, MELLON-TRACE-SRS-14
 @_atomic
 def add_link(
     folder: Path,
@@ -1414,6 +1463,8 @@ class DeleteReport:
     performed: bool
 
 
+# Requirements: MELLON-EDIT-SRS-162, MELLON-EDIT-SRS-163, MELLON-EDIT-SRS-167, MELLON-EDIT-SRS-168,
+#   MELLON-EDIT-SRS-169
 @_atomic
 def delete_object(
     folder: Path,
@@ -1529,6 +1580,7 @@ def delete_object(
     )
 
 
+# Requirements: MELLON-STORE-SRS-127, MELLON-STORE-SRS-226, MELLON-TRACE-SRS-27
 @_atomic
 def remove_link(
     folder: Path, source_id: str, target_doc: str, target_id: str
@@ -1582,6 +1634,7 @@ def _slugify_view_name(name: str) -> str:
 _SLUG_RE = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
 
 
+# Requirements: MELLON-STORE-SRS-155
 def _slug_path(folder: Path, subdir: str, slug: str) -> Path:
     """Return `folder/<subdir>/<slug>.xml`, refusing a slug that isn't one."""
     if not _SLUG_RE.fullmatch(slug or ""):
@@ -1591,6 +1644,8 @@ def _slug_path(folder: Path, subdir: str, slug: str) -> Path:
     return _child_path(folder / subdir, f"{slug}.xml")
 
 
+# Requirements: MELLON-STORE-SRS-135, MELLON-STORE-SRS-136, MELLON-STORE-SRS-137,
+#   MELLON-STORE-SRS-154
 @_atomic
 def create_view(
     folder: Path,
@@ -1648,6 +1703,7 @@ def delete_view(folder: Path, slug: str) -> None:
     _unlink(path)
 
 
+# Requirements: MELLON-STORE-SRS-154
 @_atomic
 def rename_view(folder: Path, slug: str, new_name: str) -> str:
     """Rename a view's display name (and re-slug the file if needed).
@@ -1691,6 +1747,7 @@ def rename_view(folder: Path, slug: str, new_name: str) -> str:
     return new_slug
 
 
+# Requirements: MELLON-EDIT-SRS-338
 @_atomic
 def set_view_visible(
     folder: Path,
@@ -1766,6 +1823,7 @@ def _validate_rules(rules: tuple[FilterRule, ...] | list[FilterRule]) -> None:
                 )
 
 
+# Requirements: MELLON-STORE-SRS-145, MELLON-STORE-SRS-146
 def _write_filter(
     path: Path,
     name: str,
@@ -1796,6 +1854,7 @@ def _write_filter(
     _write_tree(tree, path)
 
 
+# Requirements: MELLON-EDIT-SRS-278, MELLON-STORE-SRS-140, MELLON-STORE-SRS-154
 @_atomic
 def create_filter(
     folder: Path,
@@ -1848,6 +1907,7 @@ def delete_filter(folder: Path, slug: str) -> None:
     _unlink(path)
 
 
+# Requirements: MELLON-EDIT-SRS-278
 @_atomic
 def rename_filter(folder: Path, slug: str, new_name: str) -> str:
     """Rename a filter's display name (and re-slug the file if needed).
@@ -1924,6 +1984,7 @@ def set_filter_rules(
     )
 
 
+# Requirements: MELLON-EDIT-SRS-115, MELLON-EDIT-SRS-118, MELLON-STORE-SRS-1, MELLON-STORE-SRS-79
 def _add_outline_ref(
     manifest: Path, new_id: str, parent_id: Optional[str], next_number: int
 ) -> None:
@@ -1974,6 +2035,7 @@ def _find_ref(parent: etree._Element, ref_id: str) -> etree._Element | None:
     return None
 
 
+# Requirements: MELLON-TRACE-SRS-3
 def _compute_ack(folder: Path, target_doc: str, target_id: str) -> str | None:
     # MELLON-TRACE-SRS-79: a target that isn't an object ID could name a path
     # outside the repository; it has no commit to record, so look no further.

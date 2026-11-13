@@ -53,6 +53,7 @@ def _section(title: str) -> QLabel:
     return label
 
 
+# Requirements: MELLON-VER-SRS-326, MELLON-VER-SRS-340
 class MergeDialog(QDialog):
     def __init__(self, root: Path, plan: merge.MergePlan, parent=None) -> None:
         super().__init__(parent)
@@ -121,6 +122,8 @@ class MergeDialog(QDialog):
 
     # --- blocks -------------------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-345, MELLON-VER-SRS-348, MELLON-VER-SRS-349, MELLON-VER-SRS-350,
+    #   MELLON-VER-SRS-352, MELLON-VER-SRS-353
     def _hand_block(self, hand: merge.HandMerge) -> QFrame:
         frame = QFrame()
         frame.setFrameShape(QFrame.Shape.StyledPanel)
@@ -171,6 +174,7 @@ class MergeDialog(QDialog):
             ))
         return frame
 
+    # Requirements: MELLON-VER-SRS-346, MELLON-VER-SRS-347
     def _text_field(self, lay: QVBoxLayout, c: merge.FieldConflict) -> QPlainTextEdit:
         lay.addWidget(_wrapped(f"Mine ({self._names['ours']}): {c.ours}"))
         lay.addWidget(_wrapped(f"Theirs ({self._names['theirs']}): {c.theirs}"))
@@ -191,6 +195,7 @@ class MergeDialog(QDialog):
 
     # --- state ------------------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-354
     def edits(self) -> dict[str, dict[str, str]]:
         """`merge.resolve`'s edits: merged texts and the sides picked."""
         out: dict[str, dict[str, str]] = {}

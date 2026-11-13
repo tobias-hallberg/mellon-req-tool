@@ -51,6 +51,8 @@ def _snippet(text: str, query_lower: str, *, width: int = 80) -> str:
     return snippet.replace("\n", " ")
 
 
+# Requirements: MELLON-EDIT-SRS-260, MELLON-EDIT-SRS-261, MELLON-EDIT-SRS-262, MELLON-EDIT-SRS-263,
+#   MELLON-EDIT-SRS-265, MELLON-EDIT-SRS-266
 def search_objects(
     docs: dict[str, LoadedDoc],
     query: str,

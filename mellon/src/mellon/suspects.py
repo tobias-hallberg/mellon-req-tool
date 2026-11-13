@@ -41,6 +41,8 @@ class LinkStatus:
     reason: str  # short human-readable explanation
 
 
+# Requirements: MELLON-TRACE-SRS-1, MELLON-TRACE-SRS-43, MELLON-TRACE-SRS-45, MELLON-TRACE-SRS-47,
+#   MELLON-TRACE-SRS-64, MELLON-TRACE-SRS-79
 def scan_document(doc: Document, doc_folder: Path) -> list[LinkStatus]:
     """Classify every outgoing link in `doc`.
 
@@ -136,6 +138,7 @@ def _object_files(repo_root: Path, target_doc: str) -> set[str]:
         return set()
 
 
+# Requirements: MELLON-TRACE-SRS-105
 def scan_repo(repo_root: Path) -> dict[str, list[LinkStatus]]:
     """Scan every document under `repo_root` for suspect links.
 
@@ -150,6 +153,7 @@ def scan_repo(repo_root: Path) -> dict[str, list[LinkStatus]]:
     return out
 
 
+# Requirements: MELLON-STORE-SRS-122
 def write_ack(
     links_file: Path, target_doc: str, target_id: str, new_ack: str
 ) -> bool:
@@ -179,6 +183,7 @@ def write_ack(
     return changed
 
 
+# Requirements: MELLON-TRACE-SRS-130, MELLON-TRACE-SRS-131
 def ack_all(
     doc_folder: Path, statuses: list[LinkStatus]
 ) -> list[LinkStatus]:

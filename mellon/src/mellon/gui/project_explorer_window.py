@@ -75,6 +75,7 @@ class MergeBanner(QWidget):
         ThemeManager.instance().theme_changed.connect(self._apply_theme_tokens)
         self.setVisible(False)
 
+    # Requirements: MELLON-VER-SRS-296, MELLON-VER-SRS-300, MELLON-VER-SRS-302, MELLON-VER-SRS-303
     def show_state(self, conflicts: tuple[str, ...] | None) -> None:
         """`merge.pending`'s answer: None hides the banner."""
         if conflicts is None:
@@ -102,6 +103,7 @@ class MergeBanner(QWidget):
 
 
 class ProjectExplorerWindow(QMainWindow):
+    # Requirements: MELLON-GUI-SRS-137
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Project Explorer — Mellon")
@@ -191,6 +193,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- toolbar --------------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-146
     def _build_toolbar(self) -> None:
         tb = QToolBar("Project", self)
         tb.setMovable(False)
@@ -215,6 +218,8 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- menu -----------------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-4, MELLON-GUI-SRS-13, MELLON-GUI-SRS-140, MELLON-GUI-SRS-145,
+    #   MELLON-GUI-SRS-147, MELLON-VER-SRS-297
     def _build_menus(self) -> QMenu:
         menu = QMenu(self)
         menu.setMinimumWidth(260)
@@ -275,6 +280,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- disk freshness ---------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-40, MELLON-VER-SRS-297
     def event(self, e: QEvent) -> bool:  # type: ignore[override]
         # Coming back to the explorer: pick up documents another process
         # created or deleted, and refresh the git status cell.
@@ -289,10 +295,12 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- merges -----------------------------------------------------------
 
+    # Requirements: MELLON-VER-SRS-296
     def _refresh_merge_banner(self) -> None:
         root = self.controller.root
         self.merge_banner.show_state(merge.pending(root) if root else None)
 
+    # Requirements: MELLON-VER-SRS-302
     def _resolve_merge(self) -> None:
         root = self.controller.root
         if root is None:
@@ -313,6 +321,7 @@ class ProjectExplorerWindow(QMainWindow):
             10000,
         )
 
+    # Requirements: MELLON-GUI-SRS-40
     def _check_doc_list_freshness(self) -> None:
         root = self.controller.root
         if root is None or self._known_doc_folders is None:
@@ -327,6 +336,7 @@ class ProjectExplorerWindow(QMainWindow):
         self._known_doc_folders = fresh
         self._status.showMessage("Document list refreshed.", 4000)
 
+    # Requirements: MELLON-GUI-SRS-39
     def _refresh_documents(self) -> None:
         """F5: drop the shared cache and re-list every document from disk,
         e.g. after a pull, or to re-check documents that failed to load."""
@@ -353,6 +363,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- close ----------------------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-14
     def closeEvent(self, event: QCloseEvent) -> None:
         make_settings().setValue(_GEOMETRY_KEY, self.saveGeometry())
         for w in list(self._editor_windows.values()):
@@ -366,6 +377,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- document opening -----------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-36, MELLON-GUI-SRS-37, MELLON-GUI-SRS-38, MELLON-STORE-SRS-36
     def _open_document(self, doc_id: str) -> None:
         if doc_id in self._editor_windows:
             w = self._editor_windows[doc_id]
@@ -413,6 +425,7 @@ class ProjectExplorerWindow(QMainWindow):
         w.raise_()
         w.activateWindow()
 
+    # Requirements: MELLON-GUI-SRS-38
     def _on_editor_closed(self, doc_id: str) -> None:
         self._editor_windows.pop(doc_id, None)
         for i in range(self._open_list.count()):
@@ -423,6 +436,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- view event handlers --------------------------------------------
 
+    # Requirements: MELLON-STORE-SRS-36
     def _on_doc_activated(self, index) -> None:
         doc_id = ProjectTreeModel.doc_id_from_index(index)
         if doc_id is None:
@@ -452,6 +466,7 @@ class ProjectExplorerWindow(QMainWindow):
             w.raise_()
             w.activateWindow()
 
+    # Requirements: MELLON-EDIT-SRS-18
     def _new_document(self) -> None:
         if self.controller.service is None:
             return
@@ -470,6 +485,7 @@ class ProjectExplorerWindow(QMainWindow):
         self._status.showMessage(f"Created document {doc_id}", 3000)
         self._open_document(doc_id)
 
+    # Requirements: MELLON-GUI-SRS-4
     def _prompt_open_repo(self) -> None:
         path = QFileDialog.getExistingDirectory(
             self,
@@ -481,6 +497,7 @@ class ProjectExplorerWindow(QMainWindow):
 
     # --- controller handlers --------------------------------------------
 
+    # Requirements: MELLON-GUI-SRS-6, MELLON-VER-SRS-297
     def _on_repo_loaded(self, root: str) -> None:
         # Editors keep the service they were opened with, so a window from
         # the previous repo would edit and commit there. Close those (each
@@ -506,6 +523,7 @@ class ProjectExplorerWindow(QMainWindow):
             self._status.showMessage(f"Failed to open {root}")
         QMessageBox.warning(self, "Could not open repository", message)
 
+    # Requirements: MELLON-GUI-SRS-115, MELLON-VER-SRS-182, MELLON-VER-SRS-375
     def _refresh_git_cell(self) -> None:
         root = self.controller.root
         if root is None:

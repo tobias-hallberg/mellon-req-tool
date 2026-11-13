@@ -42,6 +42,7 @@ class Attribute:
     options: tuple[str, ...] = ()  # non-empty only when kind == "enum"
     label: str = ""  # optional human-readable display name; falls back to name
 
+    # Requirements: MELLON-EDIT-SRS-73
     @property
     def display_name(self) -> str:
         return self.label or SYSTEM_ATTRIBUTE_LABELS.get(self.name, self.name)
@@ -120,6 +121,8 @@ class Table:
 TABLE_ALIGNMENTS: frozenset[str] = frozenset({"left", "center", "right"})
 
 
+# Requirements: MELLON-STORE-SRS-109, MELLON-STORE-SRS-110, MELLON-STORE-SRS-111,
+#   MELLON-STORE-SRS-112
 def table_geometry_errors(table: "Table") -> list[str]:
     """Return human-readable problems with a table's cell tiling, empty if OK.
 

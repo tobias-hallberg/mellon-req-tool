@@ -26,6 +26,7 @@ class LoadedDoc:
     document: Document
 
 
+# Requirements: MELLON-STORE-SRS-29
 @dataclass(frozen=True, slots=True)
 class DocLoadError:
     """A document folder that failed to load.
@@ -42,6 +43,7 @@ class DocLoadError:
     message: str
 
 
+# Requirements: MELLON-STORE-SRS-30
 _CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
 
 
@@ -51,6 +53,7 @@ def _error_file(err: LoaderError) -> Path | None:
     return Path(head) if sep and Path(head).is_file() else None
 
 
+# Requirements: MELLON-STORE-SRS-30
 def _with_conflict_note(err: LoaderError, file: Path | None) -> str:
     message = str(err)
     if file is not None:
@@ -69,6 +72,7 @@ def load_error_message(err: LoaderError) -> str:
     return _with_conflict_note(err, _error_file(err))
 
 
+# Requirements: MELLON-CHECK-SRS-90, MELLON-STORE-SRS-29
 def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
     file = _error_file(err)
     # lxml's XMLSyntaxError (the cause of a parse failure) carries the line.
@@ -82,6 +86,7 @@ def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
     )
 
 
+# Requirements: MELLON-MCP-SRS-9, MELLON-STORE-SRS-13, MELLON-STORE-SRS-19
 def discover_documents(repo_root: str | Path) -> list[Path]:
     """Return sorted paths of document folders directly under `repo_root`.
 
@@ -162,6 +167,7 @@ def folders_fingerprint(
     return frozenset(out)
 
 
+# Requirements: MELLON-STORE-SRS-27, MELLON-STORE-SRS-28
 def load_all(
     repo_root: str | Path, *, load_errors: list[DocLoadError] | None = None
 ) -> dict[str, LoadedDoc]:
@@ -264,6 +270,7 @@ def parent_doc_ids(docs: dict[str, LoadedDoc], doc_id: str) -> set[str]:
     return out
 
 
+# Requirements: MELLON-TRACE-SRS-33
 def incoming_links(
     docs: dict[str, LoadedDoc], target_doc: str, target_id: str
 ) -> list[tuple[str, str, Link]]:

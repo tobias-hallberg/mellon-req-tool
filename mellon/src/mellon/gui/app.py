@@ -28,9 +28,11 @@ from .project_explorer_window import ProjectExplorerWindow
 from .theme import ThemeManager
 
 
+# Requirements: MELLON-GUI-SRS-24
 _ERROR_DIALOG_INTERVAL_S = 10.0
 
 
+# Requirements: MELLON-GUI-SRS-22
 def _log_folder() -> Path:
     r"""The folder the error log goes in.
 
@@ -60,6 +62,7 @@ def _log_folder() -> Path:
     )
 
 
+# Requirements: MELLON-GUI-SRS-20, MELLON-GUI-SRS-21, MELLON-GUI-SRS-24, MELLON-GUI-SRS-26
 def _install_excepthook() -> Path:
     """Log uncaught exceptions to a file and show them in a dialog.
 
@@ -101,6 +104,7 @@ def _install_excepthook() -> Path:
     return log_path
 
 
+# Requirements: MELLON-GUI-SRS-2, MELLON-GUI-SRS-7, MELLON-GUI-SRS-8, MELLON-GUI-SRS-127
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="mellon-gui")
     parser.add_argument(

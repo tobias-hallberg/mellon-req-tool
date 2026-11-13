@@ -28,6 +28,7 @@ class ProjectTreeModel(QStandardItemModel):
         controller.repo_loaded.connect(self._rebuild)
         self._rebuild()
 
+    # Requirements: MELLON-GUI-SRS-33, MELLON-STORE-SRS-27, MELLON-STORE-SRS-35
     def _rebuild(self, *_args) -> None:
         self.removeRows(0, self.rowCount())
         rows: list[tuple[str, QStandardItem]] = []
@@ -47,6 +48,7 @@ class ProjectTreeModel(QStandardItemModel):
         for _doc_id, item in sorted(rows, key=lambda r: r[0]):
             self.appendRow(item)
 
+    # Requirements: MELLON-STORE-SRS-34
     def data(self, index, role=Qt.ItemDataRole.DisplayRole):
         # Colour and icon for failed documents are resolved at paint time so
         # they follow theme switches.

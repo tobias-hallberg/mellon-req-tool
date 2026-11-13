@@ -171,6 +171,7 @@ class _GridModel:
         self.M.insert(i, new_row)
         self.headers.insert(i, False)
 
+    # Requirements: MELLON-EDIT-SRS-215
     def delete_row(self, i: int) -> None:
         if self.nrows <= 1:
             return
@@ -187,6 +188,7 @@ class _GridModel:
                 self.M[r].insert(j, cid)
         self.aligns.insert(j, "left")
 
+    # Requirements: MELLON-EDIT-SRS-218
     def delete_col(self, j: int) -> None:
         if self.ncols <= 1:
             return
@@ -226,6 +228,7 @@ class _GridModel:
             for c in range(c0, c1 + 1):
                 self.M[r][c] = new_id
 
+    # Requirements: MELLON-EDIT-SRS-224
     def split(self, r: int, c: int) -> None:
         cid = self.M[r][c]
         positions = [
@@ -241,6 +244,7 @@ class _GridModel:
             self.M[rr][cc] = nid
 
 
+# Requirements: MELLON-EDIT-SRS-212
 class _CellTextEdit(QPlainTextEdit):
     """A cell's text editor. MELLON-EDIT-SRS-211: plain Enter inserts a line
     break, as in the description editor. MELLON-GUI-SRS-165: Ctrl+Enter writes
@@ -249,6 +253,7 @@ class _CellTextEdit(QPlainTextEdit):
 
     finished = Signal()
 
+    # Requirements: MELLON-EDIT-SRS-211
     def keyPressEvent(self, event) -> None:  # type: ignore[override]
         if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter) and (
             event.modifiers() & Qt.KeyboardModifier.ControlModifier
@@ -265,12 +270,14 @@ class _CellDelegate(QStyledItemDelegate):
     # Ctrl+Enter in a cell: the cell's text is in its item; save the table.
     save_requested = Signal()
 
+    # Requirements: MELLON-EDIT-SRS-211
     def createEditor(self, parent, option, index):  # noqa: N802 (Qt override)
         ed = _CellTextEdit(parent)
         ed.setTabChangesFocus(True)
         ed.finished.connect(lambda: self._finish(ed))
         return ed
 
+    # Requirements: MELLON-GUI-SRS-165
     def _finish(self, editor) -> None:
         self.commitData.emit(editor)
         self.closeEditor.emit(editor, QAbstractItemDelegate.EndEditHint.NoHint)
@@ -279,6 +286,7 @@ class _CellDelegate(QStyledItemDelegate):
     def setEditorData(self, editor, index) -> None:  # noqa: N802 (Qt override)
         editor.setPlainText(str(index.data(Qt.ItemDataRole.EditRole) or ""))
 
+    # Requirements: MELLON-EDIT-SRS-210
     def setModelData(self, editor, model, index) -> None:  # noqa: N802 (Qt override)
         model.setData(index, editor.toPlainText(), Qt.ItemDataRole.EditRole)
 
@@ -482,6 +490,7 @@ class InlineTableWidget(QWidget):
         tw.resizeRowsToContents()
         self.geometry_changed.emit()
 
+    # Requirements: MELLON-EDIT-SRS-210
     def _sync_texts(self) -> None:
         """Pull the live cell texts from the widget back into the model."""
         m = self.model
@@ -504,6 +513,7 @@ class InlineTableWidget(QWidget):
         self._rebuild()
         self.table.setFocus()
 
+    # Requirements: MELLON-EDIT-SRS-213
     def add_row(self, above: bool) -> None:
         r = self.current_row()
         self._apply(self.model.insert_row, r if above else r + 1)
@@ -511,6 +521,7 @@ class InlineTableWidget(QWidget):
     def delete_row(self) -> None:
         self._apply(self.model.delete_row, self.current_row())
 
+    # Requirements: MELLON-EDIT-SRS-216
     def add_column(self, left: bool) -> None:
         c = self.current_column()
         self._apply(self.model.insert_col, c if left else c + 1)
@@ -518,6 +529,7 @@ class InlineTableWidget(QWidget):
     def delete_column(self) -> None:
         self._apply(self.model.delete_col, self.current_column())
 
+    # Requirements: MELLON-EDIT-SRS-221
     def merge_selection(self) -> None:
         rect = self._selection_rect()
         if rect is None:
@@ -530,6 +542,7 @@ class InlineTableWidget(QWidget):
     def split_selection(self) -> None:
         self._apply(self.model.split, self.current_row(), self.current_column())
 
+    # Requirements: MELLON-EDIT-SRS-226
     def toggle_header_row(self) -> None:
         r = self.current_row()
         if not (0 <= r < self.model.nrows):
@@ -540,6 +553,7 @@ class InlineTableWidget(QWidget):
 
         self._apply(_toggle)
 
+    # Requirements: MELLON-EDIT-SRS-227
     def set_column_alignment(self, name: str) -> None:
         c = self.current_column()
         if not (0 <= c < self.model.ncols):
@@ -636,6 +650,7 @@ class InlineTableWidget(QWidget):
             # Underlying C++ object already deleted (editor closed) — ignore.
             pass
 
+    # Requirements: MELLON-GUI-SRS-166
     def keyPressEvent(self, event) -> None:  # type: ignore[override]
         key = event.key()
         if key == Qt.Key.Key_Escape:

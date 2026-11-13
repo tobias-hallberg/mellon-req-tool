@@ -48,6 +48,9 @@ class LoaderError(Exception):
     """Raised when the on-disk files can't be parsed into a Document."""
 
 
+# Requirements: MELLON-STORE-SRS-25, MELLON-STORE-SRS-58, MELLON-STORE-SRS-81,
+#   MELLON-STORE-SRS-117, MELLON-STORE-SRS-129, MELLON-STORE-SRS-130, MELLON-STORE-SRS-135,
+#   MELLON-STORE-SRS-140, MELLON-STORE-SRS-159
 def load_document(folder: str | Path) -> Document:
     """Load the document rooted at `folder`.
 
@@ -214,6 +217,7 @@ def _parse_manifest(path: Path) -> _Manifest:
     return _manifest_from_root(_parse_xml(path), path)
 
 
+# Requirements: MELLON-STORE-SRS-1, MELLON-STORE-SRS-46, MELLON-STORE-SRS-59, MELLON-STORE-SRS-60
 def _manifest_from_root(manifest: etree._Element, path: Path) -> _Manifest:
     if manifest.tag != "document":
         raise LoaderError(
@@ -247,6 +251,7 @@ _manifests: _Cache = {}
 _folders: dict[str, _Cache] = {}
 
 
+# Requirements: MELLON-MCP-SRS-104, MELLON-STORE-SRS-238
 def _cached_parse(
     old: _Cache,
     new: _Cache,
@@ -295,6 +300,7 @@ def _parse_folder(folder: Path, parse: Callable[[Path], _T]) -> list[_T]:
     return out
 
 
+# Requirements: MELLON-STORE-SRS-31, MELLON-STORE-SRS-207
 def _parse_xml(path: Path) -> etree._Element:
     try:
         tree = etree.parse(str(path))
@@ -307,12 +313,14 @@ def _parse_xml(path: Path) -> etree._Element:
     return tree.getroot()
 
 
+# Requirements: MELLON-STORE-SRS-62, MELLON-STORE-SRS-86, MELLON-STORE-SRS-217
 def _text(elem: etree._Element | None) -> str:
     if elem is None or elem.text is None:
         return ""
     return elem.text.strip()
 
 
+# Requirements: MELLON-STORE-SRS-61, MELLON-STORE-SRS-66
 def _parse_metadata(elem: etree._Element | None) -> Metadata:
     if elem is None:
         return Metadata()
@@ -326,6 +334,7 @@ def _parse_metadata(elem: etree._Element | None) -> Metadata:
     )
 
 
+# Requirements: MELLON-STORE-SRS-68
 def _parse_parents(elem: etree._Element | None) -> tuple[str, ...]:
     if elem is None:
         return ()
@@ -338,9 +347,12 @@ def _parse_parents(elem: etree._Element | None) -> tuple[str, ...]:
     return tuple(out)
 
 
+# Requirements: MELLON-STORE-SRS-73
 _ATTR_KINDS = ("enum", "text", "integer", "real", "boolean", "date")
 
 
+# Requirements: MELLON-STORE-SRS-69, MELLON-STORE-SRS-74, MELLON-STORE-SRS-75, MELLON-STORE-SRS-76,
+#   MELLON-STORE-SRS-77
 def _parse_attributes(elem: etree._Element | None) -> tuple[Attribute, ...]:
     if elem is None:
         return ()
@@ -374,6 +386,7 @@ def _parse_outline(elem: etree._Element | None) -> tuple[OutlineNode, ...]:
     return _parse_refs(elem)
 
 
+# Requirements: MELLON-STORE-SRS-78, MELLON-STORE-SRS-79
 def _parse_refs(parent: etree._Element) -> tuple[OutlineNode, ...]:
     out: list[OutlineNode] = []
     for r in parent.findall("ref"):
@@ -388,6 +401,8 @@ def _parse_object(path: Path) -> RequirementObject:
     return _object_from_root(_parse_xml(path), path)
 
 
+# Requirements: MELLON-STORE-SRS-46, MELLON-STORE-SRS-82, MELLON-STORE-SRS-83, MELLON-STORE-SRS-84,
+#   MELLON-STORE-SRS-85, MELLON-STORE-SRS-87, MELLON-STORE-SRS-90, MELLON-STORE-SRS-114
 def _object_from_root(root: etree._Element, path: Path) -> RequirementObject:
     if root.tag != "object":
         raise LoaderError(f"{path}: root must be <object>, got <{root.tag}>")
@@ -415,6 +430,7 @@ def _object_from_root(root: etree._Element, path: Path) -> RequirementObject:
     )
 
 
+# Requirements: MELLON-STORE-SRS-106
 def _parse_span(value: str | None, attr: str, path: Path, obj_id: str) -> int:
     """Parse a colspan/rowspan attribute: a positive int, default 1."""
     if value is None:
@@ -432,6 +448,8 @@ def _parse_span(value: str | None, attr: str, path: Path, obj_id: str) -> int:
     return span
 
 
+# Requirements: MELLON-STORE-SRS-100, MELLON-STORE-SRS-101, MELLON-STORE-SRS-103,
+#   MELLON-STORE-SRS-105, MELLON-STORE-SRS-106, MELLON-STORE-SRS-107, MELLON-STORE-SRS-113
 def _parse_table(elem: etree._Element | None, path: Path) -> Table | None:
     """Parse an `<object>`'s `<table>` child into a Table, or None if absent.
 
@@ -478,10 +496,13 @@ def _parse_table(elem: etree._Element | None, path: Path) -> Table | None:
     return table
 
 
+# Requirements: MELLON-STORE-SRS-163
 _RULE_STATUSES = frozenset({"required", "optional", "forbidden"})
 _LINK_STATUSES = frozenset({"required"})
 
 
+# Requirements: MELLON-STORE-SRS-25, MELLON-STORE-SRS-160, MELLON-STORE-SRS-161,
+#   MELLON-STORE-SRS-163, MELLON-STORE-SRS-164
 def _parse_rules_file(path: Path) -> tuple[Rule, ...]:
     if not path.is_file():
         return ()
@@ -537,6 +558,7 @@ def _parse_rules_file(path: Path) -> tuple[Rule, ...]:
     return tuple(out)
 
 
+# Requirements: MELLON-STORE-SRS-136, MELLON-STORE-SRS-137
 def _parse_view(path: Path) -> View:
     root = _parse_xml(path)
     if root.tag != "view":
@@ -557,6 +579,8 @@ def _parse_view(path: Path) -> View:
     return View(slug=path.stem, name=name, visible=tuple(visible))
 
 
+# Requirements: MELLON-STORE-SRS-141, MELLON-STORE-SRS-142, MELLON-STORE-SRS-143,
+#   MELLON-STORE-SRS-144, MELLON-STORE-SRS-145, MELLON-STORE-SRS-147, MELLON-STORE-SRS-148
 def _parse_filter(path: Path) -> Filter:
     root = _parse_xml(path)
     if root.tag != "filter":
@@ -618,6 +642,7 @@ def _parse_filter(path: Path) -> Filter:
     )
 
 
+# Requirements: MELLON-STORE-SRS-149
 _ALL_ATTR_OPS: frozenset[str] = frozenset(
     op
     for ops in (
@@ -636,6 +661,7 @@ def _parse_links(path: Path) -> tuple[str, tuple[Link, ...]]:
     return _links_from_root(_parse_xml(path), path)
 
 
+# Requirements: MELLON-STORE-SRS-118, MELLON-STORE-SRS-119, MELLON-STORE-SRS-120
 def _links_from_root(root: etree._Element, path: Path) -> tuple[str, tuple[Link, ...]]:
     if root.tag != "links":
         raise LoaderError(f"{path}: root must be <links>, got <{root.tag}>")

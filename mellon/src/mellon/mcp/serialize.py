@@ -158,6 +158,7 @@ def trace_edge_to_dict(edge: TraceEdge) -> dict:
     }
 
 
+# Requirements: MELLON-TRACE-SRS-197, MELLON-TRACE-SRS-198
 def coverage_report_to_dict(
     report: CoverageReport, *, include_lists: bool = False
 ) -> dict:
@@ -192,6 +193,7 @@ def coverage_report_to_dict(
     return out
 
 
+# Requirements: MELLON-EDIT-SRS-55, MELLON-EDIT-SRS-56
 def document_summary_to_dict(
     doc: Document,
     folder: str,
@@ -242,6 +244,7 @@ def document_summary_to_dict(
     return out
 
 
+# Requirements: MELLON-CHECK-SRS-90, MELLON-CHECK-SRS-102, MELLON-STORE-SRS-41
 def load_error_to_dict(err: DocLoadError, root: Path) -> dict:
     """A document that failed to load; `file` is relative to `root`."""
     return {

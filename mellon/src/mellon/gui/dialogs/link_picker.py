@@ -30,6 +30,7 @@ from ..controller import RepoController
 
 TARGET_ROLE = Qt.ItemDataRole.UserRole + 1
 
+# Requirements: MELLON-TRACE-SRS-17
 COMMON_LINK_TYPES = ("satisfies", "verifies", "refines", "implements")
 
 
