@@ -1926,7 +1926,7 @@ def add_link(
     ))
 
 
-# Requirements: MELLON-TRACE-SRS-27, MELLON-TRACE-SRS-28
+# Requirements: MELLON-MCP-SRS-112, MELLON-TRACE-SRS-27, MELLON-TRACE-SRS-28
 @_write_tool
 def remove_link(
     source_doc: str,
@@ -1943,7 +1943,8 @@ def remove_link(
     )
     folder = _require_doc(source_doc)
     links_path = folder / "links" / f"{source_id}.xml"
-    existed_before = links_path.exists()
+    # Only an object ID is looked up on disk; the service refuses anything else.
+    existed_before = is_object_id(source_doc, source_id) and links_path.exists()
     try:
         result = _svc().remove_link(source_doc, source_id, target_doc, target_id)
     except ServiceError as e:
@@ -2271,7 +2272,7 @@ def commit_changes(
     }
 
 
-# Requirements: MELLON-VER-SRS-222
+# Requirements: MELLON-MCP-SRS-112, MELLON-VER-SRS-222
 @mcp.tool()
 def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
     """Recent commits on HEAD's history that changed this object's file or
@@ -2283,7 +2284,9 @@ def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
     except GitError:
         return []
     rel = f"{doc_id}/objects/{obj_id}.xml"
-    if not (root / rel).exists():
+    # An obj_id that isn't one of this document's IDs names no object: refuse
+    # it before it reaches the disk as a path.
+    if not is_object_id(doc_id, obj_id) or not (root / rel).exists():
         raise ValueError(f"No object {obj_id!r} in document {doc_id!r}")
     try:
         return git_ops.log_for_path(
