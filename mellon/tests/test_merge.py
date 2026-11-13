@@ -1002,3 +1002,69 @@ def test_ver_srs_366_resolving_again_after_a_partial_failure_records_the_same_in
     root, reference, _ = _resolve_fails_partway(tmp_path)
 
     assert _index_entries(root) == _index_entries(reference), "the git index differs from a clean resolution"
+
+
+# MELLON-VER-SRS-329 (CV-VER-35): resolving a merge writes only files inside a
+# document folder, with names the on-disk format defines. The paths come from
+# another clone's trees, so a crafted one is refused before anything is written.
+from tests.trace_support import dir_link  # noqa: E402
+
+
+def _stopped_merge(tmp_path: Path) -> Path:
+    root = _make_doc_repo(tmp_path / "repo")
+    rel = "DOC/objects/DOC-1.xml"
+    ver_branch(root, "side")
+    _write(root / rel, _obj("DOC-1", "Theirs."))
+    ver_commit(root, "theirs", tick=3)
+    ver_git(root, "checkout", "-q", "main")
+    _write(root / rel, _obj("DOC-1", "Ours."))
+    ver_commit(root, "ours", tick=4)
+    _merge_stops(root, "side", rel)
+    return root
+
+
+def _plant(monkeypatch, path: str) -> None:
+    real = merge._compute
+
+    def with_planted_path(*a, **k):
+        out = real(*a, **k)
+        out.results[path] = b"planted"
+        return out
+
+    monkeypatch.setattr(merge, "_compute", with_planted_path)
+
+
+@pytest.mark.parametrize("path", [
+    r"DOC/objects/..\..\..\planted.xml",
+    "DOC/objects/../../planted.xml",
+    ".git/hooks/pre-commit",
+    "DOC/notes.txt",
+    "DOC/objects/planted.xml",
+    "DOC/objects/sub/DOC-9.xml",
+    "C:/planted.xml",
+])
+def test_ver_srs_329_resolve_refuses_a_path_outside_the_format(tmp_path, monkeypatch, path):
+    root = _stopped_merge(tmp_path)
+    before = _work_files(root, "DOC")
+    _plant(monkeypatch, path)
+    with pytest.raises(merge.MergeError, match="isn't a document file"):
+        merge.resolve(root)
+    assert _work_files(root, "DOC") == before, "a refused resolution wrote files"
+    assert not list(tmp_path.rglob("planted*")), "the planted file was written"
+    assert not (root / ".git" / "hooks" / "pre-commit").exists()
+
+
+def test_ver_srs_329_resolve_refuses_to_write_through_a_linked_folder(tmp_path, monkeypatch):
+    root = _stopped_merge(tmp_path)
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    dir_link(root / "DOC" / "links", elsewhere)
+    _plant(monkeypatch, "DOC/links/DOC-1.xml")
+    with pytest.raises(merge.MergeError, match="junction|symbolic link"):
+        merge.resolve(root)
+    assert list(elsewhere.iterdir()) == []
+
+
+def test_ver_srs_329_resolve_writes_format_files(tmp_path):
+    root = _stopped_merge(tmp_path)
+    assert set(merge.resolve(root)) == {"DOC/DOC.xml", "DOC/objects/DOC-1.xml"}

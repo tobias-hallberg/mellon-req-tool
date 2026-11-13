@@ -48,7 +48,14 @@ from lxml import etree
 
 from .editor import EditorError, _sanitize_text
 from .git_ops import GitError, _replace_file, discover_repo
-from .schema import NEXT_OBJECT_NUMBER_ATTR, object_number, whole_number
+from .loader import entry_problem
+from .schema import (
+    NEXT_OBJECT_NUMBER_ATTR,
+    is_document_id,
+    is_object_id,
+    object_number,
+    whole_number,
+)
 
 Side = Literal["ours", "theirs"]
 # text: merged text to type in; value / whole: "ours" or "theirs"
@@ -1004,6 +1011,52 @@ def plan(root: str | Path) -> MergePlan:
 
 
 # Requirements: MELLON-VER-SRS-360, MELLON-VER-SRS-366
+# A view's or filter's file name, as the editor makes it.
+_SLUG = re.compile(r"[a-z0-9]+(-[a-z0-9]+)*")
+
+
+# Requirements: MELLON-VER-SRS-329
+def _format_path(path: str) -> bool:
+    """Whether ``path`` (posix-style, from a merge's trees) names a file the
+    on-disk format defines, inside a document folder: the manifest, the rules
+    file, or an object's file, links file or figure, or a view or filter."""
+    parts = path.split("/")
+    doc = parts[0]
+    if not is_document_id(doc):
+        return False
+    if len(parts) == 2:
+        return parts[1] in (f"{doc}.xml", f"{doc}.rules.xml")
+    if len(parts) != 3:
+        return False
+    sub, name = parts[1], parts[2]
+    stem, _, ext = name.rpartition(".")
+    if sub in ("objects", "links"):
+        return ext == "xml" and is_object_id(doc, stem)
+    if sub == "figures":
+        return ext == "svg" and is_object_id(doc, stem)
+    if sub in ("views", "filters"):
+        return ext == "xml" and _SLUG.fullmatch(stem) is not None
+    return False
+
+
+def _check_writable(root: Path, paths: Iterable[str]) -> None:
+    """Refuse the whole resolution, before anything is written, if a path
+    isn't a document file or reaches it through a link (MELLON-VER-SRS-329)."""
+    for path in sorted(paths):
+        if not _format_path(path):
+            raise MergeError(
+                f"the merge holds {path!r}, which isn't a document file; "
+                "resolve it with git"
+            )
+        parts = path.split("/")
+        for depth in range(1, len(parts) + 1):
+            entry = root.joinpath(*parts[:depth])
+            why = entry_problem(entry)
+            if why is not None:
+                raise MergeError(f"{entry}: {why}; Mellon doesn't write through it")
+
+
+# Requirements: MELLON-VER-SRS-329
 def resolve(
     root: str | Path,
     *,
@@ -1021,6 +1074,7 @@ def resolve(
     root = Path(root).resolve()
     st = _open(root)
     results = _compute(st, edits or {}, delete).results
+    _check_writable(root, results)
     for doc in {p.partition("/")[0] for p in results}:
         _reconcile_outline(st, root, doc, results)
         # MELLON-VER-SRS-64: each document the merge writes gets its next
