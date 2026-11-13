@@ -969,3 +969,19 @@ def test_store_srs_46_text_after_an_undefined_element_or_comment_is_read(tmp_pat
     obj = load_document(doc).objects["DOC-1"]
     assert obj.description == "The pump shall  stop within 2 s."
     assert obj.attrs["rationale"] == "because  of safety"
+
+
+@pytest.mark.parametrize("op_part", ["", ' op=""'], ids=["no-op", "empty-op"])
+def test_store_srs_148_attr_rule_without_an_operator_is_a_load_error(tmp_path, op_part):
+    """CV-STORE-07, MELLON-STORE-SRS-148 and -145: an attr rule whose op attribute is
+    missing or empty holds none of the operator codes: a load error."""
+    doc = tmp_path / "DOC"
+    (doc / "filters").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC"/>\n', encoding="utf-8")
+    (doc / "filters" / "no-op.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<filter name="no-op">\n'
+        f'  <rule kind="attr" attr="type"{op_part} value="Heading"/>\n</filter>\n',
+        encoding="utf-8")
+    with pytest.raises(LoaderError, match="op"):
+        load_document(doc)

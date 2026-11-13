@@ -3315,3 +3315,42 @@ def test_store_srs_167_failed_figure_copy_leaves_no_copy(tmp_path, monkeypatch):
     figures = sorted((folder / "figures").iterdir())
     for f in figures:
         assert f.read_bytes() == figure_path(folder, obj_id).read_bytes(), f
+
+
+def test_store_srs_148_filter_rule_without_an_operator_is_refused(tmp_path):
+    """CV-STORE-07, MELLON-STORE-SRS-148 and -145: Mellon doesn't write an attr rule
+    with an empty op, which it would then refuse to load."""
+    folder = new_document(tmp_path)
+    with pytest.raises(editor.EditorError):
+        editor.create_filter(folder, "no op",
+                             rules=[FilterRule(kind="attr", attr="type", op="", value="x")])
+    assert load_document(folder).filters == ()
+
+
+@pytest.mark.parametrize("value", ["20261113", "2026-W46-5", "2026-317"])
+def test_store_srs_64_metadata_date_other_iso_forms_are_refused(tmp_path, value):
+    """CV-STORE-09, MELLON-STORE-SRS-64: the manifest's date is written as YYYY-MM-DD;
+    another ISO 8601 form isn't written."""
+    folder = new_document(tmp_path)
+    manifest = folder / f"{folder.name}.xml"
+    before = manifest.read_bytes()
+    with pytest.raises(editor.EditorError):
+        editor.set_metadata(folder, "date", value)
+    assert manifest.read_bytes() == before
+
+
+@pytest.mark.parametrize("where", ["view column", "filter attribute", "parent document"])
+def test_store_srs_214_control_character_is_named(tmp_path, where):
+    """CV-STORE-12, MELLON-STORE-SRS-214: stored text with U+0001 is refused with an
+    error naming the character, for a view's column name, a filter rule's attribute
+    name and a parent document ID too."""
+    folder = new_document(tmp_path)
+    bad = "a\x01b"
+    with pytest.raises(editor.EditorError, match="U\\+0001"):
+        if where == "view column":
+            editor.create_view(folder, "cols", [bad])
+        elif where == "filter attribute":
+            editor.create_filter(folder, "f", rules=[
+                FilterRule(kind="attr", attr=bad, op="eq", value="x")])
+        else:
+            editor.add_parent(folder, bad)

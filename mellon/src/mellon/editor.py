@@ -20,7 +20,6 @@ import shutil
 import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from datetime import date as _date
 from pathlib import Path
 from typing import Optional, TypeVar
 
@@ -48,6 +47,7 @@ from .schema import (
     whole_number,
 )
 from .suspects import target_exists
+from .validator import is_date
 
 
 class EditorError(Exception):
@@ -857,14 +857,11 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
             f"(known: {list(_METADATA_FIELDS)})"
         )
     value = _sanitize_text(value, f"metadata {field!r}")
-    if field == "date" and value:
-        try:
-            _date.fromisoformat(value)
-        except ValueError:
-            raise EditorError(
-                f"manifest metadata: date={value!r} is not "
-                f"an ISO 8601 date (YYYY-MM-DD)"
-            )
+    # MELLON-STORE-SRS-64: YYYY-MM-DD only, not another ISO 8601 form.
+    if field == "date" and value and not is_date(value):
+        raise EditorError(
+            f"manifest metadata: date={value!r} is not an ISO 8601 date (YYYY-MM-DD)"
+        )
     doc = load_document(folder)
     manifest = folder / f"{doc.id}.xml"
     tree = etree.parse(str(manifest))
@@ -885,6 +882,7 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
 @_atomic
 def add_parent(folder: Path, parent_doc: str) -> None:
     """Add a `<parent doc=...>` reference to the manifest's `<parents>`."""
+    parent_doc = _sanitize_text(parent_doc, "parent document ID")
     doc = load_document(folder)
     if parent_doc == doc.id:
         raise EditorError(f"cannot add {doc.id!r} as a parent of itself")
@@ -1698,6 +1696,7 @@ def create_view(
     seen: set[str] = set()
     deduped: list[str] = []
     for attr in visible_attrs:
+        attr = _sanitize_text(attr, "view column name")
         if attr in seen:
             continue
         seen.add(attr)
@@ -1785,6 +1784,7 @@ def set_view_visible(
     seen: set[str] = set()
     deduped: list[str] = []
     for attr in visible_attrs:
+        attr = _sanitize_text(attr, "view column name")
         if attr in seen:
             continue
         seen.add(attr)
@@ -1830,7 +1830,8 @@ def _validate_rules(rules: tuple[FilterRule, ...] | list[FilterRule]) -> None:
         if rule.kind == "attr":
             if not rule.attr:
                 raise EditorError("attr rule missing attribute name")
-            if rule.op and rule.op not in _ALL_ATTR_OPS:
+            # MELLON-STORE-SRS-148: the loader refuses a missing or empty op.
+            if rule.op not in _ALL_ATTR_OPS:
                 raise EditorError(
                     f"attr rule op {rule.op!r} is not a recognised operator"
                 )
@@ -1863,7 +1864,7 @@ def _write_filter(
     for rule in rules:
         attrs = {"kind": rule.kind, "op": rule.op}
         if rule.attr:
-            attrs["attr"] = rule.attr
+            attrs["attr"] = _sanitize_text(rule.attr, "filter attribute name")
         if rule.value:
             attrs["value"] = _sanitize_text(rule.value, "filter value")
         etree.SubElement(root_el, "rule", **attrs)

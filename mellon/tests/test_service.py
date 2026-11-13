@@ -1725,3 +1725,24 @@ def test_check_srs_97_101_repo_health_never_counts_a_failed_scan_as_zero(git_rep
     assert all(d["suspect_count"] is None and d["broken_count"] is None
                for d in health["documents"]), health["documents"]
     assert health["suspect_scan_error"], health
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+@pytest.mark.parametrize("value", ["20261113", "2026-W46-5"])
+def test_store_srs_98_date_value_other_iso_forms_are_refused(tmp_path, value):
+    """CV-STORE-09, MELLON-STORE-SRS-98: an object file holds a date value as
+    YYYY-MM-DD; update_object refuses another ISO 8601 form instead of writing it."""
+    from mellon import editor
+
+    folder = editor.create_document(tmp_path, "DOC")
+    editor.add_attribute(folder, "due", "date", False)
+    obj_id = editor.create_object(folder, description="x")
+    path = folder / "objects" / f"{obj_id}.xml"
+    before = path.read_bytes()
+    svc = DocumentService(tmp_path)
+    with pytest.raises(ServiceError) as ei:
+        svc.update_object("DOC", obj_id, attrs={"due": value})
+    assert ei.value.code is ErrorCode.VALIDATION
+    assert path.read_bytes() == before

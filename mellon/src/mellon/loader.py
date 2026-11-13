@@ -669,7 +669,8 @@ def _parse_filter(path: Path) -> Filter:
             # yet at this point. The engine validates per-evaluate. Catch the
             # obvious top-level typos by checking against the union of known
             # operator codes.
-            if op and op not in _ALL_ATTR_OPS:
+            # MELLON-STORE-SRS-148: a missing or empty op holds no operator code.
+            if op not in _ALL_ATTR_OPS:
                 raise _element_error(
                     path, el, f"<rule kind='attr'> op={op!r} is not a recognised operator"
                 )

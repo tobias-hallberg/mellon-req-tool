@@ -16,6 +16,7 @@ tests/test_editor.py::test_control_characters_rejected_before_any_write[create_v
 tests/test_editor.py::test_control_characters_rejected_before_any_write[create_filter]
 tests/test_service.py::test_control_char_in_description_is_validation
 tests/test_service.py::test_composite_rejects_control_char_attr_before_write
-tests/test_service.py::test_create_object_full_rejects_bad_links_before_write[control-char-type]</attr>
+tests/test_service.py::test_create_object_full_rejects_bad_links_before_write[control-char-type]
+tests/test_editor.py::test_store_srs_214_control_character_is_named</attr>
   <description>Give text holding U+001B to each of: create an object, set a description, set an attribute, set the title, add a link (as its type), set a table cell, create a view, create a filter. Through the document service, give U+0000 in a description, U+0000 in an attribute value of a new or updated object, and U+0000 in a link type. Expected: each is refused and no file changes; each of the eight errors names U+001B, and the description's names U+0000.</description>
 </object>

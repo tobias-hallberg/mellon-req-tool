@@ -360,6 +360,20 @@ All notable changes to Mellon. The format follows
   the copy failed. Figures now go through a temporary file that replaces
   the old one, and the copy is journaled (`MELLON-STORE-SRS-167`).
 
+- **A filter rule without an operator is a load error, and isn't written.**
+  An `attr` rule with no `op`, or an empty one, loaded and then matched
+  nothing; `create_filter` and `set_filter_rules` wrote such a rule when
+  given one (`MELLON-STORE-SRS-145`, `-148`).
+- **Dates are written as YYYY-MM-DD only.** The manifest date and date
+  attribute values set through the composite MCP tools took any form
+  Python's date parser reads, such as `20261113` and the week date
+  `2026-W46-5`, which validation then reported as `META_BAD_DATE` or
+  `ATTR_BAD_DATE`. They now take the same check validation uses
+  (`MELLON-STORE-SRS-64`, `-98`).
+- **A control character in a view's column name, a filter rule's attribute
+  name or a parent document ID is named** in the refusal, as in the other
+  stored text, instead of lxml's general message (`MELLON-STORE-SRS-214`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

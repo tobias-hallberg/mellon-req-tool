@@ -18,7 +18,6 @@ import functools
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from datetime import date as _date
 
 from lxml import etree
 
@@ -70,7 +69,7 @@ from ..diff import (
 )
 from ..search import SearchHit, search_objects as _search_objects
 from ..trace import TraceEdge, trace_down, trace_up
-from ..validator import ValidationError, validate
+from ..validator import ValidationError, is_date, validate
 
 from .cache import RepoCache
 from .errors import ErrorCode, ServiceError
@@ -813,14 +812,13 @@ class DocumentService:
                     f"attribute {name!r}: {value!r} is not 'true' or 'false'",
                 )
         elif attr.kind == "date":
-            try:
-                _date.fromisoformat(value)
-            except ValueError as e:
+            # MELLON-STORE-SRS-98: YYYY-MM-DD only, as validation reads it.
+            if not is_date(value):
                 raise ServiceError(
                     ErrorCode.VALIDATION,
                     f"attribute {name!r}: {value!r} is not "
                     f"an ISO 8601 date (YYYY-MM-DD)",
-                ) from e
+                )
 
     # Requirements: MELLON-EDIT-SRS-9
     def _validate_attr_pair(self, doc: Document, name: str, value: str) -> None:
