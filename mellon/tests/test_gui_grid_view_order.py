@@ -386,3 +386,46 @@ def test_edit_srs_333_column_header_hides_and_shows_attribute_column(
     [a for a in menu.actions() if _plain(a.text()) == "rationale"][0].trigger()
     qtbot.wait(10)
     assert "rationale" in grid_headers(window)
+
+
+# MELLON-GUI-SRS blind tests
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    _choose_view,
+    _manifest,
+    _system_columns_ok,
+    _write,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+@pytest.mark.parametrize("view", ["no_attributes", "two_attributes"])
+def test_gui_srs_65_view_keeps_gutter_id_and_description(gui_gui, repo, view):
+    """MELLON-GUI-SRS-65: whichever view is chosen, the grid shows the state gutter, the object IDs and the descriptions."""
+    from mellon.service.document import DocumentService
+
+    svc = DocumentService(repo)
+    svc.create_view(SRS, "Bare", [])
+    svc.create_view(SRS, "Pair", ["priority", "status"])
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    _choose_view(gui_gui, ed, "Bare" if view == "no_attributes" else "Pair")
+    assert ed.grid_pane.current_active_view_slug() is not None, "the view wasn't applied"
+    assert _system_columns_ok(gui_gui, ed) == []
+
+
+def test_gui_srs_66_attribute_columns_headed_by_label(gui_gui, repo):
+    """MELLON-GUI-SRS-66: each attribute column is headed by the attribute's label: the label the manifest
+    gives, `Type` for type without one, and the name for any other attribute without one."""
+    m = _manifest(repo, SRS)
+    text = m.read_text(encoding="utf-8")
+    text = text.replace('name="priority" label="Priority"', 'name="priority" label="Priority level"')
+    text = text.replace('name="status" label="Status"', 'name="status"')
+    text = text.replace('name="type" label="Type"', 'name="type"')
+    _write(m, text)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    h = gui_gui.headers(ed)
+    assert "Priority level" in h and "status" in h and "Type" in h, h
+    assert "Priority" not in h and "Status" not in h

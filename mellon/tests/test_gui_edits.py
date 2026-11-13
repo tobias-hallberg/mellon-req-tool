@@ -1614,3 +1614,310 @@ def test_edit_srs_160_delete_confirmed_deletes(qtbot, tmp_path, modals, commit_a
     qtbot.wait(50)
     assert modals.calls, "no confirmation was asked"
     assert not obj_file(root, "SRS", "SRS-2").exists()
+
+
+# MELLON-GUI-SRS blind tests
+from PySide6.QtWidgets import (  # noqa: E402
+    QAbstractItemView,
+    QDialog,
+    QLineEdit,
+    QPlainTextEdit,
+    QTextEdit,
+)
+
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    _add_table,
+    _description,
+    _edit_attribute,
+    _edit_description,
+    _external_edit,
+    _obj_file,
+    _open_menu,
+    _shown,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+def _table_cell_editor(gui_gui, ed, oid, row=1, col=0):
+    """Open the table editor on `oid` and then the editor of one of its cells."""
+    from PySide6.QtWidgets import QTableWidget
+
+    w = gui_gui.open_cell_editor(ed, oid, "Description")
+    tw = w if isinstance(w, QTableWidget) else (w.findChild(QTableWidget) if w is not None else None)
+    assert tw is not None, f"no table editor opened, focus is {type(w).__name__}"
+    rect = tw.visualItemRect(tw.item(row, col))
+    QTest.mouseClick(tw.viewport(), Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, rect.center())
+    gui_gui.pause()
+    QTest.mouseDClick(tw.viewport(), Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier, rect.center())
+    gui_gui.app.processEvents()
+    cell = QApplication.focusWidget()
+    assert isinstance(cell, (QLineEdit, QTextEdit, QPlainTextEdit)), f"no table-cell editor, focus is {type(cell)}"
+    return tw, cell
+
+
+def _editor_closed(gui_gui, ed) -> bool:
+    return gui_gui.table(ed).state() != QAbstractItemView.State.EditingState
+
+
+def _save_table_editor(gui_gui, ed, cell):
+    """Save the table with Ctrl+Enter. A first Ctrl+Enter may only end the cell edit (the defect that
+    test_gui_srs_165_ctrl_enter_saves_table_cell_editor records); then a second one saves the table."""
+    QTest.keyClick(cell, Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+    gui_gui.app.processEvents()
+    if gui_gui.table(ed).state() == QAbstractItemView.State.EditingState:
+        QTest.keyClick(QApplication.focusWidget(), Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+        gui_gui.app.processEvents()
+
+
+def _edit_table(gui_gui, ed, oid, text):
+    _, cell = _table_cell_editor(gui_gui, ed, oid)
+    QTest.keyClick(cell, Qt.Key.Key_End)
+    QTest.keyClicks(cell, text)
+    _save_table_editor(gui_gui, ed, cell)
+
+
+# What is edited, and the object it is edited on: the description cell of an object with a table opens
+# the table editor, so the description is edited on an object without one.
+_EDITS = {"attribute": (_edit_attribute, "VCU3-SRS-16"), "description": (_edit_description, "VCU3-SRS-15"),
+          "table": (_edit_table, "VCU3-SRS-16")}
+
+
+@pytest.mark.parametrize("what", list(_EDITS))
+def test_gui_srs_57_edit_keeps_object_selected(gui_gui, repo, what):
+    """MELLON-GUI-SRS-57: editing an attribute value, the description or the table keeps the object selected."""
+    _add_table(repo, "VCU3-SRS-16")
+    edit, oid = _EDITS[what]
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    before = _obj_file(repo, SRS, oid).read_bytes()
+    edit(gui_gui, ed, oid, "-kept")
+    assert _obj_file(repo, SRS, oid).read_bytes() != before, "the edit wasn't written"
+    assert ed.controller.current_obj_id() == oid
+    assert gui_gui.selected_grid_ids(ed) == [oid]
+
+
+def _top_row_id(gui_gui, ed) -> str:
+    tv = gui_gui.table(ed)
+    m = tv.model()
+    return m.data(m.index(tv.rowAt(0), gui_gui.col(ed, "ID")))
+
+
+def _scroll_to_top(gui_gui, ed, oid):
+    tv = gui_gui.table(ed)
+    m = tv.model()
+    tv.scrollTo(m.index(gui_gui.row(ed, oid), gui_gui.col(ed, "ID")), QAbstractItemView.ScrollHint.PositionAtTop)
+    gui_gui.app.processEvents()
+    assert _top_row_id(gui_gui, ed) == oid, "precondition: the row is at the top"
+
+
+def test_gui_srs_58_table_edit_keeps_first_visible_row(gui_gui, repo):
+    """MELLON-GUI-SRS-58: editing a table keeps the same object in the grid's first visible row."""
+    _add_table(repo, "VCU3-SRS-16")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    gui_gui.select(ed, "VCU3-SRS-16")
+    _scroll_to_top(gui_gui, ed, "VCU3-SRS-15")
+    tw, cell = _table_cell_editor(gui_gui, ed, "VCU3-SRS-16")
+    _scroll_to_top(gui_gui, ed, "VCU3-SRS-15")
+    QTest.keyClicks(cell, "-top")
+    _save_table_editor(gui_gui, ed, cell)
+    assert "-top" in _obj_file(repo, SRS, "VCU3-SRS-16").read_text(encoding="utf-8"), "the table edit wasn't written"
+    assert _top_row_id(gui_gui, ed) == "VCU3-SRS-15"
+
+
+def test_gui_srs_58_taller_description_above_keeps_first_visible_row(gui_gui, repo):
+    """MELLON-GUI-SRS-58: editing the description of an object above the first visible row, so that its
+    row height changes, keeps the same object in the first visible row."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    gui_gui.select(ed, "VCU3-SRS-14")
+    _scroll_to_top(gui_gui, ed, "VCU3-SRS-15")
+    desc = gui_gui.insp_description(ed)
+    desc.setFocus()
+    QTest.keyClick(desc, Qt.Key.Key_End, Qt.KeyboardModifier.ControlModifier)
+    for line in ("one", "two", "three", "four"):
+        QTest.keyClick(desc, Qt.Key.Key_Return)
+        QTest.keyClicks(desc, line)
+    gui_gui.table(ed).setFocus()  # the field loses the focus and saves
+    gui_gui.app.processEvents()
+    assert "four" in _description(repo, SRS, "VCU3-SRS-14"), "the description edit wasn't written"
+    assert _top_row_id(gui_gui, ed) == "VCU3-SRS-15"
+
+
+# --------------------------------------------------------------------------- pending edits
+
+
+def _type_into(widget, text):
+    widget.setFocus()
+    QTest.keyClick(widget, Qt.Key.Key_End, Qt.KeyboardModifier.ControlModifier if isinstance(
+        widget, (QTextEdit, QPlainTextEdit)) else Qt.KeyboardModifier.NoModifier)
+    QTest.keyClicks(widget, text)
+
+
+def test_gui_srs_71_inspector_description_saved_on_focus_out(gui_gui, repo):
+    """MELLON-GUI-SRS-71: typed text in the Inspector's description is saved when the field loses the focus."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    gui_gui.select(ed, "VCU3-SRS-2")
+    _type_into(gui_gui.insp_description(ed), " Focus-out.")
+    assert "Focus-out." not in _description(repo, SRS, "VCU3-SRS-2"), "precondition: not saved while typing"
+    gui_gui.click_cell(ed, "VCU3-SRS-2", "Status")
+    assert _description(repo, SRS, "VCU3-SRS-2").endswith("20 Hz. Focus-out.")
+
+
+def test_gui_srs_71_inspector_text_attribute_saved_on_focus_out(gui_gui, repo):
+    """MELLON-GUI-SRS-71: typed text in an Inspector text attribute is saved when the field loses the focus."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    gui_gui.select(ed, "VCU3-SRS-1")
+    _type_into(gui_gui.insp_field(ed, "Rationale"), " More.")
+    gui_gui.click_cell(ed, "VCU3-SRS-1", "Status")
+    assert "SSA-014. More.</attr>" in _obj_file(repo, SRS, "VCU3-SRS-1").read_text(encoding="utf-8")
+
+
+def test_gui_srs_71_grid_cell_editor_saved_on_focus_out(gui_gui, repo):
+    """MELLON-GUI-SRS-71: typed text in a grid cell editor is saved when it loses the focus to the Inspector."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    editor = gui_gui.open_cell_editor(ed, "VCU3-SRS-2", "Rationale")
+    QTest.keyClicks(editor, "focus-out-cell")
+    desc = gui_gui.insp_description(ed)
+    QTest.mouseClick(desc.viewport(), Qt.MouseButton.LeftButton)
+    gui_gui.app.processEvents()
+    assert '<attr name="rationale">focus-out-cell</attr>' in _obj_file(repo, SRS, "VCU3-SRS-2").read_text(
+        encoding="utf-8")
+
+
+def _pending_in_inspector(gui_gui, ed):
+    gui_gui.select(ed, "VCU3-SRS-2")
+    _type_into(gui_gui.insp_description(ed), " Pending74.")
+
+
+def _pending_in_cell(gui_gui, ed):
+    editor = gui_gui.open_cell_editor(ed, "VCU3-SRS-2", "Rationale")
+    QTest.keyClicks(editor, "Pending74.")
+
+
+def _saved74(repo) -> bool:
+    return "Pending74." in _obj_file(repo, SRS, "VCU3-SRS-2").read_text(encoding="utf-8")
+
+
+# Each action: (how to run it, the dialog it opens or None). A dialog handler records whether the
+# text was on disk when the dialog opened, which is after the action started.
+_ACTIONS_74 = {
+    "commit": ("Commit", "CommitDialog"),
+    "delete": ("Delete", "question"),
+    "add_link": ("Link", "LinkPicker"),
+    "indent": ("Indent", None),
+    "move_up": ("Move up", None),
+    "properties": ("Properties", "DocumentPropertiesDialog"),
+    "trace": ("Trace", None),
+    "validate": ("Validate", None),
+    "discard": ("Discard uncommitted changes to this document", "question"),
+    "read_only": ("Read-only", None),
+    "compare": ("Compare", None),
+}
+
+
+@pytest.mark.parametrize("field", ["inspector", "grid_cell"])
+@pytest.mark.parametrize("action", list(_ACTIONS_74))
+def test_gui_srs_74_pending_edit_saved_before_action(gui_gui, repo, action, field):
+    """MELLON-GUI-SRS-74: before the Document Editor runs an action, it saves its pending edits."""
+    _external_edit(_obj_file(repo, SRS, "VCU3-SRS-11"), "3 degC", "4 degC")  # an uncommitted change
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    (_pending_in_inspector if field == "inspector" else _pending_in_cell)(gui_gui, ed)
+    assert not _saved74(repo), "precondition: the typed text is pending"
+    at_dialog = []
+
+    def record(d=None, *a):
+        at_dialog.append(_saved74(repo))
+        return int(QDialog.DialogCode.Rejected) if not isinstance(d, (str, type(None))) else QMessageBox.StandardButton.No
+
+    text, dialog = _ACTIONS_74[action]
+    for name in ("CommitDialog", "LinkPicker", "DocumentPropertiesDialog", "TraceView", "QMessageBox"):
+        gui_gui.handlers[name] = record
+    gui_gui.answers["question"] = lambda *a: (at_dialog.append(_saved74(repo)), QMessageBox.StandardButton.No)[1]
+    a = gui_gui.action(ed, text)
+    if action in ("discard", "read_only", "compare"):
+        _open_menu(gui_gui, ed)  # these are picked from the Menu
+    assert a.isEnabled(), f"{text} is disabled"
+    a.trigger()
+    gui_gui.app.processEvents()
+    if dialog is not None:
+        assert at_dialog, f"{dialog} didn't open; dialogs: {[e[:2] for e in gui_gui.log]}"
+        assert at_dialog[0], f"the typed text wasn't on disk when {text} ran"
+    assert _saved74(repo), f"the typed text wasn't written by the time {text} ran"
+
+
+def _open_description_editor(gui_gui, ed, oid):
+    editor = gui_gui.open_cell_editor(ed, oid, "Description")
+    assert isinstance(editor, (QTextEdit, QPlainTextEdit)), f"no description editor, focus is {type(editor)}"
+    QTest.keyClick(editor, Qt.Key.Key_End, Qt.KeyboardModifier.ControlModifier)
+    return editor
+
+
+def test_gui_srs_165_ctrl_enter_saves_description_editor(gui_gui, repo):
+    """MELLON-GUI-SRS-165: Ctrl+Enter in the description editor saves the text, line break included, and closes it."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    editor = _open_description_editor(gui_gui, ed, "VCU3-SRS-2")
+    QTest.keyClicks(editor, " First.")
+    QTest.keyClick(editor, Qt.Key.Key_Return)
+    QTest.keyClicks(editor, "Second.")
+    assert "Second." not in _description(repo, SRS, "VCU3-SRS-2"), "precondition: Enter didn't save"
+    QTest.keyClick(editor, Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+    gui_gui.app.processEvents()
+    assert _description(repo, SRS, "VCU3-SRS-2").endswith("20 Hz. First.\nSecond.")
+    assert _editor_closed(gui_gui, ed)
+
+
+def test_gui_srs_165_ctrl_enter_saves_table_cell_editor(gui_gui, repo):
+    """MELLON-GUI-SRS-165: Ctrl+Enter in a table-cell editor saves the text and closes the editor."""
+    _add_table(repo, "VCU3-SRS-16")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    tw, cell = _table_cell_editor(gui_gui, ed, "VCU3-SRS-16")
+    QTest.keyClick(cell, Qt.Key.Key_End)
+    QTest.keyClicks(cell, "-ctrl-enter")
+    QTest.keyClick(cell, Qt.Key.Key_Return, Qt.KeyboardModifier.ControlModifier)
+    gui_gui.app.processEvents()
+    assert "a-ctrl-enter" in _obj_file(repo, SRS, "VCU3-SRS-16").read_text(encoding="utf-8"), "the text wasn't saved"
+    assert not _shown(tw) or tw.state() != QAbstractItemView.State.EditingState, "the table-cell editor stayed open"
+
+
+def test_gui_srs_166_esc_cancels_description_editor(gui_gui, repo):
+    """MELLON-GUI-SRS-166: Esc in the description editor closes it without saving the typed text, also later."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    before = _obj_file(repo, SRS, "VCU3-SRS-2").read_bytes()
+    editor = _open_description_editor(gui_gui, ed, "VCU3-SRS-2")
+    QTest.keyClicks(editor, " Cancelled.")
+    QTest.keyClick(editor, Qt.Key.Key_Escape)
+    gui_gui.app.processEvents()
+    assert _editor_closed(gui_gui, ed)
+    gui_gui.click_cell(ed, "VCU3-SRS-11")
+    gui_gui.action(ed, "Validate").trigger()
+    gui_gui.app.processEvents()
+    assert _obj_file(repo, SRS, "VCU3-SRS-2").read_bytes() == before
+
+
+def test_gui_srs_166_esc_cancels_table_cell_editor(gui_gui, repo):
+    """MELLON-GUI-SRS-166: Esc in a table-cell editor closes the editor without saving the typed text, also later."""
+    _add_table(repo, "VCU3-SRS-16")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    before = _obj_file(repo, SRS, "VCU3-SRS-16").read_bytes()
+    tw, cell = _table_cell_editor(gui_gui, ed, "VCU3-SRS-16")
+    QTest.keyClicks(cell, "-cancelled")
+    QTest.keyClick(cell, Qt.Key.Key_Escape)
+    gui_gui.app.processEvents()
+    assert tw.state() != QAbstractItemView.State.EditingState, "the table-cell editor stayed open"
+    QTest.keyClick(QApplication.focusWidget() or ed, Qt.Key.Key_Escape)  # Esc again leaves the table editor
+    gui_gui.app.processEvents()
+    gui_gui.click_cell(ed, "VCU3-SRS-11")
+    gui_gui.action(ed, "Validate").trigger()
+    gui_gui.app.processEvents()
+    assert _obj_file(repo, SRS, "VCU3-SRS-16").read_bytes() == before

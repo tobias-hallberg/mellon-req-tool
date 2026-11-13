@@ -403,3 +403,112 @@ def test_edit_srs_115_new_child_goes_last(qtbot, tmp_path, modals, commit_all, p
     new = all_object_ids(root, V) - before_ids
     assert len(new) == 1, new
     assert sub_objects(root, V, parent) == expected_before + [new.pop()]
+
+
+# MELLON-GUI-SRS blind tests
+import re  # noqa: E402
+
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
+
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    _description,
+    _outline,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+# --------------------------------------------------------------------------- outline pane and selection
+
+
+def _outline_oid(gui, ed, repo, doc, idx) -> str:
+    """The object an outline-pane item shows: `<id>: text`, or a heading's number and title."""
+    text = str(idx.model().data(idx))
+    m = re.match(rf"^({re.escape(doc)}-\d+):", text)
+    if m:
+        return m.group(1)
+    title = re.sub(r"^[\d.]+\s+", "", text).strip()
+    hits = [oid for oid, _ in _outline(repo, doc) if _description(repo, doc, oid).splitlines()[0].strip() == title]
+    assert len(hits) == 1, f"outline item {text!r} matches {hits}"
+    return hits[0]
+
+
+def test_gui_srs_47_outline_pane_shows_each_object_nested(gui_gui, repo):
+    """MELLON-GUI-SRS-47: the outline pane shows each object of the document, once, nested as the outline
+    nests them, in outline order, and nothing else."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    shown = []
+    for _, _, idx in gui_gui.outline_items(ed):
+        parent = idx.parent()
+        shown.append((_outline_oid(gui_gui, ed, repo, SRS, idx),
+                      _outline_oid(gui_gui, ed, repo, SRS, parent) if parent.isValid() else None))
+    assert shown == _outline(repo, SRS)
+
+
+def test_gui_srs_52_at_most_one_object_selected(gui_gui, repo):
+    """MELLON-GUI-SRS-52: the user can select at most one object: after a click, a Ctrl+click and a
+    Shift+click, only the last clicked row is selected, and the outline pane has one selected item."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    gui_gui.click_cell(ed, "VCU3-SRS-1")
+    gui_gui.pause()
+    gui_gui.click_cell(ed, "VCU3-SRS-11", mods=Qt.KeyboardModifier.ControlModifier)
+    gui_gui.pause()
+    gui_gui.click_cell(ed, "VCU3-SRS-13", mods=Qt.KeyboardModifier.ShiftModifier)
+    assert gui_gui.selected_grid_ids(ed) == ["VCU3-SRS-13"]
+    assert len({(i.row(), i.parent()) for i in gui_gui.outline_selected(ed)}) == 1
+
+
+def test_gui_srs_53_outline_selection_selects_grid_row(gui_gui, repo):
+    """MELLON-GUI-SRS-53: selecting an object in the outline pane selects it in the grid, scrolled into view."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    tv = gui_gui.table(ed)
+    tv.scrollToBottom()
+    gui_gui.app.processEvents()
+    m = tv.model()
+    target = m.index(gui_gui.row(ed, "VCU3-SRS-1"), gui_gui.col(ed, "ID"))
+    assert not tv.visualRect(target).intersects(tv.viewport().rect()), "precondition: VCU3-SRS-1 starts out of view"
+    view = ed.outline_pane.outline_view
+    view.expandAll()
+    idx = gui_gui.outline_index(ed, repo, SRS, "VCU3-SRS-1")
+    view.scrollTo(idx)
+    gui_gui.app.processEvents()
+    QTest.mouseClick(view.viewport(), Qt.MouseButton.LeftButton, Qt.KeyboardModifier.NoModifier,
+                     view.visualRect(idx).center())
+    gui_gui.app.processEvents()
+    assert gui_gui.selected_grid_ids(ed) == ["VCU3-SRS-1"]
+    assert tv.visualRect(target).intersects(tv.viewport().rect()), "the selected row is out of view"
+
+
+def test_gui_srs_54_grid_selection_selects_outline_item(gui_gui, repo):
+    """MELLON-GUI-SRS-54: selecting an object in the grid selects it in the outline pane, its parent expanded."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    view = ed.outline_pane.outline_view
+    view.collapseAll()
+    gui_gui.app.processEvents()
+    gui_gui.click_cell(ed, "VCU3-SRS-1")
+    sel = gui_gui.outline_selected(ed)
+    assert len({(i.row(), i.parent()) for i in sel}) == 1
+    assert _outline_oid(gui_gui, ed, repo, SRS, sel[0]) == "VCU3-SRS-1"
+    assert view.isExpanded(sel[0].parent()), "the parent object stays collapsed"
+
+
+# --------------------------------------------------------------------------- grid
+
+
+def test_gui_srs_64_grid_rows_in_outline_order(gui_gui, repo):
+    """MELLON-GUI-SRS-64: the grid shows the objects in outline order (depth first), and follows a move."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    assert gui_gui.grid_ids(ed) == [oid for oid, _ in _outline(repo, SRS)]
+    gui_gui.select(ed, "VCU3-SRS-1")
+    gui_gui.action(ed, "Move down").trigger()
+    gui_gui.app.processEvents()
+    after = [oid for oid, _ in _outline(repo, SRS)]
+    assert after.index("VCU3-SRS-1") > after.index("VCU3-SRS-2"), "precondition: the move reached the manifest"
+    assert gui_gui.grid_ids(ed) == after

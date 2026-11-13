@@ -705,3 +705,393 @@ def test_ver_srs_377_document_editor_status_bar_shows_detached_head(tmp_path, qt
 
     assert "detached" in shown.lower(), f"the status bar doesn't say HEAD is detached: {shown}"
     assert first[:7] in shown, f"the status bar doesn't show the commit: {shown}"
+
+
+# MELLON-GUI-SRS blind tests
+import pygit2  # noqa: E402
+from PySide6.QtCore import QTimer, Qt  # noqa: E402
+from PySide6.QtTest import QTest  # noqa: E402
+from PySide6.QtWidgets import (  # noqa: E402
+    QComboBox,
+    QLabel,
+    QPlainTextEdit,
+    QPushButton,
+    QTextEdit,
+)
+
+from tests.gui_support import (  # noqa: E402
+    DOC_IDS,
+    SRS,
+    STS,
+    SYRS,
+    _RELEASE_NUMBER,
+    _choose_filter,
+    _copy_fixture,
+    _description,
+    _external_edit,
+    _fake_tectonic,
+    _head as gui_head,
+    _make_filter,
+    _manifest,
+    _obj_file,
+    _plain,
+    _shown,
+    _snapshot,
+    _snapshot_diff,
+    _start_export,
+    _write as gui_write,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    gui_version_run,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+# --------------------------------------------------------------------------- Project Explorer
+
+
+def test_gui_srs_4_open_repository_asks_for_a_folder(gui_gui, repo):
+    """MELLON-GUI-SRS-4: Open Repository… asks the user for a folder (a folder chooser, not a file chooser)
+    and opens the folder as the repository."""
+    pe = gui_gui.explorer()
+    gui_gui.answers["getExistingDirectory"] = str(repo)
+    gui_gui.action(pe, "Open Repository").trigger()
+    gui_gui.app.processEvents()
+    assert [e[0] for e in gui_gui.log if e[1] == "QFileDialog"] == ["getExistingDirectory"]
+    assert sorted(gui_gui.listed_docs(pe)) == sorted(DOC_IDS)
+
+
+def test_gui_srs_4_cancelled_chooser_keeps_open_repository(gui_gui, repo):
+    """MELLON-GUI-SRS-4: cancelling the folder chooser keeps the repository that was open."""
+    pe = gui_gui.explorer(repo)
+    gui_gui.answers["getExistingDirectory"] = ""
+    gui_gui.action(pe, "Open Repository").trigger()
+    gui_gui.app.processEvents()
+    assert gui_gui.opened("getExistingDirectory"), "no folder chooser was shown"
+    assert Path(pe.controller.root) == repo
+    assert sorted(gui_gui.listed_docs(pe)) == sorted(DOC_IDS)
+
+
+def _switch_repo_while_modal(gui_gui, pe, other: Path, dialog_name: str, outcome: dict):
+    """Handler that, with the dialog really open, opens another repository from the Project Explorer."""
+
+    def handler(d):
+        def switch():
+            outcome["switched"] = True
+            gui_gui.answers["getExistingDirectory"] = str(other)
+            gui_gui.action(pe, "Open Repository").trigger()
+
+        def watchdog():
+            if _shown(d):
+                outcome["still_open"] = True
+                d.reject()
+
+        QTimer.singleShot(50, switch)
+        QTimer.singleShot(4000, watchdog)
+        return gui_gui.real_dialog_exec(d)
+
+    gui_gui.handlers[dialog_name] = handler
+
+
+@pytest.mark.parametrize("dialog", ["DocumentPropertiesDialog", "CommitDialog"])
+def test_gui_srs_6_opening_other_repository_closes_editors_and_their_dialog(gui_gui, repo, tmp_path, dialog):
+    """MELLON-GUI-SRS-6: opening another repository closes each Document Editor of the previous one,
+    also while the Document Editor shows a modal dialog, which closes with it and changes neither repository."""
+    other = _copy_fixture(tmp_path / "other")
+    _external_edit(_obj_file(repo, SRS, "VCU3-SRS-2"), "at least 20 Hz", "at least 25 Hz")  # something to commit
+    heads = (gui_head(repo), gui_head(other))
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    outcome = {}
+    _switch_repo_while_modal(gui_gui, pe, other, dialog, outcome)
+    # Unexpected errors raised after the window closed are reported to the lead, not judged here.
+    with gui_gui.bot.captureExceptions() as errors:
+        gui_gui.action(ed, "Properties" if dialog == "DocumentPropertiesDialog" else "Commit").trigger()
+        gui_gui.bot.wait(200)
+    outcome["errors"] = [str(e[1]) for e in errors]
+    assert gui_gui.opened(dialog), f"the {dialog} didn't open; dialogs: {[e[:2] for e in gui_gui.log]}"
+    assert outcome.get("switched"), "the repository switch never ran"
+    assert Path(pe.controller.root) == other
+    assert not _shown(ed), "the Document Editor of the previous repository stayed open"
+    assert gui_gui.open_list(pe) == []
+    assert not outcome.get("still_open"), "the modal dialog stayed open after its Document Editor closed"
+    assert (gui_head(repo), gui_head(other)) == heads
+
+
+@pytest.mark.parametrize("how", ["double_click", "enter"])
+def test_gui_srs_36_opening_document_opens_editor(gui_gui, repo, how):
+    """MELLON-GUI-SRS-36: opening a document that loads opens a Document Editor for it, listed as open."""
+    pe = gui_gui.explorer(repo)
+    tree = gui_gui.doc_tree(pe)
+    idx = gui_gui.doc_index(pe, STS)
+    if how == "double_click":
+        gui_gui.dclick(tree, idx)
+    else:
+        tree.setFocus()
+        tree.setCurrentIndex(idx)
+        gui_gui.key(pe, Qt.Key.Key_Return)
+    gui_gui.bot.waitUntil(lambda: len(gui_gui.editors(STS)) == 1, timeout=5000)
+    assert [t.split(" ")[0] for t in gui_gui.open_list(pe)] == [STS]
+
+
+def test_gui_srs_37_opening_open_document_activates_its_editor(gui_gui, repo):
+    """MELLON-GUI-SRS-37: opening a document that already has a Document Editor activates that one
+    instead of opening a second."""
+    pe = gui_gui.explorer(repo)
+    first = gui_gui.open_doc(pe, SRS)
+    gui_gui.activate(pe)
+    gui_gui.dclick(gui_gui.doc_tree(pe), gui_gui.doc_index(pe, SRS))
+    gui_gui.bot.wait(200)
+    assert gui_gui.editors(SRS) == [first], "a second Document Editor opened"
+    assert [t.split(" ")[0] for t in gui_gui.open_list(pe)] == [SRS]
+    gui_gui.bot.waitUntil(lambda: first.isActiveWindow(), timeout=3000)
+
+
+def test_gui_srs_38_explorer_lists_open_editors(gui_gui, repo):
+    """MELLON-GUI-SRS-38: the Project Explorer lists the open Document Editors: DOC and PARENT, then PARENT only."""
+    pe = gui_gui.explorer(repo)
+    doc = gui_gui.open_doc(pe, SRS)
+    gui_gui.open_doc(pe, SYRS)
+    assert sorted(t.split(" ")[0] for t in gui_gui.open_list(pe)) == sorted([SRS, SYRS])
+    doc.close()
+    gui_gui.app.processEvents()
+    assert [t.split(" ")[0] for t in gui_gui.open_list(pe)] == [SYRS]
+
+
+# --------------------------------------------------------------------------- status bar
+
+
+def _hex_tokens(text: str) -> list[str]:
+    return re.findall(r"(?<![0-9a-fA-F])[0-9a-f]{4,40}(?![0-9a-fA-F])", text)
+
+
+@pytest.mark.parametrize("window", ["explorer", "editor"])
+def test_gui_srs_115_status_bar_shows_branch_and_short_hash(gui_gui, repo, window):
+    """MELLON-GUI-SRS-115: the status bar shows the current branch and an abbreviated hash of the latest commit."""
+    pe = gui_gui.explorer(repo)
+    win = pe if window == "explorer" else gui_gui.open_doc(pe, SRS)
+    text = gui_gui.status_texts(win)
+    branch = pygit2.Repository(str(repo)).head.shorthand
+    assert branch in text, text
+    full = gui_head(repo)
+    prefixes = [t for t in _hex_tokens(text) if full.startswith(t) and len(t) < len(full)]
+    assert prefixes, f"no abbreviated hash of {full} in {text!r}"
+
+
+def _uncommitted_counts(text: str) -> list[int]:
+    return [int(n) for n in re.findall(r"(\d+)\s*(?:dirty|document file|uncommitted)", text)]
+
+
+@pytest.mark.parametrize("window", ["explorer", "editor"])
+def test_gui_srs_117_status_bar_counts_uncommitted_changes(gui_gui, repo, window):
+    """MELLON-GUI-SRS-117: the status bar counts uncommitted changes in the document folders: added, changed
+    and deleted files, leaving out side files and files git ignores (here exactly 3)."""
+    folder = repo / SRS
+    gui_write(folder / "objects" / "VCU3-SRS-99.xml",
+           '<?xml version="1.0" encoding="UTF-8"?>\n<object id="VCU3-SRS-99">\n'
+           '  <attr name="type">Requirement</attr>\n  <attr name="status">Draft</attr>\n'
+           '  <description>Added.</description>\n</object>\n')  # added
+    (folder / "links" / "VCU3-SRS-30.xml").unlink()  # deleted
+    _external_edit(_obj_file(repo, SRS, "VCU3-SRS-2"), "at least 20 Hz", "at least 25 Hz")  # changed
+    gui_write(folder / "~$x.xml", "side")
+    gui_write(folder / "figures" / ".$y.svg.bkp", "side")
+    with open(repo / ".git" / "info" / "exclude", "a", encoding="utf-8", newline="\n") as fh:
+        fh.write("\n*.scratch\n")
+    gui_write(folder / "notes.scratch", "ignored")
+    pe = gui_gui.explorer(repo)
+    win = pe if window == "explorer" else gui_gui.open_doc(pe, SRS)
+    counts = _uncommitted_counts(gui_gui.status_texts(win))
+    assert counts and set(counts) == {3}, gui_gui.status_texts(win)
+
+
+def test_gui_srs_118_editor_status_bar_says_no_branch_on_detached_head(gui_gui, repo):
+    """MELLON-GUI-SRS-118: while no branch is checked out, the Document Editor's status bar says so."""
+    r = pygit2.Repository(str(repo))
+    r.set_head(r.head.target)  # detached HEAD at the latest commit
+    assert r.head_is_detached
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    text = gui_gui.status_texts(ed).lower()
+    assert "detached" in text or "no branch" in text, text
+
+
+def test_gui_srs_118_editor_status_bar_on_branch_says_nothing_of_detached(gui_gui, repo):
+    """MELLON-GUI-SRS-118 (control): on a branch, the Document Editor's status bar doesn't say no branch is checked out."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    text = gui_gui.status_texts(ed).lower()
+    assert "detached" not in text and "no branch" not in text, text
+
+
+# --------------------------------------------------------------------------- About dialog
+
+
+@pytest.mark.parametrize("window", ["explorer", "editor"])
+def test_gui_srs_140_about_action_opens_about_dialog(gui_gui, repo, window):
+    """MELLON-GUI-SRS-140: the Project Explorer and the Document Editor each have an About action that
+    opens the About dialog."""
+    pe = gui_gui.explorer(repo)
+    win = pe if window == "explorer" else gui_gui.open_doc(pe, SRS)
+    gui_gui.action(win, "About Mellon").trigger()
+    assert [e[1] for e in gui_gui.opened("AboutDialog")] == ["AboutDialog"]
+
+
+def test_gui_srs_141_about_dialog_shows_release_number(gui_gui, gui_version_run):
+    """MELLON-GUI-SRS-141: the About dialog shows the release number, the one --version prints."""
+    from mellon.gui.dialogs.about_dialog import AboutDialog
+
+    printed = _RELEASE_NUMBER.findall(gui_version_run[0].stdout.decode("utf-8"))
+    assert len(printed) == 1
+    d = AboutDialog()
+    text = "\n".join(lab.text() for lab in d.findChildren(QLabel)) + d.windowTitle()
+    assert _RELEASE_NUMBER.findall(re.sub(r"<[^>]+>", " ", text)) == printed, text
+
+
+# --------------------------------------------------------------------------- Project Explorer shortcuts
+
+
+def test_gui_srs_145_ctrl_o_runs_open_repository(gui_gui, repo):
+    """MELLON-GUI-SRS-145: Ctrl+O in the Project Explorer runs Open Repository… (its folder chooser opens)."""
+    pe = gui_gui.explorer(repo)
+    gui_gui.key(pe, Qt.Key.Key_O, Qt.KeyboardModifier.ControlModifier)
+    assert gui_gui.opened("getExistingDirectory")
+
+
+def test_gui_srs_146_ctrl_n_runs_new_document(gui_gui, repo):
+    """MELLON-GUI-SRS-146: Ctrl+N in the Project Explorer, with a repository open, runs New document."""
+    pe = gui_gui.explorer(repo)
+    gui_gui.key(pe, Qt.Key.Key_N, Qt.KeyboardModifier.ControlModifier)
+    assert gui_gui.opened("NewDocumentDialog")
+
+
+def _failed_mark(gui_gui, pe, doc_id) -> str:
+    m = gui_gui.doc_tree(pe).model()
+    idx = gui_gui.doc_index(pe, doc_id)
+    return f"{m.data(idx)}\n{m.data(idx, Qt.ItemDataRole.ToolTipRole) or ''}"
+
+
+def test_gui_srs_147_f5_runs_refresh(gui_gui, repo):
+    """MELLON-GUI-SRS-147: F5 in the Project Explorer runs Refresh: a document broken on disk is then listed
+    as failed to load."""
+    pe = gui_gui.explorer(repo)
+    assert "VCU3-STS.xml" not in _failed_mark(gui_gui, pe, STS)
+    gui_write(_manifest(repo, STS), "<document id='VCU3-STS'><broken")
+    gui_gui.key(pe, Qt.Key.Key_F5)
+    mark = _failed_mark(gui_gui, pe, STS)
+    assert "VCU3-STS.xml" in mark and "fail" in mark.lower(), mark
+
+
+_SRS2_ATTRS = {"Type": "Requirement", "Requirement Type": "Performance", "Priority": "Must", "Status": "Draft",
+               "Verification Method": "Test"}
+
+
+def _field_value(w) -> str:
+    if isinstance(w, QComboBox):
+        return w.currentText()
+    if isinstance(w, (QTextEdit, QPlainTextEdit)):
+        return w.toPlainText()
+    return w.text()
+
+
+@pytest.mark.parametrize("mode", ["read_only", "editing"])
+def test_gui_srs_55_inspector_shows_attributes_description_and_links(gui_gui, repo, mode):
+    """MELLON-GUI-SRS-55: the Inspector shows the selected object's attributes (by label, with their values),
+    description and outgoing links; an attribute that isn't set shows no value."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=(mode == "editing"))
+    gui_gui.select(ed, "VCU3-SRS-2")
+    for label, value in _SRS2_ATTRS.items():
+        assert _field_value(gui_gui.insp_field(ed, label)) == value, label
+    try:
+        rationale = gui_gui.insp_field(ed, "Rationale")
+    except AssertionError:
+        rationale = None  # not shown at all: no value either
+    assert rationale is None or _field_value(rationale) == ""
+    texts = "\n".join(gui_gui.insp_texts(ed))
+    assert _description(repo, SRS, "VCU3-SRS-2") in texts
+    assert "VCU3-SyRS-42" in texts and "satisfies" in texts
+
+
+def _visible_texts(w) -> str:
+    out = []
+    for lab in w.findChildren(QLabel):
+        if lab.isVisible():
+            out.append(lab.text())
+    return "\n".join(out)
+
+
+def _visible_buttons(w) -> list[str]:
+    return [_plain(b.text()) for b in w.findChildren(QPushButton) if b.isVisible()]
+
+
+def test_gui_srs_68_no_objects_state(gui_gui, repo):
+    """MELLON-GUI-SRS-68: a document with no objects says it has no objects and offers to add the first object."""
+    from mellon.service.document import DocumentService
+
+    DocumentService(repo).create_document("EMPTY", title="Empty")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, "EMPTY")
+    shown = _visible_texts(ed.grid_pane).lower()
+    assert "no objects" in shown, shown
+    assert "Add first object" in _visible_buttons(ed.grid_pane)
+
+
+def test_gui_srs_69_no_match_state_clear_filters(gui_gui, repo):
+    """MELLON-GUI-SRS-69: when the filter, the filter box and Suspects only hide each object, the grid says no
+    object matches and Clear filters clears the three, so each row shows."""
+    _make_filter(repo, "Nothing", "no-object-has-this-rationale")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    gp = ed.grid_pane
+    every = gui_gui.grid_ids(ed)
+    _choose_filter(gui_gui, ed, "Nothing")
+    QTest.keyClicks(gp.filter_box, "zzz")
+    sus = [b for b in gp.banner.findChildren(QPushButton) if _plain(b.text()) == "Suspects only"][0]
+    gui_gui.bot.mouseClick(sus, Qt.MouseButton.LeftButton)
+    gui_gui.app.processEvents()
+    assert gui_gui.grid_ids(ed) == []
+    assert "no requirements match" in _visible_texts(gp).lower() or "no object" in _visible_texts(gp).lower()
+    clear = [b for b in gp.findChildren(QPushButton) if _plain(b.text()) == "Clear filters" and b.isVisible()]
+    assert clear, "no Clear filters button shown"
+    gui_gui.bot.mouseClick(clear[0], Qt.MouseButton.LeftButton)
+    gui_gui.app.processEvents()
+    assert gp.active_filter() is None
+    assert gp.filter_box.text() == ""
+    assert not gp.is_suspect_only()
+    assert gui_gui.grid_ids(ed) == every
+
+
+def test_gui_srs_69_empty_document_with_filter_shows_no_objects_state(gui_gui, repo):
+    """MELLON-GUI-SRS-69 (control): an empty document with the filter box in use shows the no-objects state,
+    not the no-match state."""
+    from mellon.service.document import DocumentService
+
+    DocumentService(repo).create_document("EMPTY", title="Empty")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, "EMPTY")
+    QTest.keyClicks(ed.grid_pane.filter_box, "zzz")
+    gui_gui.app.processEvents()
+    shown = _visible_texts(ed.grid_pane).lower()
+    assert "no objects" in shown and "match" not in shown, shown
+
+
+def test_gui_srs_6_opening_other_repository_while_export_runs(gui_gui, repo, tmp_path, monkeypatch):
+    """MELLON-GUI-SRS-6: opening another repository while an export from a Document Editor of the first one runs
+    closes that Document Editor, and the export writes nothing into the new repository."""
+    from PySide6.QtCore import QThreadPool
+
+    other = _copy_fixture(tmp_path / "other")
+    monkeypatch.setenv("MELLON_TECTONIC", str(_fake_tectonic(tmp_path / "tools", 3)))
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    _start_export(gui_gui, ed, repo / "exported.pdf")
+    gui_gui.bot.waitUntil(lambda: ed.is_exporting(), timeout=5000)  # precondition: the export runs
+    before = _snapshot(other)
+    gui_gui.answers["getExistingDirectory"] = str(other)
+    gui_gui.action(pe, "Open Repository").trigger()
+    gui_gui.app.processEvents()
+    assert Path(pe.controller.root) == other, "precondition: the other repository is open"
+    assert not _shown(ed), "the Document Editor of the previous repository stayed open"
+    assert gui_gui.open_list(pe) == []
+    QThreadPool.globalInstance().waitForDone(20000)  # the export runs to its end
+    gui_gui.bot.wait(200)
+    assert _snapshot_diff(before, _snapshot(other)) == [], "the export wrote into the new repository"

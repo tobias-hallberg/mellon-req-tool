@@ -817,3 +817,283 @@ def test_store_srs_210_gui_open_and_reload_change_no_file(gui, read_only_repo):
     for ed in eds:
         gui.press_f5(ed)
     assert changed(before, snapshot(root, include_git=False)) == []
+
+
+# MELLON-GUI-SRS blind tests
+import json  # noqa: E402
+import subprocess  # noqa: E402
+import time  # noqa: E402
+
+from PySide6.QtCore import Qt  # noqa: E402
+
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    _add_link_by_key,
+    _answer_yes,
+    _attach_figure_and_commit,
+    _attach_figure_by_key,
+    _change_elsewhere,
+    _choose_view,
+    _commit_from,
+    _description,
+    _drag_column,
+    _edit_attribute,
+    _edit_description,
+    _edit_properties,
+    _external_edit,
+    _git_commit_all,
+    _grid_text,
+    _mcp_script,
+    _obj_file,
+    _offscreen_env,
+    _paste_in_cell_editor,
+    _press_in_grid,
+    _rationale,
+    _reactivated,
+    _refs,
+    _snapshot,
+    _snapshot_diff,
+    _stale_shown,
+    _svg_file as gui_svg_file,
+    _uncommitted_change,
+    _write,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+def test_gui_srs_109_refused_edit_shows_changed_on_disk_banner(gui_gui, repo):
+    """MELLON-GUI-SRS-109: when the Document Editor refuses an edit because a file changed on disk, it shows the
+    Changed on disk banner. The edit is a description edit of an object whose file another program changed after
+    the window read it, which MELLON-STORE-SRS-182 refuses."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    gui_gui.select(ed, "VCU3-SRS-1")
+    _change_elsewhere(_obj_file(repo, SRS, "VCU3-SRS-1"))  # the window isn't activated
+    _edit_description(gui_gui, ed, "VCU3-SRS-1", " Typed-109.")
+    text = _obj_file(repo, SRS, "VCU3-SRS-1").read_text(encoding="utf-8")
+    assert "Changed elsewhere." in text and "Typed-109." not in text, (
+        "the edit wasn't refused: " + _description(repo, SRS, "VCU3-SRS-1"))
+    assert _stale_shown(ed), "no Changed on disk banner after the refused edit"
+
+
+def test_gui_srs_109_accepted_edit_shows_no_banner(gui_gui, repo):
+    """MELLON-GUI-SRS-109 (control): an edit that isn't refused shows no Changed on disk banner."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    _edit_attribute(gui_gui, ed, "VCU3-SRS-2", "accepted-109")
+    assert "accepted-109" in _obj_file(repo, SRS, "VCU3-SRS-2").read_text(encoding="utf-8"), "precondition: written"
+    assert not _stale_shown(ed)
+
+
+def test_gui_srs_109_refused_commit_shows_changed_on_disk_banner(gui_gui, repo):
+    """MELLON-GUI-SRS-109: when the Document Editor refuses a commit because a file changed on disk
+    (MELLON-GUI-SRS-111), it shows the Changed on disk banner."""
+    _uncommitted_change(repo)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    refs = _refs(repo)
+    _commit_from(gui_gui, ed, lambda: _change_elsewhere(_obj_file(repo, SRS, "VCU3-SRS-2")))
+    assert _refs(repo) == refs, "precondition: the commit is refused (MELLON-GUI-SRS-111)"
+    assert _stale_shown(ed), "no Changed on disk banner after the refused commit"
+
+
+_SIDE_FILES_99 = {
+    "figures_side_files": ("figures/~$VCU3-SRS-2.svg", "figures/.$VCU3-SRS-2.svg.bkp"),
+    "objects_side_files": ("objects/.$VCU3-SRS-2.xml.bkp", "objects/~$VCU3-SRS-2.xml"),
+    "folder_side_file": ("~$notes.xml",),
+}
+
+
+@pytest.mark.parametrize("case", [
+    "figures_side_files",
+    "objects_side_files",
+    "folder_side_file",
+])
+def test_gui_srs_99_side_file_change_is_no_change_on_disk(gui_gui, repo, case):
+    """MELLON-GUI-SRS-99: the Document Editor doesn't count a change to an editor side file (a name starting with
+    `.$` or `~$`) as a change on disk, so activation after one shows no Changed on disk banner."""
+    _attach_figure_and_commit(repo, "VCU3-SRS-2")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    for rel in _SIDE_FILES_99[case]:
+        _write(repo / SRS / rel, "side file")
+    _reactivated(gui_gui, ed, pe)
+    assert not _stale_shown(ed), f"side files {_SIDE_FILES_99[case]} count as a change on disk"
+
+
+@pytest.mark.parametrize("case", ["no_change", "object_file_changed"])
+def test_gui_srs_99_controls(gui_gui, repo, case):
+    """MELLON-GUI-SRS-99 (controls): activation with nothing changed shows no Changed on disk banner, and after a
+    change to an object file it shows one."""
+    _attach_figure_and_commit(repo, "VCU3-SRS-2")
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    if case == "object_file_changed":
+        _change_elsewhere(_obj_file(repo, SRS, "VCU3-SRS-2"))
+    _reactivated(gui_gui, ed, pe)
+    assert _stale_shown(ed) == (case == "object_file_changed")
+
+
+def _outline_text(gui_gui, ed, oid) -> str:
+    hits = [text for text, _, _ in gui_gui.outline_items(ed) if text.startswith(f"{oid}:")]
+    assert len(hits) == 1, f"{oid} isn't one outline-pane item"
+    return hits[0]
+
+
+def test_gui_srs_108_old_copy_shown_until_reload(gui_gui, repo):
+    """MELLON-GUI-SRS-108: after a change on disk the Document Editor keeps showing the copy it read before, in the
+    grid, the Inspector and the outline pane, until the user reloads; then it shows the new text."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    gui_gui.select(ed, "VCU3-SRS-2")
+    _external_edit(_obj_file(repo, SRS, "VCU3-SRS-2"), "The VCU shall sample", "Elsewhere the VCU shall sample")
+    _reactivated(gui_gui, ed, pe)
+    assert _stale_shown(ed), "precondition: the Changed on disk banner shows"
+
+    def shown():
+        if ed.controller.current_obj_id() != "VCU3-SRS-2":
+            gui_gui.select(ed, "VCU3-SRS-2")
+        return {"grid": _grid_text(gui_gui, ed, "VCU3-SRS-2"), "Inspector": gui_gui.insp_description(ed).toPlainText(),
+                "outline pane": _outline_text(gui_gui, ed, "VCU3-SRS-2")}
+
+    for where, text in shown().items():
+        assert "The VCU shall sample" in text and "Elsewhere" not in text, f"the {where} shows {text!r} before reload"
+    gui_gui.table(ed).setFocus()
+    gui_gui.key(ed, Qt.Key.Key_F5)
+    assert not _stale_shown(ed), "precondition: the document reloaded"
+    for where, text in shown().items():
+        assert "Elsewhere the VCU shall sample" in text, f"the {where} shows {text!r} after reload"
+
+
+def _setup_104(gui_gui, repo, banner: bool):
+    from mellon.service.document import DocumentService
+
+    DocumentService(repo).create_view(SRS, "Pair", ["priority", "status"])
+    _git_commit_all(repo, "Add a view")
+    svg = gui_svg_file(repo)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    _edit_attribute(gui_gui, ed, "VCU3-SRS-1", "undo-me")  # something for Undo to take back
+    assert _rationale(repo, "VCU3-SRS-1") == "undo-me", "precondition: the edit is written"
+    _choose_view(gui_gui, ed, "Pair")  # a column drag changes the active view's file
+    if banner:
+        _change_elsewhere(_obj_file(repo, SRS, "VCU3-SRS-11"))
+        _reactivated(gui_gui, ed, pe)
+        assert _stale_shown(ed), "precondition: the Changed on disk banner shows"
+    _answer_yes(gui_gui)
+    return ed, svg
+
+
+_INPUTS_104 = {
+    "paste": lambda gui_gui, ed, svg: _paste_in_cell_editor(gui_gui, ed),
+    "column_drag": lambda gui_gui, ed, svg: _drag_column(gui_gui, ed),
+    "attach_figure": lambda gui_gui, ed, svg: _attach_figure_by_key(gui_gui, ed, svg),
+    "add_link": lambda gui_gui, ed, svg: _add_link_by_key(gui_gui, ed),
+    "delete_key": lambda gui_gui, ed, svg: _press_in_grid(gui_gui, ed, "VCU3-SRS-13", Qt.Key.Key_Delete),
+    "properties": lambda gui_gui, ed, svg: _edit_properties(gui_gui, ed),
+}
+
+
+# Undo is left out: the definitions say Undo and Redo aren't edits, so MELLON-GUI-SRS-104 doesn't decide it.
+
+
+@pytest.mark.parametrize("what", list(_INPUTS_104))
+def test_gui_srs_104_edit_refused_while_banner_shown(gui_gui, repo, what):
+    """MELLON-GUI-SRS-104: while the Changed on disk banner is shown, the Document Editor refuses each edit with a
+    message that says to reload: no file changes."""
+    ed, svg = _setup_104(gui_gui, repo, banner=True)
+    before = _snapshot(repo)
+    since = len(gui_gui.log)
+    ed.statusBar().clearMessage()
+    _INPUTS_104[what](gui_gui, ed, svg)
+    gui_gui.app.processEvents()
+    assert _snapshot_diff(before, _snapshot(repo)) == [], "the edit wasn't refused"
+    said = [e[2] + "\n" + e[3] for e in gui_gui.log[since:]] + [ed.statusBar().currentMessage()]
+    assert any("reload" in s.lower() for s in said), f"no message that says to reload: {said}"
+
+
+@pytest.mark.parametrize("what", [w for w in _INPUTS_104 if w != "add_link"])
+def test_gui_srs_104_control_edit_written_without_banner(gui_gui, repo, what):
+    """MELLON-GUI-SRS-104 (control): without the Changed on disk banner the same input is an edit that changes a
+    file, so the refusal above is the banner's doing. (Add link is left out: the test can't complete the link
+    picker.)"""
+    ed, svg = _setup_104(gui_gui, repo, banner=False)
+    before = _snapshot(repo)
+    _INPUTS_104[what](gui_gui, ed, svg)
+    gui_gui.app.processEvents()
+    assert _snapshot_diff(before, _snapshot(repo)) != [], "the input changed no file"
+
+
+# --------------------------------------------------------------------------- the MCP server alongside
+
+
+class _McpSession:
+    """A client of the MCP server over standard input and output (newline-delimited JSON-RPC)."""
+
+    def __init__(self, root: Path, stderr_path: Path):
+        import queue
+        import threading
+
+        self._err = open(stderr_path, "wb")
+        self.proc = subprocess.Popen(_mcp_script() + ["--repo-root", str(root)], stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE, stderr=self._err, env=_offscreen_env())
+        self._lines: queue.Queue = queue.Queue()
+        threading.Thread(target=self._read, daemon=True).start()
+        self._id = 0
+        self.request("initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
+                                    "clientInfo": {"name": "blind-test", "version": "0"}})
+        self._send({"jsonrpc": "2.0", "method": "notifications/initialized"})
+
+    def _read(self):
+        for line in self.proc.stdout:
+            self._lines.put(line)
+
+    def _send(self, msg):
+        self.proc.stdin.write((json.dumps(msg) + "\n").encode("utf-8"))
+        self.proc.stdin.flush()
+
+    def request(self, method, params):
+        self._id += 1
+        self._send({"jsonrpc": "2.0", "id": self._id, "method": method, "params": params})
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            msg = json.loads(self._lines.get(timeout=max(0.1, deadline - time.monotonic())))
+            if msg.get("id") == self._id:
+                assert "error" not in msg, msg["error"]
+                return msg["result"]
+        raise TimeoutError(method)
+
+    def call(self, tool, **arguments) -> dict:
+        return self.request("tools/call", {"name": tool, "arguments": arguments})
+
+    def close(self):
+        try:
+            self.proc.stdin.close()
+            self.proc.wait(timeout=20)
+        except Exception:
+            self.proc.kill()
+        self._err.close()
+
+
+def test_gui_srs_95_gui_and_mcp_server_edit_one_repository(gui_gui, repo, tmp_path):
+    """MELLON-GUI-SRS-95: the GUI opens and edits a repository while the MCP server has the same repository open;
+    edits alternate between them and each is written, with neither side refusing because of the other."""
+    mcp = _McpSession(repo, tmp_path / "mcp-stderr.txt")
+    try:
+        pe = gui_gui.explorer(repo)
+        ed = gui_gui.open_doc(pe, SRS, editing=True)
+        first = mcp.call("update_object", doc_id=SRS, obj_id="VCU3-SRS-2", attrs={"rationale": "mcp-first"})
+        assert not first.get("isError"), first
+        assert _rationale(repo, "VCU3-SRS-2") == "mcp-first"
+        _reactivated(gui_gui, ed, pe)
+        _press_in_grid(gui_gui, ed, None, Qt.Key.Key_F5)
+        assert not _stale_shown(ed), "precondition: the window reloaded"
+        _edit_attribute(gui_gui, ed, "VCU3-SRS-11", "gui-second")
+        assert _rationale(repo, "VCU3-SRS-11") == "gui-second", "the GUI's edit wasn't written"
+        third = mcp.call("update_object", doc_id=SRS, obj_id="VCU3-SRS-12", attrs={"rationale": "mcp-third"})
+        assert not third.get("isError"), third
+        assert _rationale(repo, "VCU3-SRS-12") == "mcp-third"
+        assert _rationale(repo, "VCU3-SRS-2") == "mcp-first" and _rationale(repo, "VCU3-SRS-11") == "gui-second"
+    finally:
+        mcp.close()

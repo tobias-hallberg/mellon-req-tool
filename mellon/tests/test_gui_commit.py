@@ -2095,3 +2095,94 @@ def test_ver_srs_374_gui_operations_change_only_the_current_branch_and_their_own
     _gui_operations(qtbot, ui, root)
 
     _assert_only_branch_and_tags_moved(before, _refs(root), 1, {"CHILD-issue-1", "M1"}, root)
+
+
+# MELLON-GUI-SRS blind tests
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    STS,
+    SVG,
+    SYRS,
+    _attach_figure_and_commit,
+    _change_elsewhere,
+    _commit_from,
+    _doc_dirty,
+    _head as gui_head,
+    _obj_file,
+    _reactivated,
+    _read_only_banner_shown,
+    _refs as gui_refs,
+    _stale_shown,
+    _uncommitted_change,
+    _write as gui_write,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+)
+
+
+_CASES_111 = {
+    "own_file_before_commit": (SRS, "VCU3-SRS-2", False),
+    "own_file_while_dialog_open": (SRS, "VCU3-SRS-2", True),
+    "parent_file_before_commit": (SYRS, "VCU3-SyRS-42", False),
+}
+
+
+@pytest.mark.parametrize("case", list(_CASES_111))
+def test_gui_srs_111_commit_refused_after_change_on_disk(gui_gui, repo, case):
+    """MELLON-GUI-SRS-111: if a file of the document or of a parent document changed on disk since the Document
+    Editor read the file, other than a figure redrawn since, the Document Editor refuses to commit: the latest
+    commit and the references stay as they were."""
+    doc, oid, in_dialog = _CASES_111[case]
+    _uncommitted_change(repo)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    refs = gui_refs(repo)
+    _commit_from(gui_gui, ed, lambda: _change_elsewhere(_obj_file(repo, doc, oid)), in_dialog)
+    if in_dialog:
+        assert gui_gui.opened("CommitDialog"), "precondition: the commit dialog opened"
+    assert gui_refs(repo) == refs, "the commit went through although a file changed on disk"
+
+
+def test_gui_srs_111_commit_goes_through_without_change_on_disk(gui_gui, repo):
+    """MELLON-GUI-SRS-111 (control): with no file changed on disk since the Document Editor read it, the same
+    commit goes through."""
+    _uncommitted_change(repo)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    head = gui_head(repo)
+    _commit_from(gui_gui, ed)
+    assert gui_head(repo) != head, "the commit didn't go through"
+    assert _doc_dirty(repo, SRS) == []
+
+
+def test_gui_srs_111_redrawn_figure_doesnt_stop_commit(gui_gui, repo):
+    """MELLON-GUI-SRS-111 (control): a figure of the document saved in place by another program and redrawn by
+    the Document Editor (MELLON-GUI-SRS-98) doesn't stop the commit."""
+    fig = _attach_figure_and_commit(repo, "VCU3-SRS-2")
+    _uncommitted_change(repo)
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    before = fig.stat()
+    gui_write(fig, SVG.format(c="ff0000"))  # draw.io saves the figure in place
+    os.utime(fig, ns=(before.st_atime_ns, before.st_mtime_ns + 2_000_000_000))
+    _reactivated(gui_gui, ed, pe)
+    assert not _stale_shown(ed), "precondition: the figure is redrawn, not reported as a change on disk"
+    head = gui_head(repo)
+    _commit_from(gui_gui, ed)
+    assert gui_head(repo) != head, "the commit didn't go through"
+
+
+@pytest.mark.parametrize("other_mode", ["editing", "read_only"])
+def test_gui_srs_88_commit_returns_committing_window_to_read_only(gui_gui, repo, other_mode):
+    """MELLON-GUI-SRS-88: when a commit from a Document Editor succeeds, that Document Editor returns to read-only
+    mode; another Document Editor keeps its mode."""
+    _uncommitted_change(repo)
+    pe = gui_gui.explorer(repo)
+    other = gui_gui.open_doc(pe, STS, editing=(other_mode == "editing"))
+    ed = gui_gui.open_doc(pe, SRS, editing=True)
+    head = gui_head(repo)
+    _commit_from(gui_gui, ed)
+    assert gui_head(repo) != head, "precondition: the commit succeeded"
+    assert gui_gui.is_read_only(ed), "the committing window stayed out of read-only mode"
+    assert _read_only_banner_shown(ed)
+    assert gui_gui.is_read_only(other) == (other_mode == "read_only"), "the other window's mode changed"

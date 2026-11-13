@@ -238,3 +238,107 @@ def test_system_columns_never_hidden(window):
         assert not w.grid_pane.table.isColumnHidden(i), (
             f"{col} should never be hidden"
         )
+
+
+# MELLON-GUI-SRS blind tests
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtGui import QPalette, QStyleHints  # noqa: E402
+
+from tests.gui_support import (  # noqa: E402
+    SRS,
+    STS,
+    SYRS,
+    _explorer_of_main,
+    gui_gui,  # noqa: F401, F811 -- fixture
+    repo,  # noqa: F401, F811 -- fixture
+    run_main,  # noqa: F401, F811 -- fixture
+)
+
+
+# --------------------------------------------------------------------------- themes at start
+
+
+def _window_bg(w) -> str:
+    return w.palette().color(QPalette.ColorRole.Window).name().lower()
+
+
+def _theme_colours(choice: str) -> set[str]:
+    from mellon.gui.theme import tokens_for
+
+    return {v.lower() for v in tokens_for(choice).values()}
+
+
+@pytest.mark.parametrize("choice", ["light", "dark"])
+def test_gui_srs_127_start_uses_last_chosen_theme(gui_gui, run_main, choice):
+    """MELLON-GUI-SRS-127: when the GUI starts, it uses the theme the user last chose."""
+    from mellon.gui.theme import ThemeManager
+
+    other = "dark" if choice == "light" else "light"
+    ThemeManager.instance().apply(choice)  # the user's last choice, saved
+    ThemeManager.instance().apply(other, persist=False)  # the running app shows the other one
+    ThemeManager.reset_for_tests()  # a new start
+    run_main([])
+    bg = _window_bg(_explorer_of_main())
+    assert bg in _theme_colours(choice) and bg not in _theme_colours(other), bg
+
+
+# --------------------------------------------------------------------------- themes
+
+
+@pytest.fixture
+def system_scheme(monkeypatch):
+    """Report the operating system's colour scheme as the test says."""
+    state = {"scheme": Qt.ColorScheme.Unknown}
+    monkeypatch.setattr(QStyleHints, "colorScheme", lambda self: state["scheme"])
+    return state
+
+
+@pytest.mark.parametrize("scheme", ["dark", "light"])
+def test_gui_srs_125_follow_system_takes_os_setting(gui_gui, repo, system_scheme, scheme):
+    """MELLON-GUI-SRS-125: Follow system takes the operating system's light or dark setting."""
+    from mellon.gui.theme import ThemeManager
+
+    other = "light" if scheme == "dark" else "dark"
+    ThemeManager.instance().apply(other, persist=False)
+    system_scheme["scheme"] = Qt.ColorScheme.Dark if scheme == "dark" else Qt.ColorScheme.Light
+    pe = gui_gui.explorer(repo)
+    gui_gui.action(pe, "Follow system").trigger()
+    gui_gui.app.processEvents()
+    bg = _window_bg(pe)
+    assert bg in _theme_colours(scheme) and bg not in _theme_colours(other), bg
+
+
+def test_gui_srs_125_offers_light_dark_and_follow_system(gui_gui, repo):
+    """MELLON-GUI-SRS-125: the GUI offers the themes Light and Dark and a Follow system choice."""
+    pe = gui_gui.explorer(repo)
+    ed = gui_gui.open_doc(pe, SRS)
+    for win in (pe, ed):
+        for name in ("Light", "Dark", "Follow system"):
+            assert gui_gui.action(win, name).isCheckable()
+
+
+def _banner_pixel(ed) -> str:
+    banner = ed.grid_pane.read_only_banner
+    img = banner.grab().toImage()
+    return img.pixelColor(3, img.height() // 2).name().lower()
+
+
+def test_gui_srs_126_theme_applies_to_each_open_window(gui_gui, repo):
+    """MELLON-GUI-SRS-126: choosing a theme in one Document Editor applies it to each open window,
+    banners included."""
+    from mellon.gui.theme import ThemeManager
+
+    ThemeManager.instance().apply("dark", persist=False)
+    pe = gui_gui.explorer(repo)
+    a = gui_gui.open_doc(pe, SRS)
+    b = gui_gui.open_doc(pe, STS)
+    dark_banner = _banner_pixel(b)
+    gui_gui.action(a, "Light").trigger()
+    gui_gui.app.processEvents()
+    for w in (pe, a, b):
+        assert _window_bg(w) in _theme_colours("light"), f"{type(w).__name__} kept {_window_bg(w)}"
+    fresh = gui_gui.open_doc(pe, SYRS)  # built under Light: its banner shows the Light colours
+    light_banner = _banner_pixel(fresh)
+    assert light_banner != dark_banner
+    assert _banner_pixel(a) == light_banner
+    assert _banner_pixel(b) == light_banner
