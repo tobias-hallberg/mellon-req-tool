@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-83">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On a clean 64-bit Windows 11 machine on which no programming-language runtime has been installed ('where python' and 'where py' find nothing but the Microsoft Store alias), install Mellon, start the GUI and the MCP server, open a copy of the req-test fixture, edit an object and commit. Expected: each step works, and nothing asks for a runtime to be installed.</description>
+</object>

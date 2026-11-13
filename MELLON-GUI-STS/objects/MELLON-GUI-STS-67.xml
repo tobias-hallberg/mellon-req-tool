@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-67">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_shift_tab_outdents_via_grid_keypress
+tests/test_gui_shortcuts.py::test_gui_srs_152_outdent_by_key</attr>
+  <description>With read-only mode off, select VCU3-SRS-1, a sub-object of VCU3-SRS-0, and press Shift+Tab in the grid. Expected: VCU3-SRS-1 moves to the top level.</description>
+</object>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-113">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_shortcuts.py::test_gui_srs_155_del_in_grid_runs_delete_object
+tests/test_gui_shortcuts.py::test_gui_srs_155_del_in_text_field_deletes_a_character
+tests/test_gui_shortcuts.py::test_gui_srs_155_del_in_dialog_text_box_deletes_a_character</attr>
+  <description>With the grid focused and read-only mode off, press Del on VCU3-STS-11. Expected: Delete object's confirmation shows. Press Del in the filter box, the Inspector's description, an Inspector text attribute and a dialog's text box. Expected: a character is deleted and no object is deleted (failure analysis CF-G24).</description>
+</object>

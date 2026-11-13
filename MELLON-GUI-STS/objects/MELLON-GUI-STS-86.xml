@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-86">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_gui_srs_4_open_repository_asks_for_a_folder
+tests/test_gui_smoke.py::test_gui_srs_4_cancelled_chooser_keeps_open_repository</attr>
+  <description>No test runs Open Repository…. In the Project Explorer, run Open Repository… with the folder chooser answering a copy of the req-test fixture. Expected: a folder chooser (not a file chooser) was shown, and the three documents are listed. Cancel the chooser with another repository open. Expected: that repository stays open.</description>
+</object>

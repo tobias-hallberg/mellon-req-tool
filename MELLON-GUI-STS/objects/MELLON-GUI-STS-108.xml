@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-108">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_gui_srs_145_ctrl_o_runs_open_repository</attr>
+  <description>Press Ctrl+O in the Project Explorer. Expected: Open Repository…'s folder chooser opens.</description>
+</object>

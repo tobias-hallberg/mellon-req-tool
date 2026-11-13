@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-78">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On the clean machine, download the Windows installer and SHA256SUMS.txt from the published release and compute the installer's SHA-256 with Get-FileHash. Expected: SHA256SUMS.txt is attached to the release and lists the installer's file name with a checksum equal to the computed one.</description>
+</object>

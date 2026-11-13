@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-58">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_git_cell_dirty_marker_appears_after_edit
+tests/test_gui_polish.py::test_git_cell_counts_only_document_files
+tests/test_gui_polish.py::test_project_explorer_git_cell_counts_only_document_files
+tests/test_gui_smoke.py::test_gui_srs_117_status_bar_counts_uncommitted_changes</attr>
+  <description>Open a clean copy of the req-test fixture in the Project Explorer and in a Document Editor. Expected: neither status bar shows an uncommitted change. Add notes.txt at the repository root and src/app.py. Expected: still none. Overwrite VCU3-SRS-2's object file. Expected: both status bars show 1 uncommitted change. Edit an object from the Document Editor. Expected: its status bar shows uncommitted changes.</description>
+</object>

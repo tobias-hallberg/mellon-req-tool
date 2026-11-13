@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-65">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_outline_shortcuts_work_with_outline_pane_hidden
+tests/test_gui_shortcuts.py::test_gui_srs_167_shortcuts_run_with_panes_collapsed</attr>
+  <description>Show a Document Editor on VCU3-SRS with read-only mode off, make it the active window and collapse its outline pane. Select VCU3-SRS-10, put the focus in the grid and press Ctrl+N. Expected: one new object is created.</description>
+</object>

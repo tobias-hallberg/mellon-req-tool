@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-33">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_outline_model.py::test_headings_render_with_chapter_numbers
+tests/test_outline_model.py::test_non_heading_rows_keep_ref_id_prefix
+tests/test_gui_outline.py::test_gui_srs_47_outline_pane_shows_each_object_nested</attr>
+  <description>Open VCU3-SRS of the req-test fixture and look up objects in the outline pane's tree. Expected: the headings VCU3-SRS-0 and VCU3-SRS-14 show as '1  Overtemperature Protection' and '2  Power Management'; VCU3-SRS-10 and the sub-object VCU3-SRS-1 show with their object IDs.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-57">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_git_cell_shows_branch_and_hash
+tests/test_gui_smoke.py::test_gui_srs_115_status_bar_shows_branch_and_short_hash</attr>
+  <description>Open a Document Editor on a clean copy of the req-test fixture. Expected: its status bar shows '&lt;branch&gt; @ &lt;hash&gt;', where the branch is the checked-out branch and the hash has 7 characters.</description>
+</object>

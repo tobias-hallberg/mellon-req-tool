@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-25">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_excepthook_logs_to_file_and_rate_limits_dialog
+tests/test_gui_app.py::test_gui_srs_20_error_in_event_loop_is_logged
+tests/test_gui_app.py::test_gui_srs_20_error_before_first_window_is_logged
+tests/test_gui_app.py::test_gui_srs_20_error_in_compare_job_is_logged
+tests/test_gui_app.py::test_gui_srs_20_error_in_history_job_is_logged
+tests/test_gui_app.py::test_gui_srs_20_error_in_export_job_is_logged
+tests/test_gui_app.py::test_gui_srs_21_error_log_in_localappdata
+tests/test_gui_app.py::test_gui_srs_24_error_dialog_at_most_once_per_10_s
+tests/test_gui_app.py::test_gui_srs_24_error_dialog_names_the_log_file</attr>
+  <description>Point the GUI's per-user application data folder at an empty folder and run with no standard error stream, as the windowed program does. Raise two unexpected errors one straight after the other. Expected: the file logs\mellon-gui.log in that folder holds both errors, each with its type and message; exactly one unexpected-error dialog appears, and it names the first error and the full path of the error log file.</description>
+</object>

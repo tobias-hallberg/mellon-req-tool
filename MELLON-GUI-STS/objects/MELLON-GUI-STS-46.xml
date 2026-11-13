@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-46">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_disable_button_clears_read_only</attr>
+  <description>Open a Document Editor and choose Enable editing on the read-only banner. Expected: read-only mode is off, the banner is hidden and the Read-only action is unchecked; with an object selected, New sibling and New child are enabled and the Inspector shows editable fields.</description>
+</object>

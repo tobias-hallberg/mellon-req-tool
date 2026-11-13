@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-76">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Before installing, record the user's PATH (HKCU\Environment, value Path) and the system PATH (HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment, value Path). Install Mellon, record both again, then uninstall it and record both again. Expected: both values are the same at each point as before installing.</description>
+</object>

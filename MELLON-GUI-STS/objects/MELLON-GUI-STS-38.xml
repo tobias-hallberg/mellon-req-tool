@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-38">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_grid_description_multiline_roundtrip
+tests/test_gui_edits.py::test_grid_row_height_grows_with_line_count
+tests/test_gui_edits.py::test_field_edit_refits_only_its_row
+tests/test_gui_edits.py::test_description_resize_refits_rows_once_after_drag</attr>
+  <description>In VCU3-SRS, set VCU3-SRS-2's description from the grid to three lines, with an empty line between two paragraphs. Expected: the object file and the grid cell hold the whole text. Set it to one line, then to five lines. Expected: the row is taller with five lines. Give VCU3-SRS-15 twelve lines. Expected: its row grows and the next row keeps its height. Narrow the description column step by step. Expected: once the resizing stops, the rows grow to fit the wrapped text.</description>
+</object>

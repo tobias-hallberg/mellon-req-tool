@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-52">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_fresh_window_is_not_stale
+tests/test_gui_reload.py::test_external_edit_flags_stale_on_activate
+tests/test_gui_reload.py::test_parent_doc_edit_flags_child_stale
+tests/test_gui_reload.py::test_figure_added_outside_flags_stale
+tests/test_gui_reload.py::test_parent_figure_change_flags_stale
+tests/test_gui_reload.py::test_own_edit_does_not_flag_stale
+tests/test_gui_edits.py::test_field_edit_does_not_flag_the_window_stale</attr>
+  <description>Open DOC, whose parent document is PARENT, in a Document Editor and activate it. Expected: no Changed on disk banner. Change DOC-1's description from another program and activate. Expected: the banner shows. Repeat, each from a fresh window, with a change to PARENT-42, a figure file added to DOC from outside, and a figure file added to PARENT. Expected: the banner shows each time. Edit DOC-1 from the Document Editor itself, or edit a field of VCU3-SRS-15 in its own window, and activate. Expected: no banner.</description>
+</object>

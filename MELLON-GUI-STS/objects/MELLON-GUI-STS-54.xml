@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-54">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_drawio_backup_file_does_not_flag_stale
+tests/test_gui_reload.py::test_gui_srs_99_side_file_change_is_no_change_on_disk
+tests/test_gui_reload.py::test_gui_srs_99_controls</attr>
+  <description>Attach a figure to DOC-1 through the Document Editor. Write the editor side file .$DOC-1.svg.bkp beside the figure, as draw.io does, and activate. Expected: no Changed on disk banner.</description>
+</object>

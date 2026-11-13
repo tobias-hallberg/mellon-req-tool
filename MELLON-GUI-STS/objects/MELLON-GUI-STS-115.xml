@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-115">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_shortcuts.py::test_gui_srs_157_ctrl_s_and_ctrl_k_run_commit</attr>
+  <description>With an uncommitted change and read-only mode off, press Ctrl+S, then Ctrl+K. Expected: the commit dialog opens each time.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-36">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_field_edit_keeps_model_scroll_and_selection
+tests/test_gui_edits.py::test_gui_srs_57_edit_keeps_object_selected
+tests/test_gui_edits.py::test_gui_srs_58_table_edit_keeps_first_visible_row
+tests/test_gui_edits.py::test_gui_srs_58_taller_description_above_keeps_first_visible_row</attr>
+  <description>Open VCU3-SRS in a window small enough for the grid to scroll. Select VCU3-SRS-15 and scroll the grid halfway down. From the grid, set VCU3-SRS-15's status, then its description. Expected: VCU3-SRS-15 stays selected, the grid's scroll position is the same as before the edits, the grid isn't rebuilt, and the row shows the new values.</description>
+</object>

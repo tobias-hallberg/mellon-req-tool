@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-103">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_commit.py::test_gui_srs_111_commit_refused_after_change_on_disk
+tests/test_gui_commit.py::test_gui_srs_111_commit_goes_through_without_change_on_disk
+tests/test_gui_commit.py::test_gui_srs_111_redrawn_figure_doesnt_stop_commit</attr>
+  <description>Accepted, no test. With read-only mode off and an uncommitted change, change a file of the document from another program without activating the window, then Commit; repeat with the change made while the commit dialog is open, and with a change to a parent document's file. Expected: each commit is refused and the latest commit is unchanged. Control: a figure redrawn under MELLON-GUI-SRS-98 before the commit doesn't stop it.</description>
+</object>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-35">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_inspector_populates_on_object_select
+tests/test_gui_smoke.py::test_outline_click_updates_inspector
+tests/test_gui_edits.py::test_inspector_enum_combo_shows_empty_value_as_the_empty_entry
+tests/test_gui_edits.py::test_grid_edit_shows_in_the_inspector
+tests/test_gui_smoke.py::test_inspector_shows_empty_state_before_any_selection
+tests/test_gui_smoke.py::test_gui_srs_55_inspector_shows_attributes_description_and_links</attr>
+  <description>Open VCU3-SRS of the req-test fixture. Select VCU3-SRS-1. Expected: the Inspector shows its description, which holds FAULT_OVERTEMP, and its outgoing link to VCU3-SyRS-42. Select VCU3-SRS-10. Expected: the Inspector shows its description, which holds MISRA. Give VCU3-SRS-2 an empty status on disk, reload and select it. Expected: the Inspector's status shows no value, not the first option. With VCU3-SRS-15 selected, change its description from the grid. Expected: the Inspector shows the new text, and an edit of another object leaves it. With no object selected, the Inspector shows its empty state.</description>
+</object>

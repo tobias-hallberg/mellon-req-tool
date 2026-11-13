@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-87">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_gui_srs_7_version_exits_with_status_0
+tests/test_gui_app.py::test_gui_srs_7_version_opens_no_window</attr>
+  <description>Run the GUI's command (mellon-gui) with --version in a subprocess from a source checkout, with QT_QPA_PLATFORM=offscreen. Expected: exit status 0 within 30 s, and no top-level window is created (in-process: the entry point returns 0 without building a Project Explorer).</description>
+</object>

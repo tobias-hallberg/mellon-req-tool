@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-85">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_gui_srs_2_folder_argument_opens_repository
+tests/test_gui_app.py::test_gui_srs_2_no_argument_opens_no_repository</attr>
+  <description>No test starts the GUI with a folder argument. Start the GUI's entry point offscreen with the path of a copy of the req-test fixture as its only argument. Expected: the Project Explorer opens that repository and lists VCU3-SyRS, VCU3-SRS and VCU3-STS. Control: without an argument it lists no document.</description>
+</object>

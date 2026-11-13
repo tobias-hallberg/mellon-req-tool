@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-48">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_successful_commit_returns_window_to_read_only
+tests/test_gui_commit.py::test_a_tag_on_a_clean_document_tags_the_current_commit
+tests/test_gui_readonly.py::test_failed_commit_keeps_read_only_state
+tests/test_gui_commit.py::test_a_failed_tag_on_a_clean_document_is_shown
+tests/test_gui_commit.py::test_gui_srs_88_commit_returns_committing_window_to_read_only</attr>
+  <description>With read-only mode off, change an object and commit from the Document Editor. Expected: the window is in read-only mode, with the banner shown and the Read-only action checked. On a document with no uncommitted change, enter a tag in the commit dialog. Expected: the tag names the latest commit and the window is in read-only mode. Cancel the commit dialog; and, separately, enter a tag that another program created meanwhile. Expected: read-only mode stays off both times.</description>
+</object>

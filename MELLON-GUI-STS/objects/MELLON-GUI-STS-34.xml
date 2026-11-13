@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-34">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_grid_setdata_commits_enum_attribute
+tests/test_gui_edits.py::test_grid_setdata_edits_description
+tests/test_gui_edits.py::test_inspector_combobox_autocommits_on_change</attr>
+  <description>Open VCU3-SRS of a copy of the req-test fixture with read-only mode off. In the grid set VCU3-SRS-2's status to Approved, then set its description; in the Inspector pick Reviewed for its status. Expected: straight after each edit, with no save action, VCU3-SRS-2's object file on disk holds the new value, and the grid shows it.</description>
+</object>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-79">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On the clean machine, install the previous release, configure an MCP client to start %LOCALAPPDATA%\Programs\Mellon\mellon-mcp.exe, then run the new release's Windows installer. Expected: no page asks for a folder and the new release is in %LOCALAPPDATA%\Programs\Mellon; 'mellon-mcp.exe --version' and the About dialog report the new release number; the MCP client connects with its configuration unchanged; the installed apps list holds Mellon once.</description>
+</object>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-119">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_shortcuts.py::test_gui_srs_162_ctrl_z_in_grid_runs_undo
+tests/test_gui_shortcuts.py::test_gui_srs_162_ctrl_z_in_text_field_undoes_its_text</attr>
+  <description>After an edit, press Ctrl+Z with the focus in the grid. Expected: the edit is undone on disk. Press Ctrl+Z in the Inspector's description, the filter box and a grid cell editor. Expected: only the field's text is undone; no file changes (failure analysis change 25).</description>
+</object>

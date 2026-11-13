@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-91">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_gui_srs_26_gui_keeps_running_after_unexpected_error</attr>
+  <description>Open the Project Explorer and a Document Editor with read-only mode off, and raise an unexpected error from a timer in the GUI. Expected: after the dialog is dismissed both windows are still open and shown, the GUI still handles events, and a following grid edit is written to disk.</description>
+</object>

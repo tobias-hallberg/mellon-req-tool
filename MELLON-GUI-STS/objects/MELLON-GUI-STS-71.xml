@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-71">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>After the fresh install, list %LOCALAPPDATA%\Programs\Mellon, start mellon.exe from it, and run 'mellon-mcp.exe --version' from it in a terminal. Expected: mellon.exe and mellon-mcp.exe are directly in the install folder; mellon.exe opens the Project Explorer; mellon-mcp.exe prints the release number and exits with status 0.</description>
+</object>

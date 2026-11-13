@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-45">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_window_opens_read_only_by_default
+tests/test_gui_readonly.py::test_view_menu_action_toggles_read_only
+tests/test_gui_readonly.py::test_grid_cells_editable_after_toggling_off</attr>
+  <description>Open a Document Editor. Expected: it is in read-only mode, the Read-only action is checked, the read-only banner shows, and the grid's description cells aren't editable. Uncheck the Read-only action. Expected: read-only mode is off, the banner is hidden and the description cells are editable. Check it again. Expected: read-only mode is on and the banner shows.</description>
+</object>

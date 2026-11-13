@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-53">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_figure_saved_in_place_does_not_flag_stale
+tests/test_gui_reload.py::test_figure_plus_object_change_flags_stale
+tests/test_gui_reload.py::test_figure_save_keeps_existing_banner</attr>
+  <description>Attach a figure to DOC-1 through the Document Editor. Overwrite the figure file with a new picture from outside, as draw.io saves, and activate. Expected: no Changed on disk banner; the row is redrawn and no changed figure is left to report. Overwrite the figure and also change DOC-1's description from outside, then activate. Expected: the banner shows. With the banner already shown for a description change, save the figure again and activate. Expected: the banner still shows.</description>
+</object>

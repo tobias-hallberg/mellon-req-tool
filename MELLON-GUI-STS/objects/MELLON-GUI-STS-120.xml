@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-120">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_shortcuts.py::test_gui_srs_163_ctrl_y_and_ctrl_shift_z_in_grid_run_redo
+tests/test_gui_shortcuts.py::test_gui_srs_163_redo_in_text_field_redoes_its_text</attr>
+  <description>After an undo, press Ctrl+Y, then (after another undo) Ctrl+Shift+Z, with the focus in the grid. Expected: the edit is redone each time. In each kind of text field: only the field's text changes.</description>
+</object>

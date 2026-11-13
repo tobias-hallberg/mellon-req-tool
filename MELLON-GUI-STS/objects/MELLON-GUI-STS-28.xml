@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-28">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_closed_editor_windows_are_freed
+tests/test_gui_reload.py::test_activating_failed_doc_shows_error_instead_of_editor
+tests/test_gui_smoke.py::test_gui_srs_36_opening_document_opens_editor</attr>
+  <description>Open a repository with the documents DOC and PARENT in the Project Explorer and open each document from it. Expected: a Document Editor opens for each. Then put git conflict markers in DOC's only object file, open the repository again and activate DOC's row. Expected: no Document Editor opens, and a message names DOC-1.xml and says '(unresolved merge conflict?)'.</description>
+</object>

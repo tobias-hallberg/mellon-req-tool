@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-102">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_gui_srs_109_refused_edit_shows_changed_on_disk_banner
+tests/test_gui_reload.py::test_gui_srs_109_accepted_edit_shows_no_banner
+tests/test_gui_reload.py::test_gui_srs_109_refused_commit_shows_changed_on_disk_banner</attr>
+  <description>Accepted, no test. With read-only mode off, change DOC-1's object file from another program without activating the window, then edit DOC-1 from the window so that the edit is refused because its file changed (MELLON-STORE-SRS-182). Expected: the Changed on disk banner shows. Do the same with a commit refused under MELLON-GUI-SRS-111. Expected: the banner shows.</description>
+</object>

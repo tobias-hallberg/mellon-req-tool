@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-99">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_gui_srs_86_only_read_only_and_enable_editing_change_mode</attr>
+  <description>With read-only mode on, run Reload from disk, a theme change, Compare, Validate, Trace, selecting objects, choosing a filter and a view, and a change on disk followed by activation. Expected: read-only mode is still on after each. Repeat with it off. Expected: still off after each, except a commit or tag (MELLON-GUI-SRS-88).</description>
+</object>

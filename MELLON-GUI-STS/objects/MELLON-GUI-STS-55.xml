@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-55">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_stale_banner_refuses_edits_until_reload
+tests/test_gui_reload.py::test_stale_grid_opens_no_cell_editor
+tests/test_gui_edits.py::test_inspector_stale_combo_shows_value_on_disk
+tests/test_gui_edits.py::test_inspector_fields_are_locked_while_stale
+tests/test_gui_tables.py::test_table_op_refused_while_stale
+tests/test_gui_reload.py::test_gui_srs_104_edit_refused_while_banner_shown
+tests/test_gui_reload.py::test_gui_srs_104_control_edit_written_without_banner</attr>
+  <description>With read-only mode off, change DOC-1's description from another program and activate the Document Editor, so that the Changed on disk banner shows. Try a grid cell edit, an Inspector description edit and New sibling. Expected: each is refused with a status message holding 'Reload first (F5)', the typed Inspector text stays in its field, the object files are unchanged and no object is added; no grid cell editor opens. While the banner shows, pick a status in the Inspector. Expected: the file is unchanged and the list shows the value on disk; the Inspector's fields can't be typed into; a Table menu action is refused with the same message. Reload from disk. Expected: a grid edit is written.</description>
+</object>

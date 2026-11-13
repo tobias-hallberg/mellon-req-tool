@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-32">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_history.py::test_outline_pane_toggle_hides_pane
+tests/test_gui_history.py::test_right_pane_toggle_hides_pane</attr>
+  <description>Open a Document Editor. Turn the outline pane's toggle off, then on; do the same with the right pane's toggle. Expected: each pane is hidden while its toggle is off and shown again when the toggle is on.</description>
+</object>

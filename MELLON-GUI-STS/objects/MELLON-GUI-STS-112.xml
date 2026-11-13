@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-112">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_shortcuts.py::test_gui_srs_154_alt_down_runs_move_down</attr>
+  <description>Select VCU3-SRS-1 and press Alt+Down. Expected: VCU3-SRS-1 comes after VCU3-SRS-2.</description>
+</object>

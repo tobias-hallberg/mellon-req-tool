@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-49">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_mutation_actions_disabled_when_read_only</attr>
+  <description>Open a Document Editor, which starts in read-only mode, and select VCU3-SRS-1. Expected: Properties is disabled, as are New sibling, New child, Indent, Outdent, Move up, Move down, Delete and Add link; Trace stays enabled.</description>
+</object>

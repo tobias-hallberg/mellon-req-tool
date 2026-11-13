@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-73">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Inspection</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>After a fresh install, list the third-party components the install folder contains (each bundled library and program, including the typesetting program) and open LICENSE and THIRD-PARTY-NOTICES.txt there. Expected: LICENSE holds the full text of GPL-3.0; THIRD-PARTY-NOTICES.txt holds a licence notice for each listed component, and lists no component that isn't there.</description>
+</object>

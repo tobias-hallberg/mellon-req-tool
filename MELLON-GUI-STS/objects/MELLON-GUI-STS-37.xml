@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-37">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_theme.py::test_system_columns_never_hidden
+tests/test_gui_smoke.py::test_grid_columns_match_document_schema
+tests/test_gui_grid_view_order.py::test_gui_srs_65_view_keeps_gutter_id_and_description
+tests/test_gui_settings.py::test_gui_srs_65_zero_stored_widths_keep_columns_visible</attr>
+  <description>Open each document of the req-test fixture in turn. Expected: the grid's first columns are the state gutter, the object ID, the description and the type, followed by the attributes the manifest defines; the state gutter, object ID and description columns are visible.</description>
+</object>

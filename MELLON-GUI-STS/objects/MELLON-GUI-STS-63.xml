@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-63">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_branding.py::test_project_explorer_has_help_about_action
+tests/test_branding.py::test_document_editor_has_help_about_action
+tests/test_gui_smoke.py::test_gui_srs_140_about_action_opens_about_dialog</attr>
+  <description>Open the Project Explorer and a Document Editor and look at their menus. Expected: each has an About action.</description>
+</object>

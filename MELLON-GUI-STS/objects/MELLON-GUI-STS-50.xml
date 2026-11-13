@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-50">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_grid_setdata_refused_when_read_only
+tests/test_gui_readonly.py::test_grid_cells_not_editable_when_read_only
+tests/test_gui_readonly.py::test_inspector_attrs_render_as_labels_when_read_only
+tests/test_gui_readonly.py::test_tab_in_grid_does_not_indent_when_read_only
+tests/test_gui_readonly.py::test_new_sibling_slot_no_op_when_read_only
+tests/test_gui_grid_view_order.py::test_drag_reorder_does_not_write_view_xml_when_read_only
+tests/test_gui_commit.py::test_discard_unavailable_when_read_only_or_clean
+tests/test_gui_undo.py::test_undo_disabled_while_read_only
+tests/test_gui_figure.py::test_figure_action_gated_by_read_only
+tests/test_gui_figure.py::test_figure_menu_drawio_disabled_read_only
+tests/test_gui_filter.py::test_filter_menu_edit_disabled_in_read_only
+tests/test_gui_filter.py::test_filter_dialog_save_disabled_in_read_only
+tests/test_gui_smoke.py::test_check_srs_9_validate_action_changes_no_working_copy_file[read-only]
+tests/test_gui_readonly.py::test_gui_srs_91_read_only_mode_changes_nothing</attr>
+  <description>On a copy of the req-test fixture, open a Document Editor in read-only mode and try each input: write a description into a grid cell; open a grid cell editor; edit in the Inspector; press Tab in the grid; run New sibling; drag an attribute column of the active view to another place; Discard; Undo after an edit; Attach or replace figure and New draw.io figure; the Filters menu's editing entries and Save in the Advanced filter dialog; Validate, on a document with uncommitted changes. Expected: the grid cells aren't editable and a write is refused; the Inspector shows labels, not fields; the outline is unchanged; no object is added; the view file's bytes are unchanged; Discard, Undo, the figure actions and the filter editing entries are disabled; after Validate each work tree file has its earlier content and modified time.</description>
+</object>

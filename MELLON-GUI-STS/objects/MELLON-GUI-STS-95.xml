@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-95">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_gui_srs_53_outline_selection_selects_grid_row</attr>
+  <description>Click VCU3-SRS-1 (a sub-object) in the outline pane with the mouse. Expected: the grid's selected row is VCU3-SRS-1 and it is scrolled into view.</description>
+</object>

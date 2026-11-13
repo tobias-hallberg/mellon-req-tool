@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-77">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>After a fresh install, run 'mellon-mcp.exe --version' in a terminal, open the About dialog in the installed GUI, and run 'mellon.exe --version' with its standard output redirected to a file. Expected: each release number read equals the release number in the installer's file name.</description>
+</object>

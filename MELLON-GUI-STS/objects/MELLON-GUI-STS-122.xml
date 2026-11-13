@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-122">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_gui_srs_165_ctrl_enter_saves_description_editor
+tests/test_gui_edits.py::test_gui_srs_165_ctrl_enter_saves_table_cell_editor</attr>
+  <description>Open VCU3-SRS-2's description editor and a table-cell editor, type text including Enter, and press Ctrl+Enter. Expected: the text, with its line break, is in the object file and the editor is closed.</description>
+</object>

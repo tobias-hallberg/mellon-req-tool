@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-70">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On a clean 64-bit Windows 11 virtual machine with no Mellon installed, sign in as a standard user without administrator rights and run the Windows installer with the default answers. Expected: no administrator prompt appears; no page offers a choice of install folder; the installation ends without error; Mellon is installed in %LOCALAPPDATA%\Programs\Mellon and nowhere under Program Files.</description>
+</object>

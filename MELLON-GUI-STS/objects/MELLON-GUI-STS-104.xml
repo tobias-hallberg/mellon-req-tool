@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-104">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_gui_srs_118_editor_status_bar_says_no_branch_on_detached_head
+tests/test_gui_smoke.py::test_gui_srs_118_editor_status_bar_on_branch_says_nothing_of_detached</attr>
+  <description>Check out a commit of a copy of the req-test fixture by its hash (detached HEAD) and open a Document Editor. Expected: its status bar says that no branch is checked out (its tooltip, as built today). Only the library's branch lookup is tested.</description>
+</object>

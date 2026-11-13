@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-41">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_inspector_description_autocommits_on_focus_out
+tests/test_gui_edits.py::test_typed_attribute_editors_write_only_when_changed
+tests/test_gui_edits.py::test_gui_srs_71_inspector_description_saved_on_focus_out
+tests/test_gui_edits.py::test_gui_srs_71_inspector_text_attribute_saved_on_focus_out
+tests/test_gui_edits.py::test_gui_srs_71_grid_cell_editor_saved_on_focus_out</attr>
+  <description>With read-only mode off, type a new description for VCU3-SRS-10 in the Inspector and let the field lose the focus. Expected: the object file holds the text. Add the integer attribute effort, open its grid cell for VCU3-SRS-2, set 5 and move to another cell. Expected: effort 5 is written.</description>
+</object>

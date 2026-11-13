@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-60">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_theme.py::test_changing_theme_via_action_applies_palette
+tests/test_gui_theme.py::test_suspect_banner_restyles_on_theme_change
+tests/test_gui_readonly.py::test_read_only_banner_uses_theme_blue
+tests/test_gui_theme.py::test_theme_changed_signal_fires
+tests/test_gui_theme.py::test_gui_srs_126_theme_applies_to_each_open_window</attr>
+  <description>Open VCU3-SRS in a Document Editor. Choose Light, then Dark, from the Theme menu. Expected: the GUI's colours change to each theme's; the suspect banner and the read-only banner take the chosen theme's colours.</description>
+</object>

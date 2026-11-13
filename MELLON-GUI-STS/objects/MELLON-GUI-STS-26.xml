@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-26">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_excepthook_log_falls_back_to_temp_dir
+tests/test_gui_app.py::test_gui_srs_22_error_log_falls_back_to_temp</attr>
+  <description>Make the per-user application data folder undetermined, point the temporary folder at an empty folder, and start the GUI's error handling. Expected: the error log is logs\mellon-gui.log in the temporary folder, not a file in the current folder.</description>
+</object>

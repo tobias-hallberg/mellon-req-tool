@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-40">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_filter_empty_state_when_text_hides_everything
+tests/test_gui_polish.py::test_clear_filters_restores_table
+tests/test_gui_smoke.py::test_gui_srs_69_no_match_state_clear_filters
+tests/test_gui_smoke.py::test_gui_srs_69_empty_document_with_filter_shows_no_objects_state</attr>
+  <description>Open VCU3-SRS and type a text that matches no object into the filter box. Expected: the grid shows the no-match state. Turn Suspects only on as well, then choose Clear filters. Expected: the filter box is empty, Suspects only is off, and the grid shows its rows again.</description>
+</object>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<links source="MELLON-GUI-STS-45">
+  <link target-doc="MELLON-GUI-SRS" target-id="MELLON-GUI-SRS-82" type="verifies" ack="034ecfd"/>
+  <link target-doc="MELLON-GUI-SRS" target-id="MELLON-GUI-SRS-83" type="verifies" ack="034ecfd"/>
+  <link target-doc="MELLON-GUI-SRS" target-id="MELLON-GUI-SRS-84" type="verifies" ack="034ecfd"/>
+</links>

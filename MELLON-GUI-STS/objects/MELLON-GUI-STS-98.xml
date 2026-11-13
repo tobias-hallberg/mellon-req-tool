@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-98">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_grid_view_order.py::test_gui_srs_66_attribute_columns_headed_by_label</attr>
+  <description>Give the attribute priority the label 'Priority level' in a manifest and leave status without a label. Expected: the grid's column headings read 'Priority level' and 'status', and the type column reads 'Type' when the type attribute has no label.</description>
+</object>

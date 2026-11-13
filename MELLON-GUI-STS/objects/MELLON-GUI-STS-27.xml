@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-27">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_project_tree_lists_three_docs
+tests/test_gui_reload.py::test_explorer_lists_doc_that_fails_to_load</attr>
+  <description>Open the req-test fixture repository, which holds the documents VCU3-SyRS, VCU3-SRS and VCU3-STS. Expected: the document list holds exactly those three document IDs. Then open a repository with the documents DOC and PARENT in which DOC's only object file holds git conflict markers. Expected: DOC and PARENT are both listed; DOC's row says it failed to load, its tooltip names DOC-1.xml with a line number and '(unresolved merge conflict?)', and the status bar says 1 failed to load.</description>
+</object>

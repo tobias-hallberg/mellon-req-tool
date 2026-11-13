@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-94">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_gui_srs_52_at_most_one_object_selected</attr>
+  <description>Open VCU3-SRS, click a row, then Ctrl+click and Shift+click two other rows in the grid. Expected: one row is selected (the last clicked), and the outline pane has one selected item.</description>
+</object>

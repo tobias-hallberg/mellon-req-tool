@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-24">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_opening_another_repo_closes_old_repo_editors
+tests/test_gui_smoke.py::test_gui_srs_6_opening_other_repository_closes_editors_and_their_dialog
+tests/test_gui_smoke.py::test_gui_srs_6_opening_other_repository_while_export_runs</attr>
+  <description>Make a git repository holding the documents DOC and PARENT, and a second copy of it in another folder. Open the first copy in the Project Explorer and open DOC in a Document Editor. Then open the second copy in the same Project Explorer. Expected: the Document Editor on the first copy closes and the Project Explorer lists no open Document Editor; opening DOC again opens a new Document Editor that reads the second copy.</description>
+</object>

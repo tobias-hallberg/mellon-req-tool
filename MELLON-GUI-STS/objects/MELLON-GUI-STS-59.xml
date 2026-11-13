@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-59">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_theme.py::test_theme_menu_has_three_options
+tests/test_gui_theme.py::test_apply_dark_changes_palette
+tests/test_gui_theme.py::test_apply_light_changes_palette
+tests/test_gui_theme.py::test_resolve_direct_choices
+tests/test_gui_theme.py::test_gui_srs_125_follow_system_takes_os_setting
+tests/test_gui_theme.py::test_gui_srs_125_offers_light_dark_and_follow_system</attr>
+  <description>Open a Document Editor and look at its Theme menu. Expected: it offers Dark, Light and Follow system. Apply Dark, then Light. Expected: the window background colour is the Dark theme's, then the Light theme's.</description>
+</object>

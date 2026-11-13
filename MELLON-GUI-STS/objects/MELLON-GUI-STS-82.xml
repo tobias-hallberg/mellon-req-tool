@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-82">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Demonstration</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On a clean 64-bit Windows 10 virtual machine and on a clean 64-bit Windows 11 one, install Mellon and, on a copy of the req-test fixture, open the repository in the GUI, edit an object, commit from the commit dialog, export VCU3-SRS to PDF, and connect an MCP client to mellon-mcp.exe. Expected: each step works on both machines.</description>
+</object>

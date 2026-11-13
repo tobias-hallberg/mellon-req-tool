@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-100">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_readonly.py::test_gui_srs_89_commit_disabled_in_read_only_mode</attr>
+  <description>Open a Document Editor (read-only mode on) on a document with an uncommitted change. Expected: Commit is disabled in the menu and the toolbar, and pressing Ctrl+S or Ctrl+K opens no commit dialog and leaves the latest commit and the tags unchanged. Turn read-only mode off. Expected: Commit is enabled. No test checks Commit in read-only mode.</description>
+</object>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-39">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_empty_state_visible_when_document_has_no_objects
+tests/test_gui_outline.py::test_empty_state_button_triggers_new_top_level
+tests/test_gui_polish.py::test_filter_empty_distinct_from_document_empty
+tests/test_gui_smoke.py::test_gui_srs_68_no_objects_state</attr>
+  <description>Make a document EMPTY whose outline is empty and open it. Expected: the grid shows the no-objects state, not the no-match state. With read-only mode off, choose Add first object. Expected: the document holds one object and the grid shows it.</description>
+</object>

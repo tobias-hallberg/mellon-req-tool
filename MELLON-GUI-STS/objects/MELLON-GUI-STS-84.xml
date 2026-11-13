@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-84">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_app.py::test_gui_srs_217_edit_and_commit_without_drawio</attr>
+  <description>On a clean machine without draw.io desktop (no draw.io install folder, none on PATH, MELLON_DRAWIO unset), install Mellon, start the GUI, open a copy of the req-test fixture, edit an attribute value and a description and commit. Expected: the GUI starts, each edit and the commit succeed, and Edit in draw.io says that draw.io isn't installed and changes nothing.</description>
+</object>

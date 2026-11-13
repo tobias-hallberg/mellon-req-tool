@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-72">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>On the clean machine, straight after a fresh install and before any other export, disable every network adapter, leave TECTONIC_CACHE_DIR unset, open a copy of the req-test fixture in the installed GUI and export VCU3-SRS, which has no figures, to PDF. Expected: the export succeeds, and the PDF opens and shows the document.</description>
+</object>

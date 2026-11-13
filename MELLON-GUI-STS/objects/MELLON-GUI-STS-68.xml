@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-68">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_reload_action_has_f5_shortcut
+tests/test_gui_shortcuts.py::test_gui_srs_161_f5_runs_reload_from_disk</attr>
+  <description>Open a Document Editor. Expected: Reload from disk has the shortcut F5.</description>
+</object>

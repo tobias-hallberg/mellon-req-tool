@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-44">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_attr_editor_opened_and_left_writes_nothing
+tests/test_gui_edits.py::test_enum_editor_keeps_value_outside_options
+tests/test_gui_edits.py::test_typed_attribute_editors_write_only_when_changed
+tests/test_gui_edits.py::test_grid_setdata_unchanged_value_is_a_noop</attr>
+  <description>With read-only mode off, open the grid cell editors of VCU3-SRS-0's empty priority, req-type and verification-method cells and of its type cell, and leave each unchanged. Expected: nothing is written and the object file's bytes are unchanged. Give VCU3-SRS-2 a priority that isn't an option, open its cell editor and leave. Expected: the editor shows that value and nothing is written. Open an empty integer cell and an empty date cell and leave each untouched. Expected: nothing is written. Confirm a status cell and a description cell with the values they hold. Expected: nothing is written.</description>
+</object>

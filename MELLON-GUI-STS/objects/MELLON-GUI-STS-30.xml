@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-30">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_explorer_picks_up_external_doc_create_and_delete</attr>
+  <description>Open a repository with the documents DOC and PARENT. From another program, create the document NEWDOC, then activate the Project Explorer. Expected: DOC, PARENT and NEWDOC are listed. Delete NEWDOC's folder and activate the Project Explorer again. Expected: only DOC and PARENT are listed.</description>
+</object>

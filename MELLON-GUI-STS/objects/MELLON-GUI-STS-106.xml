@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-106">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_settings.py::test_gui_srs_137_explorer_reopens_with_last_size_and_position
+tests/test_gui_settings.py::test_gui_srs_137_editor_reopens_with_last_size_and_position</attr>
+  <description>Open the Project Explorer, give it a size and position, close it and open it again. Expected: the same size and position. Repeat for a Document Editor. No test exists; architecture.md A7 is the only record.</description>
+</object>

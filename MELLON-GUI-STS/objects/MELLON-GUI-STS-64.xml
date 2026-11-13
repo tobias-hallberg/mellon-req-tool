@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-64">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_explorer_f5_relists_documents_from_disk
+tests/test_gui_smoke.py::test_gui_srs_147_f5_runs_refresh</attr>
+  <description>Open a repository in the Project Explorer. Expected: Refresh's shortcut is F5. Put git conflict markers in a document's object file and run Refresh. Expected: the document is shown as failed to load.</description>
+</object>

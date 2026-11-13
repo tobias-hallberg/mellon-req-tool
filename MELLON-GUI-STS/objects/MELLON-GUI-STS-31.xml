@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-31">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_main_window_has_three_panes
+tests/test_gui_history.py::test_right_pane_has_inspector_and_history_tabs</attr>
+  <description>Open VCU3-SRS of the req-test fixture in a Document Editor. Expected: the window has the outline pane, the grid and a right pane whose two tabs are Inspector and History, with Inspector shown first.</description>
+</object>

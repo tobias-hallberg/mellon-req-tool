@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-47">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_stale_banner_refuses_edits_until_reload
+tests/test_gui_reload.py::test_stale_grid_opens_no_cell_editor
+tests/test_gui_readonly.py::test_gui_srs_87_reload_keeps_read_only_mode</attr>
+  <description>With read-only mode off, change DOC-1's description from another program and activate the Document Editor so that the Changed on disk banner shows. Choose Reload from disk. Expected: read-only mode is still off: the description cell is editable and a grid edit is written to disk.</description>
+</object>

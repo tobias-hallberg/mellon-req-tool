@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-56">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_reload.py::test_reload_clears_banner_and_shows_fresh_content
+tests/test_gui_reload.py::test_reload_picks_up_external_schema_change
+tests/test_gui_reload.py::test_reload_via_banner_button</attr>
+  <description>Change DOC-1's description from another program and activate the Document Editor, so that the banner shows. Choose Reload from disk. Expected: the banner is hidden and the grid shows the new description. Add an attribute to DOC from outside and reload. Expected: the grid has a column for it. Change DOC-1 again, activate, and choose Reload on the banner. Expected: the banner is hidden.</description>
+</object>

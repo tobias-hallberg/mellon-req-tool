@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-123">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_gui_srs_166_esc_cancels_description_editor
+tests/test_gui_edits.py::test_gui_srs_166_esc_cancels_table_cell_editor</attr>
+  <description>Open the description editor and a table-cell editor, type text and press Esc. Expected: the editor closes, the object file is unchanged, and the text isn't saved later.</description>
+</object>

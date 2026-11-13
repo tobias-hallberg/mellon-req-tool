@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-80">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>With a release installed, record the SHA-256 of each file in the install folder. Start mellon.exe and run the Windows installer. Then quit mellon.exe, have an MCP client start mellon-mcp.exe and make an export call, and run the installer again while the call runs. Expected: each time the installer stops before changing anything, saying Mellon is running; afterwards each file in the install folder has its recorded checksum, and no file was added or removed.</description>
+</object>

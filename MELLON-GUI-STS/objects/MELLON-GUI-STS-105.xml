@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-105">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_settings.py::test_gui_srs_133_editor_restores_pane_sizes_per_document</attr>
+  <description>Open DOC, set the outline pane and right pane to widths that differ from the defaults, and close it. Reopen DOC. Expected: the same pane widths. Open PARENT. Expected: PARENT's own sizes, not DOC's.</description>
+</object>

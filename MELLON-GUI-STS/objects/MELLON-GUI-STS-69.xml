@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-69">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Inspection</attr>
+  <attr name="execution">Manual</attr>
+  <attr name="rung">4 Installer</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <description>Take the Windows installer of the release under test from its published release and from the release workflow's build. Expected: the file name is Mellon-Setup-&lt;release number&gt;.exe, for example Mellon-Setup-0.3.0.exe for release 0.3.0.</description>
+</object>

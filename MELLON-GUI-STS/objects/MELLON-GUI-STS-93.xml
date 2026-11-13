@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-93">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_smoke.py::test_gui_srs_38_explorer_lists_open_editors</attr>
+  <description>Open DOC and PARENT from the Project Explorer. Expected: the list of open Document Editors shows exactly DOC and PARENT. Close DOC. Expected: it shows PARENT only. The existing test checks only that the list empties when every editor closes.</description>
+</object>

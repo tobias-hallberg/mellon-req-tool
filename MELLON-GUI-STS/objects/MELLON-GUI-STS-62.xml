@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-62">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_settings.py::test_make_settings_honours_the_default_format
+tests/test_gui_grid_view_order.py::test_drag_reorder_default_bucket_persists_in_qsettings
+tests/test_gui_theme.py::test_column_visibility_persists_across_window
+tests/test_gui_settings.py::test_gui_srs_134_settings_are_kept_outside_repository</attr>
+  <description>Open VCU3-SRS with no view active and drag an attribute column to the front; hide the rationale column; then open a second Document Editor on the same repository. Expected: the new column order is kept in the user's settings, not in a repository file; the second window hides rationale too; the settings are kept per user.</description>
+</object>

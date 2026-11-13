@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-97">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_outline.py::test_gui_srs_64_grid_rows_in_outline_order</attr>
+  <description>Open VCU3-SRS. Expected: the grid's rows, top to bottom, are the outline's objects in depth-first order (each object before its sub-objects). Move VCU3-SRS-1 down. Expected: the rows follow the new outline. The existing tests check only the row count.</description>
+</object>

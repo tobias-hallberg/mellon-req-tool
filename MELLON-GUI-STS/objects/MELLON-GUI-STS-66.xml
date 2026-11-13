@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-66">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_polish.py::test_tab_indents_via_grid_keypress
+tests/test_gui_shortcuts.py::test_gui_srs_151_indent_by_key
+tests/test_gui_shortcuts.py::test_gui_srs_151_152_tab_in_cell_editor_leaves_outline</attr>
+  <description>With read-only mode off, select VCU3-SRS-10, a top-level object that follows VCU3-SRS-0, and press Tab in the grid. Expected: VCU3-SRS-10 becomes a sub-object of VCU3-SRS-0.</description>
+</object>

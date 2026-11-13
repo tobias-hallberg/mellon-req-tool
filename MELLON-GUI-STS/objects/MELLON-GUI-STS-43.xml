@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-43">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
+  <attr name="automated-tests">tests/test_gui_edits.py::test_action_commits_open_grid_editor_first
+tests/test_gui_edits.py::test_reload_commits_pending_inspector_text
+tests/test_gui_export.py::test_export_includes_text_typed_just_before
+tests/test_gui_tables.py::test_table_op_commits_inspector_description_first
+tests/test_gui_undo.py::test_undo_flushes_pending_text_first_and_undoes_it
+tests/test_gui_compare.py::test_working_copy_compare_saves_pending_inspector_text
+tests/test_gui_edits.py::test_gui_srs_74_pending_edit_saved_before_action</attr>
+  <description>With read-only mode off, leave typed text unsaved and run an action without moving the focus: text in VCU3-SRS-2's description cell editor, then New sibling; text in the Inspector's description and rationale fields, then Reload from disk; Inspector text, then Export; Inspector text, then a Table menu action; Inspector text, then Undo; Inspector text, then Compare of the latest commit with the working copy. Expected: each time the typed text is in the object file before the action takes effect: the exported PDF and the comparison show it, and Undo undoes it as the newest edit.</description>
+</object>
