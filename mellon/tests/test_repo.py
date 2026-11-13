@@ -601,3 +601,35 @@ def test_store_srs_30_only_three_markers_in_order_are_a_merge_conflict(two_doc_r
     (err,) = errors
     assert err.file == bad
     assert "merge conflict" not in err.message, err.message
+
+
+def test_store_srs_28_folder_that_cant_be_examined_doesnt_hide_the_others(two_doc_repo,
+                                                                           monkeypatch):
+    """CV-STORE-14, MELLON-STORE-SRS-27 and -28: a folder at the root whose manifest
+    Mellon may not examine (another account's build folder, an ACL; simulated, since the
+    tests may run as root) is listed with a load error, and the other documents load."""
+    import errno
+
+    root, _parent, _doc, _c1 = two_doc_repo
+    build = root / "build"
+    build.mkdir()
+    (build / "build.xml").write_text("<x/>", encoding="utf-8")
+    real_is_file = Path.is_file
+    real_listdir = os.listdir
+
+    def is_file(self, *a, **k):
+        if self.parent.name == "build":
+            raise PermissionError(errno.EACCES, "Permission denied", str(self))
+        return real_is_file(self, *a, **k)
+
+    def listdir(path="."):
+        if Path(path).name == "build":
+            raise PermissionError(errno.EACCES, "Permission denied", str(path))
+        return real_listdir(path)
+
+    monkeypatch.setattr(Path, "is_file", is_file)
+    monkeypatch.setattr(os, "listdir", listdir)
+    errors: list[DocLoadError] = []
+    docs = load_all(root, load_errors=errors)
+    assert set(docs) == {"PARENT", "DOC"}
+    assert [e.doc_id for e in errors] == ["build"], errors

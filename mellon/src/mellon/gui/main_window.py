@@ -1056,7 +1056,7 @@ class DocumentEditorWindow(QMainWindow):
             f"{'Undid' if undo else 'Redid'} {label}.", 4000
         )
 
-    # Requirements: MELLON-EDIT-SRS-113
+    # Requirements: MELLON-EDIT-SRS-113, MELLON-STORE-SRS-174
     def _new_sibling(self) -> None:
         if not self._prepare_edit():
             return
@@ -1069,10 +1069,9 @@ class DocumentEditorWindow(QMainWindow):
         )
         svc = self.controller.require_service()
         try:
-            result = svc.create_object(doc_id, parent_id=parent_id)
+            # MELLON-STORE-SRS-174: one write, so a failure leaves nothing.
+            result = svc.create_object(doc_id, parent_id=parent_id, after=sel)
             new_id = result.value
-            if sel is not None:
-                svc.move_object(doc_id, new_id, after=sel)
         except ServiceError as e:
             self._status.showMessage(f"New sibling failed: {e}", 6000)
             return

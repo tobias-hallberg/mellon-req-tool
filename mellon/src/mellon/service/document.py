@@ -243,7 +243,11 @@ class DocumentService:
             folder = editor._child_path(root, doc_id)
         except EditorError:
             folder = None
-        if folder is None or not folder.is_dir() or not has_manifest(folder):
+        try:
+            found = folder is not None and folder.is_dir() and has_manifest(folder)
+        except OSError:
+            found = True  # can't be examined: loading it reports the load error
+        if not found:
             raise ServiceError(
                 ErrorCode.NOT_FOUND, f"document {doc_id!r} not found under {root}"
             )
@@ -753,11 +757,20 @@ class DocumentService:
         *,
         parent_id: str | None = None,
         description: str = "",
+        after: str | None = None,
     ) -> MutationResult[str]:
+        """Create an object, last under `parent_id`; with `after`, placed
+        right after that object instead. MELLON-STORE-SRS-174: the object
+        and its place land together or not at all."""
         self._require_write()
         folder = self._doc_folder(doc_id)
         try:
-            new_id = editor.create_object(folder, parent_id=parent_id, description=description)
+            with editor.journal():
+                new_id = editor.create_object(
+                    folder, parent_id=parent_id, description=description
+                )
+                if after is not None:
+                    editor.move_object(folder, new_id, after=after)
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:

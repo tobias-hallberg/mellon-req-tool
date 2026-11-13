@@ -1436,9 +1436,13 @@ def add_link(
     # (MELLON-TRACE-SRS-44). Documents sit directly under the repository root.
     if not target_exists(folder.parent, target_doc, target_id):
         missing = f"link target {target_doc}/{target_id} does not exist in the working copy"
-        if is_object_id(target_doc, target_id) and not has_manifest(
-            folder.parent / target_doc
-        ):
+        try:
+            no_document = is_object_id(target_doc, target_id) and not has_manifest(
+                folder.parent / target_doc
+            )
+        except OSError:
+            no_document = False
+        if no_document:
             missing += f": there is no document {target_doc!r}"
         raise EditorError(missing)
 

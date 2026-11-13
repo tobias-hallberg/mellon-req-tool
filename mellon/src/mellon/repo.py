@@ -49,14 +49,21 @@ class DocLoadError:
 _CONFLICT_MARKER = re.compile(rb"^<{7}.*?^={7}.*?^>{7}", re.MULTILINE | re.DOTALL)
 
 
+def _is_file(path: Path) -> bool:
+    try:
+        return path.is_file()
+    except OSError:  # can't be examined: no file to name
+        return False
+
+
 def _error_file(err: LoaderError) -> Path | None:
     # Callers also pass lxml's XMLSyntaxError, which names no file.
     named = getattr(err, "file", None)
     if named is not None:
-        return Path(named) if Path(named).is_file() else None
+        return Path(named) if _is_file(Path(named)) else None
     # Older messages start with "<path>: ".
     head, sep, _rest = str(err).partition(": ")
-    return Path(head) if sep and Path(head).is_file() else None
+    return Path(head) if sep and _is_file(Path(head)) else None
 
 
 # Requirements: MELLON-STORE-SRS-30
@@ -115,7 +122,14 @@ def discover_documents(repo_root: str | Path) -> list[Path]:
         if not child.is_dir() or child.name.startswith("."):
             continue
         # MELLON-STORE-SRS-18: <folder name>.xml, letter case included.
-        if has_manifest(child):
+        try:
+            is_document = has_manifest(child)
+        except OSError:
+            # MELLON-STORE-SRS-27, -28: a folder Mellon may not examine is
+            # listed, so loading it reports the load error, and it can't hide
+            # the other documents.
+            is_document = True
+        if is_document:
             out.append(child)
     return out
 
@@ -137,7 +151,11 @@ def doc_folder_names(repo_root: str | Path) -> frozenset[str]:
     for child in children:
         if not child.is_dir() or child.name.startswith("."):
             continue
-        if has_manifest(child):
+        try:
+            is_document = has_manifest(child)
+        except OSError:
+            is_document = True  # as discover_documents lists it
+        if is_document:
             out.add(child.name)
     return frozenset(out)
 

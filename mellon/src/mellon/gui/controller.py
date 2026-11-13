@@ -22,6 +22,7 @@ from PySide6.QtCore import QObject, Signal
 
 from .. import git_ops
 from ..git_ops import GitError, discover_repo, dirty_paths_under, is_side_file
+from ..loader import LoaderError, parse_links_bytes, parse_object_bytes
 from ..repo import DocLoadError, LoadedDoc
 from ..schema import FilterRule, Link, RequirementObject, Document
 from ..service import DocCommitPreview, DocumentService, ErrorCode, ServiceError
@@ -1011,7 +1012,7 @@ class RepoController(QObject):
         except GitError as e:
             raise ServiceError(ErrorCode.GIT, str(e)) from e
 
-        obj = _parse_historical_object(xml_text, obj_id)
+        obj = _parse_historical_object(xml_text, obj_rel)
 
         manifest_rel = f"{rel_dir}/{doc_id}.xml"
         outline_path: tuple[str, ...] = ()
@@ -1025,9 +1026,10 @@ class RepoController(QObject):
         links_rel = f"{rel_dir}/links/{obj_id}.xml"
         try:
             links_xml = git_ops.show_blob_at(repo, links_rel, commit_ref)
-            outgoing = _parse_historical_links(links_xml)
         except GitError:
             outgoing = ()
+        else:
+            outgoing = _parse_historical_links(links_xml, links_rel)
 
         try:
             resolved = repo.revparse_single(commit_ref).peel(pygit2.Commit)
@@ -1045,29 +1047,15 @@ class RepoController(QObject):
         )
 
 
-# Requirements: MELLON-VER-SRS-230
-def _parse_historical_object(xml_text: str, expected_id: str) -> RequirementObject:
-    root = etree.fromstring(xml_text.encode("utf-8"))
-    if root.tag != "object":
-        raise ServiceError(
-            ErrorCode.LOAD,
-            f"historical blob root is <{root.tag}>, expected <object>",
-        )
-    attrs: dict[str, str] = {}
-    for a in root.findall("attr"):
-        name = a.get("name")
-        if not name:
-            continue
-        attrs[name] = (a.text or "").strip()
-    description = ""
-    desc_el = root.find("description")
-    if desc_el is not None and desc_el.text is not None:
-        description = desc_el.text.strip()
-    return RequirementObject(
-        id=root.get("id") or expected_id,
-        attrs=attrs,
-        description=description,
-    )
+# Requirements: MELLON-STORE-SRS-83, MELLON-STORE-SRS-85, MELLON-STORE-SRS-90,
+#   MELLON-VER-SRS-230
+def _parse_historical_object(xml_text: str, rel_path: str) -> RequirementObject:
+    """The object file at a commit, read by the loader's rules (its table
+    included); a file they reject is a load error."""
+    try:
+        return parse_object_bytes(xml_text.encode("utf-8"), rel_path)
+    except LoaderError as e:
+        raise ServiceError(ErrorCode.LOAD, str(e)) from e
 
 
 def _outline_path_from_manifest(
@@ -1092,24 +1080,11 @@ def _outline_path_from_manifest(
     return walk(outline, ()) or ()
 
 
-def _parse_historical_links(links_xml: str) -> tuple[Link, ...]:
-    root = etree.fromstring(links_xml.encode("utf-8"))
-    if root.tag != "links":
-        return ()
-    out: list[Link] = []
-    for el in root.findall("link"):
-        target_doc = el.get("target-doc") or ""
-        target_id = el.get("target-id") or ""
-        link_type = el.get("type") or ""
-        ack = el.get("ack")
-        if not target_doc or not target_id or not link_type:
-            continue
-        out.append(
-            Link(
-                target_doc=target_doc,
-                target_id=target_id,
-                type=link_type,
-                ack=ack,
-            )
-        )
-    return tuple(out)
+# Requirements: MELLON-STORE-SRS-118, MELLON-STORE-SRS-120
+def _parse_historical_links(links_xml: str, rel_path: str) -> tuple[Link, ...]:
+    """The links file at a commit, read by the loader's rules; a file they
+    reject is a load error, not a list missing its incomplete links."""
+    try:
+        return parse_links_bytes(links_xml.encode("utf-8"), rel_path)[1]
+    except LoaderError as e:
+        raise ServiceError(ErrorCode.LOAD, str(e)) from e

@@ -80,7 +80,14 @@ def load_document(folder: str | Path) -> Document:
 
     doc_id = folder.name
     manifest_path = folder / f"{doc_id}.xml"
-    if not has_manifest(folder):
+    try:
+        found = has_manifest(folder)
+    except OSError as e:
+        # MELLON-STORE-SRS-27: a folder Mellon may not examine is a load error.
+        raise LoaderError(
+            f"{manifest_path}: cannot read file: {e}", file=manifest_path
+        ) from e
+    if not found:
         raise LoaderError(f"Manifest not found: {manifest_path}")
 
     try:
@@ -171,17 +178,17 @@ def has_manifest(folder: str | Path) -> bool:
     MELLON-STORE-SRS-18: letter case included, so that on a case-insensitive
     file system (Windows, macOS) DOC/doc.xml doesn't pass for DOC/DOC.xml and
     every system sees the same documents.
+
+    Raises OSError when the folder can't be examined (no permission).
     """
     folder = Path(folder)
     name = f"{folder.name}.xml"
     if not (folder / name).is_file():
         return False
-    try:
-        # The listing holds the names as stored; is_file() ignores letter
-        # case where the file system does.
-        return name in os.listdir(folder)
-    except OSError:
-        return False
+    # The listing holds the names as stored; is_file() ignores letter case
+    # where the file system does. An OSError (the folder can't be listed)
+    # reaches the caller: whether this is a document can't be told.
+    return name in os.listdir(folder)
 
 
 _Manifest = tuple[

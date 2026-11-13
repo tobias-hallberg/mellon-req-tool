@@ -12,6 +12,7 @@ tests/test_editor.py::test_delete_object_failing_last_puts_back_other_documents
 tests/test_editor.py::test_delete_object_failing_figure_removal_changes_nothing
 tests/test_editor.py::test_inner_failure_rolls_back_only_itself
 tests/test_gui_edits.py::test_store_srs_174_gui_delete_with_failing_manifest_write_restores_all
-tests/test_gui_edits.py::test_store_srs_174_gui_delete_attribute_with_failing_second_write_restores_all</attr>
+tests/test_gui_edits.py::test_store_srs_174_gui_delete_attribute_with_failing_second_write_restores_all
+tests/test_gui_outline.py::test_store_srs_174_new_sibling_that_cant_be_placed_leaves_no_object</attr>
   <description>Make the second file write fail while deleting an attribute set on an object, and while removing an option in use. Force-delete PARENT-1, which CHILD-0 links to, with the write of PARENT's manifest failing. Force-delete an object with a figure while removing the figure fails. Inside a larger step, let one operation fail after another succeeded. Expected: each failing operation leaves every file of the repository with the bytes it had before it, including CHILD's links file and PARENT-1's object file; in the larger step, only the failed operation is returned and the earlier edit stays.</description>
 </object>

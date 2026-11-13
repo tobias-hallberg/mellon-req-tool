@@ -394,6 +394,24 @@ All notable changes to Mellon. The format follows
   GUI offered to open that folder, which then wasn't a git repository at
   all (`MELLON-STORE-SRS-7`, `-12`).
 
+- **The History tab reads an object at a commit by the format's rules.**
+  Its own reader showed no table, took the last of two `attr` elements of
+  one name, ignored an id that differs from the file name, dropped
+  incomplete links and failed with an error dialog on a file that isn't
+  well-formed. It now reads the object and its links as the working copy is
+  read, and shows a load error for a file the rules reject
+  (`MELLON-STORE-SRS-83`, `-85`, `-90`).
+- **A folder Mellon may not examine no longer stops the repository from
+  opening.** A folder at the root whose contents another account or an ACL
+  hides made the GUI, every MCP tool that lists documents and `mellon-check`
+  fail with a permission error. It is now listed with a load error and the
+  other documents load (`MELLON-STORE-SRS-27`, `-28`).
+- **New sibling is one step.** It created the object and then moved it after
+  the selection in two writes; when the move failed the object stayed, last
+  under the parent, as an undo step of its own, under a "New sibling failed"
+  message. The object and its place are now written together or not at all
+  (`MELLON-STORE-SRS-174`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**
