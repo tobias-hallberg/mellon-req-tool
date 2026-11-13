@@ -13,6 +13,7 @@ from PySide6.QtGui import QPalette, QStandardItem, QStandardItemModel
 from PySide6.QtWidgets import QApplication, QStyle
 
 from ...repo import DocLoadError
+from .. import plain
 from ..controller import RepoController, describe_load_error
 
 
@@ -42,7 +43,7 @@ class ProjectTreeModel(QStandardItemModel):
             item = QStandardItem(f"{err.doc_id} — failed to load")
             item.setData(err.doc_id, DOC_ID_ROLE)
             item.setData(err, LOAD_ERROR_ROLE)
-            item.setToolTip(describe_load_error(err))
+            item.setToolTip(plain.text(describe_load_error(err)))
             item.setEditable(False)
             rows.append((err.doc_id, item))
         for _doc_id, item in sorted(rows, key=lambda r: r[0]):
