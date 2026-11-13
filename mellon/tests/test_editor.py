@@ -3200,3 +3200,42 @@ def test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused(tmp_p
                       add_links=[{"target_doc": "PARENT", "target_id": "PARENT-1", "type": "verifies"}])
     assert refused(result), f"a second link between one pair of objects was created: {result}"
     assert trace_snapshot(r.root) == before, "a refused link changed files"
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_87_new_description_replaces_undefined_child_elements(tmp_path):
+    """CV-STORE-03, MELLON-STORE-SRS-87: after a new description is set, the file's
+    description element holds that text alone, not the new text followed by an
+    undefined child element and the text after it."""
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    path = object_file(folder, obj_id)
+    path.write_text(path.read_text(encoding="utf-8").replace(
+        "<description>object 0</description>",
+        "<description>The pump shall <b>always</b> stop.</description>"), encoding="utf-8")
+    editor.set_description(folder, obj_id, "New text")
+    desc = etree.parse(str(path)).getroot().find("description")
+    assert (desc.text, len(desc)) == ("New text", 0)
+    assert load_document(folder).objects[obj_id].description == "New text"
+
+
+def test_store_srs_208_empty_value_keeps_its_bytes_on_a_later_rewrite(tmp_path):
+    """CV-STORE-04, MELLON-STORE-SRS-208: a file Mellon wrote with an empty attribute
+    value keeps its bytes under an operation that leaves its canonical form unchanged."""
+    folder = new_document(tmp_path)
+    if "rationale" not in {a.name for a in load_document(folder).attributes}:
+        editor.add_attribute(folder, "rationale", "text", False)
+    editor.add_attribute(folder, "note", "text", False)
+    (obj_id,) = populate(folder, 1)
+    editor.set_attribute(folder, obj_id, "note", "kept")
+    editor.set_attribute(folder, obj_id, "rationale", "")
+    path = object_file(folder, obj_id)
+    before = path.read_bytes()
+    editor.set_attribute(folder, obj_id, "note", "kept")  # same value: no change
+    assert path.read_bytes() == before
+    editor.set_description(folder, obj_id, "")
+    before = path.read_bytes()
+    editor.set_attribute(folder, obj_id, "note", "kept")
+    assert path.read_bytes() == before

@@ -12,6 +12,7 @@ tests/test_loader.py::test_load_parses_only_the_changed_file
 tests/test_editor.py::test_set_description_normalises_crlf_and_cr
 tests/test_editor.py::test_set_description_maps_vertical_tab_to_newline
 tests/test_editor.py::test_create_object_maps_page_break_and_writes_lf
-tests/test_loader.py::test_store_srs_89_hand_written_line_breaks_kept</attr>
+tests/test_loader.py::test_store_srs_89_hand_written_line_breaks_kept
+tests/test_editor.py::test_store_srs_87_new_description_replaces_undefined_child_elements</attr>
   <description>Create an object with a description; replace a description; edit a description element by hand and read again. Set descriptions holding a CR LF, a CR, a vertical tab and a form feed between lines. Expected: each description reads back as written; each line break reads as one LF ('one\ntwo\nthree', 'Line one\nLine two', 'Page 1 &amp; &lt;2&gt;\nPage 2').</description>
 </object>

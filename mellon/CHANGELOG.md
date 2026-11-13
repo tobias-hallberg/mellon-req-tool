@@ -334,6 +334,21 @@ All notable changes to Mellon. The format follows
   `<<<<<<<` line, a later `=======` line and a later `>>>>>>>` line, as the
   definition of conflict markers says (`MELLON-STORE-SRS-30`).
 
+- **Text after an element or comment inside a description is read.** In
+  `<description>The pump shall <b>always</b> stop.</description>` (a
+  hand-written file, another tool or a newer Mellon) only "The pump shall"
+  was read, and setting a new description kept the child element and the
+  text after it in the file. An element the format doesn't define, or a
+  comment, is now read as if absent and the text around it is kept; each
+  text Mellon writes replaces the element's whole content
+  (`MELLON-STORE-SRS-46`, `-84`, `-87`).
+- **An empty value is written as `<x/>` every time.** An attribute,
+  description, title or metadata field set to an empty value was written as
+  `<x></x>`, and the next unrelated rewrite of the file turned it into
+  `<x/>`: a change nobody made, which moved the object's last commit and
+  turned links to it suspect. Mellon now writes the one form `<x/>`
+  (`MELLON-STORE-SRS-208`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

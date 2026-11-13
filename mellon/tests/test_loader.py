@@ -946,3 +946,26 @@ def test_store_srs_217_whitespace_at_ends_removed_on_read(tmp_path, where):
         content = object_xml("DOC-1", table=f"<columns><col/></columns><row><cell>{padded}</cell></row>")
     write(folder / "objects" / "DOC-1.xml", content)
     assert _read_text(folder, where) == "text"
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_46_text_after_an_undefined_element_or_comment_is_read(tmp_path):
+    """CV-STORE-03, MELLON-STORE-SRS-46 with -84 and -87: an element the format doesn't
+    define, or a comment, inside a description or attribute value is read as if absent;
+    the text around it is kept."""
+    doc = tmp_path / "DOC"
+    (doc / "objects").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n'
+        '  <attributes><attribute name="rationale" kind="text"/></attributes>\n'
+        '  <outline><ref id="DOC-1"/></outline>\n</document>\n', encoding="utf-8")
+    (doc / "objects" / "DOC-1.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+        '  <attr name="rationale">because <!-- note --> of safety</attr>\n'
+        "  <description>The pump shall <b>always</b> stop within 2 s.</description>\n"
+        "</object>\n", encoding="utf-8")
+    obj = load_document(doc).objects["DOC-1"]
+    assert obj.description == "The pump shall  stop within 2 s."
+    assert obj.attrs["rationale"] == "because  of safety"

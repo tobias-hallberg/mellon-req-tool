@@ -336,11 +336,22 @@ def _parse_xml(path: Path) -> etree._Element:
     return tree.getroot()
 
 
-# Requirements: MELLON-STORE-SRS-62, MELLON-STORE-SRS-86, MELLON-STORE-SRS-217
+# Requirements: MELLON-STORE-SRS-46, MELLON-STORE-SRS-62, MELLON-STORE-SRS-86,
+#   MELLON-STORE-SRS-217
 def _text(elem: etree._Element | None) -> str:
-    if elem is None or elem.text is None:
+    """The element's text, stripped. A child node (an element the format
+    doesn't define, a comment) is read as if absent: its own text is left
+    out, the text after it is kept."""
+    if elem is None:
         return ""
-    return elem.text.strip()
+    parts = [elem.text or ""]
+    parts += [child.tail or "" for child in elem]
+    return "".join(parts).strip()
+
+
+def read_text(elem: etree._Element | None) -> str:
+    """A text element's value as the loader reads it (for the editor)."""
+    return _text(elem)
 
 
 # Requirements: MELLON-STORE-SRS-61, MELLON-STORE-SRS-66

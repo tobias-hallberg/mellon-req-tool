@@ -34,7 +34,7 @@ from .filter import (
 )
 from .git_ops import GitError, _replace_file, discover_repo
 from .link_index import current_hashes
-from .loader import LoaderError, has_manifest, load_document
+from .loader import LoaderError, has_manifest, load_document, read_text
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
     NEXT_OBJECT_NUMBER_ATTR,
@@ -367,6 +367,16 @@ _XML_ILLEGAL_C0_RE = re.compile(r"[\x00-\x08\x0e-\x1f]")
 
 # Requirements: MELLON-STORE-SRS-89, MELLON-STORE-SRS-212, MELLON-STORE-SRS-213,
 #   MELLON-STORE-SRS-214
+# Requirements: MELLON-STORE-SRS-87, MELLON-STORE-SRS-208
+def _set_text(el: etree._Element, value: str) -> None:
+    """Make `value` the whole content of the text element `el`: child nodes
+    the format doesn't define (and the text after them) go, so the file holds
+    what is read back, and an empty value is written in one form, `<x/>`."""
+    for child in list(el):
+        el.remove(child)
+    el.text = value or None
+
+
 def _sanitize_text(value: str, what: str) -> str:
     """Return user text safe to store in XML, or raise EditorError naming the bad character."""
     value = value.replace("\r\n", "\n").replace("\r", "\n")
@@ -441,7 +451,7 @@ def create_object(
     if obj_path.exists():
         raise EditorError(f"object file already exists: {obj_path}")
     obj_el = etree.Element("object", id=new_id)
-    etree.SubElement(obj_el, "description").text = description
+    _set_text(etree.SubElement(obj_el, "description"), description)
     tree = etree.ElementTree(obj_el)
     etree.indent(tree, space="  ")
     # git doesn't track an empty objects/, so a fresh clone may lack it.
@@ -513,7 +523,7 @@ def _write_manifest(
 ) -> None:
     root_el = etree.Element("document", id=doc_id)
     meta = etree.SubElement(root_el, "metadata")
-    etree.SubElement(meta, "title").text = title
+    _set_text(etree.SubElement(meta, "title"), title)
 
     if parents:
         parents_el = etree.SubElement(root_el, "parents")
@@ -604,10 +614,10 @@ def set_attribute(folder: Path, obj_id: str, attr_name: str, value: str) -> None
             break
 
     if existing is not None:
-        existing.text = value
+        _set_text(existing, value)
     else:
         new = etree.Element("attr", name=attr_name)
-        new.text = value
+        _set_text(new, value)
         # Insert before <description>/<figure> if present, else at end.
         description = root.find("description")
         if description is not None:
@@ -635,7 +645,7 @@ def set_description(folder: Path, obj_id: str, text: str) -> None:
     description = root.find("description")
     if description is None:
         description = etree.SubElement(root, "description")
-    description.text = text
+    _set_text(description, text)
 
     etree.indent(tree, space="  ")
     _write_tree(tree, obj_path)
@@ -858,7 +868,7 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
     el = metadata.find(field)
     if el is None:
         el = etree.SubElement(metadata, field)
-    el.text = value
+    _set_text(el, value)
     etree.indent(tree, space="  ")
     _write_tree(tree, manifest)
 
@@ -1191,8 +1201,8 @@ def remove_attr_option(folder: Path, attr_name: str, option: str) -> list[Path]:
             oroot = otree.getroot()
             changed = False
             for a in oroot.findall("attr"):
-                if a.get("name") == attr_name and (a.text or "") == option:
-                    a.text = ""
+                if a.get("name") == attr_name and read_text(a) == option:
+                    _set_text(a, "")
                     changed = True
             if changed:
                 etree.indent(otree, space="  ")
