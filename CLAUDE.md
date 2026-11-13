@@ -93,6 +93,7 @@ All run from inside `mellon/`:
 | `gui/project_explorer_window.py` | Top-level window: list of docs + open editors. Double-click opens a `DocumentEditorWindow` |
 | `gui/main_window.py` | `DocumentEditorWindow` — three-pane editor for a single document |
 | `gui/controller.py` | `RepoController` (load, selection, Qt signals) |
+| `gui/plain.py` | Shows repository and git text as plain text: plain labels, `text` for tooltips and the static message-box and input-dialog functions, `esc` for labels that are rich on purpose. Use it for any text read from the repository |
 | `gui/theme.py` | `ThemeManager` singleton (dark/light tokens, `QPalette` + QSS) and `build_theme_menu` helper shared by both windows |
 | `gui/delegates.py` | Per-column grid delegates: state gutter, id, multi-line description (+ table preview rendered by `InlineTableWidget`), attribute-kind aware editor |
 | `gui/models/` | `ProjectTreeModel`, `OutlineModel`, `ObjectsGridModel` |

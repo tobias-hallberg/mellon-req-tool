@@ -281,6 +281,42 @@ All notable changes to Mellon. The format follows
 
 ### Security
 
+- **Exporting no longer runs a program from the repository.** On Windows a
+  bare program name is found in the current folder first, and the MCP server
+  usually starts in the repository, so a `tectonic.bat` (or a draw.io
+  program) committed there ran when anyone exported: whoever could push
+  could run code on the machine of whoever exported. The PDF program and
+  draw.io are now looked up in absolute `PATH` entries only, never inside the
+  repository or directly in the start folder; `MELLON_TECTONIC` and
+  `MELLON_DRAWIO` still name a program anywhere. A source checkout no longer
+  finds tectonic in `mellon/tools/`: set `MELLON_TECTONIC`. Specified in
+  `MELLON-PDF-SRS-67` and `MELLON-EDIT-SRS-247`.
+- **The GUI shows text from the repository as plain text.** Labels,
+  tooltips, messages and prompts took text that looked like HTML for HTML.
+  An attribute value or link type holding an image tag made the Inspector
+  open the file it named, which for a network path makes Windows offer the
+  user's credentials to that host; other markup could hide or fake text.
+  This covered attribute values, names and labels, IDs, link types, filter
+  names, load errors, branch names, View at this commit and the Resolve
+  merge dialog. Specified in `MELLON-GUI-SRS-122` and `MELLON-VER-SRS-380`;
+  new `gui/plain.py`.
+- **A link out of a document isn't followed.** A document's folder, or a
+  folder or file in it, that is a symbolic link, junction, pipe or device is
+  a load error and isn't read, and a link directly under the repository root
+  isn't taken for a document. Before, another project's document behind such
+  a link showed up in incoming links, traces and link states. Specified in
+  `MELLON-STORE-SRS-229`.
+- **IDs and paths from another clone stay inside the repository.** The link
+  picker listed a parent document named as a network share or a path;
+  resolving a merge wrote paths from the other branch unchecked; a load
+  error's merge-conflict note could read a file outside the repository that
+  an attribute name pointed at; and the MCP tools `git_history`,
+  `remove_link` and `commit_changes` looked at a `../` or share path on disk
+  before refusing it, which told the caller whether a file outside existed.
+  Each is now refused before anything outside is touched. Specified in
+  `MELLON-STORE-SRS-230`, `MELLON-VER-SRS-329` and `MELLON-MCP-SRS-112`.
+- **`export_document` refuses `.git` however the path is spelled.** A Windows
+  `\\?\` path into `.git` was written to (`MELLON-PDF-SRS-27`).
 - **A link's target can no longer make Mellon look outside the repository.**
   A links file from another clone could set `target-doc` or `target-id` to a
   path such as `../x` or, on Windows, a share such as `\\host\share`. Working
