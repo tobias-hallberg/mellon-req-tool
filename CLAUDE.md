@@ -115,7 +115,7 @@ Tests mirror the layout: one `tests/test_<module>.py` per source module. `tests/
 - **Two-commit suspect-link rule is intentional.** A file cannot record its own commit's hash, so revising a parent and re-acking children always takes two commits. This is the design — don't try to "fix" it.
 - **One test file per source module.** Match the existing pattern when adding tests.
 - **Mellon specifies Mellon.** `docs/specification.md` is the rulebook; read it before touching a spec document. In short:
-  - New behaviour is written as a requirement in its area's `MELLON-<AREA>-SRS` before it is built; existing behaviour is being specified area by area.
+  - New behaviour is written as a requirement in its area's `MELLON-<AREA>-SRS` before it is built. Every area's existing behaviour is specified, and every built requirement has a test case.
   - A requirement says exactly one of shall, should or could. It has `level: High` (Mellon is one program, so one level), a build-state `status` (Proposed, Accepted, Implemented, Deferred, Withdrawn) and a `rationale` that starts with its source (`as implemented:`, `stakeholder:`, `analysis:`, `derived:`, `parent:`).
   - Requirements are implementation-free: they must survive a rewrite in another language or a replaced exporter, so they never name modules, libraries or pytest. Terms come from `docs/definitions.md` only.
   - Edit the documents with a **released** Mellon build (GUI or MCP server), not the development build and not by hand. Rules files (`<doc>.rules.xml`) have no tool, so they're the one thing edited by hand.

@@ -1,6 +1,6 @@
 # How Mellon specifies itself
 
-Mellon's requirements and tests are kept in Mellon, in this repository, next to the code. New behaviour is specified before it is built, and existing behaviour is being specified area by area until the whole application is covered. This page records how that is done. The terms it uses are in [definitions.md](definitions.md), and open questions are in [open-questions.md](open-questions.md).
+Mellon's requirements and tests are kept in Mellon, in this repository, next to the code. New behaviour is specified before it is built. The behaviour Mellon already had was specified area by area, and every area is now covered. This page records how that is done. The terms it uses are in [definitions.md](definitions.md), and open questions are in [open-questions.md](open-questions.md).
 
 The approach follows a software engineering framework that is kept outside this repository. It draws on ISO/IEC/IEEE 29148, DO-178C and ISO 26262, but nothing here is a certification artefact or a claim of compliance.
 

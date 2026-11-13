@@ -37,7 +37,10 @@ All notable changes to Mellon. The format follows
   `MELLON-<AREA>-STS` for STORE, EDIT, CHECK, TRACE, VER, PDF, MCP and GUI,
   with rules files. `docs/specification.md` says how they're written,
   `docs/definitions.md` holds the terms, and `docs/architecture.md` describes
-  the design.
+  the design. Every area is specified: 1,675 requirements, of which 882 are
+  built, and 769 test cases, with a test case for each built requirement.
+  Tests written from the requirements alone found the defects fixed below;
+  the decisions they need from a person are in `docs/open-questions.md`.
 - `diff.compare_document` covers outline moves, tables, figures and the
   working copy (`WORKING_COPY`), counts a figure rewritten only in how its
   XML is written as no change, and gives each version's commit in full

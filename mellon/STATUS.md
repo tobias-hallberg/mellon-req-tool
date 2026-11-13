@@ -705,9 +705,16 @@ one `MELLON-<AREA>-SRS` and one `MELLON-<AREA>-STS` per area (STORE, EDIT,
 CHECK, TRACE, VER, PDF, MCP, GUI). `../docs/specification.md` says how they
 are written and checked; `../docs/definitions.md` holds the terms.
 
-- The area documents exist, with their attributes and rules files, and are
-  being filled area by area. Compare, in `MELLON-VER-SRS` / `MELLON-VER-STS`,
-  was the first; the pre-split `MELLON-SRS` / `MELLON-STS` are gone.
+- Every area is specified: 1,675 requirements and 769 test cases. 882
+  requirements are built (780 Implemented, 102 Accepted), and each of them
+  has a test case, which `test_mellon_spec.py` checks. 785 are Proposed
+  (gaps and planned behaviour, including a changed version beside a built
+  requirement where the two differ) and 8 Deferred.
+- 472 requirements only restate what was built (rationale `as
+  implemented:`) and wait for a person's review. Decisions taken without
+  one are in `../docs/open-questions.md` (Q18), each marked "to confirm".
+- Still to do per area: mutation testing, the code view (requirement
+  citations in the code) and the review ledger.
 - Requirements are implementation-free, say exactly one of shall, should or
   could, and are all `level: High`.
 - The documents are edited with a released Mellon build.
