@@ -551,7 +551,9 @@ A table is structured content on one object: `<table>` inside
 - **Surfaces:** MCP `export_document` and the GUI's Export (`Ctrl+E`, in a
   background thread).
 - **tectonic lookup:** `MELLON_TECTONIC`, then `<exe-dir>/tools` (frozen
-  build), then `PATH`, then `<project-root>/tools` (source checkout).
+  build), then the absolute `PATH` entries (`programs.which`). Nothing inside
+  the repository or directly in the start folder, other than
+  `MELLON_TECTONIC`'s program; draw.io is found the same way.
   - `<tectonic-dir>/tectonic-cache` is used as `TECTONIC_CACHE_DIR` when that
     variable is unset.
   - tectonic runs with no console window, a 300 s timeout and UTF-8 decoding.
@@ -857,7 +859,7 @@ packaging/       build.ps1, mellon.spec, mellon.iss, launch_gui.py, launch_mcp.p
                  THIRD-PARTY-NOTICES.txt
 benchmarks/      scale benchmarks: gen_repo, bench_core, bench_gui, bench_export, run_all
 tests/           one file per module; conftest.py holds the fixture + a test git identity
-tools/           (gitignored) optional vendored tectonic for source checkouts
+tools/           (gitignored) a place to keep a tectonic binary; point MELLON_TECTONIC at it
 CHANGELOG.md     per-release changes
 TEAM.md          team routine (also shipped in the installer)
 INSTALL.md       installer + MCP client config + dev env setup

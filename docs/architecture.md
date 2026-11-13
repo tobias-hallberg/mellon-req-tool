@@ -202,7 +202,7 @@ Write endurance, power and heat don't apply. Measuring: `benchmarks/run_all.py`.
 | Variant | Contents | Differences |
 |---|---|---|
 | Windows installer | `mellon.exe` (windowed GUI), `mellon-mcp.exe` (console, no Qt), tectonic 0.17.0 with a TeX cache, per-user install | No `mellon-check`. Exact locked dependencies. GUI has no console: `--version` only from `mellon-mcp.exe`. |
-| Source checkout (`uv sync`, `uv run`) | All three commands | Locked dependencies. tectonic from `PATH` or `mellon/tools/`. |
+| Source checkout (`uv sync`, `uv run`) | All three commands | Locked dependencies. tectonic from `MELLON_TECTONIC` or `PATH`, never from inside the repository. |
 | `uv tool install` | All three commands on `PATH` | Resolves dependencies within the `pyproject.toml` bounds, **not** `uv.lock`, so versions can differ from those tested. CI has a wheel smoke job for this. |
 | Platforms | Windows (installer, CI), Ubuntu (CI) | macOS: `TBD`, not in CI. |
 

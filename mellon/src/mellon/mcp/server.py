@@ -2593,8 +2593,10 @@ def export_document(
 
     Needs the `tectonic` binary, looked up as: the `MELLON_TECTONIC`
     environment variable, then `<exe-dir>/tools/` in the installed (frozen)
-    build, then PATH, then `<project-root>/tools/` in a source checkout. A
-    missing binary surfaces as `error_type: "TectonicError"`, not a crash.
+    build, then PATH. Apart from `MELLON_TECTONIC`, a program inside the
+    repository or directly in the folder the server started in is never
+    used. A missing binary surfaces as `error_type: "TectonicError"`, not a
+    crash.
     The PDF is not repo content — nothing is staged or committed.
 
     Attached figures are drawn by draw.io desktop (found via the
