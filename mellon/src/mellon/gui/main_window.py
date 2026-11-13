@@ -24,7 +24,6 @@ from PySide6.QtWidgets import (
     QAbstractItemView,
     QDialog,
     QFileDialog,
-    QLabel,
     QMainWindow,
     QMenu,
     QMessageBox,
@@ -57,6 +56,7 @@ from .panels.outline_pane import OutlinePane
 from .panels.right_pane import RightPane
 from .settings import make_settings
 from .theme import ThemeManager, build_theme_menu
+from . import plain
 
 
 _GEOMETRY_KEY = "document_editor/geometry"
@@ -228,7 +228,8 @@ class DocumentEditorWindow(QMainWindow):
         # --- status bar -------------------------------------------------
         self._status = QStatusBar(self)
         self.setStatusBar(self._status)
-        self._git_cell = QLabel()
+        # Requirements: MELLON-VER-SRS-380 (a branch name is anyone's text)
+        self._git_cell = plain.label()
         self._git_cell.setStyleSheet("padding: 0 6px; color: palette(mid);")
         self._status.addPermanentWidget(self._git_cell)
 
@@ -446,7 +447,7 @@ class DocumentEditorWindow(QMainWindow):
             # Still on disk but broken (e.g. a pull left conflict markers):
             # say what and where, not that it is gone.
             self._status.showMessage(f"{self._doc_id} failed to load.", 8000)
-            QMessageBox.warning(
+            plain.warning(
                 self,
                 "Document failed to load",
                 f"{self._doc_id} could not be reloaded:\n\n"
@@ -1036,7 +1037,7 @@ class DocumentEditorWindow(QMainWindow):
         except ServiceError as e:
             self._clear_undo()
             self._status.showMessage(f"Can't {verb} {label}.", 8000)
-            QMessageBox.warning(
+            plain.warning(
                 self,
                 f"Can't {verb}",
                 f"{e}\n\nThe undo history of this window is cleared.",
@@ -1212,7 +1213,7 @@ class DocumentEditorWindow(QMainWindow):
     def _confirm_delete(self, obj_id: str) -> bool:
         # Always asked, though Ctrl+Z brings the object back: a delete can
         # also strip links in other documents.
-        box = QMessageBox(self)
+        box = plain.make_plain(QMessageBox(self))
         box.setIcon(QMessageBox.Icon.Question)
         box.setWindowTitle("Delete object")
         box.setText(f"Delete {obj_id}?")
@@ -1234,7 +1235,7 @@ class DocumentEditorWindow(QMainWindow):
         svc = self.controller.require_service()
 
         if self.controller.outline_has_children(doc_id, sel):
-            QMessageBox.warning(
+            plain.warning(
                 self,
                 "Cannot delete object",
                 f"'{sel}' has sub-objects in the outline.\n\n"
@@ -1263,7 +1264,7 @@ class DocumentEditorWindow(QMainWindow):
             f"Delete {sel}? This will also remove {len(report.incoming)} "
             f"incoming link(s) from {sources}."
         )
-        choice = QMessageBox.question(
+        choice = plain.question(
             self,
             "Delete object",
             msg,
@@ -1453,7 +1454,7 @@ class DocumentEditorWindow(QMainWindow):
 
     def _on_repo_load_failed(self, root: str, message: str) -> None:
         self._status.showMessage(f"Failed to open {root}")
-        QMessageBox.warning(self, "Could not open repository", message)
+        plain.warning(self, "Could not open repository", message)
 
     def _on_document_selected(self, doc_id: str) -> None:
         doc = self.controller.document(doc_id)
@@ -1769,7 +1770,7 @@ class DocumentEditorWindow(QMainWindow):
                 self._doc_id, dlg.view_name(), tuple(dlg.visible_attrs())
             )
         except (ServiceError, ValueError) as exc:
-            QMessageBox.warning(self, "Create view failed", str(exc))
+            plain.warning(self, "Create view failed", str(exc))
             return
         # Seed the new bucket with the current header layout, then activate
         # the view (which restores those widths after applying visibility).
@@ -1957,7 +1958,7 @@ class DocumentEditorWindow(QMainWindow):
         a fresh one.
         """
         if self._read_only:
-            QMessageBox.warning(
+            plain.warning(
                 self, "Read-only", "Read-only mode — filters can't be saved."
             )
             return None
@@ -1980,7 +1981,7 @@ class DocumentEditorWindow(QMainWindow):
                     filt.keep_ancestors, filt.rules,
                 )
         except (ServiceError, ValueError) as exc:
-            QMessageBox.warning(self, "Save filter failed", str(exc))
+            plain.warning(self, "Save filter failed", str(exc))
             return None
 
         self._status.showMessage(f"Saved filter {filt.name!r}", 3000)
@@ -2103,7 +2104,7 @@ class DocumentEditorWindow(QMainWindow):
             shown = "\n".join(str(err) for err in errors[:10])
             if len(errors) > 10:
                 shown += f"\n… and {len(errors) - 10} more"
-            QMessageBox.critical(
+            plain.critical(
                 self,
                 "Cannot commit — validation failed",
                 f"{doc_id} has {len(errors)} validation error(s). "
@@ -2165,7 +2166,7 @@ class DocumentEditorWindow(QMainWindow):
             # MELLON-STORE-SRS-167 (CF-S34): put back with the editor's atomic
             # write, so a failure leaves the manifest whole; say so if it fails.
             if Journal(before={manifest: manifest_before}).restore():
-                QMessageBox.warning(
+                plain.warning(
                     self,
                     "Manifest not put back",
                     f"{manifest.name} could not be put back as it was before "
@@ -2207,7 +2208,7 @@ class DocumentEditorWindow(QMainWindow):
             self._status.showMessage(f"Commit failed: {e}", 8000)
             # In full: e.g. a missing git identity comes with the `git
             # config` commands to run, too long for the status bar.
-            QMessageBox.critical(self, "Commit failed", str(e))
+            plain.critical(self, "Commit failed", str(e))
             return
         except Exception:
             # Not every git failure is a ServiceError (another client holding
@@ -2246,7 +2247,7 @@ class DocumentEditorWindow(QMainWindow):
             self.controller.tag_head(doc_id, name, message)
         except ServiceError as e:
             self._status.showMessage(f"Tag failed: {e}", 8000)
-            QMessageBox.critical(self, "Tag failed", str(e))
+            plain.critical(self, "Tag failed", str(e))
             return
         self._status.showMessage(f"Tagged the current commit {name}.", 6000)
         self._set_read_only(True)
@@ -2316,7 +2317,7 @@ class DocumentEditorWindow(QMainWindow):
                 6000,
             )
             return
-        choice = QMessageBox.question(
+        choice = plain.question(
             self,
             "Discard uncommitted changes",
             f"All edits since the last commit to {doc_id} will be lost, "
@@ -2342,7 +2343,7 @@ class DocumentEditorWindow(QMainWindow):
         self._reload_from_disk()
         if error is not None:
             self._status.showMessage(f"Discard failed: {error}", 8000)
-            QMessageBox.critical(self, "Discard failed", str(error))
+            plain.critical(self, "Discard failed", str(error))
             return
         self._status.showMessage(
             f"Discarded uncommitted changes to {doc_id} "
@@ -2377,7 +2378,7 @@ class DocumentEditorWindow(QMainWindow):
         ]
         if len(problems) > _LINK_WARNING_ROWS:
             shown.append(f"… and {len(problems) - _LINK_WARNING_ROWS} more")
-        box = QMessageBox(self)
+        box = plain.make_plain(QMessageBox(self))
         box.setIcon(QMessageBox.Icon.Warning)
         box.setWindowTitle("Suspect links")
         box.setText(
@@ -2482,7 +2483,7 @@ class DocumentEditorWindow(QMainWindow):
                 )
             else:
                 why = "draw.io couldn't render them; an empty figure is one reason."
-            QMessageBox.information(
+            plain.information(
                 self,
                 "Figures not in the PDF",
                 f"Exported {doc_id} to {target}.\n\n"
@@ -2494,7 +2495,7 @@ class DocumentEditorWindow(QMainWindow):
     def _on_export_failed(self, message: str) -> None:
         self._end_export()
         self._status.showMessage("Export failed.", 6000)
-        QMessageBox.critical(self, "Export failed", message)
+        plain.critical(self, "Export failed", message)
 
     # Requirements: MELLON-GUI-SRS-20
     def _on_export_crashed(self, error: object) -> None:
@@ -2521,7 +2522,7 @@ class DocumentEditorWindow(QMainWindow):
         shown = "\n".join(str(err) for err in errors[:10])
         if len(errors) > 10:
             shown += f"\n… and {len(errors) - 10} more"
-        QMessageBox.warning(
+        plain.warning(
             self,
             "Validation failed",
             f"{doc_id} has {len(errors)} validation error(s).\n\n{shown}",

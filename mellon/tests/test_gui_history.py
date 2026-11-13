@@ -350,3 +350,25 @@ def test_ver_srs_230_history_tab_view_at_this_commit_shows_values_from_that_comm
     shown = "\n".join(_texts(ui.object_dialogs[-1]))
     assert "Draft" in shown and "Text of CHILD-0." in shown, shown
     assert "Approved text." not in shown
+
+
+def test_ver_srs_230_view_at_this_commit_shows_values_as_their_file_holds_them(window, qtbot) -> None:
+    """MELLON-VER-SRS-230 (CV-VER-15): a value holding markup shows in View at
+    this commit as its file holds it, not as formatted text."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtWidgets import QLabel
+
+    from mellon import set_attribute
+    from mellon.gui.dialogs.object_at_commit import ObjectAtCommitDialog
+    from tests.gui_support import _git_commit_all
+
+    w, repo = window
+    value = "<b>Approved</b> <s>Draft</s>"
+    set_attribute(repo / "VCU3-SRS", "VCU3-SRS-1", "rationale", value)
+    _git_commit_all(repo, "Rationale with markup")
+    snapshot = w.controller.object_at_commit("VCU3-SRS", "VCU3-SRS-1", "HEAD")
+    dialog = ObjectAtCommitDialog(snapshot)
+    qtbot.addWidget(dialog)
+    shown = [lab for lab in dialog.findChildren(QLabel) if lab.text() == value]
+    assert shown, "View at this commit shows no label with the stored value"
+    assert all(lab.textFormat() == Qt.TextFormat.PlainText for lab in shown)
