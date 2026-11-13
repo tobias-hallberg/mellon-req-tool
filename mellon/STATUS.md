@@ -713,8 +713,12 @@ are written and checked; `../docs/definitions.md` holds the terms.
 - 472 requirements only restate what was built (rationale `as
   implemented:`) and wait for a person's review. Decisions taken without
   one are in `../docs/open-questions.md` (Q18), each marked "to confirm".
-- Still to do per area: mutation testing, the code view (requirement
-  citations in the code) and the review ledger.
+- The code view ran for every area on 2026-11-13: each built requirement
+  is cited in the code (`# Requirements:` comments), the review ledger is
+  in `../.review/ledger.json`, and its findings are in
+  `../.review/code-view-findings.json`, to be fixed or decided as
+  `../.review/tasks/fix-code-view.md` says. Still to do: those fixes,
+  and mutation testing (`../.review/tasks/mutation.md`).
 - Requirements are implementation-free, say exactly one of shall, should or
   could, and are all `level: High`.
 - The documents are edited with a released Mellon build.
