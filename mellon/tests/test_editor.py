@@ -1577,7 +1577,14 @@ def test_delete_object_removes_figure_so_reused_id_starts_clean(
     assert load_document(doc_folder).objects["DOC-1"].figure_path is None
 
 
-def test_delete_object_removes_symlinked_figure(tmp_path: Path, doc_folder: Path) -> None:
+def test_store_srs_229_delete_object_refuses_a_document_with_a_linked_figure(
+    tmp_path: Path, doc_folder: Path
+) -> None:
+    """MELLON-STORE-SRS-229: a figure that is a symbolic link makes its
+    document a load error, so deleting the object is refused and neither the
+    link nor the file it points to is touched."""
+    from mellon.loader import LoaderError
+
     shared = _write_svg(tmp_path / "shared.svg")
     link = doc_folder / "figures" / "DOC-1.svg"
     link.parent.mkdir()
@@ -1585,10 +1592,11 @@ def test_delete_object_removes_symlinked_figure(tmp_path: Path, doc_folder: Path
         link.symlink_to(shared)
     except OSError:
         pytest.skip("creating symlinks needs extra privileges on this platform")
-    report = delete_object(doc_folder, "DOC-1")
-    assert link in report.removed_files
-    assert not link.is_symlink()
+    with pytest.raises(LoaderError, match="symbolic link"):
+        delete_object(doc_folder, "DOC-1")
+    assert link.is_symlink()
     assert shared.is_file()
+    assert (doc_folder / "objects" / "DOC-1.xml").is_file()
 
 
 def test_delete_object_failing_figure_removal_changes_nothing(

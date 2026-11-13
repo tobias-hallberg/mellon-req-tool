@@ -293,6 +293,10 @@ def _has_suffix(name: str, suffix: str) -> bool:
 # The folders a document holds; each is read as a plain folder, never as a link.
 _SUBFOLDERS = ("objects", "figures", "links", "views", "filters")
 
+# A junction's reparse tag (stat.IO_REPARSE_TAG_MOUNT_POINT, which only Windows
+# builds of Python define); st_reparse_tag is only there on Windows too.
+_IO_REPARSE_TAG_MOUNT_POINT = 0xA0000003
+
 
 # Requirements: MELLON-STORE-SRS-229
 def entry_problem(path: str | Path) -> str | None:
@@ -307,7 +311,7 @@ def entry_problem(path: str | Path) -> str | None:
         return None
     if stat.S_ISLNK(st.st_mode):
         return "is a symbolic link"
-    if getattr(st, "st_reparse_tag", 0) == stat.IO_REPARSE_TAG_MOUNT_POINT:
+    if getattr(st, "st_reparse_tag", 0) == _IO_REPARSE_TAG_MOUNT_POINT:
         return "is a junction"
     if not (stat.S_ISREG(st.st_mode) or stat.S_ISDIR(st.st_mode)):
         return "is not a plain file or folder"
