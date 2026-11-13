@@ -3510,6 +3510,21 @@ def test_pdf_srs_27_export_tool_refuses_a_path_inside_dot_git(tmp_path, where):
     assert [p for p in after if p not in before] == [], "a refused export wrote into .git"
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows path prefixes")
+@pytest.mark.parametrize("prefix", ["\\\\?\\", "\\\\.\\"], ids=["long-path", "device"])
+def test_pdf_srs_27_export_tool_refuses_a_prefixed_path_inside_dot_git(tmp_path, prefix):
+    """MELLON-PDF-SRS-27 (CV-PDF-06): the same .git folder spelled with the
+    Windows extended-length or device prefix is refused too, and nothing is
+    written there."""
+    root = small_repo(tmp_path / "repo")
+    target = prefix + str((root / ".git" / "x.pdf").resolve())
+    before = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    res = mcp_export(root, "DOC", target, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is False, f"{target} was accepted: {res}"
+    after = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    assert [p for p in after if p not in before] == [], "a refused export wrote into .git"
+
+
 def test_pdf_srs_27_export_tool_accepts_a_file_beside_dot_git(tmp_path):
     """MELLON-PDF-SRS-27, other side of the boundary: a file named .git.pdf in
     the repository root isn't inside the .git folder, so it is exported to."""

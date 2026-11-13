@@ -2530,6 +2530,42 @@ def review_suspect_link(
     }
 
 
+def _without_win_prefix(path: Path) -> Path:
+    r"""``path`` without a Windows ``\\?\`` or ``\\.\`` prefix (``\\?\UNC\``
+    becomes ``\\``), which ``Path.resolve`` keeps and which would make the
+    same folder compare unequal to its plain spelling."""
+    text = str(path)
+    if text.startswith("\\\\?\\UNC\\"):
+        return Path("\\\\" + text[8:])
+    if text.startswith(("\\\\?\\", "\\\\.\\")):
+        return Path(text[4:])
+    return path
+
+
+# Requirements: MELLON-PDF-SRS-27
+def _inside_folder(path: Path, folder: Path) -> bool:
+    """Whether ``path`` is ``folder`` or lies under it, however either is
+    spelled: by resolved path without prefixes, and by file identity of each
+    existing folder on the way up (a junction, 8.3 name or volume path)."""
+    full = _without_win_prefix(path.resolve())
+    if full.is_relative_to(_without_win_prefix(folder.resolve())):
+        return True
+    try:
+        target = os.stat(folder)
+    except OSError:
+        return False
+    if not target.st_ino:  # no file identity on this file system
+        return False
+    for candidate in full.parents:
+        try:
+            st = os.stat(candidate)
+        except OSError:
+            continue
+        if (st.st_dev, st.st_ino) == (target.st_dev, target.st_ino):
+            return True
+    return False
+
+
 # Requirements: MELLON-MCP-SRS-36, MELLON-MCP-SRS-112, MELLON-MCP-SRS-115, MELLON-PDF-SRS-5,
 #   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-56, MELLON-PDF-SRS-61,
 #   MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
@@ -2596,7 +2632,7 @@ def export_document(
             ),
             message="export failed",
         )
-    if out.resolve().is_relative_to((_require_root() / ".git").resolve()):
+    if _inside_folder(out, _require_root() / ".git"):
         return _service_error_result(
             ServiceError(
                 ErrorCode.VALIDATION,
