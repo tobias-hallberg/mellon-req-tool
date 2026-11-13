@@ -47,11 +47,41 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --all-groups
 
+      # The PDF program the installer bundles (packaging/build.ps1), so the
+      # tests that read an exported PDF run instead of skipping. Linux only:
+      # the Windows job keeps them skipped to stay inside its time limit.
+      - name: Install the PDF program
+        if: runner.os == 'Linux'
+        env:
+          TECTONIC_VERSION: "0.17.0"
+          TECTONIC_SHA256: 8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/tectonic.tar.gz" \
+            "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%40${TECTONIC_VERSION}/tectonic-${TECTONIC_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          echo "${TECTONIC_SHA256}  $RUNNER_TEMP/tectonic.tar.gz" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/tectonic"
+          tar xzf "$RUNNER_TEMP/tectonic.tar.gz" -C "$RUNNER_TEMP/tectonic"
+          echo "MELLON_TECTONIC=$RUNNER_TEMP/tectonic/tectonic" >> "$GITHUB_ENV"
+
+      - name: Cache the PDF program's TeX files
+        if: runner.os == 'Linux'
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/Tectonic
+          key: tectonic-0.17.0-${{ runner.os }}
+
+      # One export first, alone, so the parallel tests don't all fetch the
+      # same TeX files into an empty cache at once.
+      - name: Warm the PDF program's cache
+        if: runner.os == 'Linux'
+        run: uv run --no-sync pytest -q tests/test_export.py::test_pdf_compiles_for_fixture_doc
+
       - name: Run tests
         env:
           QT_QPA_PLATFORM: offscreen
           MELLON_REQUIRE_FIXTURE: "1"
-        run: uv run --no-sync pytest -q -rs
+        # One worker per CPU: the suite takes about 30 minutes in one process.
+        run: uv run --no-sync pytest -q -rs -n auto
 
   check:
     # Fails on any load error, validation error, or suspect or broken link in
