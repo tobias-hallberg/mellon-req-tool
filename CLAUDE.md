@@ -22,6 +22,8 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 ├── MELLON-<AREA>-SRS/          Mellon's own requirements, one document per area (STORE, EDIT, CHECK, TRACE,
 │                               VER, PDF, MCP, GUI); checked by mellon-check in CI
 ├── MELLON-<AREA>-STS/          Mellon's own test cases; each verifies its area's SRS
+├── tools/                      cloud-setup.sh (cloud environment setup); spec/ (released.py runs MCP calls on a
+│                               released build; render_srs.py renders each SRS to Markdown)
 ├── mellon/                     the actual Python package
 │   ├── README.md               short entry point
 │   ├── INSTALL.md              installer, MCP client config, dev env setup (uv, Python 3.12)
@@ -118,12 +120,23 @@ Tests mirror the layout: one `tests/test_<module>.py` per source module. `tests/
   - New behaviour is written as a requirement in its area's `MELLON-<AREA>-SRS` before it is built. Every area's existing behaviour is specified, and every built requirement has a test case.
   - A requirement says exactly one of shall, should or could. It has `level: High` (Mellon is one program, so one level), a build-state `status` (Proposed, Accepted, Implemented, Deferred, Withdrawn) and a `rationale` that starts with its source (`as implemented:`, `stakeholder:`, `analysis:`, `derived:`, `parent:`).
   - Requirements are implementation-free: they must survive a rewrite in another language or a replaced exporter, so they never name modules, libraries or pytest. Terms come from `docs/definitions.md` only.
-  - Edit the documents with a **released** Mellon build (GUI or MCP server), not the development build and not by hand. Rules files (`<doc>.rules.xml`) have no tool, so they're the one thing edited by hand.
+  - Edit the documents with a **released** Mellon build (GUI or MCP server), not the development build and not by hand. `tools/spec/released.py` runs a list of MCP tool calls on the released server (the installer's on Windows, `/opt/mellon-release/bin/mellon-mcp` elsewhere). Rules files (`<doc>.rules.xml`) have no tool, so they're the one thing edited by hand.
   - A `MELLON-<AREA>-STS` test case is written in product terms, links `verifies` to its requirements, and lists its pytest node ids in `automated-tests`. Add those links only after the requirements are committed, or `mellon-check` reports them as suspect.
   - `tests/test_mellon_spec.py` fails when a listed node id names no test, a requirement doesn't say exactly one keyword, or an Accepted or Implemented requirement has no test case. So rename or delete a test together with its test case. That file is the one test not tied to a source module.
 - **Folder name = manifest id.** A document's folder name must match its manifest's `id` attribute, and an object file's stem must match its `<object id>`.
 - **Outgoing links only on disk.** `links/<id>.xml` files hold *outgoing* links from object `<id>`. Incoming links are computed by scanning the whole repo.
 - **Canonical 2-space XML indentation** is applied on write via `lxml.etree.indent`. First edit of a hand-authored file may collapse decorative blank lines — expected, one-time.
+
+## Cloud sessions (claude.ai/code)
+
+The cloud environment's setup script is `tools/cloud-setup.sh`, pasted into the environment's settings. It installs the Qt libraries for offscreen GUI tests, the PDF program (tectonic 0.17.0, on `PATH`), Python 3.12, and the released Mellon at `/opt/mellon-release/bin`.
+
+- First `uv sync --all-groups` in `mellon/`. Run the tests with `QT_QPA_PLATFORM=offscreen uv run pytest -n auto`.
+- The VM is Linux. Windows behaviour (drive and share paths, the installer, the frozen exe) and draw.io figures are checked on Windows: CI's Windows job, or locally.
+- Mellon's own documents: through `tools/spec/released.py` only, never `uv run mellon-mcp`. `tools/spec/render_srs.py OUT_DIR` renders each SRS to one Markdown file for a reviewing agent.
+- The review checklists that `docs/specification.md` refers to come from a private framework that a cloud session can't reach, so the review views (requirements, failure analysis, code, blind tests) run locally. Fixes, tests, test cases, mutation testing and requirement citations can run in the cloud.
+- Work on a branch and push it. Don't push to `main` or `develop`, and open a PR only when asked.
+- This repository is public: no personal emails, local paths or machine names in what you commit.
 
 ## Fixture
 
