@@ -25,7 +25,7 @@ def test_excepthook_logs_to_file_and_rate_limits_dialog(qtbot, tmp_path: Path, m
     monkeypatch.setattr(gui_app, "_log_folder", lambda: tmp_path)
     shown: list[tuple] = []
     monkeypatch.setattr(
-        gui_app.QMessageBox, "critical", lambda *args, **_kwargs: shown.append(args)
+        gui_app.plain.QMessageBox, "critical", lambda *args, **_kwargs: shown.append(args)
     )
     previous = sys.excepthook
     try:

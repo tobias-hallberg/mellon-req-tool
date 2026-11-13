@@ -23,7 +23,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QHeaderView,
     QLabel,
-    QMessageBox,
     QPushButton,
     QStackedWidget,
     QTableWidget,
@@ -35,6 +34,7 @@ from PySide6.QtWidgets import (
 from ...service import ServiceError
 from ..controller import RepoController
 from ..dialogs.object_at_commit import ObjectAtCommitDialog
+from .. import plain
 
 
 _HASH_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -252,7 +252,7 @@ class HistoryTab(QWidget):
                 self._current_doc_id, self._current_obj_id, short_hash
             )
         except ServiceError as e:
-            QMessageBox.warning(
+            plain.warning(
                 self,
                 "Cannot show object at commit",
                 f"{short_hash}: {e}",
