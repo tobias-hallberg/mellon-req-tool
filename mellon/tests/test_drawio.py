@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import base64
+import os
 import subprocess
+import sys
 from pathlib import Path
 from urllib.parse import quote
 
@@ -84,11 +86,14 @@ def test_blank_template_is_an_editable_drawio_svg() -> None:
 
 @pytest.fixture
 def no_drawio(monkeypatch, tmp_path):
-    """A machine without draw.io: no override, empty install dirs, empty PATH."""
+    """A machine without draw.io: no override, empty install dirs, an empty
+    folder as PATH (``tmp_path / "bin"``)."""
     monkeypatch.delenv("MELLON_DRAWIO", raising=False)
+    monkeypatch.delenv("NoDefaultCurrentDirectoryInExePath", raising=False)
     monkeypatch.setenv("ProgramFiles", str(tmp_path / "pf"))
     monkeypatch.setenv("LOCALAPPDATA", str(tmp_path / "lad"))
-    monkeypatch.setattr(drawio.shutil, "which", lambda name: None)
+    (tmp_path / "bin").mkdir()
+    monkeypatch.setenv("PATH", str(tmp_path / "bin"))
     return tmp_path
 
 
@@ -114,11 +119,73 @@ def test_find_drawio_windows_install_dirs(no_drawio, monkeypatch, parts) -> None
     assert drawio.find_drawio() == str(exe)
 
 
+def _path_program(folder: Path, name: str) -> Path:
+    """A runnable program called ``name`` in ``folder``, as PATH lookup finds it."""
+    folder.mkdir(parents=True, exist_ok=True)
+    prog = folder / (f"{name}.exe" if sys.platform == "win32" else name)
+    prog.write_bytes(b"")
+    prog.chmod(0o755)
+    return prog
+
+
 def test_find_drawio_falls_back_to_path(no_drawio, monkeypatch) -> None:
-    monkeypatch.setattr(
-        drawio.shutil, "which", lambda name: "/usr/bin/drawio" if name == "drawio" else None
+    exe = _path_program(no_drawio / "bin", "drawio")
+    assert Path(drawio.find_drawio()) == exe
+
+
+# MELLON-EDIT-SRS-247: the lookup leaves out the repository and the current
+# folder, unless MELLON_DRAWIO names the program.
+
+
+def test_edit_srs_247_drawio_in_current_folder_is_not_found(no_drawio, monkeypatch) -> None:
+    """A draw.io program committed to the repository Mellon was started in
+    isn't found (Windows finds a bare name in the current folder first)."""
+    repo = no_drawio / "repo"
+    _path_program(repo, "drawio")
+    _path_program(repo, "draw.io")
+    monkeypatch.chdir(repo)
+    assert drawio.find_drawio() is None
+    assert drawio.find_drawio(repo) is None
+
+
+def test_edit_srs_247_drawio_inside_repository_is_not_found(no_drawio, monkeypatch) -> None:
+    """A PATH entry inside the repository, or a relative one, is left out."""
+    repo = no_drawio / "repo"
+    _path_program(repo / "node_modules" / ".bin", "drawio")
+    _path_program(no_drawio / "start" / "bin", "drawio")
+    monkeypatch.chdir(no_drawio / "start")
+    monkeypatch.setenv(
+        "PATH", os.pathsep.join([str(repo / "node_modules" / ".bin"), "bin"])
     )
-    assert drawio.find_drawio() == "/usr/bin/drawio"
+    assert drawio.find_drawio(repo) is None
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="the install folders are Windows places")
+def test_edit_srs_247_install_folder_inside_repository_is_left_out(
+    no_drawio, monkeypatch
+) -> None:
+    repo = no_drawio / "repo"
+    monkeypatch.setenv("LOCALAPPDATA", str(repo))
+    _path_program(repo / "Programs" / "draw.io", "draw.io")
+    assert drawio.find_drawio(repo) is None
+
+
+def test_edit_srs_247_mellon_drawio_in_repository_is_used(no_drawio, monkeypatch) -> None:
+    repo = no_drawio / "repo"
+    named = _path_program(repo, "drawio")
+    monkeypatch.chdir(repo)
+    monkeypatch.setenv("MELLON_DRAWIO", str(named))
+    assert drawio.find_drawio(repo) == str(named)
+
+
+def test_edit_srs_247_drawio_on_path_outside_repository_is_found(
+    no_drawio, monkeypatch
+) -> None:
+    repo = no_drawio / "repo"
+    _path_program(repo, "drawio")
+    monkeypatch.chdir(repo)
+    outside = _path_program(no_drawio / "bin", "drawio")
+    assert Path(drawio.find_drawio(repo)) == outside
 
 
 # --- open_in_drawio ------------------------------------------------------------
@@ -373,7 +440,6 @@ def test_wrap_plain_svg_sizes_the_picture() -> None:
 
 
 # MELLON-EDIT-SRS blind tests (176 and up)
-import sys  # noqa: E402
 
 from tests.edit_b_support import _fake_program  # noqa: E402
 

@@ -1613,7 +1613,7 @@ def test_export_document_rendered_figures_are_not_listed(
 def test_export_document_lists_unrendered_figures(
     mcp_repo: Path, fake_pdf, monkeypatch
 ) -> None:
-    monkeypatch.setattr(server, "find_drawio", lambda: None)
+    monkeypatch.setattr(server, "find_drawio", lambda *_a, **_k: None)
     figures = mcp_repo / "CHILD" / "figures"
     figures.mkdir()
     (figures / "CHILD-0.svg").write_text(

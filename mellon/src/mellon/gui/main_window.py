@@ -2474,7 +2474,7 @@ class DocumentEditorWindow(QMainWindow):
             f"Exported {doc_id} → {target} ({size} bytes).", 6000
         )
         if missing:
-            if find_drawio() is None:
+            if find_drawio(self.controller.root) is None:
                 why = (
                     "PDF export draws figures with draw.io desktop, which Mellon "
                     f"couldn't find. Install it from {DOWNLOAD_URL} (or set "

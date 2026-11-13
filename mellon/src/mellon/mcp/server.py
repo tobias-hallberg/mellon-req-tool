@@ -2654,7 +2654,7 @@ def export_document(
             f"; {len(missing)} figure(s) not rendered (see unrendered_figures)"
         )
         extra["unrendered_figures"] = missing
-        if find_drawio() is None:
+        if find_drawio(_require_root()) is None:
             extra["drawio_found"] = False
     if problems:
         n_broken = sum(s.state.value == "broken" for s in problems)

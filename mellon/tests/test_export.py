@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import dataclasses
 import io
+import os
 import re
 import subprocess
 import sys
@@ -30,7 +31,7 @@ from mellon.schema import Document, Metadata, OutlineNode, RequirementObject
 
 _needs_tectonic = pytest.mark.skipif(
     _find_tectonic() is None,
-    reason="tectonic not on PATH and not in <project-root>/tools/",
+    reason="tectonic not found: set MELLON_TECTONIC or put tectonic on PATH",
 )
 
 
@@ -109,7 +110,7 @@ def test_build_pdf_writes_class_file_alongside_tex(
     Otherwise `\\documentclass{syrs}` won't resolve. We monkeypatch
     subprocess.run to fail fast and just inspect what landed in the dir.
     """
-    monkeypatch.setattr(export, "_find_tectonic", lambda: "tectonic")
+    monkeypatch.setattr(export, "_find_tectonic", lambda *_a, **_k: "tectonic")
 
     seen: dict[str, list[str]] = {}
 
@@ -134,7 +135,7 @@ def test_build_pdf_writes_class_file_alongside_tex(
 
 def test_build_pdf_raises_when_tectonic_missing(monkeypatch: pytest.MonkeyPatch):
     """If tectonic isn't reachable, build_pdf raises a clear error."""
-    monkeypatch.setattr(export, "_find_tectonic", lambda: None)
+    monkeypatch.setattr(export, "_find_tectonic", lambda *_a, **_k: None)
     with pytest.raises(export.TectonicError, match="tectonic binary not found"):
         build_pdf(r"\documentclass{article}\begin{document}hi\end{document}")
 
@@ -483,7 +484,7 @@ def _fake_drawio(monkeypatch, rendered: set[int]) -> list[list[Path]]:
             out[n].write_bytes(b"%PDF-figure")
         return out
 
-    monkeypatch.setattr(export.drawio, "find_drawio", lambda: "draw.io.exe")
+    monkeypatch.setattr(export.drawio, "find_drawio", lambda *_a, **_k: "draw.io.exe")
     monkeypatch.setattr(export.drawio, "export_pdfs", fake_export)
     return calls
 
@@ -491,7 +492,7 @@ def _fake_drawio(monkeypatch, rendered: set[int]) -> list[list[Path]]:
 def _capture_build(monkeypatch) -> dict:
     seen: dict = {}
 
-    def fake_build(tex, assets=None):
+    def fake_build(tex, assets=None, *, repo_root=None):
         seen["tex"] = tex
         seen["assets"] = {n: Path(p).read_bytes() for n, p in (assets or {}).items()}
         return b"%PDF-doc"
@@ -520,7 +521,7 @@ def test_pdf_renders_figures_through_drawio(doc_folder: Path, monkeypatch):
 
 def test_pdf_without_drawio_keeps_placeholders(doc_folder: Path, monkeypatch):
     _attach_figure(doc_folder, "DOC-1")
-    monkeypatch.setattr(export.drawio, "find_drawio", lambda: None)
+    monkeypatch.setattr(export.drawio, "find_drawio", lambda *_a, **_k: None)
     seen = _capture_build(monkeypatch)
     missing: list[str] = []
 
@@ -540,7 +541,7 @@ def test_pdf_does_not_start_drawio_without_figures(doc_folder: Path, monkeypatch
 
 def test_pdf_survives_drawio_failing_to_run(doc_folder: Path, monkeypatch):
     _attach_figure(doc_folder, "DOC-1")
-    monkeypatch.setattr(export.drawio, "find_drawio", lambda: "bad.exe")
+    monkeypatch.setattr(export.drawio, "find_drawio", lambda *_a, **_k: "bad.exe")
 
     def boom(exe, svgs, out_dir):
         raise export.drawio.DrawioError("could not run draw.io")
@@ -554,7 +555,7 @@ def test_pdf_survives_drawio_failing_to_run(doc_folder: Path, monkeypatch):
 
 
 def test_build_pdf_stages_assets_next_to_tex(monkeypatch, tmp_path: Path):
-    monkeypatch.setattr(export, "_find_tectonic", lambda: "tectonic")
+    monkeypatch.setattr(export, "_find_tectonic", lambda *_a, **_k: "tectonic")
     asset = tmp_path / "rendered.pdf"
     asset.write_bytes(b"%PDF-figure")
     seen: dict[str, bytes] = {}
@@ -587,7 +588,7 @@ def test_pdf_compiles_with_a_rendered_figure(doc_folder: Path, monkeypatch, tmp_
         out.write_bytes(figure_pdf.read_bytes())
         return {0: out}
 
-    monkeypatch.setattr(export.drawio, "find_drawio", lambda: "draw.io.exe")
+    monkeypatch.setattr(export.drawio, "find_drawio", lambda *_a, **_k: "draw.io.exe")
     monkeypatch.setattr(export.drawio, "export_pdfs", fake_export)
     missing: list[str] = []
     blob = pdf(load_document(doc_folder), folder=doc_folder, unrendered=missing)
@@ -820,16 +821,37 @@ def test_pdf_srs_104_contents_page_numbers_match_the_printed_page_numbers(
 
 
 @pytest.fixture
-def clean_tectonic_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Drop every env var that steers tectonic lookup or its subprocess."""
-    for var in ("MELLON_TECTONIC", "TECTONIC_CACHE_DIR"):
+def clean_tectonic_env(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> Path:
+    """Drop every env var that steers tectonic lookup or its subprocess, and
+    give PATH one empty absolute folder. Returns that folder."""
+    for var in ("MELLON_TECTONIC", "TECTONIC_CACHE_DIR", "NoDefaultCurrentDirectoryInExePath"):
         monkeypatch.delenv(var, raising=False)
+    monkeypatch.delattr(sys, "frozen", raising=False)
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    monkeypatch.setenv("PATH", str(bin_dir))
+    return bin_dir
 
 
 def _touch(path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(b"")
     return path
+
+
+def _program(folder: Path, name: str, marker: Path | None = None) -> Path:
+    """A runnable program called ``name`` in ``folder`` (a .bat on Windows),
+    which writes ``marker`` when it runs."""
+    folder.mkdir(parents=True, exist_ok=True)
+    target = marker if marker is not None else folder / "unused-marker"
+    if sys.platform == "win32":
+        prog = folder / f"{name}.bat"
+        prog.write_text(f'@echo off\r\necho ran> "{target}"\r\n', encoding="ascii")
+    else:
+        prog = folder / name
+        prog.write_text(f'#!/bin/sh\necho ran > "{target}"\n', encoding="ascii")
+        prog.chmod(0o755)
+    return prog
 
 
 def test_find_tectonic_env_override_wins(
@@ -839,7 +861,7 @@ def test_find_tectonic_env_override_wins(
     _touch(app / "tools" / "tectonic.exe")
     monkeypatch.setattr(sys, "frozen", True, raising=False)
     monkeypatch.setattr(sys, "executable", str(app / "mellon.exe"))
-    monkeypatch.setattr(export.shutil, "which", lambda _: "/usr/bin/tectonic")
+    _program(clean_tectonic_env, "tectonic")
     custom = str(tmp_path / "custom" / "tectonic.exe")
     monkeypatch.setenv("MELLON_TECTONIC", custom)
     # Returned as-is even though it doesn't exist: a wrong explicit path
@@ -854,12 +876,12 @@ def test_find_tectonic_frozen_prefers_bundled_tools(
     bundled = _touch(app / "tools" / "tectonic.exe")
     monkeypatch.setattr(sys, "frozen", True, raising=False)
     monkeypatch.setattr(sys, "executable", str(app / "mellon.exe"))
-    monkeypatch.setattr(export.shutil, "which", lambda _: "/usr/bin/tectonic")
+    on_path = _program(clean_tectonic_env, "tectonic")
     assert _find_tectonic() == str(bundled)
 
     # No bundled copy -> PATH, as before.
     bundled.unlink()
-    assert _find_tectonic() == "/usr/bin/tectonic"
+    assert Path(_find_tectonic()) == on_path
 
 
 def test_find_tectonic_ignores_exe_tools_when_not_frozen(
@@ -867,10 +889,120 @@ def test_find_tectonic_ignores_exe_tools_when_not_frozen(
 ):
     app = tmp_path / "python"
     _touch(app / "tools" / "tectonic.exe")
-    monkeypatch.delattr(sys, "frozen", raising=False)
     monkeypatch.setattr(sys, "executable", str(app / "python.exe"))
-    monkeypatch.setattr(export.shutil, "which", lambda _: "/usr/bin/tectonic")
-    assert _find_tectonic() == "/usr/bin/tectonic"
+    on_path = _program(clean_tectonic_env, "tectonic")
+    assert Path(_find_tectonic()) == on_path
+
+
+# MELLON-PDF-SRS-67: an export runs no program file inside the repository or
+# directly in the folder Mellon was started in, unless the user named it.
+
+_TINY_TEX = r"\documentclass{article}\begin{document}hi\end{document}"
+
+
+def test_pdf_srs_67_program_in_start_folder_is_not_run(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    """A tectonic program committed to the repository the export starts in
+    isn't found and doesn't run (Windows finds a bare name in the current
+    folder first)."""
+    repo = tmp_path / "repo"
+    marker = tmp_path / "ran.txt"
+    _program(repo, "tectonic", marker)
+    monkeypatch.chdir(repo)
+    assert _find_tectonic() is None
+    with pytest.raises(export.TectonicError, match="not found"):
+        build_pdf(_TINY_TEX)
+    assert not marker.exists(), "the program in the start folder ran"
+
+
+def test_pdf_srs_67_program_inside_repository_is_not_found(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    """A PATH entry inside the repository, or a relative one, is left out."""
+    repo = tmp_path / "repo"
+    _program(repo / "tools", "tectonic")
+    elsewhere = tmp_path / "elsewhere"
+    _program(elsewhere / "bin", "tectonic")
+    monkeypatch.chdir(elsewhere)
+    monkeypatch.setenv("PATH", os.pathsep.join([str(repo / "tools"), "bin"]))
+    assert _find_tectonic(repo) is None
+
+
+def test_pdf_srs_67_program_on_path_outside_repository_is_found(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    repo = tmp_path / "repo"
+    _program(repo / "tools", "tectonic")
+    monkeypatch.chdir(repo)
+    outside = _program(clean_tectonic_env, "tectonic")
+    monkeypatch.setenv(
+        "PATH", os.pathsep.join([str(repo / "tools"), str(clean_tectonic_env)])
+    )
+    assert Path(_find_tectonic(repo)) == outside
+
+
+def test_pdf_srs_67_program_named_in_setting_is_used_inside_repository(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    repo = tmp_path / "repo"
+    named = _program(repo, "tectonic")
+    monkeypatch.chdir(repo)
+    monkeypatch.setenv("MELLON_TECTONIC", str(named))
+    assert Path(_find_tectonic(repo)) == named
+
+
+def test_pdf_srs_67_installed_build_started_in_its_folder_finds_its_program(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    """The start folder is left out, not the folders under it: the installed
+    build starts in its own folder and runs tools/tectonic from there."""
+    app = tmp_path / "Mellon"
+    bundled = _touch(app / "tools" / "tectonic.exe")
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "executable", str(app / "mellon.exe"))
+    monkeypatch.chdir(app)
+    assert _find_tectonic(tmp_path / "repo") == str(bundled)
+
+
+def test_pdf_srs_67_installed_program_inside_repository_is_not_run(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, clean_tectonic_env
+):
+    app = tmp_path / "repo" / "Mellon"
+    _touch(app / "tools" / "tectonic.exe")
+    monkeypatch.setattr(sys, "frozen", True, raising=False)
+    monkeypatch.setattr(sys, "executable", str(app / "mellon.exe"))
+    assert _find_tectonic(tmp_path / "repo") is None
+
+
+def test_pdf_srs_67_export_looks_up_programs_outside_the_documents_repository(
+    monkeypatch: pytest.MonkeyPatch, doc_folder: Path
+):
+    """An export of a document leaves its repository out of both lookups."""
+    doc = load_document(doc_folder)
+    first = next(iter(doc.objects.values()))
+    doc = dataclasses.replace(
+        doc,
+        objects={
+            **doc.objects,
+            first.id: dataclasses.replace(first, figure_path=f"figures/{first.id}.svg"),
+        },
+    )
+    seen: dict[str, object] = {}
+
+    def fake_tectonic(repo_root=None):
+        seen["tectonic"] = repo_root
+        return None
+
+    def fake_drawio(repo_root=None):
+        seen["drawio"] = repo_root
+        return None
+
+    monkeypatch.setattr(export, "_find_tectonic", fake_tectonic)
+    monkeypatch.setattr(export.drawio, "find_drawio", fake_drawio)
+    with pytest.raises(export.TectonicError):
+        pdf(doc, folder=doc_folder)
+    assert seen == {"tectonic": doc_folder.parent, "drawio": doc_folder.parent}
 
 
 # --- tectonic subprocess ----------------------------------------------------
@@ -908,7 +1040,7 @@ def fake_tectonic(
 ) -> Path:
     """Point the lookup at a (non-existent) binary in `tmp_path/tools/`."""
     exe = tmp_path / "tools" / "tectonic.exe"
-    monkeypatch.setattr(export, "_find_tectonic", lambda: str(exe))
+    monkeypatch.setattr(export, "_find_tectonic", lambda *_a, **_k: str(exe))
     return exe
 
 

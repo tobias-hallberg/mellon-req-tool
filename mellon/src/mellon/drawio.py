@@ -15,7 +15,6 @@ import base64
 import binascii
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
@@ -25,6 +24,8 @@ from urllib.parse import unquote
 from xml.sax.saxutils import quoteattr
 
 from lxml import etree
+
+from . import programs
 
 DOWNLOAD_URL = "https://www.drawio.com/"
 
@@ -333,8 +334,8 @@ def qt_svg(data: bytes) -> bytes:
     return etree.tostring(root, xml_declaration=True, encoding="UTF-8")
 
 
-# Requirements: MELLON-EDIT-SRS-246, MELLON-GUI-SRS-217
-def find_drawio() -> str | None:
+# Requirements: MELLON-EDIT-SRS-246, MELLON-EDIT-SRS-247, MELLON-GUI-SRS-217, MELLON-PDF-SRS-67
+def find_drawio(repo_root: Path | None = None) -> str | None:
     """Locate the draw.io desktop executable.
 
     Search order:
@@ -342,7 +343,12 @@ def find_drawio() -> str | None:
            loudly at run time rather than being skipped).
         2. The Windows installer locations: per-machine under
            ``%ProgramFiles%``, per-user under ``%LOCALAPPDATA%\\Programs``.
-        3. ``PATH`` (``drawio`` from the Linux packages, or ``draw.io``).
+        3. ``PATH``, absolute entries only (``drawio`` from the Linux packages,
+           or ``draw.io``).
+
+    Apart from ``MELLON_DRAWIO``, a program inside the repository at
+    ``repo_root`` or directly in the current folder is never returned
+    (``programs.allowed``).
     """
     override = os.environ.get("MELLON_DRAWIO")
     if override:
@@ -353,10 +359,10 @@ def find_drawio() -> str | None:
                 continue
             for sub in (("draw.io",), ("Programs", "draw.io")):
                 cand = Path(base, *sub, "draw.io.exe")
-                if cand.is_file():
+                if cand.is_file() and programs.allowed(cand, repo_root):
                     return str(cand)
     for name in ("drawio", "draw.io"):
-        on_path = shutil.which(name)
+        on_path = programs.which(name, repo_root)
         if on_path is not None:
             return on_path
     return None

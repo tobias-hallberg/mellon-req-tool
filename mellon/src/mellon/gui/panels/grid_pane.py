@@ -1439,7 +1439,7 @@ class GridPane(QWidget):
             return
         self._controller.reload_document(doc_id)
 
-    # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-GUI-SRS-217
+    # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-EDIT-SRS-247, MELLON-GUI-SRS-217
     def edit_figure_in_drawio(self, doc_id: str, obj_id: str) -> None:
         """Open `obj_id`'s figure in draw.io desktop.
 
@@ -1447,7 +1447,7 @@ class GridPane(QWidget):
         saves back into the same file, and the window picks the change up when
         it is next activated (`RepoController.changed_figures`).
         """
-        exe = drawio.find_drawio()
+        exe = drawio.find_drawio(self._controller.root)
         if exe is None:
             QMessageBox.information(self, "draw.io not found", DRAWIO_NOT_FOUND_TEXT)
             return
