@@ -139,6 +139,9 @@
         <ref id="MELLON-GUI-STS-63"/>
         <ref id="MELLON-GUI-STS-107"/>
       </ref>
+      <ref id="MELLON-GUI-STS-125">
+        <ref id="MELLON-GUI-STS-124"/>
+      </ref>
     </ref>
     <ref id="MELLON-GUI-STS-17">
       <ref id="MELLON-GUI-STS-18">

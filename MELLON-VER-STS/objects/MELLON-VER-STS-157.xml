@@ -6,6 +6,7 @@
   <attr name="execution">Automated</attr>
   <attr name="rung">3 GUI and MCP</attr>
   <attr name="rationale">as implemented: mapped from the existing tests.</attr>
-  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand</attr>
+  <attr name="automated-tests">tests/test_gui_merge.py::test_dialog_renumbers_without_asking_and_merges_by_hand
+tests/test_gui_merge.py::test_ver_srs_340_renumbered_objects_show_ids_and_branch_names_as_written</attr>
   <description>Open the Resolve merge dialog for a merge in which both sides created VCU3-SRS-34. Expected: the dialog shows a line saying VCU3-SRS-34 on b was created later and naming its new ID VCU3-SRS-35, with no choice to make.</description>
 </object>
