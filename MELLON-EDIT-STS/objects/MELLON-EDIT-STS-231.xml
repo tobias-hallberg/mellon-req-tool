@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-EDIT-STS-231">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_drawio.py::test_edit_srs_247_drawio_in_current_folder_is_not_found
+tests/test_drawio.py::test_edit_srs_247_drawio_inside_repository_is_not_found
+tests/test_drawio.py::test_edit_srs_247_install_folder_inside_repository_is_left_out
+tests/test_drawio.py::test_edit_srs_247_mellon_drawio_in_repository_is_used
+tests/test_drawio.py::test_edit_srs_247_drawio_on_path_outside_repository_is_found</attr>
+  <description>Without MELLON_DRAWIO, put a draw.io program in the current folder, which is the repository; separately, in a folder inside the repository that PATH names, in a folder PATH names by a relative path, and (Windows) in a standard install folder that lies inside the repository; then in a PATH folder outside the repository; then name the program inside the repository in MELLON_DRAWIO. Expected: the programs in the current folder and inside the repository are never found; the one outside is found; the one MELLON_DRAWIO names is used.</description>
+</object>

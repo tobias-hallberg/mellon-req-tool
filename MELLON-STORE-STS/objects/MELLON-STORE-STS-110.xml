@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-110">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_gui_links.py::test_store_srs_230_link_picker_lists_no_folder_outside_the_repository</attr>
+  <description>A document's manifest declares as parents a loaded document, a parent folder path, an absolute path to another project's document and a network share. Open the link picker on one of its objects while recording each path Mellon asks the file system for. Expected: no path outside the repository is asked for, and the picker lists exactly the loaded parent's objects and the document's other objects.</description>
+</object>
