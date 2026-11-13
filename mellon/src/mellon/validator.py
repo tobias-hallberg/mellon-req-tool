@@ -288,6 +288,17 @@ def link_target_missing(doc: Document, link: Link) -> bool:
     return link.target_doc == doc.id and link.target_id not in doc.objects
 
 
+# Requirements: MELLON-CHECK-SRS-33
+def link_not_allowed(doc: Document, link: Link) -> bool:
+    """True when `link`, an outgoing link of `doc`, is reported as
+    LINK_NOT_ALLOWED: its target is neither in `doc` nor in a parent of `doc`.
+
+    `mellon-check` uses this to print such a link once, whether its target
+    exists or not (MELLON-CHECK-SRS-134).
+    """
+    return link.target_doc != doc.id and link.target_doc not in doc.parents
+
+
 # Requirements: MELLON-CHECK-SRS-34
 def _check_links(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
@@ -314,10 +325,9 @@ def _check_links(doc: Document) -> list[ValidationError]:
 # Requirements: MELLON-CHECK-SRS-33
 def _check_link_policy(doc: Document) -> list[ValidationError]:
     errors: list[ValidationError] = []
-    allowed = {doc.id, *doc.parents}
     for source, link_list in doc.links.items():
         for link in link_list:
-            if link.target_doc not in allowed:
+            if link_not_allowed(doc, link):
                 errors.append(
                     ValidationError(
                         "LINK_NOT_ALLOWED",

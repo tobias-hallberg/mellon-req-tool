@@ -19,7 +19,26 @@ from .link_index import from_scratch
 from .repo import DocLoadError
 from .service import DocumentService, ServiceError
 from .suspects import LinkState
-from .validator import link_target_missing
+from .validator import link_not_allowed, link_target_missing
+
+
+# Requirements: MELLON-CHECK-SRS-137
+def _load_error_line(err: DocLoadError, root: Path) -> str:
+    """`<doc>: LOAD_ERROR <file>:<line>: <reason>`, the file relative to the
+    root; without the line when the reason concerns no one line."""
+    if err.file is None:
+        return f"{err.doc_id}: LOAD_ERROR {err.message}"
+    reason = err.message
+    prefix = f"{err.file}: "
+    if reason.startswith(prefix):
+        reason = reason[len(prefix):]
+    try:
+        where = err.file.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        where = str(err.file)
+    if err.line is not None:
+        where = f"{where}:{err.line}"
+    return f"{err.doc_id}: LOAD_ERROR {where}: {reason}"
 
 
 # Requirements: MELLON-CHECK-SRS-2, MELLON-CHECK-SRS-137, MELLON-CHECK-SRS-147,
@@ -28,7 +47,7 @@ def _problems(svc: DocumentService) -> tuple[list[str], int]:
     """One line per problem, and the number of documents that loaded."""
     load_errors: list[DocLoadError] = []
     validation = svc.validate_repo(load_errors=load_errors)
-    lines = [f"{e.doc_id}: LOAD_ERROR {e.message}" for e in load_errors]
+    lines = [_load_error_line(e, svc.repo_root) for e in load_errors]
     for doc_id in sorted(validation):
         lines += [f"{doc_id}: {e.code} {e.message}" for e in validation[doc_id]]
     docs = svc.get_all_documents()
@@ -39,13 +58,15 @@ def _problems(svc: DocumentService) -> tuple[list[str], int]:
             if s.state is LinkState.OK:
                 continue
             # MELLON-CHECK-SRS-134: one line per check problem. A broken link
-            # the validation already printed as LINK_TARGET_MISSING (a target
-            # in its own document) gets no second BROKEN line; one into
-            # another document has only the BROKEN line.
+            # the validation already printed, as LINK_TARGET_MISSING (a target
+            # in its own document) or as LINK_NOT_ALLOWED (a target outside
+            # the document and its parents, MELLON-CHECK-SRS-33), gets no
+            # second BROKEN line; one into a parent document has only the
+            # BROKEN line.
             if (
                 s.state is LinkState.BROKEN
                 and doc is not None
-                and link_target_missing(doc, s.link)
+                and (link_target_missing(doc, s.link) or link_not_allowed(doc, s.link))
             ):
                 continue
             link = f"{s.source_id} -> {s.link.target_doc}/{s.link.target_id}"

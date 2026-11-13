@@ -45,7 +45,24 @@ from .filter import COMBINATORS, KINDS, LINK_OPS, valid_ops_for_kind
 
 
 class LoaderError(Exception):
-    """Raised when the on-disk files can't be parsed into a Document."""
+    """Raised when the on-disk files can't be parsed into a Document.
+
+    `file` and `line` name the file and the line the reason concerns, when
+    there is one (MELLON-STORE-SRS-29); the message starts with the file.
+    """
+
+    def __init__(
+        self, message: str, *, file: PurePath | None = None, line: int | None = None
+    ) -> None:
+        super().__init__(message)
+        self.file = file
+        self.line = line
+
+
+def _element_error(path: PurePath, elem: etree._Element, reason: str) -> LoaderError:
+    """A load error about `elem` of the file at `path`, naming the file and
+    the element's line."""
+    return LoaderError(f"{path}: {reason}", file=path, line=elem.sourceline)
 
 
 # Requirements: MELLON-STORE-SRS-25, MELLON-STORE-SRS-58, MELLON-STORE-SRS-81,
@@ -69,7 +86,7 @@ def load_document(folder: str | Path) -> Document:
     try:
         manifest_stat = os.stat(manifest_path)
     except OSError as e:
-        raise LoaderError(f"{manifest_path}: cannot read file: {e}") from e
+        raise LoaderError(f"{manifest_path}: cannot read file: {e}", file=manifest_path) from e
     metadata, parents, attributes, outline, next_object_number = _cached_parse(
         _manifests,
         _manifests,
@@ -210,7 +227,9 @@ def _parse_xml_bytes(data: bytes, path: PurePath) -> etree._Element:
     try:
         return etree.fromstring(data)
     except etree.XMLSyntaxError as e:
-        raise LoaderError(f"{path}: XML parse error: {e}") from e
+        raise LoaderError(
+            f"{path}: XML parse error: {e}", file=path, line=e.lineno
+        ) from e
 
 
 def _parse_manifest(path: Path) -> _Manifest:
@@ -220,20 +239,22 @@ def _parse_manifest(path: Path) -> _Manifest:
 # Requirements: MELLON-STORE-SRS-1, MELLON-STORE-SRS-46, MELLON-STORE-SRS-59, MELLON-STORE-SRS-60
 def _manifest_from_root(manifest: etree._Element, path: Path) -> _Manifest:
     if manifest.tag != "document":
-        raise LoaderError(
-            f"{path}: root element must be <document>, got <{manifest.tag}>"
+        raise _element_error(
+            path, manifest, f"root element must be <document>, got <{manifest.tag}>"
         )
     manifest_id = manifest.get("id")
     if manifest_id != path.parent.name:
-        raise LoaderError(
-            f"{path}: document id={manifest_id!r} does not match "
-            f"folder name {path.parent.name!r}"
+        raise _element_error(
+            path,
+            manifest,
+            f"document id={manifest_id!r} does not match "
+            f"folder name {path.parent.name!r}",
         )
     return (
         _parse_metadata(manifest.find("metadata")),
-        _parse_parents(manifest.find("parents")),
-        _parse_attributes(manifest.find("attributes")),
-        _parse_outline(manifest.find("outline")),
+        _parse_parents(manifest.find("parents"), path),
+        _parse_attributes(manifest.find("attributes"), path),
+        _parse_outline(manifest.find("outline"), path),
         manifest.get(NEXT_OBJECT_NUMBER_ATTR),
     )
 
@@ -305,11 +326,13 @@ def _parse_xml(path: Path) -> etree._Element:
     try:
         tree = etree.parse(str(path))
     except etree.XMLSyntaxError as e:
-        raise LoaderError(f"{path}: XML parse error: {e}") from e
+        raise LoaderError(
+            f"{path}: XML parse error: {e}", file=path, line=e.lineno
+        ) from e
     except OSError as e:
         # Unreadable (locked, no permission, a directory named *.xml): one
         # broken document, not a reason to abort a repo-wide load.
-        raise LoaderError(f"{path}: cannot read file: {e}") from e
+        raise LoaderError(f"{path}: cannot read file: {e}", file=path) from e
     return tree.getroot()
 
 
@@ -335,14 +358,14 @@ def _parse_metadata(elem: etree._Element | None) -> Metadata:
 
 
 # Requirements: MELLON-STORE-SRS-68
-def _parse_parents(elem: etree._Element | None) -> tuple[str, ...]:
+def _parse_parents(elem: etree._Element | None, path: PurePath) -> tuple[str, ...]:
     if elem is None:
         return ()
     out: list[str] = []
     for p in elem.findall("parent"):
         doc = p.get("doc")
         if not doc:
-            raise LoaderError("<parent> missing required @doc")
+            raise _element_error(path, p, "<parent> missing required @doc")
         out.append(doc)
     return tuple(out)
 
@@ -353,7 +376,7 @@ _ATTR_KINDS = ("enum", "text", "integer", "real", "boolean", "date")
 
 # Requirements: MELLON-STORE-SRS-69, MELLON-STORE-SRS-74, MELLON-STORE-SRS-75, MELLON-STORE-SRS-76,
 #   MELLON-STORE-SRS-77
-def _parse_attributes(elem: etree._Element | None) -> tuple[Attribute, ...]:
+def _parse_attributes(elem: etree._Element | None, path: PurePath) -> tuple[Attribute, ...]:
     if elem is None:
         return ()
     out: list[Attribute] = []
@@ -361,39 +384,43 @@ def _parse_attributes(elem: etree._Element | None) -> tuple[Attribute, ...]:
         name = a.get("name")
         kind = a.get("kind")
         if not name or not kind:
-            raise LoaderError("<attribute> requires @name and @kind")
+            raise _element_error(path, a, "<attribute> requires @name and @kind")
         if kind not in _ATTR_KINDS:
-            raise LoaderError(
+            raise _element_error(
+                path,
+                a,
                 f"<attribute name={name!r}>: unsupported kind={kind!r} "
-                f"(expected one of {list(_ATTR_KINDS)})"
+                f"(expected one of {list(_ATTR_KINDS)})",
             )
         required = a.get("required", "false").lower() == "true"
         label = a.get("label", "")
         options = tuple(_text(o) for o in a.findall("option"))
         if kind == "enum" and not options:
-            raise LoaderError(f"<attribute name={name!r}> kind=enum has no <option>s")
+            raise _element_error(
+                path, a, f"<attribute name={name!r}> kind=enum has no <option>s"
+            )
         if kind != "enum" and options:
-            raise LoaderError(
-                f"<attribute name={name!r}> kind={kind} cannot declare <option>s"
+            raise _element_error(
+                path, a, f"<attribute name={name!r}> kind={kind} cannot declare <option>s"
             )
         out.append(Attribute(name=name, kind=kind, required=required, options=options, label=label))
     return tuple(out)
 
 
-def _parse_outline(elem: etree._Element | None) -> tuple[OutlineNode, ...]:
+def _parse_outline(elem: etree._Element | None, path: PurePath) -> tuple[OutlineNode, ...]:
     if elem is None:
         return ()
-    return _parse_refs(elem)
+    return _parse_refs(elem, path)
 
 
 # Requirements: MELLON-STORE-SRS-78, MELLON-STORE-SRS-79
-def _parse_refs(parent: etree._Element) -> tuple[OutlineNode, ...]:
+def _parse_refs(parent: etree._Element, path: PurePath) -> tuple[OutlineNode, ...]:
     out: list[OutlineNode] = []
     for r in parent.findall("ref"):
         ref_id = r.get("id")
         if not ref_id:
-            raise LoaderError("<ref> missing required @id")
-        out.append(OutlineNode(ref_id=ref_id, children=_parse_refs(r)))
+            raise _element_error(path, r, "<ref> missing required @id")
+        out.append(OutlineNode(ref_id=ref_id, children=_parse_refs(r, path)))
     return tuple(out)
 
 
@@ -405,22 +432,22 @@ def _parse_object(path: Path) -> RequirementObject:
 #   MELLON-STORE-SRS-85, MELLON-STORE-SRS-87, MELLON-STORE-SRS-90, MELLON-STORE-SRS-114
 def _object_from_root(root: etree._Element, path: Path) -> RequirementObject:
     if root.tag != "object":
-        raise LoaderError(f"{path}: root must be <object>, got <{root.tag}>")
+        raise _element_error(path, root, f"root must be <object>, got <{root.tag}>")
     obj_id = root.get("id")
     if not obj_id:
-        raise LoaderError(f"{path}: <object> missing required @id")
+        raise _element_error(path, root, "<object> missing required @id")
     if path.stem != obj_id:
-        raise LoaderError(
-            f"{path}: filename stem {path.stem!r} does not match @id={obj_id!r}"
+        raise _element_error(
+            path, root, f"filename stem {path.stem!r} does not match @id={obj_id!r}"
         )
 
     attrs: dict[str, str] = {}
     for a in root.findall("attr"):
         name = a.get("name")
         if not name:
-            raise LoaderError(f"{path}: <attr> missing required @name")
+            raise _element_error(path, a, "<attr> missing required @name")
         if name in attrs:
-            raise LoaderError(f"{path}: duplicate <attr name={name!r}>")
+            raise _element_error(path, a, f"duplicate <attr name={name!r}>")
         attrs[name] = _text(a)
 
     description = _text(root.find("description"))
@@ -431,19 +458,20 @@ def _object_from_root(root: etree._Element, path: Path) -> RequirementObject:
 
 
 # Requirements: MELLON-STORE-SRS-106
-def _parse_span(value: str | None, attr: str, path: Path, obj_id: str) -> int:
+def _parse_span(cell: etree._Element, attr: str, path: Path, obj_id: str) -> int:
     """Parse a colspan/rowspan attribute: a positive int, default 1."""
+    value = cell.get(attr)
     if value is None:
         return 1
     try:
         span = int(value)
     except ValueError:
-        raise LoaderError(
-            f"{path}: <cell> @{attr}={value!r} is not an integer (object {obj_id})"
+        raise _element_error(
+            path, cell, f"<cell> @{attr}={value!r} is not an integer (object {obj_id})"
         )
     if span < 1:
-        raise LoaderError(
-            f"{path}: <cell> @{attr}={span} must be >= 1 (object {obj_id})"
+        raise _element_error(
+            path, cell, f"<cell> @{attr}={span} must be >= 1 (object {obj_id})"
         )
     return span
 
@@ -467,9 +495,11 @@ def _parse_table(elem: etree._Element | None, path: Path) -> Table | None:
         for c in cols_el.findall("col"):
             align = c.get("align", "left")
             if align not in TABLE_ALIGNMENTS:
-                raise LoaderError(
-                    f"{path}: <col align={align!r}> must be one of "
-                    f"{sorted(TABLE_ALIGNMENTS)} (object {obj_id})"
+                raise _element_error(
+                    path,
+                    c,
+                    f"<col align={align!r}> must be one of "
+                    f"{sorted(TABLE_ALIGNMENTS)} (object {obj_id})",
                 )
             columns.append(TableColumn(align=align))
 
@@ -479,8 +509,8 @@ def _parse_table(elem: etree._Element | None, path: Path) -> Table | None:
         cells = tuple(
             TableCell(
                 text=_text(c),
-                colspan=_parse_span(c.get("colspan"), "colspan", path, obj_id),
-                rowspan=_parse_span(c.get("rowspan"), "rowspan", path, obj_id),
+                colspan=_parse_span(c, "colspan", path, obj_id),
+                rowspan=_parse_span(c, "rowspan", path, obj_id),
             )
             for c in r.findall("cell")
         )
@@ -489,9 +519,10 @@ def _parse_table(elem: etree._Element | None, path: Path) -> Table | None:
     table = Table(columns=tuple(columns), rows=tuple(rows))
     problems = table_geometry_errors(table)
     if problems:
-        raise LoaderError(
-            f"{path}: inconsistent table geometry (object {obj_id}): "
-            + "; ".join(problems)
+        raise _element_error(
+            path,
+            elem,
+            f"inconsistent table geometry (object {obj_id}): " + "; ".join(problems),
         )
     return table
 
@@ -508,7 +539,7 @@ def _parse_rules_file(path: Path) -> tuple[Rule, ...]:
         return ()
     root = _parse_xml(path)
     if root.tag != "rules":
-        raise LoaderError(f"{path}: root must be <rules>, got <{root.tag}>")
+        raise _element_error(path, root, f"root must be <rules>, got <{root.tag}>")
     out: list[Rule] = []
     for rule_el in root.findall("rule"):
         when = rule_el.find("when")
@@ -524,26 +555,30 @@ def _parse_rules_file(path: Path) -> tuple[Rule, ...]:
                 name = attr_el.get("name")
                 status = attr_el.get("status")
                 if not name or not status:
-                    raise LoaderError(
-                        f"{path}: <attr> in <then> requires @name and @status"
+                    raise _element_error(
+                        path, attr_el, "<attr> in <then> requires @name and @status"
                     )
                 if status not in _RULE_STATUSES:
-                    raise LoaderError(
-                        f"{path}: <attr name={name!r}> has invalid status={status!r} "
-                        f"(expected one of {sorted(_RULE_STATUSES)})"
+                    raise _element_error(
+                        path,
+                        attr_el,
+                        f"<attr name={name!r}> has invalid status={status!r} "
+                        f"(expected one of {sorted(_RULE_STATUSES)})",
                     )
                 directives[name] = status
             for link_el in then.findall("link"):
                 target_doc = link_el.get("target-doc")
                 status = link_el.get("status", "required")
                 if not target_doc:
-                    raise LoaderError(
-                        f"{path}: <link> in <then> requires @target-doc"
+                    raise _element_error(
+                        path, link_el, "<link> in <then> requires @target-doc"
                     )
                 if status not in _LINK_STATUSES:
-                    raise LoaderError(
-                        f"{path}: <link target-doc={target_doc!r}> has invalid "
-                        f"status={status!r} (expected one of {sorted(_LINK_STATUSES)})"
+                    raise _element_error(
+                        path,
+                        link_el,
+                        f"<link target-doc={target_doc!r}> has invalid "
+                        f"status={status!r} (expected one of {sorted(_LINK_STATUSES)})",
                     )
                 link_directives.append(
                     LinkDirective(target_doc=target_doc, status=status)
@@ -562,18 +597,18 @@ def _parse_rules_file(path: Path) -> tuple[Rule, ...]:
 def _parse_view(path: Path) -> View:
     root = _parse_xml(path)
     if root.tag != "view":
-        raise LoaderError(f"{path}: root must be <view>, got <{root.tag}>")
+        raise _element_error(path, root, f"root must be <view>, got <{root.tag}>")
     name = root.get("name")
     if not name:
-        raise LoaderError(f"{path}: <view> missing required @name")
+        raise _element_error(path, root, "<view> missing required @name")
     visible: list[str] = []
     seen: set[str] = set()
     for el in root.findall("attribute"):
         attr_name = el.get("name")
         if not attr_name:
-            raise LoaderError(f"{path}: <attribute> missing required @name")
+            raise _element_error(path, el, "<attribute> missing required @name")
         if attr_name in seen:
-            raise LoaderError(f"{path}: duplicate <attribute name={attr_name!r}>")
+            raise _element_error(path, el, f"duplicate <attribute name={attr_name!r}>")
         seen.add(attr_name)
         visible.append(attr_name)
     return View(slug=path.stem, name=name, visible=tuple(visible))
@@ -584,21 +619,24 @@ def _parse_view(path: Path) -> View:
 def _parse_filter(path: Path) -> Filter:
     root = _parse_xml(path)
     if root.tag != "filter":
-        raise LoaderError(f"{path}: root must be <filter>, got <{root.tag}>")
+        raise _element_error(path, root, f"root must be <filter>, got <{root.tag}>")
     name = root.get("name")
     if not name:
-        raise LoaderError(f"{path}: <filter> missing required @name")
+        raise _element_error(path, root, "<filter> missing required @name")
     combinator = root.get("combinator", "all")
     if combinator not in COMBINATORS:
-        raise LoaderError(
-            f"{path}: <filter> combinator must be one of "
-            f"{COMBINATORS}, got {combinator!r}"
+        raise _element_error(
+            path,
+            root,
+            f"<filter> combinator must be one of {COMBINATORS}, got {combinator!r}",
         )
     keep_ancestors_attr = (root.get("keep-ancestors") or "true").lower()
     if keep_ancestors_attr not in ("true", "false"):
-        raise LoaderError(
-            f"{path}: <filter> keep-ancestors must be 'true' or 'false', "
-            f"got {keep_ancestors_attr!r}"
+        raise _element_error(
+            path,
+            root,
+            f"<filter> keep-ancestors must be 'true' or 'false', "
+            f"got {keep_ancestors_attr!r}",
         )
     keep_ancestors = keep_ancestors_attr == "true"
 
@@ -606,30 +644,28 @@ def _parse_filter(path: Path) -> Filter:
     for el in root.findall("rule"):
         kind = el.get("kind")
         if kind not in KINDS:
-            raise LoaderError(
-                f"{path}: <rule> kind must be one of {KINDS}, got {kind!r}"
+            raise _element_error(
+                path, el, f"<rule> kind must be one of {KINDS}, got {kind!r}"
             )
         op = el.get("op") or ""
         attr = el.get("attr") or ""
         value = el.get("value") or ""
         if kind == "attr":
             if not attr:
-                raise LoaderError(f"{path}: <rule kind='attr'> missing @attr")
+                raise _element_error(path, el, "<rule kind='attr'> missing @attr")
             # Op validity is kind-specific; fully validating it here would
             # require knowing the attribute's schema kind, which isn't loaded
             # yet at this point. The engine validates per-evaluate. Catch the
             # obvious top-level typos by checking against the union of known
             # operator codes.
             if op and op not in _ALL_ATTR_OPS:
-                raise LoaderError(
-                    f"{path}: <rule kind='attr'> op={op!r} is not a recognised "
-                    f"operator"
+                raise _element_error(
+                    path, el, f"<rule kind='attr'> op={op!r} is not a recognised operator"
                 )
         else:
             if op not in LINK_OPS:
-                raise LoaderError(
-                    f"{path}: <rule kind='{kind}'> op must be one of "
-                    f"{LINK_OPS}, got {op!r}"
+                raise _element_error(
+                    path, el, f"<rule kind='{kind}'> op must be one of {LINK_OPS}, got {op!r}"
                 )
         rules.append(FilterRule(kind=kind, attr=attr, op=op, value=value))
 
@@ -664,13 +700,13 @@ def _parse_links(path: Path) -> tuple[str, tuple[Link, ...]]:
 # Requirements: MELLON-STORE-SRS-118, MELLON-STORE-SRS-119, MELLON-STORE-SRS-120
 def _links_from_root(root: etree._Element, path: Path) -> tuple[str, tuple[Link, ...]]:
     if root.tag != "links":
-        raise LoaderError(f"{path}: root must be <links>, got <{root.tag}>")
+        raise _element_error(path, root, f"root must be <links>, got <{root.tag}>")
     source = root.get("source")
     if not source:
-        raise LoaderError(f"{path}: <links> missing required @source")
+        raise _element_error(path, root, "<links> missing required @source")
     if path.stem != source:
-        raise LoaderError(
-            f"{path}: filename stem {path.stem!r} does not match @source={source!r}"
+        raise _element_error(
+            path, root, f"filename stem {path.stem!r} does not match @source={source!r}"
         )
 
     out: list[Link] = []
@@ -680,9 +716,7 @@ def _links_from_root(root: etree._Element, path: Path) -> tuple[str, tuple[Link,
         link_type = el.get("type")
         ack = el.get("ack")
         if not target_doc or not target_id or not link_type:
-            raise LoaderError(
-                f"{path}: <link> requires @target-doc, @target-id, @type"
-            )
+            raise _element_error(path, el, "<link> requires @target-doc, @target-id, @type")
         out.append(
             Link(
                 target_doc=target_doc,

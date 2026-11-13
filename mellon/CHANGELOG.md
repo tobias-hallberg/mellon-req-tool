@@ -279,6 +279,21 @@ All notable changes to Mellon. The format follows
   still can't be acknowledged until the target is committed, and
   `ack_suspects` skips it with that reason (`MELLON-TRACE-SRS-45`, `-47`).
 
+- **`mellon-check` prints a link outside the document and its parents once.**
+  A link to a document that is neither the link's own document nor a parent,
+  whose target object doesn't exist, was printed as `LINK_NOT_ALLOWED` and
+  again as a `BROKEN` link, and counted as two problems. It now gets the
+  `LINK_NOT_ALLOWED` line alone (`MELLON-CHECK-SRS-134`, `-33`).
+- **Every load error names its file and line.** A manifest whose enum
+  attribute has no option, or whose parent, attribute or ref element lacks a
+  required XML attribute, gave no file; and only an XML syntax error gave a
+  line. Each load error now names the file and the line of the element it
+  concerns, in `DocLoadError`, MCP `list_documents`, `validate_repo` and
+  `repo_health`, and in `mellon-check`, whose line now reads
+  `<doc>: LOAD_ERROR <file>:<line>: <reason>` with the file relative to the
+  repository root (`MELLON-STORE-SRS-29`, `MELLON-CHECK-SRS-90`, `-102`,
+  `-137`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

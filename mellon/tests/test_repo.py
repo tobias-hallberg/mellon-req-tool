@@ -239,7 +239,8 @@ def test_load_all_records_semantic_load_error_without_hint(two_doc_repo):
     errors: list[DocLoadError] = []
     load_all(root, load_errors=errors)
     (err,) = errors
-    assert (err.doc_id, err.file, err.line) == ("DOC", bad, None)
+    # MELLON-STORE-SRS-29: the line of the <object> element (CV-STORE-02).
+    assert (err.doc_id, err.file, err.line) == ("DOC", bad, 1)
     assert "does not match @id='DOC-2'" in err.message
     assert "merge conflict" not in err.message
 
@@ -534,3 +535,49 @@ def test_trace_srs_33_incoming_links_match_generated_link_sets(tmp_path):
             for o in ids[d]:
                 got = sorted((sd, ss, lk.type) for sd, ss, lk in repo_incoming_links(loaded, d, o))
                 assert got == sorted(expected.get((d, o), [])), f"repository {n}, object {o}"
+
+
+# --- code view findings (CV-STORE-*) ---
+
+_CV_STORE_LOAD_ERRORS = {
+    # name: (path in the document folder, content, line the reason concerns)
+    "enum-without-option": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <attributes>\n'
+        '    <attribute name="type" kind="enum"/>\n  </attributes>\n</document>\n'), 4),
+    "parent-without-doc": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <parents>\n'
+        "    <parent/>\n  </parents>\n</document>\n"), 4),
+    "attribute-without-kind": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <attributes>\n'
+        '    <attribute name="type"/>\n  </attributes>\n</document>\n'), 4),
+    "ref-without-id": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <outline>\n'
+        '    <ref id="DOC-1">\n      <ref/>\n    </ref>\n  </outline>\n</document>\n'), 5),
+    "duplicate-attr": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+        '  <attr name="type">A</attr>\n  <attr name="type">B</attr>\n</object>\n'), 4),
+    "id-mismatch": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-9">\n</object>\n'), 2),
+    "bad-span": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n  <table>\n'
+        '    <row>\n      <cell colspan="0">a</cell>\n    </row>\n  </table>\n'
+        "</object>\n"), 5),
+    "link-without-type": ("links/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<links source="DOC-1">\n'
+        '  <link target-doc="PARENT" target-id="PARENT-42"/>\n</links>\n'), 3),
+    "syntax-error": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n  <attr\n'), 4),
+}
+
+
+@pytest.mark.parametrize("case", sorted(_CV_STORE_LOAD_ERRORS))
+def test_store_srs_29_load_error_names_file_and_line(two_doc_repo, case):
+    """CV-STORE-02, MELLON-STORE-SRS-29: each load error names the document, the file
+    and the line where the reason concerns one line, whatever the loader rejected."""
+    root, _parent, doc, _c1 = two_doc_repo
+    rel, content, line = _CV_STORE_LOAD_ERRORS[case]
+    (doc / rel).write_text(content, encoding="utf-8")
+    errors: list[DocLoadError] = []
+    load_all(root, load_errors=errors)
+    (err,) = errors
+    assert (err.doc_id, err.file, err.line) == ("DOC", doc / rel, line), err.message

@@ -48,7 +48,11 @@ _CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
 
 
 def _error_file(err: LoaderError) -> Path | None:
-    # Most loader messages start with "<path>: ".
+    # Callers also pass lxml's XMLSyntaxError, which names no file.
+    named = getattr(err, "file", None)
+    if named is not None:
+        return Path(named) if Path(named).is_file() else None
+    # Older messages start with "<path>: ".
     head, sep, _rest = str(err).partition(": ")
     return Path(head) if sep and Path(head).is_file() else None
 
@@ -75,8 +79,11 @@ def load_error_message(err: LoaderError) -> str:
 # Requirements: MELLON-CHECK-SRS-90, MELLON-STORE-SRS-29
 def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
     file = _error_file(err)
-    # lxml's XMLSyntaxError (the cause of a parse failure) carries the line.
-    line = getattr(err.__cause__, "lineno", None)
+    # The loader names the line of the element the reason concerns, or the
+    # line lxml's XMLSyntaxError (the cause of a parse failure) gives.
+    line = getattr(err, "line", None)
+    if line is None:
+        line = getattr(err.__cause__, "lineno", None)
     return DocLoadError(
         doc_id=folder.name,
         folder=folder,

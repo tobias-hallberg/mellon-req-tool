@@ -817,3 +817,98 @@ def test_store_srs_210_check_changes_no_file(read_only_repo):
     before = snapshot(root, include_git=False)
     run_program(CHECK_EXE, root)
     assert changed(before, snapshot(root, include_git=False)) == []
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+@pytest.mark.parametrize("runner", ["process", "main"])
+def test_check_srs_134_link_outside_parents_to_missing_object_has_one_line(
+        tmp_path, capsys, monkeypatch, runner):
+    """CV-CHECK-01, MELLON-CHECK-SRS-134: one line per check problem. CHILD declares
+    PARENT; CHILD-1 links to OTHER/OTHER-9, OTHER isn't a parent and OTHER-9 doesn't
+    exist. Validation reports LINK_NOT_ALLOWED; no second BROKEN line follows."""
+    root = _blind_clean_check_repo(tmp_path / "repo")
+    _blind_write_doc(root, "OTHER", {"OTHER-1": {"type": "Requirement"}})
+    ack = _blind_git(root, "log", "-1", "--format=%H", "--", "PARENT/objects/PARENT-1.xml")
+    _blind_write(root / "CHILD" / "links" / "CHILD-1.xml", _blind_links("CHILD-1", [
+        ("PARENT", "PARENT-1", "satisfies", ack[:7]), ("OTHER", "OTHER-9", "refines", None)]))
+    _blind_commit(root, "Link outside the parents")
+    code, out, err = _blind_run_check(runner, ["--repo-root", str(root)], capsys, monkeypatch)
+    assert code == 1, (out, err)
+    lines = _blind_problem_lines(out)
+    assert len(lines) == 1, out
+    assert "LINK_NOT_ALLOWED" in lines[0], out
+    assert "1 problem(s)" in out, out
+
+
+_CV_LOAD_ERRORS = {
+    # name: (path relative to the document folder, content, line the reason concerns)
+    "enum-without-option": ("CHILD.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<document id="CHILD">\n'
+        "  <attributes>\n"
+        '    <attribute name="type" kind="enum"/>\n'
+        "  </attributes>\n"
+        "</document>\n"), 4),
+    "parent-without-doc": ("CHILD.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<document id="CHILD">\n'
+        "  <parents>\n"
+        "    <parent/>\n"
+        "  </parents>\n"
+        "</document>\n"), 4),
+    "ref-without-id": ("CHILD.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<document id="CHILD">\n'
+        "  <outline>\n"
+        "    <ref/>\n"
+        "  </outline>\n"
+        "</document>\n"), 4),
+    "id-mismatch": ("objects/CHILD-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<object id="CHILD-2">\n'
+        "  <description>text</description>\n"
+        "</object>\n"), 2),
+    "duplicate-attr": ("objects/CHILD-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<object id="CHILD-1">\n'
+        '  <attr name="type">Requirement</attr>\n'
+        '  <attr name="type">Heading</attr>\n'
+        "  <description>text</description>\n"
+        "</object>\n"), 4),
+}
+
+
+@pytest.mark.parametrize("case", sorted(_CV_LOAD_ERRORS))
+def test_check_srs_137_each_load_error_line_names_file_and_line(tmp_path, capsys,
+                                                                monkeypatch, case):
+    """CV-CHECK-02, MELLON-CHECK-SRS-137: the LOAD_ERROR line holds the file and the line
+    for a load error that isn't an XML syntax error too."""
+    root = _blind_clean_check_repo(tmp_path / "repo")
+    rel, content, line_no = _CV_LOAD_ERRORS[case]
+    _blind_write(root / "CHILD" / rel, content)
+    code, out, err = _blind_check_main(["--repo-root", str(root)], capsys, monkeypatch)
+    lines = [line for line in out.splitlines() if "LOAD_ERROR" in line]
+    assert len(lines) == 1, out
+    assert f"CHILD/{rel}:{line_no}:" in lines[0].replace("\\", "/"), lines[0]
+
+
+@pytest.mark.parametrize("tool", ["validate_repo", "repo_health"])
+@pytest.mark.parametrize("case", sorted(_CV_LOAD_ERRORS))
+def test_check_srs_90_102_each_load_error_has_file_and_line(tmp_path, monkeypatch, case,
+                                                             tool):
+    """CV-CHECK-02, MELLON-CHECK-SRS-90 and -102: validate_repo and repo_health return each
+    load error with its file and line."""
+    import mellon.mcp.server as mcp_server
+
+    root = _blind_clean_check_repo(tmp_path / "repo")
+    rel, content, line_no = _CV_LOAD_ERRORS[case]
+    _blind_write(root / "CHILD" / rel, content)
+    monkeypatch.setattr(mcp_server._State, "repo_root", root)
+    monkeypatch.setattr(mcp_server._State, "service", None)
+    monkeypatch.setattr(mcp_server._State, "read_only", False)
+    res = getattr(mcp_server, tool)()
+    errors = res["load_errors"]
+    assert [(e["doc_id"], e["file"], e["line"]) for e in errors] == [
+        ("CHILD", f"CHILD/{rel}", line_no)], errors
