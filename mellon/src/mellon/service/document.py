@@ -387,7 +387,19 @@ class DocumentService:
         return obj
 
     # Requirements: MELLON-CHECK-SRS-9
-    def validate_document(self, doc_id: str) -> list[ValidationError]:
+    # Requirements: MELLON-CHECK-SRS-2
+    def validate_document(
+        self, doc_id: str, *, from_disk: bool = False
+    ) -> list[ValidationError]:
+        """Validate `doc_id`. With `from_disk`, read it from the working copy
+        even when the cache holds it, leaving the cache as it is, so a file
+        changed since raises its load error (ServiceError LOAD)."""
+        if from_disk:
+            folder = self._doc_folder(doc_id)
+            try:
+                return validate(load_document(folder))
+            except LoaderError as e:
+                raise _load_error(e) from e
         return validate(self._load(doc_id).document)
 
     # Requirements: MELLON-CHECK-SRS-2

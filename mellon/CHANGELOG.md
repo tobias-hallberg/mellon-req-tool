@@ -305,6 +305,15 @@ All notable changes to Mellon. The format follows
   `null`, and the new `suspect_scan_error` says why (`MELLON-CHECK-SRS-97`,
   `-101`). A failing coverage row is no longer silently left out either.
 
+- **The Validate action reads the working copy.** A Document Editor
+  validated the copy it had read earlier, so after a pull left conflict
+  markers in the document it said "validation passed". It now reads the
+  document's files when the action is chosen and shows the load error
+  instead (`MELLON-CHECK-SRS-2`).
+- **The Validate action lists every validation error,** in a scrollable
+  list, where it used to show the first ten and "… and N more"
+  (`MELLON-CHECK-SRS-79`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**
