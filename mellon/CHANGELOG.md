@@ -412,6 +412,14 @@ All notable changes to Mellon. The format follows
   message. The object and its place are now written together or not at all
   (`MELLON-STORE-SRS-174`).
 
+- **Only an SVG holding a draw.io diagram counts as a draw.io figure.** The
+  test looked for the text `<mxfile` anywhere in the `content` attribute and
+  accepted any root named `svg`, so content that wasn't XML, an `mxfile`
+  inside another element, and an svg outside the SVG namespace were offered
+  Edit in draw.io. The content must now parse as XML with an `mxfile` root
+  (or, as before, `mxGraphModel`; see the open questions), in an `svg` root
+  in the SVG namespace (`MELLON-STORE-SRS-132`).
+
 ### Security
 
 - **A link's target can no longer make Mellon look outside the repository.**

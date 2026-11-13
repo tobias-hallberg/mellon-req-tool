@@ -7,6 +7,7 @@
   <attr name="rung">1 Unit</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_drawio.py::test_is_drawio_svg_plain_content
-tests/test_drawio.py::test_is_drawio_svg_rejects</attr>
+tests/test_drawio.py::test_is_drawio_svg_rejects
+tests/test_drawio.py::test_store_srs_132_only_an_mxfile_root_in_an_svg_is_a_drawio_figure</attr>
   <description>Check whether each of these is a draw.io figure: an SVG whose content attribute holds XML with an mxfile root; an SVG with no content attribute; an SVG whose content is 'not a diagram'; an html root with mxfile content; text that isn't XML. Expected: only the first is a draw.io figure.</description>
 </object>
