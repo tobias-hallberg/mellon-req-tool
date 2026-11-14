@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-111">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">derived: written with the hardening the person accepted on 2026-11-14, from the requirement.</attr>
+  <attr name="automated-tests">tests/test_editor.py::test_store_srs_228_editor_refuses_to_write_through_a_linked_folder
+tests/test_editor.py::test_store_srs_228_editor_refuses_to_write_or_delete_a_linked_file
+tests/test_editor.py::test_store_srs_228_a_root_reached_through_a_link_still_takes_edits</attr>
+  <description>Give a document a figure, a view and a filter. For each kind of edit (create, edit and delete an object, add a link, set and clear a figure, rename a view, save a filter, change the document's title), make the folder it writes in a link to a copy elsewhere: once after Mellon has read the document, and from the start for the edits that don't read it. Then make an object file a symbolic link to a file elsewhere after the read, and edit and delete that object. Last, reach the repository root itself through a link and edit through it. Expected: each edit through a link is refused, naming the link, and nothing behind the link changes; the linked object file stays a link; the edits through the root's link are made.</description>
+</object>
