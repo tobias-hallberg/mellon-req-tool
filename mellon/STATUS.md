@@ -3,7 +3,7 @@
 A snapshot of what's built, what's deferred, and where to pick up. For the
 per-release list of changes, see [CHANGELOG.md](CHANGELOG.md).
 
-**Current release:** v0.3.0, with draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
+**Current release:** v0.4.0, with Mellon's own requirements covering the whole application. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
 and the team routine is in [TEAM.md](TEAM.md). Documents are meant for up to
 1,000 objects each; [SCALING.md](SCALING.md) has measurements up to 5,000.
 
@@ -707,9 +707,9 @@ one `MELLON-<AREA>-SRS` and one `MELLON-<AREA>-STS` per area (STORE, EDIT,
 CHECK, TRACE, VER, PDF, MCP, GUI). `../docs/specification.md` says how they
 are written and checked; `../docs/definitions.md` holds the terms.
 
-- Every area is specified: 1,675 requirements and 776 test cases. 889
-  requirements are built (780 Implemented, 109 Accepted), and each of them
-  has a test case, which `test_mellon_spec.py` checks. 778 are Proposed
+- Every area is specified: 1,676 requirements and 779 test cases. 892
+  requirements are built (780 Implemented, 112 Accepted), and each of them
+  has a test case, which `test_mellon_spec.py` checks. 776 are Proposed
   (gaps and planned behaviour, including a changed version beside a built
   requirement where the two differ) and 8 Deferred.
 - 472 requirements only restate what was built (rationale `as
@@ -720,7 +720,8 @@ are written and checked; `../docs/definitions.md` holds the terms.
   in `../.review/ledger.json`, and its findings are in
   `../.review/code-view-findings.json`, to be fixed or decided as
   `../.review/tasks/fix-code-view.md` says. Its 8 security findings were
-  fixed first, on 2026-11-14 (`../docs/open-questions.md` Q20). Still to
+  fixed first, on 2026-11-14, with three hardening steps the person
+  accepted (`../docs/open-questions.md` Q20). Still to
   do: the other fixes, and mutation testing (`../.review/tasks/mutation.md`).
 - Requirements are implementation-free, say exactly one of shall, should or
   could, and are all `level: High`.

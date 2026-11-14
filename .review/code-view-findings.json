@@ -385,7 +385,7 @@
    "impact": "Merely selecting the object, in the read-only mode every window opens in, makes the GUI open the file the repository text names. With \\\\host\\share\\x.png Windows connects to that host and sends the user's NTLM credentials (analysis); other markup can hide or fake text in the Inspector.",
    "proof": "probe codeview-probe/gui/p4_richtext.py prints 'value label text format is AutoText: True', 'label size hint: 400 x 300 | same text as plain text: 948 x 12' (the label loaded the 400x300 PNG the value names) and 'outgoing-link labels taller than the image: 1'. The network-path consequence is analysis.",
    "fix": "setTextFormat(Qt.PlainText) on every QLabel and QMessageBox that shows repository or git text; html.escape the link fields in the rich link row (or build the row from two plain labels); then build MELLON-GUI-SRS-122.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-GUI-05",
@@ -617,7 +617,7 @@
    "impact": "An obj_id or path with '../' makes the server look at files outside the repository, and the answer differs on whether the file exists: an existence check on any *.xml file (git_history) or any file (commit_changes) the person can read, steerable by repository text. MELLON-MCP-SRS-112 allows only source_path and out_path outside.",
    "proof": "probe codeview-probe/mcp/p6_paths.py prints: git_history obj_id='../../../<x>-outside' (existing file outside): isError=False '' versus (missing file outside): \"No object ...\"; commit_changes paths=['../<x>-outside.xml'] (existing): error \"invalid path\" versus (missing): 'nothing to commit (no changes staged)'.",
    "fix": "In git_history check is_object_id(doc_id, obj_id) (or that the object is in the document) before building a path; in _selected_files refuse an absolute path or one with a '..' part before touching the disk.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-MCP-09",
@@ -739,7 +739,7 @@
    "impact": "The PDF is written inside the repository's .git folder, which the requirement forbids; an agent steered by repository text can overwrite git's files with a PDF. .GIT, .git., DOC/../.git, a junction to .git and GIT~1 are all refused correctly.",
    "proof": "probe codeview-probe/pdf/p3_gitpath.py (typesetter stubbed): 'long-path prefix -> ok=True', and .git then holds e.pdf; the six other spellings return ok=False.",
    "fix": "Strip the extended-length prefix before comparing (or refuse \\\\?\\ and \\\\.\\ paths, as MELLON-PDF-SRS-31 proposes), and compare by resolved, case-folded paths; add the prefixed spelling to the test.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-PDF-07",
@@ -795,7 +795,7 @@
    "impact": "Exporting runs a program from the repository: anyone who can push runs code on the machine of whoever exports. Recorded because the code does this today; the requirements that forbid it are Proposed (decided on 2026-11-11).",
    "proof": "probe codeview-probe/pdf/p8_cwd_program.py: this agent environment sets NoDefaultCurrentDirectoryInExePath=1 (then nothing is found); with it unset, as on a normal desktop, _find_tectonic() returns '.\\tectonic.BAT' and build_pdf runs it (marker written).",
    "fix": "Look up programs only in absolute PATH entries outside the repository and the start folder (set NoDefaultCurrentDirectoryInExePath in os.environ before shutil.which, and skip relative PATH entries), as MELLON-PDF-SRS-67 and MELLON-EDIT-SRS-247 propose.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-PDF-12",
@@ -1181,7 +1181,7 @@
    "impact": "Working out incoming links, traces and link states opens files outside the repository, which SRS-79 prohibits: another project's links show as incoming links and as the trace, and a link to a network share would make Windows offer the user's credentials.",
    "proof": "probe codeview-probe/trace/p8_linked_folder.py (a junction) prints 'EVIL resolves to: ...\\\\cvtrace-other-project-...\\\\EVIL | inside repository: False', \"incoming_links(A, A-0): [{'source_doc': 'EVIL', 'source_id': 'EVIL-0', 'link_type': 'verifies'}]\", and suspects() and trace list EVIL-0.",
    "fix": "Treat a document folder, or an entry in it, that is a link or junction as a load error without opening it (MELLON-STORE-SRS-229, Proposed), and check that a resolved path stays under the repository root before opening it.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-TRACE-08",
@@ -1193,7 +1193,7 @@
    "impact": "Opening the link picker lists a folder outside the repository; with a UNC parent, Windows contacts the host and offers the user's credentials. SRS-79 closes this vector for link states, but its list leaves out the picker.",
    "proof": "probe codeview-probe/trace/p6_gui_qt.py (part P7) prints 'P7 link picker listed: C:\\\\...\\\\cvtrace-outside-...\\\\objects | inside repository: False' and 'P7 a UNC parent ID joins to: \\\\\\\\fileserver\\\\share\\\\ (a network path)'.",
    "fix": "List only parents that are document IDs (schema.is_document_id) and loaded documents, using svc.get_loaded_document(doc_id).folder; MELLON-STORE-SRS-230 (Proposed) states the rule, and SRS-79's list could name the link picker.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-TRACE-09",
@@ -1469,7 +1469,7 @@
    "impact": "The dialog shows a formatted 'Approved Draft' instead of the stored value, so an older version reads differently from its file (230); markup in a pushed value or branch name can hide or fake text (380, Proposed).",
    "proof": "probe codeview-probe/ver/lp3_gui.py prints 'E label textFormat: TextFormat.AutoText | Qt.mightBeRichText: True'",
    "fix": "setTextFormat(Qt.PlainText) on every label that shows repository text.",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-VER-16",
@@ -1690,7 +1690,7 @@
    "impact": "A crafted branch or file name can change how the dialog reads (markup in a QLabel). Path escape needs a crafted path on both sides (it must differ in ours and theirs, or be renumbered), and git refuses such paths on checkout, so it is unconfirmed",
    "proof": "analysis: _wrapped(..., rich=True) with r.obj_id and self._names[r.side]; target = root / path with no containment check",
    "fix": "Escape names with html.escape (MELLON-VER-SRS-380, Proposed) and check each written path with the editor's path guard (MELLON-VER-SRS-329, Proposed) when those are built",
-   "status": "fixed on branch fix/security, 2026-11-14: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   }
  ]
 }

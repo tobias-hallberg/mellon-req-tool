@@ -6,6 +6,13 @@ All notable changes to Mellon. The format follows
 
 ## Unreleased
 
+## 0.4.0 — 2026-11-14
+
+Mellon's own requirements now cover the whole application, in
+`MELLON-<AREA>-SRS` with their test cases in `MELLON-<AREA>-STS`. This
+release also fixes security problems found in 0.3.0 (see Security), so
+everyone on 0.3.0 should upgrade.
+
 ### Added
 
 - **Compare dialog.** Hamburger menu → **Compare…** shows what changed in a
@@ -317,6 +324,22 @@ All notable changes to Mellon. The format follows
   `MELLON-STORE-SRS-230`, `MELLON-VER-SRS-329` and `MELLON-MCP-SRS-112`.
 - **`export_document` refuses `.git` however the path is spelled.** A Windows
   `\\?\` path into `.git` was written to (`MELLON-PDF-SRS-27`).
+- **The editor doesn't write or delete through a link.** Every edit, and
+  every folder an edit makes, is refused when the file, a folder of the
+  document or the document's folder is a symbolic link, a junction, a pipe
+  or a device, so an edit can't change a file outside the repository.
+  Saving a view or a filter didn't read the document first, so a linked
+  `views/` or `filters/` folder was written through. A repository root
+  reached through a link still works. Specified in `MELLON-STORE-SRS-228`.
+- **Loading a document looks at nothing outside it.** A load error's
+  merge-conflict note took the start of the message as a file name, and a
+  message can start with an attribute name from the file: the note then
+  looked that text up in the start folder, which for a network path
+  contacts the host. The note now looks only at a file inside the
+  document's folder. Specified in `MELLON-STORE-SRS-241`.
+- **`export_document` refuses a device, a pipe or a colon path.** `NUL.pdf`
+  wrote nowhere and `notes.txt:x.pdf` wrote a hidden stream into another
+  file, while the tool reported a PDF (`MELLON-PDF-SRS-31`).
 - **A link's target can no longer make Mellon look outside the repository.**
   A links file from another clone could set `target-doc` or `target-id` to a
   path such as `../x` or, on Windows, a share such as `\\host\share`. Working
@@ -338,6 +361,12 @@ All notable changes to Mellon. The format follows
 - **Upgrade everyone who creates objects.** Mellon 0.3.0 keeps
   `next-object-number` but doesn't use or raise it, so an object created with
   0.3.0 can still take the ID of a deleted one. Documents need no change.
+- **A document holding a link is now a load error.** Replace a symbolic link
+  or junction inside a document folder (a shared figure, say) with the file
+  itself. A repository root reached through a link still works.
+- **A source checkout no longer finds tectonic in `mellon/tools/`.** Set
+  `MELLON_TECTONIC` to the program. The installer finds its own copy as
+  before.
 
 ## 0.3.0 — 2026-10-30
 

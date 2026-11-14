@@ -1,6 +1,6 @@
 # Mellon — orientation for Claude
 
-A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.3.0 is the current release; see `mellon/CHANGELOG.md`.
+A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.4.0 is the current release; see `mellon/CHANGELOG.md`.
 
 **The Python package is one directory deep**, in `mellon/`. Run all `uv` commands from there, not from this outer directory.
 

@@ -2,7 +2,7 @@
 
 Mellon is a requirements management tool modelled on IBM DOORS, built for small engineering teams. Each requirements document is a folder of XML files in a git repository: a manifest (metadata, attribute schema, outline), one file per object, and a links file for each object that has outgoing links. Git provides versioning, branching, history, diffs and review, and one-file-per-object keeps diffs and merges at the level of a single requirement. Mellon adds the document editor, links with suspect-link review, validation, traceability and PDF export. It has a desktop GUI for engineers and an MCP server so AI agents can work on the same requirements under the same rules.
 
-The current version is 0.3.0. A document is meant to hold up to 1,000 objects, counting headings and information text; split a larger specification into components, each with its own set of documents. See [SCALING.md](mellon/SCALING.md).
+The current version is 0.4.0. A document is meant to hold up to 1,000 objects, counting headings and information text; split a larger specification into components, each with its own set of documents. See [SCALING.md](mellon/SCALING.md).
 
 ## Features
 
