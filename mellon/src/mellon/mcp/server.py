@@ -30,7 +30,8 @@ import functools
 import logging
 import os
 import sys
-from pathlib import Path
+import stat
+from pathlib import Path, PureWindowsPath
 from typing import Any, Literal
 
 from lxml import etree
@@ -2545,6 +2546,37 @@ def _without_win_prefix(path: Path) -> Path:
     return path
 
 
+# Windows' device names: a file whose name before the first dot is one of
+# these (letter case and trailing spaces aside) is the device, not a file.
+_WINDOWS_DEVICES = frozenset(
+    {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"}
+    | {f"{kind}{n}" for kind in ("COM", "LPT") for n in "0123456789¹²³"}
+)
+
+
+# Requirements: MELLON-PDF-SRS-31
+def _unsafe_output(out_path: str, out: Path) -> str | None:
+    """Why the export tool refuses ``out_path``: it names a device or a pipe,
+    or holds a colon other than after a drive letter (on Windows such a colon
+    names a hidden stream inside another file). The text is checked first, the
+    same on every system, so a device is never opened to find out; then an
+    existing pipe, device or socket at ``out`` is refused too."""
+    spelled = PureWindowsPath(out_path)
+    if out_path.replace("\\", "/").lower().startswith(("//./", "//?/globalroot")):
+        return "names a device or a pipe"
+    if ":" in out_path[len(spelled.drive):]:
+        return "holds a colon other than after a drive letter"
+    if spelled.name.split(".")[0].rstrip(" ").upper() in _WINDOWS_DEVICES:
+        return "names a device"
+    try:
+        mode = os.stat(out).st_mode
+    except (OSError, ValueError):
+        return None
+    if stat.S_ISFIFO(mode) or stat.S_ISCHR(mode) or stat.S_ISBLK(mode) or stat.S_ISSOCK(mode):
+        return "names a device or a pipe"
+    return None
+
+
 # Requirements: MELLON-PDF-SRS-27
 def _inside_folder(path: Path, folder: Path) -> bool:
     """Whether ``path`` is ``folder`` or lies under it, however either is
@@ -2570,8 +2602,8 @@ def _inside_folder(path: Path, folder: Path) -> bool:
 
 
 # Requirements: MELLON-MCP-SRS-36, MELLON-MCP-SRS-112, MELLON-MCP-SRS-115, MELLON-PDF-SRS-5,
-#   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-56, MELLON-PDF-SRS-61,
-#   MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
+#   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-31, MELLON-PDF-SRS-56,
+#   MELLON-PDF-SRS-61, MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
 @_changing_tool
 def export_document(
     doc_id: str,
@@ -2582,9 +2614,10 @@ def export_document(
     """Render a document to PDF (LaTeX via tectonic) and write it to disk.
 
     `out_path` is the destination file; it must end in `.pdf`, must not be
-    inside the repo's `.git` directory, and relative paths resolve against
-    the repo root. This tool writes to a filesystem path, so `--read-only`
-    refuses it.
+    inside the repo's `.git` directory, must not name a device or a pipe
+    (such as `NUL.pdf`) or hold a colon other than after a drive letter, and
+    relative paths resolve against the repo root. This tool writes to a
+    filesystem path, so `--read-only` refuses it.
 
     `rev` labels the cover page: omit it to use the document's current issue
     tag, pass an explicit string to override, or pass "" to suppress the rev
@@ -2635,6 +2668,12 @@ def export_document(
             ServiceError(
                 ErrorCode.VALIDATION, f"out_path must end in .pdf: {out_path!r}"
             ),
+            message="export failed",
+        )
+    why = _unsafe_output(out_path, out)
+    if why is not None:
+        return _service_error_result(
+            ServiceError(ErrorCode.VALIDATION, f"out_path {why}: {out_path!r}"),
             message="export failed",
         )
     if _inside_folder(out, _require_root() / ".git"):
