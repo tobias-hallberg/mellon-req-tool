@@ -34,7 +34,7 @@ from .filter import (
 )
 from .git_ops import GitError, _replace_file, discover_repo
 from .link_index import current_hashes
-from .loader import LoaderError, has_manifest, load_document
+from .loader import DOCUMENT_SUBFOLDERS, LoaderError, entry_problem, has_manifest, load_document
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
     NEXT_OBJECT_NUMBER_ATTR,
@@ -303,9 +303,50 @@ _JOURNALS: contextvars.ContextVar[tuple[Journal, ...]] = contextvars.ContextVar(
 
 
 def _touch(path: Path) -> None:
-    """Record `path`'s current bytes in every open journal before it changes."""
+    """Refuse a path reached through a link, then record its current bytes in
+    every open journal before it changes. Every write and delete calls it."""
+    _refuse_links(path)
     for j in _JOURNALS.get():
         j.note(path)
+
+
+# Requirements: MELLON-STORE-SRS-228
+def _refuse_links(path: Path) -> None:
+    """Refuse to write or delete `path`, or make it as a folder, when it or a
+    folder between the repository root and it is a symbolic link, a junction,
+    or something other than a plain file or folder. The root and the folders
+    above it aren't looked at, so a root reached through a link still works.
+    """
+    for entry in _below_root(path):
+        why = entry_problem(entry)
+        if why is not None:
+            raise EditorError(f"{entry}: {why}; Mellon doesn't write or delete through it")
+
+
+def _below_root(path: Path) -> list[Path]:
+    """`path` and the folders above it, up to and including its document's
+    folder. A document's files lie in the document folder or one folder
+    below it (`DOCUMENT_SUBFOLDERS`); a folder named like one of those is the
+    document folder itself unless the folder above holds a manifest."""
+    doc = path.parent
+    if doc.name in DOCUMENT_SUBFOLDERS:
+        above = doc.parent
+        if os.path.lexists(above / f"{above.name}.xml"):
+            doc = above
+    chain = [path]
+    folder = path.parent
+    while folder != doc and folder != folder.parent:
+        chain.append(folder)
+        folder = folder.parent
+    chain.append(doc)
+    return chain
+
+
+def _make_folder(folder: Path) -> None:
+    """Make a folder of a document (and the ones above it within the
+    document), refusing one reached through a link (MELLON-STORE-SRS-228)."""
+    _refuse_links(folder)
+    folder.mkdir(parents=True, exist_ok=True)
 
 
 def journal_open() -> bool:
@@ -445,7 +486,7 @@ def create_object(
     tree = etree.ElementTree(obj_el)
     etree.indent(tree, space="  ")
     # git doesn't track an empty objects/, so a fresh clone may lack it.
-    obj_path.parent.mkdir(parents=True, exist_ok=True)
+    _make_folder(obj_path.parent)
     _write_tree(tree, obj_path)
 
     _add_outline_ref(folder / f"{doc.id}.xml", new_id, parent_id, number + 1)
@@ -787,7 +828,7 @@ def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
         )
 
     dest = figure_path(folder, obj_id)
-    dest.parent.mkdir(parents=True, exist_ok=True)
+    _make_folder(dest.parent)
     _touch(dest)
     shutil.copyfile(src_path, dest)
 
@@ -1439,7 +1480,7 @@ def add_link(
     if ack is not None:
         link_el.set("ack", ack)
     etree.indent(tree, space="  ")
-    links_path.parent.mkdir(parents=True, exist_ok=True)
+    _make_folder(links_path.parent)
     _write_tree(tree, links_path)
 
     return ack
@@ -1669,7 +1710,7 @@ def create_view(
         )
 
     views_dir = folder / "views"
-    views_dir.mkdir(parents=True, exist_ok=True)
+    _make_folder(views_dir)
 
     slug = base_slug
     n = 2
@@ -1880,7 +1921,7 @@ def create_filter(
         )
 
     filters_dir = folder / "filters"
-    filters_dir.mkdir(parents=True, exist_ok=True)
+    _make_folder(filters_dir)
 
     slug = base_slug
     n = 2
