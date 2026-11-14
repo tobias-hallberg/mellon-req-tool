@@ -48,17 +48,32 @@ from .filter import COMBINATORS, KINDS, LINK_OPS, valid_ops_for_kind
 class LoaderError(Exception):
     """Raised when the on-disk files can't be parsed into a Document."""
 
+    #: The document folder whose load failed, set by `load_document`. A file
+    #: named at the start of the message counts only inside it
+    #: (MELLON-STORE-SRS-241).
+    folder: Path | None = None
+
 
 # Requirements: MELLON-STORE-SRS-25, MELLON-STORE-SRS-58, MELLON-STORE-SRS-81,
 #   MELLON-STORE-SRS-117, MELLON-STORE-SRS-129, MELLON-STORE-SRS-130, MELLON-STORE-SRS-135,
-#   MELLON-STORE-SRS-140, MELLON-STORE-SRS-159
+#   MELLON-STORE-SRS-140, MELLON-STORE-SRS-159, MELLON-STORE-SRS-241
 def load_document(folder: str | Path) -> Document:
     """Load the document rooted at `folder`.
 
     `folder` name must equal the manifest's `id` attribute, and the manifest
-    filename must be `<folder_name>.xml` inside that folder.
+    filename must be `<folder_name>.xml` inside that folder. A `LoaderError`
+    carries `folder`.
     """
     folder = Path(folder)
+    try:
+        return _load_document(folder)
+    except LoaderError as e:
+        if e.folder is None:
+            e.folder = folder
+        raise
+
+
+def _load_document(folder: Path) -> Document:
     _refuse_special(folder)
     if not folder.is_dir():
         raise LoaderError(f"Not a directory: {folder}")
@@ -85,7 +100,7 @@ def load_document(folder: str | Path) -> Document:
     _refuse_special(rules_path)
     rules = _parse_rules_file(rules_path)
 
-    for sub_name in _SUBFOLDERS:
+    for sub_name in DOCUMENT_SUBFOLDERS:
         _refuse_special(folder / sub_name)
 
     objects_dir = folder / "objects"
@@ -291,7 +306,7 @@ def _has_suffix(name: str, suffix: str) -> bool:
 
 
 # The folders a document holds; each is read as a plain folder, never as a link.
-_SUBFOLDERS = ("objects", "figures", "links", "views", "filters")
+DOCUMENT_SUBFOLDERS = ("objects", "figures", "links", "views", "filters")
 
 # A junction's reparse tag (stat.IO_REPARSE_TAG_MOUNT_POINT, which only Windows
 # builds of Python define); st_reparse_tag is only there on Windows too.

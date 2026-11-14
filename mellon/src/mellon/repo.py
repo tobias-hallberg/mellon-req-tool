@@ -47,18 +47,29 @@ class DocLoadError:
 _CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
 
 
-# Requirements: MELLON-STORE-SRS-30, MELLON-STORE-SRS-229
+# Requirements: MELLON-STORE-SRS-30, MELLON-STORE-SRS-229, MELLON-STORE-SRS-241
 def _error_file(err: LoaderError) -> Path | None:
-    # Most loader messages start with "<path>: ". Others start with text from
-    # the file (an attribute name), which can hold ": " and "..": a path with a
-    # ".." part, or a link, is never taken, so the message can't make Mellon
-    # name or read a file outside the document.
+    # Most loader messages start with "<path>: ". Others start with other text
+    # ("Not a directory", or an attribute name from the file, which can hold
+    # ": ", "..", an absolute path or a share). So the start counts only when,
+    # as text, it names something inside the document folder the load error
+    # comes from, with no ".." part, and no folder or file on the way is a
+    # link: the message can't make Mellon look at a path outside the document.
+    folder = getattr(err, "folder", None)
     head, sep, _rest = str(err).partition(": ")
-    if not sep:
+    if folder is None or not sep:
         return None
-    path = Path(head)
-    if ".." in path.parts or entry_problem(path) is not None:
+    try:
+        rel = Path(head).relative_to(folder)
+    except ValueError:
         return None
+    if not rel.parts or ".." in rel.parts:
+        return None
+    path = folder
+    for part in rel.parts:
+        path = path / part
+        if entry_problem(path) is not None:
+            return None
     return path if path.is_file() else None
 
 

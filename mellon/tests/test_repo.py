@@ -592,3 +592,69 @@ def test_store_srs_30_conflict_note_reads_no_file_outside_the_document(
     assert len(errors) == 1, errors
     assert errors[0].file is None, errors[0].file
     assert "merge conflict" not in errors[0].message, errors[0].message
+
+
+
+# MELLON-STORE-SRS-241: a load error's merge-conflict note looks only at a file
+# inside the document's folder. An attribute name at the start of the message
+# can't make Mellon look up a path in a folder above or in the start folder.
+from tests.trace_support import recorded_paths  # noqa: E402
+
+_CONFLICTED = "<<<<<<< HEAD\nours\n=======\ntheirs\n>>>>>>> b\n"
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["a/../../outside.txt: x", "outside.txt: x", "a\\..\\..\\outside.txt: x"],
+    ids=["folder-above", "start-folder", "folder-above-backslash"],
+)
+def test_store_srs_241_a_load_errors_note_accesses_nothing_outside_the_document(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, name: str
+) -> None:
+    (tmp_path / "outside.txt").write_text(_CONFLICTED, encoding="utf-8")
+    start = tmp_path / "start"
+    start.mkdir()
+    (start / "outside.txt").write_text(_CONFLICTED, encoding="utf-8")
+    monkeypatch.chdir(start)
+    root = tmp_path / "repo"
+    (root / "D" / "objects").mkdir(parents=True)
+    (root / "D" / "D.xml").write_text(
+        trace_manifest_xml("D", []).replace(
+            "<attributes>", f'<attributes><attribute name="{name}" kind="nonsense"/>', 1
+        ),
+        encoding="utf-8",
+    )
+    errors: list = []
+    with recorded_paths(root) as (_seen, outside):
+        load_all(root, load_errors=errors)
+        try:
+            DocumentService(root).get_document("D")
+        except Exception as e:  # the service's load error
+            service_message = str(e)
+        else:
+            service_message = ""
+    assert outside == [], f"the note looked outside the document: {outside}"
+    assert len(errors) == 1, errors
+    assert errors[0].file is None, errors[0].file
+    assert "merge conflict" not in errors[0].message, errors[0].message
+    assert "unsupported kind" in service_message, service_message
+    assert "merge conflict" not in service_message, service_message
+
+
+def test_store_srs_241_the_note_still_names_a_conflicted_file_in_the_document(
+    tmp_path: Path,
+) -> None:
+    """MELLON-STORE-SRS-30 still holds inside the document: an object file
+    with conflict markers gets the note, and is named."""
+    root = tmp_path / "repo"
+    (root / "D" / "objects").mkdir(parents=True)
+    (root / "D" / "D.xml").write_text(trace_manifest_xml("D", ["D-1"]), encoding="utf-8")
+    conflicted = root / "D" / "objects" / "D-1.xml"
+    conflicted.write_text('<object id="D-1">\n' + _CONFLICTED + "</object>\n", encoding="utf-8")
+    errors: list = []
+    with recorded_paths(root) as (_seen, outside):
+        load_all(root, load_errors=errors)
+    assert outside == []
+    assert len(errors) == 1, errors
+    assert errors[0].file == conflicted
+    assert "(unresolved merge conflict?)" in errors[0].message
