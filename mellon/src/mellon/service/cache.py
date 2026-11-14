@@ -65,6 +65,12 @@ class RepoCache:
             self._docs.pop(did, None)
             self._suspects.pop(did, None)
 
+    def mark_incomplete(self) -> None:
+        """The full document map is no longer known (a document failed to
+        load again): the next `get_all` misses, so a full load lists it with
+        its load error (MELLON-STORE-SRS-27)."""
+        self._loaded_all = False
+
     def forget_document(self, doc_id: str) -> None:
         """Drop one loaded document, keeping its suspect scan."""
         self._docs.pop(doc_id, None)

@@ -44,23 +44,41 @@ class DocLoadError:
 
 
 # Requirements: MELLON-STORE-SRS-30
-_CONFLICT_MARKER = re.compile(rb"^<{7}", re.MULTILINE)
+# Conflict markers (docs/definitions.md): a line starting with <<<<<<<, a
+# later line starting with =======, and a later line starting with >>>>>>>.
+_CONFLICT_MARKER = re.compile(rb"^<{7}.*?^={7}.*?^>{7}", re.MULTILINE | re.DOTALL)
+
+
+def _is_file(path: Path) -> bool:
+    try:
+        return path.is_file()
+    except OSError:  # can't be examined: no file to name
+        return False
 
 
 # Requirements: MELLON-STORE-SRS-30, MELLON-STORE-SRS-229, MELLON-STORE-SRS-241
 def _error_file(err: LoaderError) -> Path | None:
-    # Most loader messages start with "<path>: ". Others start with other text
-    # ("Not a directory", or an attribute name from the file, which can hold
-    # ": ", "..", an absolute path or a share). So the start counts only when,
-    # as text, it names something inside the document folder the load error
-    # comes from, with no ".." part, and no folder or file on the way is a
-    # link: the message can't make Mellon look at a path outside the document.
+    # The loader names the file in `err.file`; other messages start with
+    # "<path>: ", or with other text ("Not a directory", or an attribute name
+    # from the file, which can hold ": ", "..", an absolute path or a share).
+    # Either way the file counts only when, as text, it names something inside
+    # the document folder the load error comes from, with no ".." part, and no
+    # folder or file on the way is a link: the message can't make Mellon look
+    # at a path outside the document (MELLON-STORE-SRS-241). Callers also pass
+    # lxml's XMLSyntaxError, which names neither.
     folder = getattr(err, "folder", None)
-    head, sep, _rest = str(err).partition(": ")
-    if folder is None or not sep:
+    if folder is None:
         return None
+    named = getattr(err, "file", None)
+    if named is not None:
+        candidate = Path(named)
+    else:
+        head, sep, _rest = str(err).partition(": ")
+        if not sep:
+            return None
+        candidate = Path(head)
     try:
-        rel = Path(head).relative_to(folder)
+        rel = candidate.relative_to(folder)
     except ValueError:
         return None
     if not rel.parts or ".." in rel.parts:
@@ -70,7 +88,7 @@ def _error_file(err: LoaderError) -> Path | None:
         path = path / part
         if entry_problem(path) is not None:
             return None
-    return path if path.is_file() else None
+    return path if _is_file(path) else None
 
 
 # Requirements: MELLON-STORE-SRS-30
@@ -95,8 +113,11 @@ def load_error_message(err: LoaderError) -> str:
 # Requirements: MELLON-CHECK-SRS-90, MELLON-STORE-SRS-29
 def _doc_load_error(folder: Path, err: LoaderError) -> DocLoadError:
     file = _error_file(err)
-    # lxml's XMLSyntaxError (the cause of a parse failure) carries the line.
-    line = getattr(err.__cause__, "lineno", None)
+    # The loader names the line of the element the reason concerns, or the
+    # line lxml's XMLSyntaxError (the cause of a parse failure) gives.
+    line = getattr(err, "line", None)
+    if line is None:
+        line = getattr(err.__cause__, "lineno", None)
     return DocLoadError(
         doc_id=folder.name,
         folder=folder,
@@ -128,7 +149,14 @@ def discover_documents(repo_root: str | Path) -> list[Path]:
         if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
         # MELLON-STORE-SRS-18: <folder name>.xml, letter case included.
-        if has_manifest(child):
+        try:
+            is_document = has_manifest(child)
+        except OSError:
+            # MELLON-STORE-SRS-27, -28: a folder Mellon may not examine is
+            # listed, so loading it reports the load error, and it can't hide
+            # the other documents.
+            is_document = True
+        if is_document:
             out.append(child)
     return out
 
@@ -150,7 +178,11 @@ def doc_folder_names(repo_root: str | Path) -> frozenset[str]:
     for child in children:
         if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
-        if has_manifest(child):
+        try:
+            is_document = has_manifest(child)
+        except OSError:
+            is_document = True  # as discover_documents lists it
+        if is_document:
             out.add(child.name)
     return frozenset(out)
 

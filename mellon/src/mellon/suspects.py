@@ -166,7 +166,7 @@ def scan_repo(repo_root: Path) -> dict[str, list[LinkStatus]]:
     return out
 
 
-# Requirements: MELLON-STORE-SRS-122
+# Requirements: MELLON-STORE-SRS-122, MELLON-STORE-SRS-190
 def write_ack(
     links_file: Path, target_doc: str, target_id: str, new_ack: str
 ) -> bool:
@@ -192,6 +192,8 @@ def write_ack(
     if changed:
         from .editor import _write_tree
 
+        # MELLON-STORE-SRS-190: 2 spaces per level, as every other writer.
+        etree.indent(tree, space="  ")
         _write_tree(tree, links_file)
     return changed
 

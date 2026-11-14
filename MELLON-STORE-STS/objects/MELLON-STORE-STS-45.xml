@@ -8,6 +8,7 @@
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_loader.py::test_load_minimal_document
 tests/test_editor.py::test_add_parent_adds_new
-tests/test_editor.py::test_remove_parent_removes_existing</attr>
+tests/test_editor.py::test_remove_parent_removes_existing
+tests/test_editor.py::test_store_srs_68_parent_that_isnt_a_document_id_is_refused</attr>
   <description>Read a manifest declaring the parent document PARENT; add the parent ANOTHER; remove PARENT. Expected: the parents read as PARENT, then PARENT and ANOTHER, then none.</description>
 </object>

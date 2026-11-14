@@ -1706,3 +1706,65 @@ def test_copy_with_a_link_to_a_missing_target_is_refused_before_writing(tmp_path
     assert trace_snapshot(r.root) == before
     (new_id,) = svc.copy_object("CHILD", "CHILD-1", copy_links=False).value
     assert new_id not in load_document(r.root / "CHILD").links
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+def test_check_srs_97_101_repo_health_never_counts_a_failed_scan_as_zero(git_repo: Path):
+    """CV-CHECK-09, MELLON-CHECK-SRS-97 and -101: when the suspect scan can't run (the
+    repository's .git is gone after the service started), repo_health doesn't return
+    0 suspect links; it returns no counts and says why."""
+    svc = DocumentService(git_repo)
+    before = svc.repo_health()
+    assert before["total_suspect_count"] >= 0
+    (git_repo / ".git").rename(git_repo / "moved.git")
+    health = svc.repo_health()
+    assert health["total_suspect_count"] is None, health
+    assert health["total_broken_count"] is None, health
+    assert all(d["suspect_count"] is None and d["broken_count"] is None
+               for d in health["documents"]), health["documents"]
+    assert health["suspect_scan_error"], health
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+@pytest.mark.parametrize("value", ["20261113", "2026-W46-5"])
+def test_store_srs_98_date_value_other_iso_forms_are_refused(tmp_path, value):
+    """CV-STORE-09, MELLON-STORE-SRS-98: an object file holds a date value as
+    YYYY-MM-DD; update_object refuses another ISO 8601 form instead of writing it."""
+    from mellon import editor
+
+    folder = editor.create_document(tmp_path, "DOC")
+    editor.add_attribute(folder, "due", "date", False)
+    obj_id = editor.create_object(folder, description="x")
+    path = folder / "objects" / f"{obj_id}.xml"
+    before = path.read_bytes()
+    svc = DocumentService(tmp_path)
+    with pytest.raises(ServiceError) as ei:
+        svc.update_object("DOC", obj_id, attrs={"due": value})
+    assert ei.value.code is ErrorCode.VALIDATION
+    assert path.read_bytes() == before
+
+
+def test_store_srs_27_document_unreadable_after_an_edit_stays_listed(tmp_path, monkeypatch):
+    """CV-STORE-10, MELLON-STORE-SRS-27: when a document can't be read after an edit
+    (here the edit leaves a file the loader rejects), the cached document list doesn't
+    lose it: the document is listed with its load error."""
+    from mellon import editor
+
+    folder = editor.create_document(tmp_path, "DOC")
+    obj_id = editor.create_object(folder, description="x")
+    svc = DocumentService(tmp_path, cache=True)
+    assert set(svc.get_all_documents()) == {"DOC"}
+
+    def breaks_the_file(folder, obj_id, text):
+        (folder / "objects" / f"{obj_id}.xml").write_text("<object id=", encoding="utf-8")
+
+    monkeypatch.setattr(editor, "set_description", breaks_the_file)
+    with pytest.raises(ServiceError):
+        svc.set_description("DOC", obj_id, "y")
+    errors: list = []
+    docs = svc.get_all_documents(load_errors=errors)
+    assert "DOC" in docs or [e.doc_id for e in errors] == ["DOC"], (list(docs), errors)

@@ -909,6 +909,24 @@ def test_trace_srs_77_target_that_is_no_object_id_is_broken_without_opening_file
     assert for_target == [], f"paths opened for target {target!r}: {for_target}"
 
 
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_190_acknowledging_writes_the_two_space_indent(tmp_path):
+    """CV-STORE-05, MELLON-STORE-SRS-190: a links file indented by 4 spaces (hand-written
+    or from another tool) is written with 2 spaces per level when a link in it is
+    acknowledged."""
+    from mellon.suspects import write_ack
+
+    path = tmp_path / "DOC-2.xml"
+    path.write_text('<?xml version="1.0" encoding="UTF-8"?>\n<links source="DOC-2">\n'
+                    '    <link target-doc="DOC" target-id="DOC-1" type="verifies"/>\n'
+                    "</links>\n", encoding="utf-8")
+    assert write_ack(path, "DOC", "DOC-1", "5eecbec")
+    assert path.read_text(encoding="utf-8").splitlines()[2] == (
+        '  <link target-doc="DOC" target-id="DOC-1" type="verifies" ack="5eecbec"/>')
+
+
 # MELLON-TRACE-SRS-79, MELLON-STORE-SRS-229 (CV-TRACE-07): a link whose target
 # document folder is a link to another project is broken; nothing behind the
 # link is opened to decide that.

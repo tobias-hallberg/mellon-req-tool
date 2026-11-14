@@ -948,6 +948,86 @@ def test_store_srs_217_whitespace_at_ends_removed_on_read(tmp_path, where):
     assert _read_text(folder, where) == "text"
 
 
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_46_text_after_an_undefined_element_or_comment_is_read(tmp_path):
+    """CV-STORE-03, MELLON-STORE-SRS-46 with -84 and -87: an element the format doesn't
+    define, or a comment, inside a description or attribute value is read as if absent;
+    the text around it is kept."""
+    doc = tmp_path / "DOC"
+    (doc / "objects").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n'
+        '  <attributes><attribute name="rationale" kind="text"/></attributes>\n'
+        '  <outline><ref id="DOC-1"/></outline>\n</document>\n', encoding="utf-8")
+    (doc / "objects" / "DOC-1.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+        '  <attr name="rationale">because <!-- note --> of safety</attr>\n'
+        "  <description>The pump shall <b>always</b> stop within 2 s.</description>\n"
+        "</object>\n", encoding="utf-8")
+    obj = load_document(doc).objects["DOC-1"]
+    assert obj.description == "The pump shall  stop within 2 s."
+    assert obj.attrs["rationale"] == "because  of safety"
+
+
+@pytest.mark.parametrize("op_part", ["", ' op=""'], ids=["no-op", "empty-op"])
+def test_store_srs_148_attr_rule_without_an_operator_is_a_load_error(tmp_path, op_part):
+    """CV-STORE-07, MELLON-STORE-SRS-148 and -145: an attr rule whose op attribute is
+    missing or empty holds none of the operator codes: a load error."""
+    doc = tmp_path / "DOC"
+    (doc / "filters").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC"/>\n', encoding="utf-8")
+    (doc / "filters" / "no-op.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<filter name="no-op">\n'
+        f'  <rule kind="attr" attr="type"{op_part} value="Heading"/>\n</filter>\n',
+        encoding="utf-8")
+    with pytest.raises(LoaderError, match="op"):
+        load_document(doc)
+
+
+def test_store_srs_81_129_file_suffix_letter_case_counts_on_every_system(tmp_path,
+                                                                          monkeypatch):
+    """CV-STORE-11, MELLON-STORE-SRS-81 and -129: an object file is <object ID>.xml and a
+    figure file <object ID>.svg. objects/DOC-7.XML and figures/DOC-0.SVG are neither, on
+    Windows (simulated: names compared as the system folds them) as on Linux, so both
+    systems read the same objects and figures."""
+    import ntpath
+
+    doc = tmp_path / "DOC"
+    (doc / "objects").mkdir(parents=True)
+    (doc / "figures").mkdir()
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC"/>\n', encoding="utf-8")
+    for obj_id, name in (("DOC-0", "DOC-0.xml"), ("DOC-7", "DOC-7.XML")):
+        (doc / "objects" / name).write_text(
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<object id="{obj_id}"/>\n',
+            encoding="utf-8")
+    (doc / "figures" / "DOC-0.SVG").write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg"/>\n', encoding="utf-8")
+    monkeypatch.setattr(os.path, "normcase", ntpath.normcase)
+    loaded = load_document(doc)
+    assert sorted(loaded.objects) == ["DOC-0"]
+    assert loaded.objects["DOC-0"].figure_path is None
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-STORE-SRS-149: an attr rule with a listed operator that no attribute "
+    "kind takes (present) is a load error; waiting on Q19 (CV-STORE-19)"))
+def test_store_srs_149_listed_operator_that_fits_no_kind_still_loads(tmp_path):
+    """CV-STORE-19, MELLON-STORE-SRS-148 and -149: present is one of SRS-148's codes, and
+    an operator that doesn't fit the attribute tested still loads (SRS-149)."""
+    doc = tmp_path / "DOC"
+    (doc / "filters").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC"/>\n', encoding="utf-8")
+    (doc / "filters" / "p.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<filter name="p">\n'
+        '  <rule kind="attr" attr="type" op="present"/>\n</filter>\n', encoding="utf-8")
+    load_document(doc)
+
+
 # MELLON-STORE-SRS-229 (CV-TRACE-07): a document's folder, or an entry in it,
 # that is a link, junction, pipe or device is a load error, and isn't opened.
 from tests.trace_support import Repo, dir_link, file_link, linked_document_repo  # noqa: E402

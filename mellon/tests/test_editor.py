@@ -3210,6 +3210,185 @@ def test_trace_srs_7_second_link_to_same_target_with_other_type_is_refused(tmp_p
     assert trace_snapshot(r.root) == before, "a refused link changed files"
 
 
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_87_new_description_replaces_undefined_child_elements(tmp_path):
+    """CV-STORE-03, MELLON-STORE-SRS-87: after a new description is set, the file's
+    description element holds that text alone, not the new text followed by an
+    undefined child element and the text after it."""
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    path = object_file(folder, obj_id)
+    path.write_text(path.read_text(encoding="utf-8").replace(
+        "<description>object 0</description>",
+        "<description>The pump shall <b>always</b> stop.</description>"), encoding="utf-8")
+    editor.set_description(folder, obj_id, "New text")
+    desc = etree.parse(str(path)).getroot().find("description")
+    assert (desc.text, len(desc)) == ("New text", 0)
+    assert load_document(folder).objects[obj_id].description == "New text"
+
+
+def test_store_srs_208_empty_value_keeps_its_bytes_on_a_later_rewrite(tmp_path):
+    """CV-STORE-04, MELLON-STORE-SRS-208: a file Mellon wrote with an empty attribute
+    value keeps its bytes under an operation that leaves its canonical form unchanged."""
+    folder = new_document(tmp_path)
+    if "rationale" not in {a.name for a in load_document(folder).attributes}:
+        editor.add_attribute(folder, "rationale", "text", False)
+    editor.add_attribute(folder, "note", "text", False)
+    (obj_id,) = populate(folder, 1)
+    editor.set_attribute(folder, obj_id, "note", "kept")
+    editor.set_attribute(folder, obj_id, "rationale", "")
+    path = object_file(folder, obj_id)
+    before = path.read_bytes()
+    editor.set_attribute(folder, obj_id, "note", "kept")  # same value: no change
+    assert path.read_bytes() == before
+    editor.set_description(folder, obj_id, "")
+    before = path.read_bytes()
+    editor.set_attribute(folder, obj_id, "note", "kept")
+    assert path.read_bytes() == before
+
+
+def _fail_mid_copy(monkeypatch):
+    """Make a byte copy between files fail after the destination is opened, as a full
+    disk would: os.sendfile and shutil.copyfileobj raise."""
+    import errno
+    import shutil
+
+    def no_space(*_a, **_k):
+        raise OSError(errno.ENOSPC, "No space left on device")
+
+    monkeypatch.setattr(os, "sendfile", no_space, raising=False)
+    monkeypatch.setattr(shutil, "copyfileobj", no_space)
+
+
+_STOP_AT_FIRST_WRITE = r"""
+import os, shutil, sys
+from pathlib import Path
+from mellon import editor
+
+folder, obj_id, src = Path(sys.argv[1]), sys.argv[2], Path(sys.argv[3])
+
+def stop(*_a, **_k):
+    os._exit(9)
+
+real_write_bytes = Path.write_bytes
+
+def half_then_stop(self, data):
+    real_write_bytes(self, data[: len(data) // 2])
+    os._exit(9)
+
+# The process stops at the first write of the figure's bytes, however they are
+# written: a byte copy between files, or a write of the bytes read.
+os.sendfile = stop
+shutil.copyfileobj = stop
+Path.write_bytes = half_then_stop
+editor.set_figure(folder, obj_id, src)
+"""
+
+
+def test_store_srs_167_figure_write_stopped_leaves_old_or_new_figure(tmp_path):
+    """CV-STORE-06, MELLON-STORE-SRS-167: if Mellon stops while it replaces a figure,
+    the figure file holds its old content or the new content in full."""
+    import subprocess
+    import sys
+
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    editor.set_figure(folder, obj_id, _write_svg(tmp_path / "old.svg"))
+    dest = figure_path(folder, obj_id)
+    before = dest.read_bytes()
+    new = _write_svg(tmp_path / "new.svg",
+                     _VALID_SVG.replace(b'fill="blue"', b'fill="red"' + b" " * 5000))
+    proc = subprocess.run([sys.executable, "-c", _STOP_AT_FIRST_WRITE, str(folder), obj_id,
+                           str(new)], capture_output=True, text=True, timeout=120)
+    assert proc.returncode == 9, proc.stderr
+    assert dest.read_bytes() in (before, new.read_bytes())
+
+
+def test_store_srs_167_failed_figure_copy_leaves_no_copy(tmp_path, monkeypatch):
+    """CV-STORE-06, MELLON-STORE-SRS-167 (with -174): copying an object with its figure
+    while the figure's copy fails leaves no half-written figure file."""
+    from mellon.service import DocumentService, ServiceError
+
+    folder = new_document(tmp_path)
+    (obj_id,) = populate(folder, 1)
+    editor.set_figure(folder, obj_id, _write_svg(tmp_path / "f.svg"))
+    svc = DocumentService(tmp_path)
+    _fail_mid_copy(monkeypatch)
+    try:
+        svc.copy_object(folder.name, obj_id)
+    except (OSError, ServiceError):
+        pass
+    figures = sorted((folder / "figures").iterdir())
+    for f in figures:
+        assert f.read_bytes() == figure_path(folder, obj_id).read_bytes(), f
+
+
+def test_store_srs_148_filter_rule_without_an_operator_is_refused(tmp_path):
+    """CV-STORE-07, MELLON-STORE-SRS-148 and -145: Mellon doesn't write an attr rule
+    with an empty op, which it would then refuse to load."""
+    folder = new_document(tmp_path)
+    with pytest.raises(editor.EditorError):
+        editor.create_filter(folder, "no op",
+                             rules=[FilterRule(kind="attr", attr="type", op="", value="x")])
+    assert load_document(folder).filters == ()
+
+
+@pytest.mark.parametrize("value", ["20261113", "2026-W46-5", "2026-317"])
+def test_store_srs_64_metadata_date_other_iso_forms_are_refused(tmp_path, value):
+    """CV-STORE-09, MELLON-STORE-SRS-64: the manifest's date is written as YYYY-MM-DD;
+    another ISO 8601 form isn't written."""
+    folder = new_document(tmp_path)
+    manifest = folder / f"{folder.name}.xml"
+    before = manifest.read_bytes()
+    with pytest.raises(editor.EditorError):
+        editor.set_metadata(folder, "date", value)
+    assert manifest.read_bytes() == before
+
+
+@pytest.mark.parametrize("where", ["view column", "filter attribute", "parent document"])
+def test_store_srs_214_control_character_is_named(tmp_path, where):
+    """CV-STORE-12, MELLON-STORE-SRS-214: stored text with U+0001 is refused with an
+    error naming the character, for a view's column name, a filter rule's attribute
+    name and a parent document ID too."""
+    folder = new_document(tmp_path)
+    bad = "a\x01b"
+    with pytest.raises(editor.EditorError, match="U\\+0001"):
+        if where == "view column":
+            editor.create_view(folder, "cols", [bad])
+        elif where == "filter attribute":
+            editor.create_filter(folder, "f", rules=[
+                FilterRule(kind="attr", attr=bad, op="eq", value="x")])
+        else:
+            editor.add_parent(folder, bad)
+
+
+@pytest.mark.parametrize("link_type", [""])
+def test_store_srs_120_empty_link_type_is_refused(tmp_path, link_type):
+    """CV-STORE-10, MELLON-STORE-SRS-120 with -27: a link's type attribute holds the
+    link type; a link with an empty type would make its links file a load error, so
+    it isn't written."""
+    folder = new_document(tmp_path)
+    a, b = populate(folder, 2)
+    with pytest.raises(editor.EditorError):
+        editor.add_link(folder, a, folder.name, b, link_type)
+    assert not (folder / "links" / f"{a}.xml").exists()
+    load_document(folder)
+
+
+@pytest.mark.parametrize("parent", ["", "../X", "A B"])
+def test_store_srs_68_parent_that_isnt_a_document_id_is_refused(tmp_path, parent):
+    """CV-STORE-10, MELLON-STORE-SRS-68 with -27: a parent element's doc attribute holds
+    the parent's document ID; an empty or impossible ID isn't written."""
+    folder = new_document(tmp_path)
+    manifest = folder / f"{folder.name}.xml"
+    before = manifest.read_bytes()
+    with pytest.raises(editor.EditorError):
+        editor.add_parent(folder, parent)
+    assert manifest.read_bytes() == before
+
+
 
 # ---------------------------------------------------------------------------
 # MELLON-STORE-SRS-228: no write or delete through a link. Each folder or file

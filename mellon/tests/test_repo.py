@@ -239,7 +239,8 @@ def test_load_all_records_semantic_load_error_without_hint(two_doc_repo):
     errors: list[DocLoadError] = []
     load_all(root, load_errors=errors)
     (err,) = errors
-    assert (err.doc_id, err.file, err.line) == ("DOC", bad, None)
+    # MELLON-STORE-SRS-29: the line of the <object> element (CV-STORE-02).
+    assert (err.doc_id, err.file, err.line) == ("DOC", bad, 1)
     assert "does not match @id='DOC-2'" in err.message
     assert "merge conflict" not in err.message
 
@@ -536,6 +537,104 @@ def test_trace_srs_33_incoming_links_match_generated_link_sets(tmp_path):
                 assert got == sorted(expected.get((d, o), [])), f"repository {n}, object {o}"
 
 
+# --- code view findings (CV-STORE-*) ---
+
+_CV_STORE_LOAD_ERRORS = {
+    # name: (path in the document folder, content, line the reason concerns)
+    "enum-without-option": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <attributes>\n'
+        '    <attribute name="type" kind="enum"/>\n  </attributes>\n</document>\n'), 4),
+    "parent-without-doc": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <parents>\n'
+        "    <parent/>\n  </parents>\n</document>\n"), 4),
+    "attribute-without-kind": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <attributes>\n'
+        '    <attribute name="type"/>\n  </attributes>\n</document>\n'), 4),
+    "ref-without-id": ("DOC.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n  <outline>\n'
+        '    <ref id="DOC-1">\n      <ref/>\n    </ref>\n  </outline>\n</document>\n'), 5),
+    "duplicate-attr": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+        '  <attr name="type">A</attr>\n  <attr name="type">B</attr>\n</object>\n'), 4),
+    "id-mismatch": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-9">\n</object>\n'), 2),
+    "bad-span": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n  <table>\n'
+        '    <row>\n      <cell colspan="0">a</cell>\n    </row>\n  </table>\n'
+        "</object>\n"), 5),
+    "link-without-type": ("links/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<links source="DOC-1">\n'
+        '  <link target-doc="PARENT" target-id="PARENT-42"/>\n</links>\n'), 3),
+    "syntax-error": ("objects/DOC-1.xml", (
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n  <attr\n'), 4),
+}
+
+
+@pytest.mark.parametrize("case", sorted(_CV_STORE_LOAD_ERRORS))
+def test_store_srs_29_load_error_names_file_and_line(two_doc_repo, case):
+    """CV-STORE-02, MELLON-STORE-SRS-29: each load error names the document, the file
+    and the line where the reason concerns one line, whatever the loader rejected."""
+    root, _parent, doc, _c1 = two_doc_repo
+    rel, content, line = _CV_STORE_LOAD_ERRORS[case]
+    (doc / rel).write_text(content, encoding="utf-8")
+    errors: list[DocLoadError] = []
+    load_all(root, load_errors=errors)
+    (err,) = errors
+    assert (err.doc_id, err.file, err.line) == ("DOC", doc / rel, line), err.message
+
+
+@pytest.mark.parametrize("markers", [
+    pytest.param("<<<<<<< HEAD\n", id="opening-line-only"),
+    pytest.param(">>>>>>> other\n=======\n<<<<<<< HEAD\n", id="out-of-order"),
+])
+def test_store_srs_30_only_three_markers_in_order_are_a_merge_conflict(two_doc_repo,
+                                                                        markers):
+    """CV-STORE-20, MELLON-STORE-SRS-30 with the definition of conflict markers (a
+    <<<<<<< line, a later ======= line and a later >>>>>>> line): a load error for a
+    file holding only some of them, or in another order, doesn't say merge conflict."""
+    root, _parent, doc, _c1 = two_doc_repo
+    bad = doc / "objects" / "DOC-1.xml"
+    bad.write_text('<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+                   + markers, encoding="utf-8")
+    errors: list[DocLoadError] = []
+    load_all(root, load_errors=errors)
+    (err,) = errors
+    assert err.file == bad
+    assert "merge conflict" not in err.message, err.message
+
+
+def test_store_srs_28_folder_that_cant_be_examined_doesnt_hide_the_others(two_doc_repo,
+                                                                           monkeypatch):
+    """CV-STORE-14, MELLON-STORE-SRS-27 and -28: a folder at the root whose manifest
+    Mellon may not examine (another account's build folder, an ACL; simulated, since the
+    tests may run as root) is listed with a load error, and the other documents load."""
+    import errno
+
+    root, _parent, _doc, _c1 = two_doc_repo
+    build = root / "build"
+    build.mkdir()
+    (build / "build.xml").write_text("<x/>", encoding="utf-8")
+    real_is_file = Path.is_file
+    real_listdir = os.listdir
+
+    def is_file(self, *a, **k):
+        if self.parent.name == "build":
+            raise PermissionError(errno.EACCES, "Permission denied", str(self))
+        return real_is_file(self, *a, **k)
+
+    def listdir(path="."):
+        if Path(path).name == "build":
+            raise PermissionError(errno.EACCES, "Permission denied", str(path))
+        return real_listdir(path)
+
+    monkeypatch.setattr(Path, "is_file", is_file)
+    monkeypatch.setattr(os, "listdir", listdir)
+    errors: list[DocLoadError] = []
+    docs = load_all(root, load_errors=errors)
+    assert set(docs) == {"PARENT", "DOC"}
+    assert [e.doc_id for e in errors] == ["build"], errors
+
+
 # MELLON-STORE-SRS-229, MELLON-TRACE-SRS-79 (CV-TRACE-07): a link at the
 # repository root isn't followed, so another project's document behind it
 # shows nowhere.
@@ -590,7 +689,9 @@ def test_store_srs_30_conflict_note_reads_no_file_outside_the_document(
     errors: list = []
     load_all(root, load_errors=errors)
     assert len(errors) == 1, errors
-    assert errors[0].file is None, errors[0].file
+    # MELLON-STORE-SRS-29: the error names the manifest it concerns, inside
+    # the document, not the path the attribute name spells.
+    assert errors[0].file == root / "D" / "D.xml", errors[0].file
     assert "merge conflict" not in errors[0].message, errors[0].message
 
 
@@ -635,7 +736,9 @@ def test_store_srs_241_a_load_errors_note_accesses_nothing_outside_the_document(
             service_message = ""
     assert outside == [], f"the note looked outside the document: {outside}"
     assert len(errors) == 1, errors
-    assert errors[0].file is None, errors[0].file
+    # MELLON-STORE-SRS-29: the error names the manifest it concerns, inside
+    # the document, not the path the attribute name spells.
+    assert errors[0].file == root / "D" / "D.xml", errors[0].file
     assert "merge conflict" not in errors[0].message, errors[0].message
     assert "unsupported kind" in service_message, service_message
     assert "merge conflict" not in service_message, service_message

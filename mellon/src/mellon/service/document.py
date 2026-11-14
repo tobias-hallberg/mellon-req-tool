@@ -18,7 +18,6 @@ import functools
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-from datetime import date as _date
 
 from lxml import etree
 
@@ -70,7 +69,7 @@ from ..diff import (
 )
 from ..search import SearchHit, search_objects as _search_objects
 from ..trace import TraceEdge, trace_down, trace_up
-from ..validator import ValidationError, validate
+from ..validator import ValidationError, is_date, validate
 
 from .cache import RepoCache
 from .errors import ErrorCode, ServiceError
@@ -244,7 +243,11 @@ class DocumentService:
             folder = editor._child_path(root, doc_id)
         except EditorError:
             folder = None
-        if folder is None or not folder.is_dir() or not has_manifest(folder):
+        try:
+            found = folder is not None and folder.is_dir() and has_manifest(folder)
+        except OSError:
+            found = True  # can't be examined: loading it reports the load error
+        if not found:
             raise ServiceError(
                 ErrorCode.NOT_FOUND, f"document {doc_id!r} not found under {root}"
             )
@@ -279,7 +282,14 @@ class DocumentService:
                 self._cache.forget_document(doc_id)
             else:
                 self._cache.invalidate([doc_id])
-        return self._load(doc_id)
+        try:
+            return self._load(doc_id)
+        except ServiceError:
+            # MELLON-STORE-SRS-27: the document is gone from the cache; don't
+            # let the cached list go on without it or its load error.
+            if self._cache is not None:
+                self._cache.mark_incomplete()
+            raise
 
     def _docs_of(self, paths: Iterable[Path]) -> tuple[str, ...]:
         """Ids of the document folders `paths` lie in, sorted."""
@@ -387,7 +397,19 @@ class DocumentService:
         return obj
 
     # Requirements: MELLON-CHECK-SRS-9
-    def validate_document(self, doc_id: str) -> list[ValidationError]:
+    # Requirements: MELLON-CHECK-SRS-2
+    def validate_document(
+        self, doc_id: str, *, from_disk: bool = False
+    ) -> list[ValidationError]:
+        """Validate `doc_id`. With `from_disk`, read it from the working copy
+        even when the cache holds it, leaving the cache as it is, so a file
+        changed since raises its load error (ServiceError LOAD)."""
+        if from_disk:
+            folder = self._doc_folder(doc_id)
+            try:
+                return validate(load_document(folder))
+            except LoaderError as e:
+                raise _load_error(e) from e
         return validate(self._load(doc_id).document)
 
     # Requirements: MELLON-CHECK-SRS-2
@@ -423,13 +445,18 @@ class DocumentService:
         `load_errors` (as in `get_all_documents`).
         """
         docs = self.get_all_documents(load_errors=load_errors)
-        # Pull repo-wide suspects (returns dict[doc_id, [LinkStatus]]). Falls
-        # back to empty when the repo isn't a git repo — that's fine, we still
-        # want validation + counts.
+        # Pull repo-wide suspects (returns dict[doc_id, [LinkStatus]]). When
+        # the scan can't run (no git repository, or it moved away), the
+        # validation and the other counts still stand, but MELLON-CHECK-SRS-97
+        # and -101: the suspect and broken counts are null, never 0, and
+        # `suspect_scan_error` says why.
+        suspect_scan: dict[str, list[LinkStatus]] | None
+        scan_error: str | None = None
         try:
             suspect_scan = self.scan_suspects(None)
-        except ServiceError:
-            suspect_scan = {}
+        except ServiceError as e:
+            suspect_scan = None
+            scan_error = e.message
 
         documents: list[dict] = []
         total_validation_errors = 0
@@ -440,14 +467,15 @@ class DocumentService:
             loaded = docs[doc_id]
             doc = loaded.document
             errors = validate(doc)
-            statuses = suspect_scan.get(doc_id, [])
-            suspect = sum(
-                1 for s in statuses if s.state is LinkState.SUSPECT
-            )
-            broken = sum(1 for s in statuses if s.state is LinkState.BROKEN)
             total_validation_errors += len(errors)
-            total_suspect_count += suspect
-            total_broken_count += broken
+            suspect: int | None = None
+            broken: int | None = None
+            if suspect_scan is not None:
+                statuses = suspect_scan.get(doc_id, [])
+                suspect = sum(1 for s in statuses if s.state is LinkState.SUSPECT)
+                broken = sum(1 for s in statuses if s.state is LinkState.BROKEN)
+                total_suspect_count += suspect
+                total_broken_count += broken
             documents.append(
                 {
                     "doc_id": doc_id,
@@ -468,46 +496,41 @@ class DocumentService:
                 if parent_id not in docs:
                     continue
                 # child -> parent (outgoing): "does each child obj justify itself?"
-                try:
-                    out_report = _coverage_report(
-                        docs, doc_id, parent_id, direction="outgoing"
-                    )
-                    coverage_rows.append(
-                        {
-                            "source_doc": doc_id,
-                            "target_doc": parent_id,
-                            "direction": "outgoing",
-                            "total": out_report.total,
-                            "covered": out_report.covered,
-                            "coverage_percent": out_report.coverage_percent,
-                        }
-                    )
-                except Exception:  # pragma: no cover — defensive
-                    pass
+                out_report = _coverage_report(
+                    docs, doc_id, parent_id, direction="outgoing"
+                )
+                coverage_rows.append(
+                    {
+                        "source_doc": doc_id,
+                        "target_doc": parent_id,
+                        "direction": "outgoing",
+                        "total": out_report.total,
+                        "covered": out_report.covered,
+                        "coverage_percent": out_report.coverage_percent,
+                    }
+                )
                 # parent -> child (incoming): "is each parent obj verified by a child?"
-                try:
-                    in_report = _coverage_report(
-                        docs, parent_id, doc_id, direction="incoming"
-                    )
-                    coverage_rows.append(
-                        {
-                            "source_doc": parent_id,
-                            "target_doc": doc_id,
-                            "direction": "incoming",
-                            "total": in_report.total,
-                            "covered": in_report.covered,
-                            "coverage_percent": in_report.coverage_percent,
-                        }
-                    )
-                except Exception:  # pragma: no cover — defensive
-                    pass
+                in_report = _coverage_report(
+                    docs, parent_id, doc_id, direction="incoming"
+                )
+                coverage_rows.append(
+                    {
+                        "source_doc": parent_id,
+                        "target_doc": doc_id,
+                        "direction": "incoming",
+                        "total": in_report.total,
+                        "covered": in_report.covered,
+                        "coverage_percent": in_report.coverage_percent,
+                    }
+                )
 
         return {
             "documents": documents,
             "coverage": coverage_rows,
             "total_validation_errors": total_validation_errors,
-            "total_suspect_count": total_suspect_count,
-            "total_broken_count": total_broken_count,
+            "total_suspect_count": None if suspect_scan is None else total_suspect_count,
+            "total_broken_count": None if suspect_scan is None else total_broken_count,
+            "suspect_scan_error": scan_error,
         }
 
     def scan_suspects(self, doc_id: str | None = None) -> dict[str, list[LinkStatus]]:
@@ -734,11 +757,20 @@ class DocumentService:
         *,
         parent_id: str | None = None,
         description: str = "",
+        after: str | None = None,
     ) -> MutationResult[str]:
+        """Create an object, last under `parent_id`; with `after`, placed
+        right after that object instead. MELLON-STORE-SRS-174: the object
+        and its place land together or not at all."""
         self._require_write()
         folder = self._doc_folder(doc_id)
         try:
-            new_id = editor.create_object(folder, parent_id=parent_id, description=description)
+            with editor.journal():
+                new_id = editor.create_object(
+                    folder, parent_id=parent_id, description=description
+                )
+                if after is not None:
+                    editor.move_object(folder, new_id, after=after)
         except EditorError as e:
             raise _classify_editor_error(e) from e
         except LoaderError as e:
@@ -800,14 +832,13 @@ class DocumentService:
                     f"attribute {name!r}: {value!r} is not 'true' or 'false'",
                 )
         elif attr.kind == "date":
-            try:
-                _date.fromisoformat(value)
-            except ValueError as e:
+            # MELLON-STORE-SRS-98: YYYY-MM-DD only, as validation reads it.
+            if not is_date(value):
                 raise ServiceError(
                     ErrorCode.VALIDATION,
                     f"attribute {name!r}: {value!r} is not "
                     f"an ISO 8601 date (YYYY-MM-DD)",
-                ) from e
+                )
 
     # Requirements: MELLON-EDIT-SRS-9
     def _validate_attr_pair(self, doc: Document, name: str, value: str) -> None:
@@ -1176,7 +1207,6 @@ class DocumentService:
 
         new_ids: list[str] = []
         try:
-            import shutil
             for _ in range(count):
                 new_id = editor.create_object(
                     folder, parent_id=effective_parent, description=source.description
@@ -1193,9 +1223,9 @@ class DocumentService:
                             link.target_doc, link.target_id, link.type,
                         )
                 if copy_figure and has_figure:
-                    dst = folder / "figures" / f"{new_id}.svg"
-                    dst.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(source_figure_path, dst)
+                    editor.copy_figure_file(
+                        source_figure_path, folder / "figures" / f"{new_id}.svg"
+                    )
                 new_ids.append(new_id)
         except EditorError as e:
             self._reload(doc_id)

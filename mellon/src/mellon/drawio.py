@@ -84,10 +84,19 @@ def _decode_content(content: str) -> str:
 def is_drawio_svg(data: bytes) -> bool:
     """True when ``data`` is an SVG with an editable draw.io diagram in it."""
     root = _parse(data)
-    if root is None or etree.QName(root).localname != "svg":
+    # MELLON-STORE-SRS-132: the root is svg in SVG's namespace, and its
+    # content attribute holds XML whose root element is mxfile. A bare
+    # mxGraphModel root is accepted too, as built (open question Q19).
+    if root is None or root.tag != f"{{{_SVG_NS}}}svg":
         return False
     xml = _decode_content(root.get("content") or "")
-    return "<mxfile" in xml or "<mxGraphModel" in xml
+    if not xml:
+        return False
+    try:
+        content_root = etree.fromstring(xml.encode("utf-8"), _parser())
+    except (etree.XMLSyntaxError, ValueError):
+        return False
+    return content_root.tag in ("mxfile", "mxGraphModel")
 
 
 def is_drawio_file(path: Path) -> bool:

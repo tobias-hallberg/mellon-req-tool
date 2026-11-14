@@ -155,3 +155,42 @@ def test_is_object_id_accepts(doc_id: str, obj_id: str) -> None:
 )
 def test_is_object_id_refuses(doc_id, obj_id) -> None:
     assert not is_object_id(doc_id, obj_id)
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_111_113_cell_spanning_over_a_row_span_is_an_error(tmp_path):
+    """CV-STORE-01, MELLON-STORE-SRS-111 and -113: three columns; row 1 = A, B
+    (rowspan 2), C; row 2 = D (colspan 2), E; row 3 = F, G. D, placed at column 0,
+    spans over column 1, which B still covers, so (2,1) is covered twice and (3,1) by
+    nothing. The table doesn't tile its grid: a geometry error and a load error."""
+    from mellon.loader import LoaderError, load_document
+    from mellon.schema import (Table, TableCell, TableColumn, TableRow,
+                               table_geometry_errors)
+
+    table = Table(
+        columns=(TableColumn(), TableColumn(), TableColumn()),
+        rows=(
+            TableRow(cells=(TableCell("A"), TableCell("B", rowspan=2), TableCell("C"))),
+            TableRow(cells=(TableCell("D", colspan=2), TableCell("E"))),
+            TableRow(cells=(TableCell("F"), TableCell("G"))),
+        ),
+    )
+    assert table_geometry_errors(table)
+
+    doc = tmp_path / "DOC"
+    (doc / "objects").mkdir(parents=True)
+    (doc / "DOC.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<document id="DOC">\n'
+        '  <outline><ref id="DOC-1"/></outline>\n</document>\n', encoding="utf-8")
+    (doc / "objects" / "DOC-1.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<object id="DOC-1">\n'
+        "  <description>t</description>\n  <table>\n"
+        '    <columns><col/><col/><col/></columns>\n'
+        '    <row><cell>A</cell><cell rowspan="2">B</cell><cell>C</cell></row>\n'
+        '    <row><cell colspan="2">D</cell><cell>E</cell></row>\n'
+        "    <row><cell>F</cell><cell>G</cell></row>\n"
+        "  </table>\n</object>\n", encoding="utf-8")
+    with pytest.raises(LoaderError, match="geometry"):
+        load_document(doc)

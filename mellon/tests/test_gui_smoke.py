@@ -1084,3 +1084,68 @@ def test_gui_srs_6_opening_other_repository_while_export_runs(gui_gui, repo, tmp
     QThreadPool.globalInstance().waitForDone(20000)  # the export runs to its end
     gui_gui.bot.wait(200)
     assert _snapshot_diff(before, _snapshot(other)) == [], "the export wrote into the new repository"
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+def test_check_srs_79_validate_action_lists_every_error(qtbot, tmp_path, clean_worktree):
+    """CV-CHECK-05, MELLON-CHECK-SRS-79: the Validate action shows each validation error,
+    not only the first ten. Condition: 12 objects of VCU3-SRS with an attribute the
+    manifest doesn't define."""
+    from mellon.gui.main_window import DocumentEditorWindow
+    from mellon.service import DocumentService
+
+    root = _blind_req_test_copy(tmp_path / "rt", clean_worktree)
+    objs = root / "VCU3-SRS" / "objects"
+    broken = []
+    for p in sorted(objs.glob("*.xml"))[:12]:
+        _blind_write(p, p.read_text(encoding="utf-8").replace(
+            "<description>", '<attr name="colour">red</attr>\n  <description>', 1))
+        broken.append(p.stem)
+
+    win = DocumentEditorWindow("VCU3-SRS", DocumentService(root))
+    qtbot.addWidget(win)
+    win.show()
+    shown = _blind_trigger_validate(qtbot, win)
+    assert len(shown) == 1, shown
+    text = shown[0][1]
+    assert len(re.findall(r"\bATTR_UNKNOWN\b", text)) == 12, text
+    for obj_id in broken:
+        assert re.search(rf"\b{re.escape(obj_id)}\b", text), (obj_id, text)
+
+
+def test_check_srs_2_validate_action_reports_a_load_error_after_the_window_opened(
+        qtbot, tmp_path, clean_worktree):
+    """CV-CHECK-04, MELLON-CHECK-SRS-2: if the document has a load error, Mellon reports
+    the load error instead of validating it. Condition: a Document Editor is open on
+    VCU3-SRS (cache on, as the GUI runs); a pull leaves conflict markers in one of its
+    object files; the user chooses Validate."""
+    from mellon.gui.main_window import DocumentEditorWindow
+    from mellon.service import DocumentService
+
+    root = _blind_req_test_copy(tmp_path / "rt", clean_worktree)
+    win = DocumentEditorWindow("VCU3-SRS", DocumentService(root, cache=True))
+    qtbot.addWidget(win)
+    win.show()
+    p10 = root / "VCU3-SRS" / "objects" / "VCU3-SRS-10.xml"
+    lines = p10.read_text(encoding="utf-8").splitlines(keepends=True)
+    _blind_write(p10, "".join(lines[:2] + ["<<<<<<< HEAD\n", "=======\n", ">>>>>>> other\n"]
+                              + lines[2:]))
+    shown = _blind_trigger_validate(qtbot, win)
+    assert "passed" not in win.statusBar().currentMessage(), win.statusBar().currentMessage()
+    assert len(shown) == 1, shown
+    assert "VCU3-SRS-10.xml" in shown[0][1], shown[0]
+    assert "merge conflict" in shown[0][1], shown[0]
+
+
+def test_store_srs_7_bare_repository_advice_names_no_root(tmp_path):
+    """CV-STORE-16, MELLON-STORE-SRS-7: the GUI's advice for a bare repository doesn't
+    tell the user to open the folder above it."""
+    import pygit2
+
+    from mellon.gui.controller import _repo_root_advice
+
+    bare = tmp_path / "reqs.git"
+    pygit2.init_repository(str(bare), bare=True)
+    assert "Open " + str(tmp_path) not in _repo_root_advice(bare.resolve())

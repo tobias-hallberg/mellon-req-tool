@@ -20,7 +20,6 @@ import shutil
 import time
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from datetime import date as _date
 from pathlib import Path
 from typing import Optional, TypeVar
 
@@ -34,7 +33,14 @@ from .filter import (
 )
 from .git_ops import GitError, _replace_file, discover_repo
 from .link_index import current_hashes
-from .loader import DOCUMENT_SUBFOLDERS, LoaderError, entry_problem, has_manifest, load_document
+from .loader import (
+    DOCUMENT_SUBFOLDERS,
+    LoaderError,
+    entry_problem,
+    has_manifest,
+    load_document,
+    read_text,
+)
 from .repo import DocLoadError, load_sibling_docs
 from .schema import (
     NEXT_OBJECT_NUMBER_ATTR,
@@ -48,6 +54,7 @@ from .schema import (
     whole_number,
 )
 from .suspects import target_exists
+from .validator import is_date
 
 
 class EditorError(Exception):
@@ -408,6 +415,16 @@ _XML_ILLEGAL_C0_RE = re.compile(r"[\x00-\x08\x0e-\x1f]")
 
 # Requirements: MELLON-STORE-SRS-89, MELLON-STORE-SRS-212, MELLON-STORE-SRS-213,
 #   MELLON-STORE-SRS-214
+# Requirements: MELLON-STORE-SRS-87, MELLON-STORE-SRS-208
+def _set_text(el: etree._Element, value: str) -> None:
+    """Make `value` the whole content of the text element `el`: child nodes
+    the format doesn't define (and the text after them) go, so the file holds
+    what is read back, and an empty value is written in one form, `<x/>`."""
+    for child in list(el):
+        el.remove(child)
+    el.text = value or None
+
+
 def _sanitize_text(value: str, what: str) -> str:
     """Return user text safe to store in XML, or raise EditorError naming the bad character."""
     value = value.replace("\r\n", "\n").replace("\r", "\n")
@@ -482,7 +499,7 @@ def create_object(
     if obj_path.exists():
         raise EditorError(f"object file already exists: {obj_path}")
     obj_el = etree.Element("object", id=new_id)
-    etree.SubElement(obj_el, "description").text = description
+    _set_text(etree.SubElement(obj_el, "description"), description)
     tree = etree.ElementTree(obj_el)
     etree.indent(tree, space="  ")
     # git doesn't track an empty objects/, so a fresh clone may lack it.
@@ -554,7 +571,7 @@ def _write_manifest(
 ) -> None:
     root_el = etree.Element("document", id=doc_id)
     meta = etree.SubElement(root_el, "metadata")
-    etree.SubElement(meta, "title").text = title
+    _set_text(etree.SubElement(meta, "title"), title)
 
     if parents:
         parents_el = etree.SubElement(root_el, "parents")
@@ -645,10 +662,10 @@ def set_attribute(folder: Path, obj_id: str, attr_name: str, value: str) -> None
             break
 
     if existing is not None:
-        existing.text = value
+        _set_text(existing, value)
     else:
         new = etree.Element("attr", name=attr_name)
-        new.text = value
+        _set_text(new, value)
         # Insert before <description>/<figure> if present, else at end.
         description = root.find("description")
         if description is not None:
@@ -676,7 +693,7 @@ def set_description(folder: Path, obj_id: str, text: str) -> None:
     description = root.find("description")
     if description is None:
         description = etree.SubElement(root, "description")
-    description.text = text
+    _set_text(description, text)
 
     etree.indent(tree, space="  ")
     _write_tree(tree, obj_path)
@@ -827,10 +844,19 @@ def set_figure(folder: Path, obj_id: str, src_path: Path) -> None:
             f"got <{src_root.tag}>: {src_path}"
         )
 
-    dest = figure_path(folder, obj_id)
+    copy_figure_file(src_path, figure_path(folder, obj_id))
+
+
+# Requirements: MELLON-STORE-SRS-167, MELLON-STORE-SRS-228
+def copy_figure_file(src_path: Path, dest: Path) -> None:
+    """Copy a figure file's bytes to `dest` through a temporary sibling and
+    `os.replace`, so a failed write or a stop during it leaves `dest` holding
+    its old content or the new content in full. `dest` is journaled, and
+    neither it nor its folder is written through a link."""
+    data = Path(src_path).read_bytes()
     _make_folder(dest.parent)
     _touch(dest)
-    shutil.copyfile(src_path, dest)
+    _replace_file(dest, data)
 
 
 # Requirements: MELLON-EDIT-SRS-240
@@ -880,14 +906,11 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
             f"(known: {list(_METADATA_FIELDS)})"
         )
     value = _sanitize_text(value, f"metadata {field!r}")
-    if field == "date" and value:
-        try:
-            _date.fromisoformat(value)
-        except ValueError:
-            raise EditorError(
-                f"manifest metadata: date={value!r} is not "
-                f"an ISO 8601 date (YYYY-MM-DD)"
-            )
+    # MELLON-STORE-SRS-64: YYYY-MM-DD only, not another ISO 8601 form.
+    if field == "date" and value and not is_date(value):
+        raise EditorError(
+            f"manifest metadata: date={value!r} is not an ISO 8601 date (YYYY-MM-DD)"
+        )
     doc = load_document(folder)
     manifest = folder / f"{doc.id}.xml"
     tree = etree.parse(str(manifest))
@@ -899,7 +922,7 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
     el = metadata.find(field)
     if el is None:
         el = etree.SubElement(metadata, field)
-    el.text = value
+    _set_text(el, value)
     etree.indent(tree, space="  ")
     _write_tree(tree, manifest)
 
@@ -908,6 +931,14 @@ def set_metadata(folder: Path, field: str, value: str) -> None:
 @_atomic
 def add_parent(folder: Path, parent_doc: str) -> None:
     """Add a `<parent doc=...>` reference to the manifest's `<parents>`."""
+    parent_doc = _sanitize_text(parent_doc, "parent document ID")
+    # MELLON-STORE-SRS-68, -27: the doc attribute holds a document ID; an
+    # empty one is a load error for the whole manifest.
+    if not _DOC_ID_RE.match(parent_doc):
+        raise EditorError(
+            f"invalid parent document ID {parent_doc!r}: "
+            "use letters, digits, hyphens, underscores"
+        )
     doc = load_document(folder)
     if parent_doc == doc.id:
         raise EditorError(f"cannot add {doc.id!r} as a parent of itself")
@@ -1232,8 +1263,8 @@ def remove_attr_option(folder: Path, attr_name: str, option: str) -> list[Path]:
             oroot = otree.getroot()
             changed = False
             for a in oroot.findall("attr"):
-                if a.get("name") == attr_name and (a.text or "") == option:
-                    a.text = ""
+                if a.get("name") == attr_name and read_text(a) == option:
+                    _set_text(a, "")
                     changed = True
             if changed:
                 etree.indent(otree, space="  ")
@@ -1434,6 +1465,10 @@ def add_link(
     already exists (same target-doc + target-id on source).
     """
     link_type = _sanitize_text(link_type, "link type")
+    # MELLON-STORE-SRS-120, -27: a link without a type is a load error for its
+    # links file, so it is never written.
+    if not link_type:
+        raise EditorError("link type cannot be empty")
     doc = load_document(folder)
     if source_id not in doc.objects:
         raise EditorError(f"no object {source_id!r} in document {doc.id!r}")
@@ -1450,9 +1485,13 @@ def add_link(
     # (MELLON-TRACE-SRS-44). Documents sit directly under the repository root.
     if not target_exists(folder.parent, target_doc, target_id):
         missing = f"link target {target_doc}/{target_id} does not exist in the working copy"
-        if is_object_id(target_doc, target_id) and not has_manifest(
-            folder.parent / target_doc
-        ):
+        try:
+            no_document = is_object_id(target_doc, target_id) and not has_manifest(
+                folder.parent / target_doc
+            )
+        except OSError:
+            no_document = False
+        if no_document:
             missing += f": there is no document {target_doc!r}"
         raise EditorError(missing)
 
@@ -1721,6 +1760,7 @@ def create_view(
     seen: set[str] = set()
     deduped: list[str] = []
     for attr in visible_attrs:
+        attr = _sanitize_text(attr, "view column name")
         if attr in seen:
             continue
         seen.add(attr)
@@ -1808,6 +1848,7 @@ def set_view_visible(
     seen: set[str] = set()
     deduped: list[str] = []
     for attr in visible_attrs:
+        attr = _sanitize_text(attr, "view column name")
         if attr in seen:
             continue
         seen.add(attr)
@@ -1853,7 +1894,8 @@ def _validate_rules(rules: tuple[FilterRule, ...] | list[FilterRule]) -> None:
         if rule.kind == "attr":
             if not rule.attr:
                 raise EditorError("attr rule missing attribute name")
-            if rule.op and rule.op not in _ALL_ATTR_OPS:
+            # MELLON-STORE-SRS-148: the loader refuses a missing or empty op.
+            if rule.op not in _ALL_ATTR_OPS:
                 raise EditorError(
                     f"attr rule op {rule.op!r} is not a recognised operator"
                 )
@@ -1886,7 +1928,7 @@ def _write_filter(
     for rule in rules:
         attrs = {"kind": rule.kind, "op": rule.op}
         if rule.attr:
-            attrs["attr"] = rule.attr
+            attrs["attr"] = _sanitize_text(rule.attr, "filter attribute name")
         if rule.value:
             attrs["value"] = _sanitize_text(rule.value, "filter value")
         etree.SubElement(root_el, "rule", **attrs)

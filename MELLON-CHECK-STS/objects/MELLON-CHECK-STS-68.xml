@@ -6,6 +6,7 @@
   <attr name="execution">Automated</attr>
   <attr name="rung">3 GUI and MCP</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
-  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_107_repo_health_document_objects_linking_to_parent</attr>
+  <attr name="automated-tests">tests/test_mcp_read.py::test_check_srs_107_repo_health_document_objects_linking_to_parent
+tests/test_coverage.py::test_check_srs_107_108_each_object_counted_once</attr>
   <description>PARENT: heading PARENT-0, requirements PARENT-1 and PARENT-2. CHILD (parent PARENT): requirement CHILD-0 linking to PARENT-1, requirement CHILD-1 without links, heading CHILD-2 linking to PARENT-2. Expected for CHILD against PARENT: 1 object linking directly, out of 2 (the heading is left out).</description>
 </object>

@@ -503,3 +503,34 @@ def test_gui_srs_64_grid_rows_in_outline_order(gui_gui, repo):
     after = [oid for oid, _ in _outline(repo, SRS)]
     assert after.index("VCU3-SRS-1") > after.index("VCU3-SRS-2"), "precondition: the move reached the manifest"
     assert gui_gui.grid_ids(ed) == after
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+def test_store_srs_174_new_sibling_that_cant_be_placed_leaves_no_object(window, monkeypatch):
+    """CV-STORE-15, MELLON-STORE-SRS-174: New sibling writes the object and its place in
+    the outline. If the manifest can't be written when the new object is placed after
+    the selection, the object file already written is removed again, and no undo step
+    is recorded."""
+    import errno
+
+    from mellon import editor
+
+    w, dst = window
+    w.controller.select_document("VCU3-SRS")
+    w.controller.select_object("VCU3-SRS", "VCU3-SRS-10")
+    objects = dst / "VCU3-SRS" / "objects"
+    before_files = sorted(p.name for p in objects.iterdir())
+    manifest = dst / "VCU3-SRS" / "VCU3-SRS.xml"
+    manifest_before = manifest.read_bytes()
+    steps_before = len(w._undo_steps)
+
+    def move_fails(*_a, **_k):
+        raise PermissionError(errno.EACCES, "Permission denied", str(manifest))
+
+    monkeypatch.setattr(editor, "move_object", move_fails)
+    w._new_sibling()
+    assert sorted(p.name for p in objects.iterdir()) == before_files
+    assert manifest.read_bytes() == manifest_before
+    assert len(w._undo_steps) == steps_before

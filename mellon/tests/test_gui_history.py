@@ -352,6 +352,59 @@ def test_ver_srs_230_history_tab_view_at_this_commit_shows_values_from_that_comm
     assert "Approved text." not in shown
 
 
+# --- code view findings (CV-STORE-*) ---
+
+_CV_TABLE = (
+    "  <table>\n    <columns><col/><col/></columns>\n"
+    "    <row><cell>a</cell><cell>b</cell></row>\n  </table>\n")
+
+
+@pytest.mark.parametrize("case", ["table", "duplicate-attr", "id-mismatch", "not-well-formed",
+                                  "link-without-type"])
+def test_store_srs_83_85_90_object_at_a_commit_is_read_by_the_format_rules(
+        window, case) -> None:
+    """CV-STORE-13, MELLON-STORE-SRS-83, -85 and -90: an object as stored at a commit is
+    read by the same rules as the working copy: its table is shown; two attr elements of
+    one name, an id that isn't the file's name, a file that isn't well-formed XML, or a
+    link without a type are load errors, not guesses."""
+    from mellon.service import ErrorCode, ServiceError
+
+    w, dst = window
+    obj_id = "VCU3-SyRS-47"
+    path = dst / "VCU3-SyRS" / "objects" / f"{obj_id}.xml"
+    text = path.read_text(encoding="utf-8")
+    if case == "table":
+        text = text.replace("</object>", _CV_TABLE + "</object>")
+    elif case == "duplicate-attr":
+        text = text.replace("<description>",
+                            '<attr name="type">Heading</attr>\n  <attr name="type">Note</attr>'
+                            "\n  <description>")
+    elif case == "id-mismatch":
+        text = text.replace(f'id="{obj_id}"', 'id="VCU3-SyRS-9"')
+    elif case == "not-well-formed":
+        text = text.replace("</object>", "")
+    else:
+        (dst / "VCU3-SyRS" / "links").mkdir(exist_ok=True)
+        (dst / "VCU3-SyRS" / "links" / f"{obj_id}.xml").write_text(
+            f'<?xml version="1.0" encoding="UTF-8"?>\n<links source="{obj_id}">\n'
+            '  <link target-doc="VCU3-StRS" target-id="VCU3-StRS-1"/>\n</links>\n',
+            encoding="utf-8")
+    path.write_text(text, encoding="utf-8")
+    repo = pygit2.Repository(str(dst))
+    repo.index.add_all()
+    repo.index.write()
+    sig = pygit2.Signature("t", "t@x")
+    repo.create_commit("HEAD", sig, sig, case, repo.index.write_tree(), [repo.head.target])
+
+    if case == "table":
+        snapshot = w.controller.object_at_commit("VCU3-SyRS", obj_id, "HEAD")
+        assert snapshot.object.table is not None
+        return
+    with pytest.raises(ServiceError) as ei:
+        w.controller.object_at_commit("VCU3-SyRS", obj_id, "HEAD")
+    assert ei.value.code is ErrorCode.LOAD, ei.value
+
+
 def test_ver_srs_230_view_at_this_commit_shows_values_as_their_file_holds_them(window, qtbot) -> None:
     """MELLON-VER-SRS-230 (CV-VER-15): a value holding markup shows in View at
     this commit as its file holds it, not as formatted text."""

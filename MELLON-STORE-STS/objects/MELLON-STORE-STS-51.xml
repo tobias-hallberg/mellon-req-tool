@@ -11,6 +11,8 @@ tests/test_editor.py::test_edit_srs_1_created_object_file_holds_the_returned_id
 tests/test_loader.py::test_object_filename_must_match_id
 tests/test_loader.py::test_renamed_file_fails_as_it_would_uncached
 tests/test_repo.py::test_load_all_records_semantic_load_error_without_hint
-tests/test_loader.py::test_parse_bytes_errors_name_the_path</attr>
+tests/test_loader.py::test_parse_bytes_errors_name_the_path
+tests/test_loader.py::test_store_srs_81_129_file_suffix_letter_case_counts_on_every_system
+tests/test_gui_history.py::test_store_srs_83_85_90_object_at_a_commit_is_read_by_the_format_rules</attr>
   <description>Create an object, and create one after deleting the highest object; look at objects/. Write objects/DOC-1.xml holding object id DOC-99; separately rename objects/DOC-0.xml to DOC-7.xml after a read; read each. Read object file content with id DOC-1 as stored at a version under the name DOC-0.xml. Expected: each new object is in objects/&lt;object ID&gt;.xml, whose object element's id is that ID; each file whose name differs from its id is a load error saying so.</description>
 </object>

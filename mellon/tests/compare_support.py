@@ -494,6 +494,14 @@ def _build_canon_repo(root: Path) -> dict:
     three = editor.create_object(folder, top, "")
     editor.set_attribute(folder, three, "type", "Note")
     editor.add_link(folder, one, DOC, top, "refines")
+    # Mellon writes an empty element as <x/> (MELLON-STORE-SRS-208); hand-write
+    # SPEC-1's empty rationale as <x></x>, as an older Mellon did, so both forms
+    # are present.
+    one_path = folder / "objects" / f"{one}.xml"
+    one_data = one_path.read_bytes()
+    empty = b'<attr name="rationale"/>'
+    assert empty in one_data, f"test setup: unexpected object file {one_data!r}"
+    one_path.write_bytes(one_data.replace(empty, b'<attr name="rationale"></attr>'))
     src = root.parent / "figure-src.svg"
     src.write_bytes(FIGURE_SVG)
     editor.set_figure(folder, two, src)

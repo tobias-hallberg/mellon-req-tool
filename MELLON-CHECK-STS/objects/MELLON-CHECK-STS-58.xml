@@ -8,6 +8,7 @@
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_check.py::test_suspect_link_fails
 tests/test_check.py::test_req_test_fixture_lists_its_suspects
-tests/test_check.py::test_check_srs_149_suspect_link_exits_1</attr>
+tests/test_check.py::test_check_srs_149_suspect_link_exits_1
+tests/test_check.py::test_check_srs_147_149_one_reading_of_the_repository</attr>
   <description>Commit a change to PARENT-1 after CHILD-1's link to it was acknowledged, and run mellon-check; then run it on the req-test fixture, which has 6 suspect links. Expected: exit status 1 both times.</description>
 </object>

@@ -6,6 +6,7 @@
   <attr name="execution">Automated</attr>
   <attr name="rung">1 Unit</attr>
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
-  <attr name="automated-tests">tests/test_loader.py::test_store_srs_46_undefined_elements_and_attributes_are_ignored</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_46_undefined_elements_and_attributes_are_ignored
+tests/test_loader.py::test_store_srs_46_text_after_an_undefined_element_or_comment_is_read</attr>
   <description>For each kind of data file (manifest, object file, links file, view file, filter file, rules file), add an element the format doesn't define (&lt;extra&gt;x&lt;/extra&gt; as a child of the root element) and an XML attribute it doesn't define (extra="1" on the root element and on one child). Read the document. Expected: no load error, and the document reads exactly as the same files without the additions.</description>
 </object>

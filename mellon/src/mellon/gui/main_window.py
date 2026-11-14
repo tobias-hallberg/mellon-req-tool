@@ -1057,7 +1057,7 @@ class DocumentEditorWindow(QMainWindow):
             f"{'Undid' if undo else 'Redid'} {label}.", 4000
         )
 
-    # Requirements: MELLON-EDIT-SRS-113
+    # Requirements: MELLON-EDIT-SRS-113, MELLON-STORE-SRS-174
     def _new_sibling(self) -> None:
         if not self._prepare_edit():
             return
@@ -1070,10 +1070,9 @@ class DocumentEditorWindow(QMainWindow):
         )
         svc = self.controller.require_service()
         try:
-            result = svc.create_object(doc_id, parent_id=parent_id)
+            # MELLON-STORE-SRS-174: one write, so a failure leaves nothing.
+            result = svc.create_object(doc_id, parent_id=parent_id, after=sel)
             new_id = result.value
-            if sel is not None:
-                svc.move_object(doc_id, new_id, after=sel)
         except ServiceError as e:
             self._status.showMessage(f"New sibling failed: {e}", 6000)
             return
@@ -2504,7 +2503,8 @@ class DocumentEditorWindow(QMainWindow):
         # Unexpected: leave it to the excepthook (log file + dialog).
         raise error  # type: ignore[misc]
 
-    # Requirements: MELLON-CHECK-SRS-9, MELLON-CHECK-SRS-79
+    # Requirements: MELLON-CHECK-SRS-2, MELLON-CHECK-SRS-9, MELLON-CHECK-SRS-79,
+    #   MELLON-GUI-SRS-122
     def _validate_current_doc(self) -> None:
         self._save_pending_edits()  # MELLON-GUI-SRS-74
         doc_id = self.controller.current_doc_id()
@@ -2512,24 +2512,54 @@ class DocumentEditorWindow(QMainWindow):
             self._status.showMessage("No document selected.", 4000)
             return
         try:
-            errors = self.controller.require_service().validate_document(doc_id)
+            # MELLON-CHECK-SRS-2: read the working copy, so a file a pull or
+            # another program broke since the window read it is reported as
+            # the load error it now is, not validated from the old copy.
+            errors = self.controller.require_service().validate_document(
+                doc_id, from_disk=True
+            )
         except ServiceError as e:
+            if e.code is ErrorCode.LOAD:
+                self._status.showMessage(f"{doc_id} failed to load.", 8000)
+                plain.warning(
+                    self,
+                    "Document failed to load",
+                    f"{doc_id} can't be validated, because it fails to load:\n\n"
+                    f"{e.message}\n\n"
+                    "Fix the file (for a merge conflict, use Resolve merge… in "
+                    "the Project Explorer, or your git client), then press F5.",
+                )
+                return
             self._status.showMessage(f"Validation unavailable: {e}", 6000)
             return
         if not errors:
             self._status.showMessage(f"{doc_id}: validation passed.", 4000)
             return
-        shown = "\n".join(str(err) for err in errors[:10])
-        if len(errors) > 10:
-            shown += f"\n… and {len(errors) - 10} more"
-        plain.warning(
-            self,
-            "Validation failed",
-            f"{doc_id} has {len(errors)} validation error(s).\n\n{shown}",
-        )
+        self._show_validation_errors(doc_id, [str(err) for err in errors])
         self._status.showMessage(
             f"{doc_id}: {len(errors)} validation error(s).", 6000
         )
+
+    # Requirements: MELLON-CHECK-SRS-79, MELLON-GUI-SRS-122
+    def _show_validation_errors(self, doc_id: str, lines: list[str]) -> None:
+        """Each validation error, one per line, in a scrollable list."""
+        from PySide6.QtWidgets import QDialogButtonBox, QPlainTextEdit, QVBoxLayout
+
+        dlg = QDialog(self)
+        dlg.setWindowTitle("Validation failed")
+        layout = QVBoxLayout(dlg)
+        # MELLON-GUI-SRS-122: repository text is shown as written.
+        layout.addWidget(plain.label(f"{doc_id} has {len(lines)} validation error(s).", dlg))
+        text = QPlainTextEdit(dlg)
+        text.setReadOnly(True)
+        text.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
+        text.setPlainText("\n".join(lines))
+        text.setMinimumSize(640, 240)
+        layout.addWidget(text)
+        buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok, dlg)
+        buttons.accepted.connect(dlg.accept)
+        layout.addWidget(buttons)
+        dlg.exec()
 
     # Requirements: MELLON-GUI-SRS-115, MELLON-GUI-SRS-117, MELLON-GUI-SRS-118, MELLON-VER-SRS-183,
     #   MELLON-VER-SRS-376, MELLON-VER-SRS-377

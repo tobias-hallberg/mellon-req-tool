@@ -13,6 +13,7 @@ tests/test_check.py::test_validation_error_fails
 tests/test_check.py::test_document_that_fails_to_load_fails
 tests/test_check.py::test_check_srs_134_one_line_per_check_problem
 tests/test_check.py::test_check_srs_134_one_line_per_check_problem_with_load_error
-tests/test_check.py::test_check_srs_134_broken_link_has_one_line</attr>
+tests/test_check.py::test_check_srs_134_broken_link_has_one_line
+tests/test_check.py::test_check_srs_134_link_outside_parents_to_missing_object_has_one_line</attr>
   <description>Run mellon-check on: (a) a clean repository of two committed documents; (b) the same with one suspect link; (c) the req-test fixture, built with exactly 6 suspect links and no broken link; (d) the clean repository with one object's status not an option; (e) the clean repository with CHILD's manifest unreadable. Expected: (a) no problem line, only the summary 2 documents checked, 0 problems; (b) one suspect line and the summary 1 problem; (c) 6 suspect lines and 6 problems; (d) a line naming PARENT and ATTR_BAD_ENUM; (e) a line naming CHILD and LOAD_ERROR.</description>
 </object>

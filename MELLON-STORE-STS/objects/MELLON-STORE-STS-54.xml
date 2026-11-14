@@ -8,6 +8,7 @@
   <attr name="rationale">as implemented: mapped from the existing tests, with blind tests written from the requirements alone for what they missed.</attr>
   <attr name="automated-tests">tests/test_editor.py::test_set_table_placed_after_description
 tests/test_loader.py::test_parse_table_basic
-tests/test_loader.py::test_object_without_table_has_none</attr>
+tests/test_loader.py::test_object_without_table_has_none
+tests/test_gui_history.py::test_store_srs_83_85_90_object_at_a_commit_is_read_by_the_format_rules</attr>
   <description>Set a table on an object and look at the object file. Read an object of type Information whose file holds a table element after the description, and an object whose file holds none. Expected: the table element follows the description element; the Information object has its table; the other has no table.</description>
 </object>

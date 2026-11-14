@@ -11,6 +11,7 @@ tests/test_validator.py::test_validate_passes_iso_metadata_date
 tests/test_validator.py::test_validate_passes_empty_metadata_date
 tests/test_editor.py::test_set_metadata_rejects_bad_date
 tests/test_editor.py::test_set_metadata_accepts_iso_date
-tests/test_service.py::test_store_srs_64_manifest_date_calendar_range</attr>
+tests/test_service.py::test_store_srs_64_manifest_date_calendar_range
+tests/test_editor.py::test_store_srs_64_metadata_date_other_iso_forms_are_refused</attr>
   <description>Write a manifest's date by hand as 2026-04-215 and validate; then as 2026-04-25, and empty. Set the date through Mellon to 2026-04-215 and to 2026-04-25. Expected: 2026-04-215 gives a validation error for the metadata date and is refused when set; 2026-04-25 and an empty date give no error and are accepted.</description>
 </object>

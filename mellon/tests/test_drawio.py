@@ -714,3 +714,20 @@ def test_pdf_srs_156_multipage_drawio_figure_draws_its_first_page(figures_export
     text = pdf.flat()
     assert "PAGE-ONE" in text, "the first figure page isn't drawn"
     assert "PAGE-TWO" not in text, "the second figure page is drawn"
+
+
+# --- code view findings (CV-STORE-*) ---
+
+
+@pytest.mark.parametrize("data", [
+    pytest.param(_svg_with_content("<diagrams><mxfile/></diagrams>"), id="other-root-holding-mxfile"),
+    pytest.param(_svg_with_content("<mxfileX"), id="not-xml"),
+    pytest.param(_svg_with_content("text <mxfile/> more"), id="mxfile-inside-text"),
+    pytest.param(_svg_with_content(_DIAGRAM).replace(b"http://www.w3.org/2000/svg",
+                                                     b"urn:not-svg"), id="svg-in-another-namespace"),
+])
+def test_store_srs_132_only_an_mxfile_root_in_an_svg_is_a_drawio_figure(data) -> None:
+    """CV-STORE-08, MELLON-STORE-SRS-132: a figure is a draw.io figure when the file's
+    root svg element has a content attribute whose value is XML with an mxfile root
+    element; these aren't."""
+    assert not drawio.is_drawio_svg(data)

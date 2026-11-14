@@ -1551,3 +1551,31 @@ def test_check_srs_66_link_demands_of_several_rules_add_up(tmp_path, status, tar
         ({"status": "Approved"}, {}, ("GRAND",)),
     ])
     assert _blind_codes(folder) == ["RULE_LINK_REQUIRED_MISSING"] * expected
+
+
+# --- code view findings (CV-CHECK-*) ---
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-CHECK-SRS-61: an attribute set to an empty value isn't reported as "
+    "RULE_FORBIDDEN_PRESENT; waiting on Q19 (CV-CHECK-03, MELLON-CHECK-SRS-60)"))
+def test_check_srs_61_forbidden_attribute_set_to_an_empty_value(tmp_path):
+    """CV-CHECK-03, MELLON-CHECK-SRS-61: a rule forbids rationale on headings; D-1 is a
+    Heading whose rationale is set to an empty value (set, per the definition, even when
+    the file gives an empty value). Expected: RULE_FORBIDDEN_PRESENT."""
+    folder = _blind_write_doc(tmp_path, "D", {"D-1": {"type": "Heading", "rationale": ""}},
+                              rules=[({"type": "Heading"}, {"rationale": "forbidden"}, ())])
+    assert "RULE_FORBIDDEN_PRESENT" in _blind_codes(folder)
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "defect: MELLON-CHECK-SRS-66: one missing link to a document named by two rules is "
+    "reported twice; waiting on Q19 (CV-CHECK-11)"))
+def test_check_srs_66_one_missing_link_named_by_two_rules_is_one_error(tmp_path):
+    """CV-CHECK-11, MELLON-CHECK-SRS-66: two rules apply to D-1 and both require a link to
+    P; D-1 has none. One link to P is required, so one error is expected."""
+    _blind_write_doc(tmp_path, "P", {"P-1": {"type": "Requirement"}})
+    folder = _blind_write_doc(
+        tmp_path, "D", {"D-1": {"type": "Requirement", "status": "Draft"}}, parents=("P",),
+        rules=[({"type": "Requirement"}, {}, ("P",)), ({"status": "Draft"}, {}, ("P",))])
+    assert _blind_codes(folder).count("RULE_LINK_REQUIRED_MISSING") == 1
