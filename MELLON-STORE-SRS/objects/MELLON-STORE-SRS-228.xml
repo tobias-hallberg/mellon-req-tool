@@ -2,8 +2,8 @@
 <object id="MELLON-STORE-SRS-228">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: CF-S40. A cloned repository can hold symbolic links (checked out as links on Linux and macOS, and on Windows with core.symlinks), and writing or deleting through one changes a file outside the repository. Folders above the root don't count, so a root reached through a link still works. Decided on 2026-11-10.</attr>
+  <attr name="rationale">derived: CF-S40. A cloned repository can hold symbolic links (checked out as links on Linux and macOS, and on Windows with core.symlinks), and writing or deleting through one changes a file outside the repository. Folders above the root don't count, so a root reached through a link still works. Decided on 2026-11-10. Accepted on 2026-11-14 by the person as a security fix (open question Q20).</attr>
   <description>If a file Mellon is about to write or delete, or a folder between the repository root and the file, is a symbolic link or junction, Mellon shall refuse the operation.</description>
 </object>

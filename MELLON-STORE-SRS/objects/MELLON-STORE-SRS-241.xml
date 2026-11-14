@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-SRS-241">
+  <attr name="type">Requirement</attr>
+  <attr name="req-type">Security</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="level">High</attr>
+  <attr name="rationale">analysis: the path audit after the code view (2026-11-13) found that a load error's merge-conflict note took the start of the message as a file name, so an attribute name holding .. made every load read a file outside the repository, and a network path there would make Windows send the user's credentials to that host. MELLON-STORE-SRS-231 covers what a file refers to when it is read, drawn or exported; this covers every path a load touches, whatever names it. Accepted on 2026-11-14 by the person as a security fix (open question Q20).</attr>
+  <description>When Mellon loads a document, Mellon shall access no path outside the document's folder.</description>
+</object>
