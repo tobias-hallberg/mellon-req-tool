@@ -28,7 +28,6 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPlainTextEdit,
     QPushButton,
     QRadioButton,
@@ -38,9 +37,14 @@ from PySide6.QtWidgets import (
 )
 
 from ... import merge
+from .. import plain
 
 
+# Requirements: MELLON-GUI-SRS-122, MELLON-VER-SRS-380
 def _wrapped(text: str, *, rich: bool = False) -> QLabel:
+    """A word-wrapped label. ``rich`` labels escape every value they show
+    (``plain.esc``): object IDs, file names and branch names come from
+    another clone."""
     label = QLabel(text)
     label.setWordWrap(True)
     label.setTextFormat(Qt.TextFormat.RichText if rich else Qt.TextFormat.PlainText)
@@ -53,7 +57,7 @@ def _section(title: str) -> QLabel:
     return label
 
 
-# Requirements: MELLON-VER-SRS-326, MELLON-VER-SRS-340
+# Requirements: MELLON-VER-SRS-326, MELLON-VER-SRS-340, MELLON-VER-SRS-380
 class MergeDialog(QDialog):
     def __init__(self, root: Path, plan: merge.MergePlan, parent=None) -> None:
         super().__init__(parent)
@@ -84,8 +88,8 @@ class MergeDialog(QDialog):
             layout.addWidget(_section("Renumbered"))
             for r in plan.renumbered:
                 layout.addWidget(_wrapped(
-                    f"{r.obj_id} on {self._names[r.side]} was created later "
-                    f"under the same id: it becomes <b>{r.new_id}</b>.",
+                    f"{plain.esc(r.obj_id)} on {plain.esc(self._names[r.side])} was created later "
+                    f"under the same id: it becomes <b>{plain.esc(r.new_id)}</b>.",
                     rich=True,
                 ))
         if plan.by_hand:
@@ -127,11 +131,13 @@ class MergeDialog(QDialog):
     def _hand_block(self, hand: merge.HandMerge) -> QFrame:
         frame = QFrame()
         frame.setFrameShape(QFrame.Shape.StyledPanel)
-        frame.setToolTip(hand.path)
+        frame.setToolTip(plain.text(hand.path))
         lay = QVBoxLayout(frame)
         lay.setContentsMargins(10, 8, 10, 8)
         lay.setSpacing(4)
-        lay.addWidget(_wrapped(f"<b>{hand.title}</b> · {hand.doc_id}", rich=True))
+        lay.addWidget(_wrapped(
+            f"<b>{plain.esc(hand.title)}</b> · {plain.esc(hand.doc_id)}", rich=True
+        ))
 
         if hand.links:
             lay.addWidget(_wrapped("<b>Traces to</b>", rich=True))
@@ -149,7 +155,7 @@ class MergeDialog(QDialog):
 
         fields = self._fields.setdefault(hand.path, {})
         for c in hand.conflicts:
-            lay.addWidget(_wrapped(f"<b>{c.label}</b>", rich=True))
+            lay.addWidget(_wrapped(f"<b>{plain.esc(c.label)}</b>", rich=True))
             if c.kind == "text":
                 fields[c.field] = self._text_field(lay, c)
             elif c.kind == "value":
@@ -224,6 +230,6 @@ class MergeDialog(QDialog):
                 self._root, edits=self.edits(), delete=self.delete()
             )
         except (merge.MergeError, OSError) as e:
-            QMessageBox.critical(self, "Resolve merge failed", str(e))
+            plain.critical(self, "Resolve merge failed", str(e))
             return
         self.accept()

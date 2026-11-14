@@ -2,8 +2,8 @@
 <object id="MELLON-GUI-SRS-122">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: failure analysis CF-G49 (D-G23). Text from another clone or another person's commit reaches widgets that guess rich text, where markup can spoof text, freeze layout or make Windows open a network path. MELLON-CHECK-SRS-84 says the same for validation results.</attr>
+  <attr name="rationale">derived: failure analysis CF-G49 (D-G23). Text from another clone or another person's commit reaches widgets that guess rich text, where markup can spoof text, freeze layout or make Windows open a network path. MELLON-CHECK-SRS-84 says the same for validation results. Accepted on 2026-11-13 as a security fix after the code view (CV-GUI-04: an attribute value or link type holding an image tag made the Inspector open the file it named, which for a network path sends the user's credentials to that host); to confirm with the person (open question Q20).</attr>
   <description>The GUI shall show text read from the repository or from git history as plain text in each label, tooltip, grid cell, message, banner and window title.</description>
 </object>

@@ -2,8 +2,8 @@
 <object id="MELLON-VER-SRS-380">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: CF-V34 (D-V21). Anyone who can push writes this text, and markup could make it show as something else: fake rows, hidden words. MELLON-CHECK-SRS-84 says the same for validation results; the rule for each window is handed to GUI.</attr>
+  <attr name="rationale">derived: CF-V34 (D-V21). Anyone who can push writes this text, and markup could make it show as something else: fake rows, hidden words. MELLON-CHECK-SRS-84 says the same for validation results; the rule for each window is handed to GUI. Accepted on 2026-11-13 as a security fix after the code view (CV-VER-15 and CV-VER-35: values, branch names and object IDs showed as formatted text in View at this commit, the status bar and the Resolve merge dialog); to confirm with the person (open question Q20).</attr>
   <description>The GUI shall show commit messages, author names, branch names and tag names read from the repository as plain text.</description>
 </object>

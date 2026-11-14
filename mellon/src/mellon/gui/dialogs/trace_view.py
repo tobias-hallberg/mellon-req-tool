@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 from ...service import ServiceError
 from ...trace import TraceEdge
 from ..controller import RepoController
+from .. import plain
 
 
 TARGET_ROLE = Qt.ItemDataRole.UserRole + 1
@@ -40,8 +41,9 @@ class TraceView(QDialog):
         self.resize(720, 560)
 
         header = QLabel(
-            f"<b>{doc_id} / {obj_id}</b>  —  double-click a target to jump to it."
+            f"<b>{plain.esc(doc_id)} / {plain.esc(obj_id)}</b>  —  double-click a target to jump to it."
         )
+        header.setTextFormat(Qt.TextFormat.RichText)  # MELLON-GUI-SRS-122: the IDs are escaped
         header.setStyleSheet("padding: 6px 0;")
 
         self._model = QStandardItemModel()

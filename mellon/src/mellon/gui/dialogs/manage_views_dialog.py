@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..controller import RepoController
+from .. import plain
 
 
 class ManageViewsDialog(QDialog):
@@ -115,7 +116,7 @@ class ManageViewsDialog(QDialog):
             return
         existing = {n.casefold() for n in self._existing_names_excluding(slug)}
         if new_name.casefold() in existing:
-            QMessageBox.warning(
+            plain.warning(
                 self, "Name in use",
                 f"A view named {new_name!r} already exists.",
             )
@@ -123,7 +124,7 @@ class ManageViewsDialog(QDialog):
         try:
             self._controller.rename_view(self._doc_id, slug, new_name)
         except Exception as exc:  # surface editor errors as a dialog
-            QMessageBox.warning(self, "Rename failed", str(exc))
+            plain.warning(self, "Rename failed", str(exc))
             return
         self._reload()
 
@@ -136,7 +137,7 @@ class ManageViewsDialog(QDialog):
         view = next((v for v in (doc.views if doc else ()) if v.slug == slug), None)
         if view is None:
             return
-        confirm = QMessageBox.question(
+        confirm = plain.question(
             self, "Delete view",
             f"Delete view {view.name!r}? This removes its XML file.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
@@ -147,6 +148,6 @@ class ManageViewsDialog(QDialog):
         try:
             self._controller.delete_view(self._doc_id, slug)
         except Exception as exc:
-            QMessageBox.warning(self, "Delete failed", str(exc))
+            plain.warning(self, "Delete failed", str(exc))
             return
         self._reload()

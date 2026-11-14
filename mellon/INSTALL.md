@@ -314,8 +314,8 @@ order:
 1. `MELLON_TECTONIC`: the full path to the binary.
 2. Frozen (installed) build only: `tools\tectonic.exe` next to the exe.
 3. `PATH`.
-4. `<project-root>/tools/tectonic[.exe]`, which is `mellon/tools/` in a source
-   checkout (gitignored). This does not work from a tool install.
+
+Apart from `MELLON_TECTONIC`, a program inside the repository being exported, or directly in the folder Mellon was started in, is never used, and a relative `PATH` entry is skipped: a program committed to a repository must not run on the machine of whoever exports it. In a source checkout, set `MELLON_TECTONIC` or put tectonic on `PATH`.
 
 If a `tectonic-cache` folder sits next to the binary, Mellon uses it as
 `TECTONIC_CACHE_DIR`, unless you have set that variable yourself. Otherwise

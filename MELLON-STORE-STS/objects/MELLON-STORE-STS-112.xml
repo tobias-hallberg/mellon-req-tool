@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-112">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">derived: written with the hardening the person accepted on 2026-11-14, from the requirement and the path audit's finding.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_241_loading_a_document_accesses_nothing_outside_its_folder
+tests/test_loader.py::test_store_srs_241_loading_reads_no_file_that_a_data_file_names
+tests/test_repo.py::test_store_srs_241_a_load_errors_note_accesses_nothing_outside_the_document
+tests/test_repo.py::test_store_srs_241_the_note_still_names_a_conflicted_file_in_the_document</attr>
+  <description>Load a document whose parents, attribute names and values, links, view and filter name a sibling document, a folder above, absolute paths and network shares, recording every path Mellon touches, with the start folder outside the repository. Load documents whose object file pulls in a file outside through an external entity, an external DTD or an XInclude. Load a repository whose document's load error starts with an attribute name naming a folder above or the start folder, through the repository load and through the document service, and one whose object file holds merge-conflict markers. Expected: no path outside the document's folder is touched (the repository's own folder aside, for the repository load); no outside file's text appears; the crafted load errors get no merge-conflict note and name no file; the conflicted object file is named and gets the note.</description>
+</object>

@@ -376,6 +376,18 @@
    "fix": "Connect outline_view.selectionModel().currentChanged (not clicked) to select_object, guarding against the echo from _on_external_selection as GridPane._on_row_changed does."
   },
   {
+   "id": "CV-GUI-04",
+   "area": "GUI",
+   "kind": "gap",
+   "item": "C15",
+   "where": "Proposed MELLON-GUI-SRS-122 (no built requirement covers it); mellon/src/mellon/gui/panels/inspector.py:237; mellon/src/mellon/gui/panels/inspector.py:312-316; mellon/src/mellon/gui/panels/inspector.py:257; mellon/src/mellon/gui/app.py:92-96; mellon/src/mellon/gui/project_explorer_window.py:437-443",
+   "path": "Text from the repository reaches Qt widgets that interpret HTML: read-only Inspector attribute values are QLabel(value) with Qt's AutoText; outgoing-link rows interpolate link.type, target-doc and target-id unescaped into a RichText label; the form's row labels come from manifest labels; message boxes show load errors and exception text with AutoText. A teammate's commit sets an attribute value (or a link type, which the loader accepts as any string) to <img src=\"...\">.",
+   "impact": "Merely selecting the object, in the read-only mode every window opens in, makes the GUI open the file the repository text names. With \\\\host\\share\\x.png Windows connects to that host and sends the user's NTLM credentials (analysis); other markup can hide or fake text in the Inspector.",
+   "proof": "probe codeview-probe/gui/p4_richtext.py prints 'value label text format is AutoText: True', 'label size hint: 400 x 300 | same text as plain text: 948 x 12' (the label loaded the 400x300 PNG the value names) and 'outgoing-link labels taller than the image: 1'. The network-path consequence is analysis.",
+   "fix": "setTextFormat(Qt.PlainText) on every QLabel and QMessageBox that shows repository or git text; html.escape the link fields in the rich link row (or build the row from two plain labels); then build MELLON-GUI-SRS-122.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
    "id": "CV-GUI-05",
    "area": "GUI",
    "kind": "defect",
@@ -596,6 +608,18 @@
    "fix": "Open the repository once from the folder to serve (pygit2.Repository(_State.repo_root)) and pass it down, instead of discovering from each document folder; or refuse a document folder that holds .git."
   },
   {
+   "id": "CV-MCP-08",
+   "area": "MCP",
+   "kind": "defect",
+   "item": "C15",
+   "where": "MELLON-MCP-SRS-112; mellon/src/mellon/mcp/server.py: git_history; mellon/src/mellon/git_ops.py: _selected_files",
+   "path": "git_history builds f\"{doc_id}/objects/{obj_id}.xml\" and calls (root / rel).exists() before checking obj_id; commit_changes' paths go to _selected_files, which stats root / rel for a '../' path before libgit2 refuses it.",
+   "impact": "An obj_id or path with '../' makes the server look at files outside the repository, and the answer differs on whether the file exists: an existence check on any *.xml file (git_history) or any file (commit_changes) the person can read, steerable by repository text. MELLON-MCP-SRS-112 allows only source_path and out_path outside.",
+   "proof": "probe codeview-probe/mcp/p6_paths.py prints: git_history obj_id='../../../<x>-outside' (existing file outside): isError=False '' versus (missing file outside): \"No object ...\"; commit_changes paths=['../<x>-outside.xml'] (existing): error \"invalid path\" versus (missing): 'nothing to commit (no changes staged)'.",
+   "fix": "In git_history check is_object_id(doc_id, obj_id) (or that the object is in the document) before building a path; in _selected_files refuse an absolute path or one with a '..' part before touching the disk.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
    "id": "CV-MCP-09",
    "area": "MCP",
    "kind": "ambiguity",
@@ -706,6 +730,18 @@
    "fix": "In _export_current_doc, check the disk first (_changed_on_disk) and refuse while stale, as edits do, or reload; read the document and parents for the job from disk; drop cached suspect scans whenever a document folder changed on disk (they depend on the working copy, not only HEAD)."
   },
   {
+   "id": "CV-PDF-06",
+   "area": "PDF",
+   "kind": "defect",
+   "item": "C15",
+   "where": "MELLON-PDF-SRS-27; mellon/src/mellon/mcp/server.py:2525 (export_document)",
+   "path": "export_document('DOC', '\\\\?\\C:\\...\\repo\\.git\\e.pdf'). Path.resolve() keeps the \\\\?\\ prefix, so is_relative_to() compares drive '\\\\?\\C:' with 'C:' and finds no match.",
+   "impact": "The PDF is written inside the repository's .git folder, which the requirement forbids; an agent steered by repository text can overwrite git's files with a PDF. .GIT, .git., DOC/../.git, a junction to .git and GIT~1 are all refused correctly.",
+   "proof": "probe codeview-probe/pdf/p3_gitpath.py (typesetter stubbed): 'long-path prefix -> ok=True', and .git then holds e.pdf; the six other spellings return ok=False.",
+   "fix": "Strip the extended-length prefix before comparing (or refuse \\\\?\\ and \\\\.\\ paths, as MELLON-PDF-SRS-31 proposes), and compare by resolved, case-folded paths; add the prefixed spelling to the test.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
    "id": "CV-PDF-07",
    "area": "PDF",
    "kind": "defect",
@@ -748,6 +784,18 @@
    "impact": "The export warning isn't shown and the MCP result has no suspect_links, which reads as 'no suspect or broken links' for a document that may have them; nothing says the states weren't worked out.",
    "proof": "analysis: the two except branches quoted; not provoked by a probe.",
    "fix": "Report a failed scan: in the GUI show the export warning saying link states couldn't be worked out (the direction of MELLON-PDF-SRS-46, -53), and in the MCP result return a field saying the links weren't checked, with the error."
+  },
+  {
+   "id": "CV-PDF-11",
+   "area": "PDF",
+   "kind": "gap",
+   "item": "C15",
+   "where": "MELLON-PDF-SRS-67 (Proposed) and MELLON-EDIT-SRS-247 (Proposed); mellon/src/mellon/export.py:465 (_find_tectonic: shutil.which('tectonic')), mellon/src/mellon/drawio.py:355-358 (find_drawio: shutil.which)",
+   "path": "No MELLON_TECTONIC, a source or uv tool install, the MCP server started in the repository (its usual working folder), and a tectonic.bat committed to the repository. On Windows, shutil.which searches the current folder first unless NoDefaultCurrentDirectoryInExePath is set. The same holds for draw.io's PATH fallback (drawio/draw.io .bat/.cmd/.exe) when draw.io isn't in its standard folders, installed build included.",
+   "impact": "Exporting runs a program from the repository: anyone who can push runs code on the machine of whoever exports. Recorded because the code does this today; the requirements that forbid it are Proposed (decided on 2026-11-11).",
+   "proof": "probe codeview-probe/pdf/p8_cwd_program.py: this agent environment sets NoDefaultCurrentDirectoryInExePath=1 (then nothing is found); with it unset, as on a normal desktop, _find_tectonic() returns '.\\tectonic.BAT' and build_pdf runs it (marker written).",
+   "fix": "Look up programs only in absolute PATH entries outside the repository and the start folder (set NoDefaultCurrentDirectoryInExePath in os.environ before shutil.which, and skip relative PATH entries), as MELLON-PDF-SRS-67 and MELLON-EDIT-SRS-247 propose.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   },
   {
    "id": "CV-PDF-12",
@@ -1124,6 +1172,30 @@
    "fix": "Pre-check each link with exactly add_link's tests (suspects.target_exists and the parent rule), and run each composite write (create_object_full, update_object, copy_object) inside one rollback journal so a late refusal puts every file back. SRS-10 (Proposed) decides what a copy does with a refused link."
   },
   {
+   "id": "CV-TRACE-07",
+   "area": "TRACE",
+   "kind": "defect",
+   "item": "C15",
+   "where": "MELLON-TRACE-SRS-79; mellon/src/mellon/repo.py:104 (discover_documents); mellon/src/mellon/suspects.py:148 (scan_repo), 127 (target_exists)",
+   "path": "A document folder in the work tree is a symbolic link (checked out on Linux or macOS, or Windows with core.symlinks) or a junction to a folder outside the repository. discover_documents accepts it (is_dir and has_manifest follow links); load_all reads its files; incoming_links, trace, coverage and suspects() use them. An object file that is a link is followed the same way by target_exists.",
+   "impact": "Working out incoming links, traces and link states opens files outside the repository, which SRS-79 prohibits: another project's links show as incoming links and as the trace, and a link to a network share would make Windows offer the user's credentials.",
+   "proof": "probe codeview-probe/trace/p8_linked_folder.py (a junction) prints 'EVIL resolves to: ...\\\\cvtrace-other-project-...\\\\EVIL | inside repository: False', \"incoming_links(A, A-0): [{'source_doc': 'EVIL', 'source_id': 'EVIL-0', 'link_type': 'verifies'}]\", and suspects() and trace list EVIL-0.",
+   "fix": "Treat a document folder, or an entry in it, that is a link or junction as a load error without opening it (MELLON-STORE-SRS-229, Proposed), and check that a resolved path stays under the repository root before opening it.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
+   "id": "CV-TRACE-08",
+   "area": "TRACE",
+   "kind": "defect",
+   "item": "C15",
+   "where": "MELLON-TRACE-SRS-16, -17 (link picker); mellon/src/mellon/gui/dialogs/link_picker.py:115 (LinkPicker._populate); parent IDs unchecked in mellon/src/mellon/loader.py:329 (_parse_parents)",
+   "path": "A manifest from another clone declares <parent doc=\"//fileserver/share\"/> or an absolute path. Ctrl+L on an object of that document: _populate lists root / doc_id / 'objects' for each declared parent, and pathlib turns an absolute or UNC parent ID into that path.",
+   "impact": "Opening the link picker lists a folder outside the repository; with a UNC parent, Windows contacts the host and offers the user's credentials. SRS-79 closes this vector for link states, but its list leaves out the picker.",
+   "proof": "probe codeview-probe/trace/p6_gui_qt.py (part P7) prints 'P7 link picker listed: C:\\\\...\\\\cvtrace-outside-...\\\\objects | inside repository: False' and 'P7 a UNC parent ID joins to: \\\\\\\\fileserver\\\\share\\\\ (a network path)'.",
+   "fix": "List only parents that are document IDs (schema.is_document_id) and loaded documents, using svc.get_loaded_document(doc_id).folder; MELLON-STORE-SRS-230 (Proposed) states the rule, and SRS-79's list could name the link picker.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
    "id": "CV-TRACE-09",
    "area": "TRACE",
    "kind": "defect",
@@ -1388,6 +1460,18 @@
    "fix": "Decide which wins (213, Proposed, drops pending edits on a completed discard): either exempt Discard from GUI-SRS-74 and keep the text pending until the answer, or reword 196 to 'no file other than the pending edits'."
   },
   {
+   "id": "CV-VER-15",
+   "area": "VER",
+   "kind": "defect",
+   "item": "C15",
+   "where": "MELLON-VER-SRS-230, MELLON-VER-SRS-380; mellon/src/mellon/gui/dialogs/object_at_commit.py:57 ObjectAtCommitDialog.__init__; mellon/src/mellon/gui/main_window.py:225 and project_explorer_window.py:168 _git_cell",
+   "path": "View at this commit… shows each attribute value in QLabel(value), whose text format is AutoText. A value from another clone such as '<b>Approved</b> <s>Draft</s>' is taken as rich text. The status bar's git cell is a QLabel too, showing the branch name.",
+   "impact": "The dialog shows a formatted 'Approved Draft' instead of the stored value, so an older version reads differently from its file (230); markup in a pushed value or branch name can hide or fake text (380, Proposed).",
+   "proof": "probe codeview-probe/ver/lp3_gui.py prints 'E label textFormat: TextFormat.AutoText | Qt.mightBeRichText: True'",
+   "fix": "setTextFormat(Qt.PlainText) on every label that shows repository text.",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
+  },
+  {
    "id": "CV-VER-16",
    "area": "VER",
    "kind": "gap",
@@ -1595,6 +1679,18 @@
    "impact": "A rebase or cherry-pick resets the committer time, so an older object can read as the later one and lose its ID; the requirement doesn't say which time counts or what a tie does (the rationale leaves it to test mapping)",
    "proof": "analysis: side = \"ours\" if t_ours > t_theirs else \"theirs\" with t from commit.commit_time",
    "fix": "State committer time and the tie rule in 331's test mapping, or move on to 332-334 as planned"
+  },
+  {
+   "id": "CV-VER-35",
+   "area": "VER",
+   "kind": "question",
+   "item": "C15",
+   "where": "MELLON-VER-SRS-340; mellon/src/mellon/gui/dialogs/merge_dialog.py:85 MergeDialog, merge_dialog.py:131 MergeDialog._hand_block, mellon/src/mellon/merge.py:1016 resolve",
+   "path": "The Renumbered line and each block title are rich text built from an object ID (a file name from another clone) and a branch name read from MERGE_MSG; git allows < > & in branch names. resolve() writes root / path for paths read from the merge's trees without checking they stay in a document folder",
+   "impact": "A crafted branch or file name can change how the dialog reads (markup in a QLabel). Path escape needs a crafted path on both sides (it must differ in ours and theirs, or be renumbered), and git refuses such paths on checkout, so it is unconfirmed",
+   "proof": "analysis: _wrapped(..., rich=True) with r.obj_id and self._names[r.side]; target = root / path with no containment check",
+   "fix": "Escape names with html.escape (MELLON-VER-SRS-380, Proposed) and check each written path with the editor's path guard (MELLON-VER-SRS-329, Proposed) when those are built",
+   "status": "fixed on 2026-11-14, in 0.4.0: kept out of this file until fixed because it is a security finding; see docs/open-questions.md Q20"
   }
  ]
 }

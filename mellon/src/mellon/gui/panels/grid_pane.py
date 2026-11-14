@@ -57,6 +57,7 @@ from ..models.objects_grid import (
 from ..widgets.inline_table import InlineTableWidget
 from ..theme import ThemeManager
 from ...schema import Table, TableCell, TableColumn, TableRow
+from .. import plain
 
 
 # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-EDIT-SRS-245
@@ -337,6 +338,8 @@ class FilterPill(QWidget):
 
         self._label = QLabel()
         self._label.setObjectName("FilterPillLabel")
+        # Rich on purpose (the name is bold); MELLON-GUI-SRS-122: the name is escaped.
+        self._label.setTextFormat(Qt.TextFormat.RichText)
         self._edit_btn = QPushButton("Edit")
         self._edit_btn.setToolTip("Edit the active filter (Ctrl+Shift+F)")
         self._edit_btn.clicked.connect(self.edit_clicked.emit)
@@ -365,13 +368,14 @@ class FilterPill(QWidget):
             f"border: none; color: {tokens['fg_0']}; font-size: 12px; }}"
         )
 
+    # Requirements: MELLON-GUI-SRS-122
     def show_filter(self, name: str, rule_count: int, combinator: str,
                     keep_ancestors: bool, match_count: int) -> None:
         combinator_label = "All" if combinator == "all" else "Any"
         plural = "s" if rule_count != 1 else ""
         anc = " · keep ancestors" if keep_ancestors else ""
         self._label.setText(
-            f"<b>Filter: {name}</b>  ·  {rule_count} rule{plural} ({combinator_label})"
+            f"<b>Filter: {plain.esc(name)}</b>  ·  {rule_count} rule{plural} ({combinator_label})"
             f"{anc}  ·  {match_count} matching"
         )
         self.setVisible(True)
@@ -1435,11 +1439,11 @@ class GridPane(QWidget):
         try:
             svc.set_figure(doc_id, obj_id, Path(path_str))
         except ServiceError as e:
-            QMessageBox.warning(self, "Attach figure failed", str(e))
+            plain.warning(self, "Attach figure failed", str(e))
             return
         self._controller.reload_document(doc_id)
 
-    # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-GUI-SRS-217
+    # Requirements: MELLON-EDIT-SRS-242, MELLON-EDIT-SRS-244, MELLON-EDIT-SRS-247, MELLON-GUI-SRS-217
     def edit_figure_in_drawio(self, doc_id: str, obj_id: str) -> None:
         """Open `obj_id`'s figure in draw.io desktop.
 
@@ -1447,9 +1451,9 @@ class GridPane(QWidget):
         saves back into the same file, and the window picks the change up when
         it is next activated (`RepoController.changed_figures`).
         """
-        exe = drawio.find_drawio()
+        exe = drawio.find_drawio(self._controller.root)
         if exe is None:
-            QMessageBox.information(self, "draw.io not found", DRAWIO_NOT_FOUND_TEXT)
+            plain.information(self, "draw.io not found", DRAWIO_NOT_FOUND_TEXT)
             return
         path = self.figure_abs_path(obj_id)
         if path is None:
@@ -1462,7 +1466,7 @@ class GridPane(QWidget):
                 try:
                     svc.set_figure(doc_id, obj_id, blank)
                 except ServiceError as e:
-                    QMessageBox.warning(self, "New draw.io figure failed", str(e))
+                    plain.warning(self, "New draw.io figure failed", str(e))
                     return
             self._controller.reload_document(doc_id)
             path = self.figure_abs_path(obj_id)
@@ -1471,11 +1475,11 @@ class GridPane(QWidget):
         try:
             drawio.open_in_drawio(exe, Path(path))
         except drawio.DrawioError as e:
-            QMessageBox.warning(self, "Could not start draw.io", str(e))
+            plain.warning(self, "Could not start draw.io", str(e))
 
     # Requirements: MELLON-EDIT-SRS-238
     def clear_figure(self, doc_id: str, obj_id: str) -> None:
-        choice = QMessageBox.question(
+        choice = plain.question(
             self,
             "Clear figure",
             f"Remove the figure attached to {obj_id}?",
@@ -1490,7 +1494,7 @@ class GridPane(QWidget):
         try:
             svc.clear_figure(doc_id, obj_id)
         except ServiceError as e:
-            QMessageBox.warning(self, "Clear figure failed", str(e))
+            plain.warning(self, "Clear figure failed", str(e))
             return
         self._controller.reload_document(doc_id)
 
@@ -1534,13 +1538,13 @@ class GridPane(QWidget):
         try:
             svc.set_table(doc_id, obj_id, default)
         except ServiceError as e:
-            QMessageBox.warning(self, "Insert table failed", str(e))
+            plain.warning(self, "Insert table failed", str(e))
             return
         self._controller.reload_document(doc_id)
 
     # Requirements: MELLON-EDIT-SRS-201
     def remove_table(self, doc_id: str, obj_id: str) -> None:
-        choice = QMessageBox.question(
+        choice = plain.question(
             self,
             "Remove table",
             f"Remove the table attached to {obj_id}?",
@@ -1555,7 +1559,7 @@ class GridPane(QWidget):
         try:
             svc.clear_table(doc_id, obj_id)
         except ServiceError as e:
-            QMessageBox.warning(self, "Remove table failed", str(e))
+            plain.warning(self, "Remove table failed", str(e))
             return
         self._controller.reload_document(doc_id)
 

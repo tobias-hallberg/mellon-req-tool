@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-198">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_merge.py::test_ver_srs_329_resolve_refuses_a_path_outside_the_format
+tests/test_merge.py::test_ver_srs_329_resolve_refuses_to_write_through_a_linked_folder
+tests/test_merge.py::test_ver_srs_329_resolve_writes_format_files</attr>
+  <description>With a merge stopped on a conflicting object file, resolve it while the merge's result also holds, in turn, a path with backslash parent parts, one with slash parent parts, a git hook path, a non-format file in a document folder, an object file whose name isn't an object ID, a file one folder too deep and a drive path; then a links file whose folder is a link to a folder elsewhere; then nothing extra. Expected: each resolution with an extra path is refused before any file is written, and nothing appears outside the document folders or in the hooks folder; the one through the link is refused and writes nothing elsewhere; the plain resolution writes the object file and the manifest.</description>
+</object>

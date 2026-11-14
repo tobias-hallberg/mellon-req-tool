@@ -1,6 +1,6 @@
 [project]
 name = "mellon"
-version = "0.3.0"
+version = "0.4.0"
 description = "DOORS-like requirements management on top of XML files in a git repository, with a PySide6 GUI and an MCP server."
 readme = "README.md"
 license = "GPL-3.0-or-later"

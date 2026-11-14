@@ -42,6 +42,7 @@ from PySide6.QtWidgets import (
 from ...schema import Document
 from ...service import ServiceError
 from ..controller import RepoController
+from .. import plain
 
 
 _ATTR_NAME_RE = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -83,7 +84,7 @@ class DocumentPropertiesDialog(QDialog):
         # dropping typed-but-unapplied values.
         tab = self._metadata_tab
         if tab.has_unapplied_changes():
-            answer = QMessageBox.question(
+            answer = plain.question(
                 self,
                 "Unapplied changes",
                 "Apply the metadata changes before closing?",
@@ -136,7 +137,7 @@ class MetadataTab(QWidget):
         self._apply_btn = QPushButton("Apply")
         self._apply_btn.clicked.connect(self._on_apply)
 
-        self._status = QLabel("")
+        self._status = plain.label("")  # MELLON-GUI-SRS-122: names IDs and attribute names
         self._status.setStyleSheet("color: palette(mid); font-size: 9pt;")
 
         btn_row = QHBoxLayout()
@@ -200,7 +201,7 @@ class ParentsTab(QWidget):
         self._remove_btn.clicked.connect(self._on_remove)
         self._list.itemSelectionChanged.connect(self._refresh_buttons)
 
-        self._status = QLabel("")
+        self._status = plain.label("")  # MELLON-GUI-SRS-122: names IDs and attribute names
         self._status.setStyleSheet("color: palette(mid); font-size: 9pt;")
 
         btn_row = QHBoxLayout()
@@ -300,7 +301,7 @@ class AttributesTab(QWidget):
         self._add_opt_btn.clicked.connect(self._on_add_option)
         self._rm_opt_btn.clicked.connect(self._on_remove_option)
 
-        self._status = QLabel("")
+        self._status = plain.label("")  # MELLON-GUI-SRS-122: names IDs and attribute names
         self._status.setStyleSheet("color: palette(mid); font-size: 9pt;")
 
         btn_row = QHBoxLayout()
@@ -398,7 +399,7 @@ class AttributesTab(QWidget):
             1 for o in doc.objects.values() if not o.attrs.get(attr_name, "").strip()
         )
         if required and missing:
-            confirm = QMessageBox.question(
+            confirm = plain.question(
                 self,
                 "Make attribute required",
                 f"{missing} object(s) have no value for {attr_name!r}; validation "
@@ -454,7 +455,7 @@ class AttributesTab(QWidget):
             f"This will strip the value from {n_objects} object(s) "
             f"and {n_rules} rule directive(s)."
         )
-        confirm = QMessageBox.question(
+        confirm = plain.question(
             self,
             "Delete attribute",
             msg,
@@ -481,7 +482,7 @@ class AttributesTab(QWidget):
         attr = doc.attribute(attr_name)
         if attr is None or attr.kind != "enum":
             return
-        text, ok = QInputDialog.getText(
+        text, ok = plain.get_text(
             self, "Add option", f"New option for {attr_name}:"
         )
         if not ok:
@@ -518,7 +519,7 @@ class AttributesTab(QWidget):
             f"{n_objects} object(s) currently use this value; their value "
             f"will be cleared (left blank for the validator to flag)."
         )
-        confirm = QMessageBox.question(
+        confirm = plain.question(
             self,
             "Remove option",
             msg,

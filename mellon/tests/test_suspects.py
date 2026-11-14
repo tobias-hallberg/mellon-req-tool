@@ -925,3 +925,17 @@ def test_store_srs_190_acknowledging_writes_the_two_space_indent(tmp_path):
     assert write_ack(path, "DOC", "DOC-1", "5eecbec")
     assert path.read_text(encoding="utf-8").splitlines()[2] == (
         '  <link target-doc="DOC" target-id="DOC-1" type="verifies" ack="5eecbec"/>')
+
+
+# MELLON-TRACE-SRS-79, MELLON-STORE-SRS-229 (CV-TRACE-07): a link whose target
+# document folder is a link to another project is broken; nothing behind the
+# link is opened to decide that.
+from mellon.suspects import target_exists  # noqa: E402
+from tests.trace_support import linked_document_repo  # noqa: E402
+
+
+def test_trace_srs_79_link_into_a_linked_folder_is_broken(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    assert target_exists(r.root, "EVIL", "EVIL-0") is False
+    states = scan_document(load_document(r.root / "CHILD"), r.root / "CHILD")
+    assert [(s.link.target_doc, s.state) for s in states] == [("EVIL", LinkState.BROKEN)]

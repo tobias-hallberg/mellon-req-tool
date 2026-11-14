@@ -15,7 +15,7 @@
 set -euo pipefail
 
 MELLON_REPO="https://github.com/tobias-hallberg/mellon-req-tool"
-MELLON_RELEASE="v0.3.0"
+MELLON_RELEASE="v0.4.0"
 TECTONIC_VERSION="0.17.0"
 TECTONIC_SHA256="8533d07f9ccbd7a65824b9e0459041bca34af1eb33daba48f59215593753a3b7"
 

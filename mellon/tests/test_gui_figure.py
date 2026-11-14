@@ -169,7 +169,7 @@ def fake_drawio(monkeypatch):
     from mellon import drawio
 
     opened: list[Path] = []
-    monkeypatch.setattr(drawio, "find_drawio", lambda: "draw.io.exe")
+    monkeypatch.setattr(drawio, "find_drawio", lambda *_a, **_k: "draw.io.exe")
     monkeypatch.setattr(drawio, "open_in_drawio", lambda exe, path: opened.append(path))
     return opened
 
@@ -208,7 +208,7 @@ def test_edit_in_drawio_without_drawio_explains_and_writes_nothing(
     from mellon.gui.panels import grid_pane
 
     shown: list[str] = []
-    monkeypatch.setattr(drawio, "find_drawio", lambda: None)
+    monkeypatch.setattr(drawio, "find_drawio", lambda *_a, **_k: None)
     monkeypatch.setattr(
         grid_pane.QMessageBox,
         "information",

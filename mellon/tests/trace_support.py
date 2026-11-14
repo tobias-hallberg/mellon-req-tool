@@ -624,6 +624,51 @@ def _repo_with_never_committed_target(tmp_path) -> Repo:
     return r
 
 
+def dir_link(link: Path, target: Path) -> Path:
+    """Make ``link`` a link to the folder ``target``: a junction on Windows
+    (no privilege needed), a symbolic link elsewhere."""
+    link.parent.mkdir(parents=True, exist_ok=True)
+    if sys.platform == "win32":
+        import _winapi
+
+        _winapi.CreateJunction(str(target), str(link))
+    else:
+        os.symlink(target, link, target_is_directory=True)
+    return link
+
+
+def file_link(link: Path, target: Path) -> Path:
+    """Make ``link`` a symbolic link to the file ``target``, or skip the test
+    where that needs a privilege (Windows without developer mode)."""
+    link.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        os.symlink(target, link)
+    except OSError:
+        pytest.skip("creating a symbolic link to a file needs a privilege here")
+    return link
+
+
+def linked_document_repo(tmp_path) -> Repo:
+    """A repository with documents A and CHILD, and beside it another
+    project's document EVIL whose EVIL-0 links to A-0. ``repo/EVIL`` is a
+    link to that folder (CV-TRACE-07)."""
+    other = tmp_path / "other-project"
+    (other / "EVIL" / "objects").mkdir(parents=True)
+    (other / "EVIL" / "EVIL.xml").write_text(manifest_xml("EVIL", ["EVIL-0"]), encoding="utf-8")
+    (other / "EVIL" / "objects" / "EVIL-0.xml").write_text(
+        object_xml("EVIL-0", "another project's object"), encoding="utf-8")
+    (other / "EVIL" / "links").mkdir()
+    r = Repo(tmp_path / "repo")
+    r.add_doc("A", {"A-0": "a zero"})
+    r.add_doc("CHILD", {"CHILD-1": "c1"}, parents=["A"])
+    r.set_links("CHILD", "CHILD-1", [("EVIL", "EVIL-0", "satisfies", None)])
+    r.commit("documents")
+    (other / "EVIL" / "links" / "EVIL-0.xml").write_text(
+        links_xml("EVIL-0", [("A", "A-0", "verifies", None)]), encoding="utf-8")
+    dir_link(r.root / "EVIL", other / "EVIL")
+    return r
+
+
 def _outside_repo(tmp_path) -> Repo:
     base = tmp_path / "w"
     (base / "OUT" / "objects").mkdir(parents=True)

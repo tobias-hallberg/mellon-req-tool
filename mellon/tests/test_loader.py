@@ -1026,3 +1026,209 @@ def test_store_srs_149_listed_operator_that_fits_no_kind_still_loads(tmp_path):
         '<?xml version="1.0" encoding="UTF-8"?>\n<filter name="p">\n'
         '  <rule kind="attr" attr="type" op="present"/>\n</filter>\n', encoding="utf-8")
     load_document(doc)
+
+
+# MELLON-STORE-SRS-229 (CV-TRACE-07): a document's folder, or an entry in it,
+# that is a link, junction, pipe or device is a load error, and isn't opened.
+from tests.trace_support import Repo, dir_link, file_link, linked_document_repo  # noqa: E402
+
+
+def _one_doc(tmp_path: Path) -> Repo:
+    r = Repo(tmp_path / "repo", git=False)
+    r.add_doc("D", {"D-1": "one", "D-2": "two"})
+    return r
+
+
+def test_store_srs_229_document_folder_that_is_a_link_is_a_load_error(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    with pytest.raises(LoaderError, match="junction|symbolic link"):
+        load_document(r.root / "EVIL")
+
+
+@pytest.mark.parametrize("sub", ["objects", "links", "figures", "views", "filters"])
+def test_store_srs_229_subfolder_that_is_a_link_is_a_load_error(tmp_path: Path, sub: str) -> None:
+    r = _one_doc(tmp_path)
+    elsewhere = tmp_path / "elsewhere" / sub
+    if sub == "objects":
+        elsewhere.parent.mkdir()
+        shutil.move(str(r.root / "D" / "objects"), str(elsewhere))
+    else:
+        elsewhere.mkdir(parents=True)
+    dir_link(r.root / "D" / sub, elsewhere)
+    with pytest.raises(LoaderError, match="junction|symbolic link") as e:
+        load_document(r.root / "D")
+    assert sub in str(e.value)
+
+
+@pytest.mark.parametrize("rel", ["objects/D-3.xml", "D.xml", "figures/D-1.svg"])
+def test_store_srs_229_file_that_is_a_link_is_a_load_error(tmp_path: Path, rel: str) -> None:
+    r = _one_doc(tmp_path)
+    outside = tmp_path / "outside" / Path(rel).name
+    outside.parent.mkdir()
+    source = r.root / "D" / ("D.xml" if rel == "D.xml" else "objects/D-1.xml")
+    outside.write_bytes(source.read_bytes() if rel != "figures/D-1.svg" else b"<svg/>")
+    if rel == "D.xml":
+        (r.root / "D" / "D.xml").unlink()
+    file_link(r.root / "D" / rel, outside)
+    with pytest.raises(LoaderError, match="symbolic link"):
+        load_document(r.root / "D")
+
+
+def test_store_srs_229_plain_document_still_loads(tmp_path: Path) -> None:
+    r = _one_doc(tmp_path)
+    (r.root / "D" / "figures").mkdir()
+    (r.root / "D" / "figures" / "D-1.svg").write_bytes(b"<svg/>")
+    doc = load_document(r.root / "D")
+    assert set(doc.objects) == {"D-1", "D-2"}
+    assert doc.objects["D-1"].figure_path == "figures/D-1.svg"
+
+
+def test_store_srs_229_entry_problem_names_each_kind(tmp_path: Path) -> None:
+    plain = tmp_path / "plain.txt"
+    plain.write_text("x")
+    assert loader.entry_problem(plain) is None
+    assert loader.entry_problem(tmp_path) is None
+    assert loader.entry_problem(tmp_path / "missing") is None
+    (tmp_path / "plain-folder").mkdir()
+    link = dir_link(tmp_path / "link", tmp_path / "plain-folder")
+    assert loader.entry_problem(link) in ("is a junction", "is a symbolic link")
+
+
+
+# ---------------------------------------------------------------------------
+# MELLON-STORE-SRS-241: loading a document accesses no path outside its folder
+# ---------------------------------------------------------------------------
+
+from tests.trace_support import SVG, recorded_paths  # noqa: E402
+from tests.trace_support import links_xml as trace_links_xml  # noqa: E402
+from tests.trace_support import manifest_xml as trace_manifest_xml  # noqa: E402
+from tests.trace_support import object_xml as trace_object_xml  # noqa: E402
+
+# Text in a document that names somewhere outside it: a sibling document, a
+# folder above, an absolute path, and a network share in both spellings.
+_ELSEWHERE = (
+    "OTHER",
+    "../outside",
+    "..\\outside",
+    "/outside/x",
+    "C:/outside/x",
+    "//mellon-test.invalid/share",
+    "\\\\mellon-test.invalid\\share",
+)
+
+
+def _document_naming_elsewhere(tmp_path: Path) -> Path:
+    """repo/D, whose parents, attribute names and values, links, figure, view
+    and filter all name places outside it; repo/OTHER and outside/ exist."""
+    (tmp_path / "outside").mkdir()
+    (tmp_path / "outside" / "outside.xml").write_text(trace_manifest_xml("outside", []), encoding="utf-8")
+    other = tmp_path / "repo" / "OTHER"
+    (other / "objects").mkdir(parents=True)
+    (other / "OTHER.xml").write_text(trace_manifest_xml("OTHER", []), encoding="utf-8")
+    d = tmp_path / "repo" / "D"
+    for sub in ("objects", "links", "figures", "views", "filters"):
+        (d / sub).mkdir(parents=True)
+    schema = "".join(
+        f'    <attribute name="{n}" kind="text" required="false"/>\n' for n in _ELSEWHERE
+    )
+    (d / "D.xml").write_text(
+        trace_manifest_xml("D", ["D-1"], parents=_ELSEWHERE).replace(
+            "  </attributes>\n", schema + "  </attributes>\n"
+        ),
+        encoding="utf-8",
+    )
+    values = "".join(f'  <attr name="{n}">{n}</attr>\n' for n in _ELSEWHERE)
+    (d / "objects" / "D-1.xml").write_text(
+        trace_object_xml("D-1", "one").replace("  <description>", values + "  <description>"),
+        encoding="utf-8",
+    )
+    (d / "links" / "D-1.xml").write_text(
+        trace_links_xml("D-1", [(n, f"{n}-1", "satisfies", None) for n in _ELSEWHERE]),
+        encoding="utf-8",
+    )
+    (d / "figures" / "D-1.svg").write_text(SVG, encoding="utf-8")
+    (d / "views" / "v.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n<view name="v">\n'
+        + "".join(f'  <attribute name="{n}"/>\n' for n in _ELSEWHERE)
+        + "</view>\n",
+        encoding="utf-8",
+    )
+    (d / "filters" / "f.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<filter name="f" combinator="any" keep-ancestors="true">\n'
+        + "".join(
+            f'  <rule kind="attr" op="contains" attr="{n}" value="{n}"/>\n'
+            f'  <rule kind="has-outgoing" op="present" value="{n}"/>\n'
+            for n in _ELSEWHERE
+        )
+        + "</filter>\n",
+        encoding="utf-8",
+    )
+    return d
+
+
+def test_store_srs_241_loading_a_document_accesses_nothing_outside_its_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """MELLON-STORE-SRS-241: a document whose files name other documents,
+    folders above, absolute paths and network shares loads without Mellon
+    looking at any of them; a relative name would land in the start folder."""
+    d = _document_naming_elsewhere(tmp_path)
+    monkeypatch.chdir(tmp_path / "outside")
+    with recorded_paths(d) as (seen, outside):
+        doc = load_document(d)
+    assert outside == [], f"the load looked outside the document: {outside}"
+    assert seen, "the recorder saw nothing: the check didn't run"
+    assert set(_ELSEWHERE) <= set(doc.parents)
+    assert len(doc.links["D-1"]) == len(_ELSEWHERE)
+    assert doc.objects["D-1"].figure_path == "figures/D-1.svg"
+    assert [v.slug for v in doc.views] == ["v"]
+    assert [f.slug for f in doc.filters] == ["f"]
+
+
+_SECRET = "SECRET-MARKER-241"
+
+
+@pytest.mark.parametrize("kind", ["external-entity", "external-dtd", "xinclude"])
+def test_store_srs_241_loading_reads_no_file_that_a_data_file_names(
+    tmp_path: Path, kind: str
+) -> None:
+    """MELLON-STORE-SRS-241: an object file that pulls in a file outside the
+    document through an external entity, an external DTD or an XInclude: the
+    outside file's text appears nowhere, whether or not the load succeeds."""
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    secret = outside / "secret.txt"
+    secret.write_text(_SECRET, encoding="utf-8")
+    dtd = outside / "x.dtd"
+    dtd.write_text(f'<!ENTITY m "{_SECRET}">\n', encoding="utf-8")
+    d = tmp_path / "repo" / "D"
+    (d / "objects").mkdir(parents=True)
+    (d / "D.xml").write_text(trace_manifest_xml("D", ["D-1"]), encoding="utf-8")
+    head = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    body = {
+        "external-entity": (
+            f'<!DOCTYPE object [<!ENTITY ext SYSTEM "{secret.as_uri()}">]>\n'
+            '<object id="D-1"><attr name="type">Requirement</attr>'
+            "<description>&ext;</description></object>\n"
+        ),
+        "external-dtd": (
+            f'<!DOCTYPE object SYSTEM "{dtd.as_uri()}">\n'
+            '<object id="D-1"><attr name="type">Requirement</attr>'
+            "<description>&m;</description></object>\n"
+        ),
+        "xinclude": (
+            '<object id="D-1" xmlns:xi="http://www.w3.org/2001/XInclude">'
+            '<attr name="type">Requirement</attr>'
+            f'<description><xi:include href="{secret.as_uri()}" parse="text"/></description>'
+            "</object>\n"
+        ),
+    }[kind]
+    (d / "objects" / "D-1.xml").write_text(head + body, encoding="utf-8")
+    with recorded_paths(d) as (_seen, recorded_outside):
+        try:
+            text = repr(load_document(d))
+        except LoaderError as e:
+            text = str(e)
+    assert recorded_outside == []
+    assert _SECRET not in text, f"the {kind} was read: {text}"

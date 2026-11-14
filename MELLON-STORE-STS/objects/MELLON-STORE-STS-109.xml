@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-STORE-STS-109">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">2 Git</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_loader.py::test_store_srs_229_document_folder_that_is_a_link_is_a_load_error
+tests/test_loader.py::test_store_srs_229_subfolder_that_is_a_link_is_a_load_error
+tests/test_loader.py::test_store_srs_229_file_that_is_a_link_is_a_load_error
+tests/test_loader.py::test_store_srs_229_plain_document_still_loads
+tests/test_loader.py::test_store_srs_229_entry_problem_names_each_kind
+tests/test_repo.py::test_store_srs_229_linked_folder_at_the_root_is_not_a_document
+tests/test_repo.py::test_store_srs_229_change_detection_doesnt_walk_into_a_link
+tests/test_diff.py::test_store_srs_229_compare_refuses_a_linked_subfolder
+tests/test_diff.py::test_store_srs_229_compare_doesnt_read_a_linked_file
+tests/test_editor.py::test_store_srs_229_delete_object_refuses_a_document_with_a_linked_figure</attr>
+  <description>Make a document's folder, then each of its objects, links, figures, views and filters folders, a link (a junction on Windows) to a folder elsewhere; separately make an object file, the manifest and a figure symbolic links to files elsewhere; make a folder directly under the repository root a link to another project's document; and compare the working copy of a document whose links folder, or one object file, is a link. Expected: each document with a linked folder or file is a load error that names the entry, and nothing behind it is read; the linked folder at the root isn't listed as a document and its objects show nowhere; change detection doesn't walk into a link; Compare refuses the linked folder and doesn't show the linked file's content; a document without links loads as before.</description>
+</object>

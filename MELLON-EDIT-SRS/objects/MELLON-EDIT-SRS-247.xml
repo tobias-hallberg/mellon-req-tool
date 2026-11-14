@@ -2,8 +2,8 @@
 <object id="MELLON-EDIT-SRS-247">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: CF-E29. Windows finds a program looked up by bare name in the current folder first, and the MCP server usually runs in the repository, so a program in a pulled commit would run (D-E19).</attr>
-  <description>When Mellon looks for draw.io desktop, Mellon shall leave out the repository folder and the current folder unless MELLON_DRAWIO names a program in one of the two folders.</description>
+  <attr name="rationale">derived: CF-E29. Windows finds a program looked up by bare name in the current folder first, and the MCP server usually runs in the repository, so a program in a pulled commit would run (D-E19). Accepted on 2026-11-13 as a security fix after the code view (CV-PDF-11: the draw.io lookup found a program committed to the current folder); to confirm with the person (open question Q20).</attr>
+  <description>When Mellon looks for draw.io desktop, Mellon shall leave out programs inside the repository and programs directly in the current folder, other than a program that MELLON_DRAWIO names.</description>
 </object>

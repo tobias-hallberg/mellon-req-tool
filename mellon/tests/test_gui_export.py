@@ -399,7 +399,7 @@ def test_export_names_objects_whose_figures_are_not_rendered(
         return b"%PDF-stub"
 
     monkeypatch.setattr(mw, "export_pdf", fake_pdf)
-    monkeypatch.setattr(mw, "find_drawio", lambda: None)
+    monkeypatch.setattr(mw, "find_drawio", lambda *_a, **_k: None)
     notes: list[str] = []
     monkeypatch.setattr(
         mw.QMessageBox,

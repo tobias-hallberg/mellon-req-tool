@@ -1365,6 +1365,44 @@ def test_mcp_srs_112_refuses_paths_outside_the_repository(case, outside_case):
             shutil.rmtree(other_drive_folder, ignore_errors=True)
 
 
+from tests.trace_support import _outside_repo, call, recorded_paths, refused  # noqa: E402
+
+_SHARE = "//127.0.0.1/mellon-test-share"
+
+# Each call names a file outside the repository (base/OUT-1.xml beside it, or
+# a share) where the tool expects an ID or a repository path.
+OUTSIDE_LOOKUPS = {
+    "git_history obj_id parent folder": lambda s, out: s.git_history("CHILD", "../../../OUT-1"),
+    "remove_link source_id parent folder": lambda s, out: s.remove_link(
+        "CHILD", "../../../OUT-1", "PARENT", "PARENT-1"),
+    "remove_link source_id share": lambda s, out: s.remove_link(
+        "CHILD", f"{_SHARE}/x", "PARENT", "PARENT-1"),
+    "commit_changes paths parent folder": lambda s, out: s.commit_changes(
+        "m", paths=["../OUT-1.xml"]),
+    "commit_changes paths absolute": lambda s, out: s.commit_changes(
+        "m", paths=[out.as_posix()]),
+    "commit_changes paths share": lambda s, out: s.commit_changes(
+        "m", paths=[f"{_SHARE}/x.xml"]),
+}
+
+
+@pytest.mark.parametrize("case", list(OUTSIDE_LOOKUPS))
+def test_mcp_srs_112_refuses_an_outside_path_without_looking_at_it(tmp_path, mcp, case):
+    """MELLON-MCP-SRS-112 (CV-MCP-08): a tool given an ID or repository path that
+    names a file outside the repository refuses it without asking the file
+    system about that file, so whether the file exists can't change the answer
+    (and a share's host isn't contacted)."""
+    r = _outside_repo(tmp_path)
+    outside_file = tmp_path / "w" / "OUT-1.xml"
+    assert outside_file.is_file(), "setup: the outside file is missing"
+    s = mcp.serve(r.root)
+    call(s.list_documents)  # imports and the first load done before recording
+    with recorded_paths(r.root) as (_seen, outside):
+        res = call(OUTSIDE_LOOKUPS[case], s, outside_file)
+    assert outside == [], f"{case}: paths outside the repository were asked for: {outside}"
+    assert refused(res) or (isinstance(res, dict) and res.get("ok") is False), f"{case}: accepted: {res}"
+
+
 # MELLON-MCP-SRS blind tests
 from tests.mcp_stdio_support import fold, rel_paths  # noqa: E402
 

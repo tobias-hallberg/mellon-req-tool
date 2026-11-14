@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (
     QAbstractItemDelegate,
     QApplication,
     QHeaderView,
-    QMessageBox,
     QPlainTextEdit,
     QStyledItemDelegate,
     QTableWidget,
@@ -39,6 +38,7 @@ from ...schema import (
     table_geometry_errors,
 )
 from ..theme import ThemeManager
+from .. import plain
 
 _QT_ALIGN: dict[str, Qt.AlignmentFlag] = {
     "left": Qt.AlignmentFlag.AlignLeft,
@@ -610,7 +610,7 @@ class InlineTableWidget(QWidget):
     def _table_is_valid(self) -> bool:
         problems = table_geometry_errors(self.to_table())
         if problems:
-            QMessageBox.warning(
+            plain.warning(
                 self, "Invalid table", "Cannot save table:\n" + "\n".join(problems)
             )
         return not problems

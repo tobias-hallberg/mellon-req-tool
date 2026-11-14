@@ -1613,7 +1613,7 @@ def test_export_document_rendered_figures_are_not_listed(
 def test_export_document_lists_unrendered_figures(
     mcp_repo: Path, fake_pdf, monkeypatch
 ) -> None:
-    monkeypatch.setattr(server, "find_drawio", lambda: None)
+    monkeypatch.setattr(server, "find_drawio", lambda *_a, **_k: None)
     figures = mcp_repo / "CHILD" / "figures"
     figures.mkdir()
     (figures / "CHILD-0.svg").write_text(
@@ -3510,6 +3510,21 @@ def test_pdf_srs_27_export_tool_refuses_a_path_inside_dot_git(tmp_path, where):
     assert [p for p in after if p not in before] == [], "a refused export wrote into .git"
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows path prefixes")
+@pytest.mark.parametrize("prefix", ["\\\\?\\", "\\\\.\\"], ids=["long-path", "device"])
+def test_pdf_srs_27_export_tool_refuses_a_prefixed_path_inside_dot_git(tmp_path, prefix):
+    """MELLON-PDF-SRS-27 (CV-PDF-06): the same .git folder spelled with the
+    Windows extended-length or device prefix is refused too, and nothing is
+    written there."""
+    root = small_repo(tmp_path / "repo")
+    target = prefix + str((root / ".git" / "x.pdf").resolve())
+    before = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    res = mcp_export(root, "DOC", target, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    assert res["ok"] is False, f"{target} was accepted: {res}"
+    after = sorted(p.relative_to(root / ".git").as_posix() for p in (root / ".git").rglob("*"))
+    assert [p for p in after if p not in before] == [], "a refused export wrote into .git"
+
+
 def test_pdf_srs_27_export_tool_accepts_a_file_beside_dot_git(tmp_path):
     """MELLON-PDF-SRS-27, other side of the boundary: a file named .git.pdf in
     the repository root isn't inside the .git folder, so it is exported to."""
@@ -3761,3 +3776,53 @@ def test_pdf_srs_5_export_tool_exports_while_another_document_fails_to_load(tmp_
     res = mcp_export(root, "DOC", out, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
     assert res["ok"] is True, res
     assert out.read_bytes()[:5] == b"%PDF-"
+
+
+
+# MELLON-PDF-SRS-31: the export tool refuses an output path that names a device
+# or a pipe, or holds a colon other than after a drive letter. One server runs
+# every call; an ordinary path in the same session is still exported to.
+_UNSAFE_OUTPUTS = [
+    "NUL.pdf",
+    "nul.PDF",
+    "CON .pdf",
+    "aux.notes.pdf",
+    "out/COM1.pdf",
+    "lpt9.pdf",
+    "notes.txt:x.pdf",
+    "out/a:b.pdf",
+    "\\\\.\\pipe\\mellon-test.pdf",
+    "//./pipe/mellon-test.pdf",
+    "\\\\.\\C:\\mellon-test.pdf",
+]
+
+
+def test_pdf_srs_31_export_tool_refuses_a_device_a_pipe_or_a_colon(tmp_path):
+    root = small_repo(tmp_path / "repo")
+    notes = root / "notes.txt"
+    notes.write_text("notes\n", encoding="utf-8")
+    calls = [("export_document", {"doc_id": "DOC", "out_path": p}) for p in _UNSAFE_OUTPUTS]
+    calls.append(("export_document", {"doc_id": "DOC", "out_path": "ok.pdf"}))
+    results = mcp_calls(root, calls, env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))})
+    for path, res in zip(_UNSAFE_OUTPUTS, results):
+        assert res["ok"] is False, f"{path!r} was accepted: {res}"
+        assert res.get("error_type") == "ValidationError" or "out_path" in json.dumps(res), res
+    assert results[-1]["ok"] is True, results[-1]
+    assert (root / "ok.pdf").read_bytes()[:5] == b"%PDF-"
+    assert notes.read_text(encoding="utf-8") == "notes\n"
+    assert not os.path.exists(str(notes) + ":x.pdf"), "a stream was written into notes.txt"
+    assert not (root / "out").exists()
+
+
+@pytest.mark.skipif(sys.platform == "win32", reason="a named pipe or device file made the POSIX way")
+def test_pdf_srs_31_export_tool_refuses_an_existing_pipe_or_device(tmp_path):
+    root = small_repo(tmp_path / "repo")
+    os.mkfifo(root / "pipe.pdf")
+    os.symlink("/dev/null", root / "null.pdf")
+    results = mcp_calls(
+        root,
+        [("export_document", {"doc_id": "DOC", "out_path": p}) for p in ("pipe.pdf", "null.pdf")],
+        env={"MELLON_TECTONIC": str(pdf_standin(tmp_path))},
+    )
+    for res in results:
+        assert res["ok"] is False, res

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-PDF-STS-75">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">1 Unit</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_export.py::test_pdf_srs_67_program_in_start_folder_is_not_run
+tests/test_export.py::test_pdf_srs_67_program_inside_repository_is_not_found
+tests/test_export.py::test_pdf_srs_67_program_on_path_outside_repository_is_found
+tests/test_export.py::test_pdf_srs_67_program_named_in_setting_is_used_inside_repository
+tests/test_export.py::test_pdf_srs_67_installed_build_started_in_its_folder_finds_its_program
+tests/test_export.py::test_pdf_srs_67_installed_program_inside_repository_is_not_run
+tests/test_export.py::test_pdf_srs_67_export_looks_up_programs_outside_the_documents_repository
+tests/test_programs.py::test_pdf_srs_67_which_never_looks_in_the_start_folder
+tests/test_programs.py::test_pdf_srs_67_which_skips_relative_path_entries
+tests/test_programs.py::test_pdf_srs_67_which_skips_path_entries_inside_the_repository
+tests/test_programs.py::test_pdf_srs_67_which_returns_the_first_allowed_match
+tests/test_programs.py::test_pdf_srs_67_allowed_leaves_out_the_start_folder_but_not_below_it</attr>
+  <description>Without MELLON_TECTONIC, put a PDF program called tectonic (on Windows a .bat that writes a marker file) in the folder the export starts in, which is the repository; separately, in a folder inside the repository that PATH names; in a folder PATH names by a relative path; and in a folder outside the repository that PATH names. Then name the program inside the repository in MELLON_TECTONIC, and start the installed build in its own folder with its program under it. Expected: the programs in the start folder, inside the repository and in the relative folder are never found, and the marker isn't written; the program outside is found; the program named in the setting is used; the installed build finds its own program; an export of a document leaves that document's repository out of the lookup.</description>
+</object>

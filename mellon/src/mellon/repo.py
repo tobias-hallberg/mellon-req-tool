@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .git_ops import GitError, discover_repo
-from .loader import LoaderError, has_manifest, load_document
+from .loader import LoaderError, entry_problem, has_manifest, load_document
 from .schema import Document, Link
 
 
@@ -56,14 +56,39 @@ def _is_file(path: Path) -> bool:
         return False
 
 
+# Requirements: MELLON-STORE-SRS-30, MELLON-STORE-SRS-229, MELLON-STORE-SRS-241
 def _error_file(err: LoaderError) -> Path | None:
-    # Callers also pass lxml's XMLSyntaxError, which names no file.
+    # The loader names the file in `err.file`; other messages start with
+    # "<path>: ", or with other text ("Not a directory", or an attribute name
+    # from the file, which can hold ": ", "..", an absolute path or a share).
+    # Either way the file counts only when, as text, it names something inside
+    # the document folder the load error comes from, with no ".." part, and no
+    # folder or file on the way is a link: the message can't make Mellon look
+    # at a path outside the document (MELLON-STORE-SRS-241). Callers also pass
+    # lxml's XMLSyntaxError, which names neither.
+    folder = getattr(err, "folder", None)
+    if folder is None:
+        return None
     named = getattr(err, "file", None)
     if named is not None:
-        return Path(named) if _is_file(Path(named)) else None
-    # Older messages start with "<path>: ".
-    head, sep, _rest = str(err).partition(": ")
-    return Path(head) if sep and _is_file(Path(head)) else None
+        candidate = Path(named)
+    else:
+        head, sep, _rest = str(err).partition(": ")
+        if not sep:
+            return None
+        candidate = Path(head)
+    try:
+        rel = candidate.relative_to(folder)
+    except ValueError:
+        return None
+    if not rel.parts or ".." in rel.parts:
+        return None
+    path = folder
+    for part in rel.parts:
+        path = path / part
+        if entry_problem(path) is not None:
+            return None
+    return path if _is_file(path) else None
 
 
 # Requirements: MELLON-STORE-SRS-30
@@ -119,7 +144,9 @@ def discover_documents(repo_root: str | Path) -> list[Path]:
         raise LoaderError(f"cannot read repo root {repo_root}: {e}") from e
     out: list[Path] = []
     for child in children:
-        if not child.is_dir() or child.name.startswith("."):
+        # MELLON-STORE-SRS-229: a link or junction isn't followed, so it isn't
+        # found to be a document.
+        if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
         # MELLON-STORE-SRS-18: <folder name>.xml, letter case included.
         try:
@@ -149,7 +176,7 @@ def doc_folder_names(repo_root: str | Path) -> frozenset[str]:
     except OSError:
         return frozenset()
     for child in children:
-        if not child.is_dir() or child.name.startswith("."):
+        if child.name.startswith(".") or entry_problem(child) or not child.is_dir():
             continue
         try:
             is_document = has_manifest(child)
@@ -182,10 +209,14 @@ def folders_fingerprint(
                     for entry in entries:
                         key = f"{prefix}{entry.name}"
                         try:
-                            if entry.is_dir(follow_symlinks=False):
+                            # Links aren't followed (MELLON-STORE-SRS-229).
+                            if entry.is_symlink() or entry.is_junction():
+                                st = entry.stat(follow_symlinks=False)
+                                out.add((key, st.st_mtime_ns, st.st_size))
+                            elif entry.is_dir(follow_symlinks=False):
                                 stack.append((entry.path, f"{key}/"))
-                            elif entry.is_file():
-                                st = entry.stat()
+                            elif entry.is_file(follow_symlinks=False):
+                                st = entry.stat(follow_symlinks=False)
                                 out.add((key, st.st_mtime_ns, st.st_size))
                         except OSError:
                             continue

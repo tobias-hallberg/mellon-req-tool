@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..controller import RepoController
+from .. import plain
 
 
 class ManageFiltersDialog(QDialog):
@@ -117,7 +118,7 @@ class ManageFiltersDialog(QDialog):
             return
         existing = {n.casefold() for n in self._existing_names_excluding(slug)}
         if new_name.casefold() in existing:
-            QMessageBox.warning(
+            plain.warning(
                 self, "Name in use",
                 f"A filter named {new_name!r} already exists.",
             )
@@ -125,7 +126,7 @@ class ManageFiltersDialog(QDialog):
         try:
             self._controller.rename_filter(self._doc_id, slug, new_name)
         except Exception as exc:
-            QMessageBox.warning(self, "Rename failed", str(exc))
+            plain.warning(self, "Rename failed", str(exc))
             return
         self._reload()
 
@@ -138,7 +139,7 @@ class ManageFiltersDialog(QDialog):
         filt = next((f for f in (doc.filters if doc else ()) if f.slug == slug), None)
         if filt is None:
             return
-        confirm = QMessageBox.question(
+        confirm = plain.question(
             self, "Delete filter",
             f"Delete filter {filt.name!r}? This removes its XML file.",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
@@ -149,6 +150,6 @@ class ManageFiltersDialog(QDialog):
         try:
             self._controller.delete_filter(self._doc_id, slug)
         except Exception as exc:
-            QMessageBox.warning(self, "Delete failed", str(exc))
+            plain.warning(self, "Delete failed", str(exc))
             return
         self._reload()

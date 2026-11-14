@@ -633,3 +633,131 @@ def test_store_srs_28_folder_that_cant_be_examined_doesnt_hide_the_others(two_do
     docs = load_all(root, load_errors=errors)
     assert set(docs) == {"PARENT", "DOC"}
     assert [e.doc_id for e in errors] == ["build"], errors
+
+
+# MELLON-STORE-SRS-229, MELLON-TRACE-SRS-79 (CV-TRACE-07): a link at the
+# repository root isn't followed, so another project's document behind it
+# shows nowhere.
+from tests.trace_support import dir_link, linked_document_repo  # noqa: E402
+from tests.trace_support import manifest_xml as trace_manifest_xml  # noqa: E402
+
+
+def test_store_srs_229_linked_folder_at_the_root_is_not_a_document(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    assert [p.name for p in discover_documents(r.root)] == ["A", "CHILD"]
+    assert doc_folder_names(r.root) == {"A", "CHILD"}
+    errors: list = []
+    assert set(load_all(r.root, load_errors=errors)) == {"A", "CHILD"}
+    assert errors == []
+
+
+def test_trace_srs_79_incoming_links_leave_out_a_linked_folder(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    docs = load_all(r.root)
+    assert repo_incoming_links(docs, "A", "A-0") == []
+
+
+def test_store_srs_229_change_detection_doesnt_walk_into_a_link(tmp_path: Path) -> None:
+    r = linked_document_repo(tmp_path)
+    dir_link(r.root / "A" / "extra", tmp_path / "other-project" / "EVIL")
+    keys = {key for key, _mtime, _size in folders_fingerprint([r.root / "A"])}
+    assert "A/extra" in keys
+    assert not any(k.startswith("A/extra/") for k in keys), sorted(keys)
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="Windows folds '..' out of a path it can't find")
+def test_store_srs_30_conflict_note_reads_no_file_outside_the_document(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """MELLON-STORE-SRS-30: the conflict note looks only at the file the load
+    error names; an attribute name in the message can't make it name and read
+    a file outside the repository."""
+    outside = tmp_path / "outside.txt"
+    outside.write_text("<<<<<<< HEAD\nours\n=======\ntheirs\n>>>>>>> b\n", encoding="utf-8")
+    (tmp_path / "cwd").mkdir()
+    monkeypatch.chdir(tmp_path / "cwd")
+    root = tmp_path / "repo"
+    (root / "D" / "objects").mkdir(parents=True)
+    (root / "D" / "D.xml").write_text(
+        trace_manifest_xml("D", []).replace(
+            "<attributes>",
+            '<attributes><attribute name="a/../../outside.txt: x" kind="nonsense"/>',
+            1,
+        ),
+        encoding="utf-8",
+    )
+    errors: list = []
+    load_all(root, load_errors=errors)
+    assert len(errors) == 1, errors
+    # MELLON-STORE-SRS-29: the error names the manifest it concerns, inside
+    # the document, not the path the attribute name spells.
+    assert errors[0].file == root / "D" / "D.xml", errors[0].file
+    assert "merge conflict" not in errors[0].message, errors[0].message
+
+
+
+# MELLON-STORE-SRS-241: a load error's merge-conflict note looks only at a file
+# inside the document's folder. An attribute name at the start of the message
+# can't make Mellon look up a path in a folder above or in the start folder.
+from tests.trace_support import recorded_paths  # noqa: E402
+
+_CONFLICTED = "<<<<<<< HEAD\nours\n=======\ntheirs\n>>>>>>> b\n"
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["a/../../outside.txt: x", "outside.txt: x", "a\\..\\..\\outside.txt: x"],
+    ids=["folder-above", "start-folder", "folder-above-backslash"],
+)
+def test_store_srs_241_a_load_errors_note_accesses_nothing_outside_the_document(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, name: str
+) -> None:
+    (tmp_path / "outside.txt").write_text(_CONFLICTED, encoding="utf-8")
+    start = tmp_path / "start"
+    start.mkdir()
+    (start / "outside.txt").write_text(_CONFLICTED, encoding="utf-8")
+    monkeypatch.chdir(start)
+    root = tmp_path / "repo"
+    (root / "D" / "objects").mkdir(parents=True)
+    (root / "D" / "D.xml").write_text(
+        trace_manifest_xml("D", []).replace(
+            "<attributes>", f'<attributes><attribute name="{name}" kind="nonsense"/>', 1
+        ),
+        encoding="utf-8",
+    )
+    errors: list = []
+    with recorded_paths(root) as (_seen, outside):
+        load_all(root, load_errors=errors)
+        try:
+            DocumentService(root).get_document("D")
+        except Exception as e:  # the service's load error
+            service_message = str(e)
+        else:
+            service_message = ""
+    assert outside == [], f"the note looked outside the document: {outside}"
+    assert len(errors) == 1, errors
+    # MELLON-STORE-SRS-29: the error names the manifest it concerns, inside
+    # the document, not the path the attribute name spells.
+    assert errors[0].file == root / "D" / "D.xml", errors[0].file
+    assert "merge conflict" not in errors[0].message, errors[0].message
+    assert "unsupported kind" in service_message, service_message
+    assert "merge conflict" not in service_message, service_message
+
+
+def test_store_srs_241_the_note_still_names_a_conflicted_file_in_the_document(
+    tmp_path: Path,
+) -> None:
+    """MELLON-STORE-SRS-30 still holds inside the document: an object file
+    with conflict markers gets the note, and is named."""
+    root = tmp_path / "repo"
+    (root / "D" / "objects").mkdir(parents=True)
+    (root / "D" / "D.xml").write_text(trace_manifest_xml("D", ["D-1"]), encoding="utf-8")
+    conflicted = root / "D" / "objects" / "D-1.xml"
+    conflicted.write_text('<object id="D-1">\n' + _CONFLICTED + "</object>\n", encoding="utf-8")
+    errors: list = []
+    with recorded_paths(root) as (_seen, outside):
+        load_all(root, load_errors=errors)
+    assert outside == []
+    assert len(errors) == 1, errors
+    assert errors[0].file == conflicted
+    assert "(unresolved merge conflict?)" in errors[0].message

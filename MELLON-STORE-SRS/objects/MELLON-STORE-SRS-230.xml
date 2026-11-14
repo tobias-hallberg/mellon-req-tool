@@ -2,8 +2,8 @@
 <object id="MELLON-STORE-SRS-230">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: CF-S23. Links, parents, rules and filters name documents and objects; a name holding .., an absolute path or a network share would make trace, coverage or a PDF read another project's files, or make Windows send the user's credentials to the named host.</attr>
+  <attr name="rationale">derived: CF-S23. Links, parents, rules and filters name documents and objects; a name holding .., an absolute path or a network share would make trace, coverage or a PDF read another project's files, or make Windows send the user's credentials to the named host. Accepted on 2026-11-13 as a security fix after the code view (CV-TRACE-08: a parent document ID naming a network share made the link picker list that share, so Windows contacted the host); to confirm with the person (open question Q20).</attr>
   <description>When Mellon follows a document ID or object ID read from a data file, Mellon shall access no path outside the folders directly under the repository root that are named by document IDs.</description>
 </object>

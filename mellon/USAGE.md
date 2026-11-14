@@ -1,6 +1,6 @@
 # Usage
 
-This page covers Mellon 0.3.0. Mellon works on **documents**, which are folders inside a git repository. You can work with them in three ways, and all three use the on-disk format described below:
+This page covers Mellon 0.4.0. Mellon works on **documents**, which are folders inside a git repository. You can work with them in three ways, and all three use the on-disk format described below:
 
 - **GUI:** `mellon.exe` from the Windows installer, or `mellon-gui` in a dev environment.
 - **MCP stdio server:** `mellon-mcp`.
@@ -428,14 +428,15 @@ The History tab's **Compare with latest…** compares the whole document at the 
 - **Suspect links are checked first.** The PDF shows no link states, so before the save dialog Export checks the document's outgoing links. If any are suspect or broken, a warning lists them (the first 10) with **Export anyway** and **Cancel** (the default). MCP `export_document` exports regardless and returns them in `suspect_links`.
   - **Uncovered objects in** *parent*, per parent: the ids of its objects (headings excluded) that no object in this document links to. A parent that fails to load is named instead.
 
-Figures need draw.io desktop (<https://www.drawio.com/>). Mellon looks for it in this order: `MELLON_DRAWIO`, then the standard install folders (`%ProgramFiles%\draw.io\` and `%LOCALAPPDATA%\Programs\draw.io\`), then `PATH` (`drawio` or `draw.io`).
+Figures need draw.io desktop (<https://www.drawio.com/>). Mellon looks for it in this order: `MELLON_DRAWIO`, then the standard install folders (`%ProgramFiles%\draw.io\` and `%LOCALAPPDATA%\Programs\draw.io\`), then `PATH` (`drawio` or `draw.io`). Apart from `MELLON_DRAWIO`, a program inside the repository or directly in the current folder is never used.
 
 Export needs the `tectonic` binary. Mellon looks for it in this order:
 
 1. `MELLON_TECTONIC`.
 2. `<exe-dir>\tools\` in the installed build, which ships tectonic and a pre-filled TeX cache so that export works offline.
 3. `PATH`.
-4. `<project-root>/tools/` in a source checkout.
+
+Apart from `MELLON_TECTONIC`, a program inside the repository being exported, or directly in the folder Mellon was started in, is never used, and a relative `PATH` entry is skipped: a program committed to a repository must not run on the machine of whoever exports it.
 
 **Error log.** Unexpected errors are shown in a dialog and appended to `%LOCALAPPDATA%\mellon\mellon\logs\mellon-gui.log`, in the folder the `LOCALAPPDATA` variable names. If it is unset or isn't a folder, the log goes to `%TEMP%\logs\mellon-gui.log`. On other operating systems the log is under Qt's per-user app-data folder, or `<temp>/logs/` if that can't be determined.
 

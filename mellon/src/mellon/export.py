@@ -23,7 +23,7 @@ from pathlib import Path, PurePosixPath
 
 import jinja2
 
-from . import drawio
+from . import drawio, programs
 from .schema import Document, OutlineNode, RequirementObject, Table
 
 _BLOCK_START, _BLOCK_END = "((* ", " *))"
@@ -453,8 +453,8 @@ def _tectonic_in(folder: Path) -> str | None:
     return None
 
 
-# Requirements: MELLON-GUI-SRS-184, MELLON-PDF-SRS-69
-def _find_tectonic() -> str | None:
+# Requirements: MELLON-GUI-SRS-184, MELLON-PDF-SRS-67, MELLON-PDF-SRS-69
+def _find_tectonic(repo_root: Path | None = None) -> str | None:
     """Locate the tectonic binary.
 
     Search order:
@@ -462,24 +462,22 @@ def _find_tectonic() -> str | None:
            (a bad path fails loudly at run time rather than being skipped).
         2. Frozen build: ``<exe-dir>/tools/tectonic[.exe]``, the copy the
            installer ships, so it wins over whatever is on PATH.
-        3. ``PATH`` (the normal install case)
-        4. ``<project-root>/tools/tectonic[.exe]`` — a vendored binary sitting
-           alongside the source tree, for contributors who don't want a
-           system-wide install. Only meaningful when running from a source
-           checkout; in an installed wheel the relative path points inside
-           site-packages, so installed users need tectonic on PATH.
+        3. ``PATH``, absolute entries only (``programs.which``).
+
+    Apart from ``MELLON_TECTONIC``, a program inside the repository at
+    ``repo_root`` or directly in the current folder is never returned: the
+    MCP server usually starts in the repository, and Windows would find a
+    program committed there first. A source checkout sets ``MELLON_TECTONIC``
+    or puts tectonic on PATH.
     """
     override = os.environ.get("MELLON_TECTONIC")
     if override:
         return override
     if getattr(sys, "frozen", False):
         frozen = _tectonic_in(Path(sys.executable).parent / "tools")
-        if frozen is not None:
+        if frozen is not None and programs.allowed(frozen, repo_root):
             return frozen
-    on_path = shutil.which("tectonic")
-    if on_path is not None:
-        return on_path
-    return _tectonic_in(Path(__file__).resolve().parents[2] / "tools")
+    return programs.which("tectonic", repo_root)
 
 
 # Wall clock limit. A first-ever export on a cold cache downloads the TeX
@@ -530,22 +528,28 @@ def _run_tectonic(
         raise TectonicError(f"could not run tectonic at {tectonic}: {e}") from e
 
 
-# Requirements: MELLON-PDF-SRS-66, MELLON-PDF-SRS-177
-def build_pdf(tex: str, assets: Mapping[str, Path] | None = None) -> bytes:
+# Requirements: MELLON-PDF-SRS-66, MELLON-PDF-SRS-67, MELLON-PDF-SRS-177
+def build_pdf(
+    tex: str,
+    assets: Mapping[str, Path] | None = None,
+    *,
+    repo_root: Path | None = None,
+) -> bytes:
     """Compile a LaTeX source string to PDF bytes via tectonic.
 
     ``assets`` maps a file name the source refers to (a figure's
     ``\\includegraphics``) to the file copied next to the .tex first.
+    ``repo_root`` is the repository being exported, which the program lookup
+    leaves out (see ``_find_tectonic``).
 
     Raises ``TectonicError`` if the binary is missing or compilation fails.
     """
-    tectonic = _find_tectonic()
+    tectonic = _find_tectonic(repo_root)
     if tectonic is None:
         raise TectonicError(
             "tectonic binary not found on PATH — install from "
             "https://github.com/tectonic-typesetting/tectonic/releases "
-            "(source checkouts may also drop it in <project-root>/tools/, "
-            "or set MELLON_TECTONIC to its path)"
+            "or set MELLON_TECTONIC to its path"
         )
     with tempfile.TemporaryDirectory(prefix="mellon-export-") as tmp:
         tmp_path = Path(tmp)
@@ -603,7 +607,7 @@ def _render_figures(
     ))
     if not ids:
         return {}, {}
-    exe = drawio.find_drawio()
+    exe = drawio.find_drawio(folder.parent)
     if exe is None:
         return {}, {}
     svgs = [folder / doc.objects[obj_id].figure_path for obj_id in ids]
@@ -649,4 +653,6 @@ def pdf(
         tex = render_latex(
             doc, attrs=attrs, rev=rev, figures=figures, parents=parents
         )
-        return build_pdf(tex, assets)
+        return build_pdf(
+            tex, assets, repo_root=Path(folder).parent if folder is not None else None
+        )

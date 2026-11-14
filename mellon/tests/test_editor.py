@@ -1577,7 +1577,14 @@ def test_delete_object_removes_figure_so_reused_id_starts_clean(
     assert load_document(doc_folder).objects["DOC-1"].figure_path is None
 
 
-def test_delete_object_removes_symlinked_figure(tmp_path: Path, doc_folder: Path) -> None:
+def test_store_srs_229_delete_object_refuses_a_document_with_a_linked_figure(
+    tmp_path: Path, doc_folder: Path
+) -> None:
+    """MELLON-STORE-SRS-229: a figure that is a symbolic link makes its
+    document a load error, so deleting the object is refused and neither the
+    link nor the file it points to is touched."""
+    from mellon.loader import LoaderError
+
     shared = _write_svg(tmp_path / "shared.svg")
     link = doc_folder / "figures" / "DOC-1.svg"
     link.parent.mkdir()
@@ -1585,10 +1592,11 @@ def test_delete_object_removes_symlinked_figure(tmp_path: Path, doc_folder: Path
         link.symlink_to(shared)
     except OSError:
         pytest.skip("creating symlinks needs extra privileges on this platform")
-    report = delete_object(doc_folder, "DOC-1")
-    assert link in report.removed_files
-    assert not link.is_symlink()
+    with pytest.raises(LoaderError, match="symbolic link"):
+        delete_object(doc_folder, "DOC-1")
+    assert link.is_symlink()
     assert shared.is_file()
+    assert (doc_folder / "objects" / "DOC-1.xml").is_file()
 
 
 def test_delete_object_failing_figure_removal_changes_nothing(
@@ -3379,3 +3387,126 @@ def test_store_srs_68_parent_that_isnt_a_document_id_is_refused(tmp_path, parent
     with pytest.raises(editor.EditorError):
         editor.add_parent(folder, parent)
     assert manifest.read_bytes() == before
+
+
+
+# ---------------------------------------------------------------------------
+# MELLON-STORE-SRS-228: no write or delete through a link. Each folder or file
+# becomes a link only after the editor has read the document, so the load's
+# own refusal (MELLON-STORE-SRS-229) can't be what stops the write.
+# ---------------------------------------------------------------------------
+
+from mellon.editor import EditorError, clear_figure, create_filter, create_view  # noqa: E402
+from mellon.loader import LoaderError  # noqa: E402
+from tests.trace_support import dir_link, file_link  # noqa: E402
+
+
+def _files(base: Path) -> dict[str, bytes]:
+    return {
+        p.relative_to(base).as_posix(): p.read_bytes()
+        for p in sorted(base.rglob("*"))
+        if p.is_file()
+    }
+
+
+# These don't read the document, so their folder is a link from the start and
+# only the write itself can refuse.
+_WITHOUT_A_READ = {"create_filter", "rename_view"}
+
+# operation -> (the folder that turns into a link, the call)
+_THROUGH_A_LINK = {
+    "create_object": ("objects", lambda d, t: create_object(d, description="new")),
+    "set_description": ("objects", lambda d, t: set_description(d, "DOC-1", "changed")),
+    "delete_object": ("objects", lambda d, t: delete_object(d, "DOC-1", force=True)),
+    "add_link": ("links", lambda d, t: add_link(d, "DOC-1", "DOC", "DOC-0", "refines")),
+    "set_figure": ("figures", lambda d, t: set_figure(d, "DOC-1", _write_svg(t / "new.svg"))),
+    "clear_figure": ("figures", lambda d, t: clear_figure(d, "DOC-1")),
+    "rename_view": ("views", lambda d, t: rename_view(d, "v", "W")),
+    "create_filter": ("filters", lambda d, t: create_filter(d, "G")),
+    "set_metadata": (".", lambda d, t: set_metadata(d, "title", "changed")),
+}
+
+
+@pytest.mark.parametrize("op", sorted(_THROUGH_A_LINK))
+def test_store_srs_228_editor_refuses_to_write_through_a_linked_folder(
+    tmp_path: Path, doc_folder: Path, monkeypatch: pytest.MonkeyPatch, op: str
+) -> None:
+    """MELLON-STORE-SRS-228: a document folder, or a folder in it, that is a
+    link (a junction on Windows) when the editor writes or deletes: the
+    operation is refused and nothing behind the link changes."""
+    set_figure(doc_folder, "DOC-1", _write_svg(tmp_path / "fig.svg"))
+    create_view(doc_folder, "V", ["type"])
+    create_filter(doc_folder, "F")
+    sub, operation = _THROUGH_A_LINK[op]
+    inside = doc_folder if sub == "." else doc_folder / sub
+    elsewhere = tmp_path / "elsewhere"
+    before: dict[str, bytes] = {}
+
+    def link():
+        elsewhere.mkdir()
+        inside.rename(elsewhere / inside.name)
+        dir_link(inside, elsewhere / inside.name)
+        before.update(_files(elsewhere))
+
+    if op in _WITHOUT_A_READ:
+        link()
+    else:
+        real_load = editor.load_document
+
+        def load_then_link(folder):
+            doc = real_load(folder)
+            if not before:
+                link()
+            return doc
+
+        monkeypatch.setattr(editor, "load_document", load_then_link)
+    with pytest.raises((EditorError, LoaderError), match="link|junction"):
+        operation(doc_folder, tmp_path)
+    assert before, f"{op} didn't read the document first"
+    assert _files(elsewhere) == before, f"{op} changed files behind the link"
+
+
+@pytest.mark.parametrize("op", ["set_description", "delete_object"])
+def test_store_srs_228_editor_refuses_to_write_or_delete_a_linked_file(
+    tmp_path: Path, doc_folder: Path, monkeypatch: pytest.MonkeyPatch, op: str
+) -> None:
+    """MELLON-STORE-SRS-228: an object file that is a symbolic link to a file
+    elsewhere when the editor writes or deletes it: refused, and the link and
+    the file it points to are left as they were."""
+    target = tmp_path / "elsewhere.xml"
+    obj = doc_folder / "objects" / "DOC-1.xml"
+    real_load = editor.load_document
+    before: list[bytes] = []
+
+    def load_then_link(folder):
+        doc = real_load(folder)
+        if not before:
+            target.write_bytes(obj.read_bytes())
+            obj.unlink()
+            file_link(obj, target)
+            before.append(target.read_bytes())
+        return doc
+
+    monkeypatch.setattr(editor, "load_document", load_then_link)
+    with pytest.raises((EditorError, LoaderError), match="link"):
+        _THROUGH_A_LINK[op][1](doc_folder, tmp_path)
+    assert before, f"{op} didn't read the document first"
+    assert obj.is_symlink(), f"{op} replaced or removed the link"
+    assert target.read_bytes() == before[0]
+
+
+def test_store_srs_228_a_root_reached_through_a_link_still_takes_edits(
+    tmp_path: Path, doc_folder: Path
+) -> None:
+    """MELLON-STORE-SRS-228, other side of the boundary: folders above the
+    repository root don't count, so a root reached through a link is edited."""
+    real = tmp_path / "real"
+    real.mkdir()
+    doc_folder.rename(real / "DOC")
+    via = dir_link(tmp_path / "via", real)
+    set_description(via / "DOC", "DOC-1", "changed through the root's link")
+    new_id = create_object(via / "DOC", description="new")
+    set_figure(via / "DOC", new_id, _write_svg(tmp_path / "fig.svg"))
+    doc = load_document(real / "DOC")
+    assert doc.objects["DOC-1"].description == "changed through the root's link"
+    assert doc.objects[new_id].figure_path == f"figures/{new_id}.svg"

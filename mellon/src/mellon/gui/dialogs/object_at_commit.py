@@ -24,6 +24,7 @@ from PySide6.QtWidgets import (
 )
 
 from ..controller import ObjectAtCommit
+from .. import plain
 
 
 class ObjectAtCommitDialog(QDialog):
@@ -39,14 +40,15 @@ class ObjectAtCommitDialog(QDialog):
         )
         self.resize(560, 600)
 
-        self._id_label = QLabel(f"{snapshot.doc_id} / {snapshot.obj_id}")
+        # Requirements: MELLON-GUI-SRS-122, MELLON-VER-SRS-230
+        self._id_label = plain.label(f"{snapshot.doc_id} / {snapshot.obj_id}")
         self._id_label.setStyleSheet("font-weight: bold; font-size: 10pt;")
         self._id_label.setWordWrap(True)
 
         self._commit_label = QLabel(f"at commit {snapshot.short_hash}")
         self._commit_label.setStyleSheet("color: palette(mid);")
 
-        self._breadcrumb = QLabel(
+        self._breadcrumb = plain.label(
             " › ".join(snapshot.outline_path) if snapshot.outline_path else ""
         )
         self._breadcrumb.setStyleSheet("color: palette(mid);")
@@ -54,7 +56,9 @@ class ObjectAtCommitDialog(QDialog):
 
         self._attrs_form = QFormLayout()
         for name, value in snapshot.object.attrs.items():
-            self._attrs_form.addRow(name, QLabel(value))
+            # As stored at that commit, markup included (MELLON-VER-SRS-230).
+            value_label = plain.label(value)
+            self._attrs_form.addRow(plain.form_label(name, value_label), value_label)
         self._attrs_wrap = QWidget()
         self._attrs_wrap.setLayout(self._attrs_form)
 

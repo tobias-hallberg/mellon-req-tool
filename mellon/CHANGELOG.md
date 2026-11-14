@@ -6,6 +6,157 @@ All notable changes to Mellon. The format follows
 
 ## Unreleased
 
+### Fixed
+
+- **`mellon-check` prints a link outside the document and its parents once.**
+  A link to a document that is neither the link's own document nor a parent,
+  whose target object doesn't exist, was printed as `LINK_NOT_ALLOWED` and
+  again as a `BROKEN` link, and counted as two problems. It now gets the
+  `LINK_NOT_ALLOWED` line alone (`MELLON-CHECK-SRS-134`, `-33`).
+- **Every load error names its file and line.** A manifest whose enum
+  attribute has no option, or whose parent, attribute or ref element lacks a
+  required XML attribute, gave no file; and only an XML syntax error gave a
+  line. Each load error now names the file and the line of the element it
+  concerns, in `DocLoadError`, MCP `list_documents`, `validate_repo` and
+  `repo_health`, and in `mellon-check`, whose line now reads
+  `<doc>: LOAD_ERROR <file>:<line>: <reason>` with the file relative to the
+  repository root (`MELLON-STORE-SRS-29`, `MELLON-CHECK-SRS-90`, `-102`,
+  `-137`).
+
+- **Coverage counts each object once.** An outline that named an object
+  twice counted it twice, and an object the outline left out wasn't counted,
+  in `repo_health`'s coverage rows, MCP `coverage_report` and the PDF. Each
+  object of the document is now counted once, in outline order and then the
+  objects the outline leaves out (`MELLON-CHECK-SRS-107`, `-108`).
+- **`repo_health` no longer reports 0 suspect links when it couldn't look.**
+  When the suspect scan failed (no git repository, or `.git` moved after the
+  server started), each suspect and broken count read 0. They are now
+  `null`, and the new `suspect_scan_error` says why (`MELLON-CHECK-SRS-97`,
+  `-101`). A failing coverage row is no longer silently left out either.
+
+- **The Validate action reads the working copy.** A Document Editor
+  validated the copy it had read earlier, so after a pull left conflict
+  markers in the document it said "validation passed". It now reads the
+  document's files when the action is chosen and shows the load error
+  instead (`MELLON-CHECK-SRS-2`).
+- **The Validate action lists every validation error,** in a scrollable
+  list, where it used to show the first ten and "… and N more"
+  (`MELLON-CHECK-SRS-79`).
+
+- **`mellon-check` reads the repository once.** It used to read it three
+  times (to validate, to list, to scan); a file that changed in between,
+  such as during a pull, could leave a document validated clean and then
+  skipped by the scan without a word, so the check could pass with a load
+  error and suspect links. Each document is now validated and scanned from
+  the one reading, or reported as a load error (`MELLON-CHECK-SRS-147`,
+  `-149`).
+
+- **A table whose cell spans over a row span from above is a load error.**
+  A cell whose column span crossed a column still covered by a row span from
+  an earlier row was accepted: one grid position was covered twice and one
+  left empty, and the grid, the table editor and the PDF drew it by guessing.
+  The loader, the editor and validation now report it
+  (`MELLON-STORE-SRS-111`, `-113`).
+- **The merge-conflict note needs all three conflict markers.** A load error
+  was labelled "(unresolved merge conflict?)" for a file holding only a
+  `<<<<<<<` line. The note is now added only when the file holds a
+  `<<<<<<<` line, a later `=======` line and a later `>>>>>>>` line, as the
+  definition of conflict markers says (`MELLON-STORE-SRS-30`).
+
+- **Text after an element or comment inside a description is read.** In
+  `<description>The pump shall <b>always</b> stop.</description>` (a
+  hand-written file, another tool or a newer Mellon) only "The pump shall"
+  was read, and setting a new description kept the child element and the
+  text after it in the file. An element the format doesn't define, or a
+  comment, is now read as if absent and the text around it is kept; each
+  text Mellon writes replaces the element's whole content
+  (`MELLON-STORE-SRS-46`, `-84`, `-87`).
+- **An empty value is written as `<x/>` every time.** An attribute,
+  description, title or metadata field set to an empty value was written as
+  `<x></x>`, and the next unrelated rewrite of the file turned it into
+  `<x/>`: a change nobody made, which moved the object's last commit and
+  turned links to it suspect. Mellon now writes the one form `<x/>`
+  (`MELLON-STORE-SRS-208`).
+
+- **Acknowledging a link writes the links file with 2-space indentation.**
+  A links file indented another way kept that indentation when a link in it
+  was acknowledged, so the next edit re-indented it in a later commit
+  (`MELLON-STORE-SRS-190`).
+- **A figure is written whole or not at all.** Attaching or replacing a
+  figure, and copying an object with its figure, wrote straight into the
+  figure file, so a stop or a full disk part-way left a truncated SVG and
+  lost the draw.io diagram in it; a copy's figure also wasn't undone when
+  the copy failed. Figures now go through a temporary file that replaces
+  the old one, and the copy is journaled (`MELLON-STORE-SRS-167`).
+
+- **A filter rule without an operator is a load error, and isn't written.**
+  An `attr` rule with no `op`, or an empty one, loaded and then matched
+  nothing; `create_filter` and `set_filter_rules` wrote such a rule when
+  given one (`MELLON-STORE-SRS-145`, `-148`).
+- **Dates are written as YYYY-MM-DD only.** The manifest date and date
+  attribute values set through the composite MCP tools took any form
+  Python's date parser reads, such as `20261113` and the week date
+  `2026-W46-5`, which validation then reported as `META_BAD_DATE` or
+  `ATTR_BAD_DATE`. They now take the same check validation uses
+  (`MELLON-STORE-SRS-64`, `-98`).
+- **A control character in a view's column name, a filter rule's attribute
+  name or a parent document ID is named** in the refusal, as in the other
+  stored text, instead of lxml's general message (`MELLON-STORE-SRS-214`).
+
+- **A link without a type, and a parent that isn't a document ID, are
+  refused before anything is written.** MCP `add_link` with an empty
+  `link_type`, or `add_parent` with an empty or impossible ID, wrote a file
+  the loader then rejected, so the whole document stopped loading while the
+  call reported failure. And when a document failed to load again after an
+  edit, the GUI's cached document list dropped it without a load error until
+  a full refresh; the next listing now reads the repository again and shows
+  the load error (`MELLON-STORE-SRS-27`, `-68`, `-120`).
+
+- **Windows and Linux read the same object, figure, view and filter files.**
+  On Windows `objects/DOC-7.XML` was read as object DOC-7 and
+  `figures/DOC-0.SVG` as DOC-0's figure; on Linux CI neither was, so the
+  same commit checked differently. The `.xml` and `.svg` suffixes now count
+  letter case everywhere, as the manifest's name already did
+  (`MELLON-STORE-SRS-81`, `-129`).
+- **Opening a bare repository is refused as outside a work tree.** It was
+  called a subfolder of a work tree rooted in the folder above it, and the
+  GUI offered to open that folder, which then wasn't a git repository at
+  all (`MELLON-STORE-SRS-7`, `-12`).
+
+- **The History tab reads an object at a commit by the format's rules.**
+  Its own reader showed no table, took the last of two `attr` elements of
+  one name, ignored an id that differs from the file name, dropped
+  incomplete links and failed with an error dialog on a file that isn't
+  well-formed. It now reads the object and its links as the working copy is
+  read, and shows a load error for a file the rules reject
+  (`MELLON-STORE-SRS-83`, `-85`, `-90`).
+- **A folder Mellon may not examine no longer stops the repository from
+  opening.** A folder at the root whose contents another account or an ACL
+  hides made the GUI, every MCP tool that lists documents and `mellon-check`
+  fail with a permission error. It is now listed with a load error and the
+  other documents load (`MELLON-STORE-SRS-27`, `-28`).
+- **New sibling is one step.** It created the object and then moved it after
+  the selection in two writes; when the move failed the object stayed, last
+  under the parent, as an undo step of its own, under a "New sibling failed"
+  message. The object and its place are now written together or not at all
+  (`MELLON-STORE-SRS-174`).
+
+- **Only an SVG holding a draw.io diagram counts as a draw.io figure.** The
+  test looked for the text `<mxfile` anywhere in the `content` attribute and
+  accepted any root named `svg`, so content that wasn't XML, an `mxfile`
+  inside another element, and an svg outside the SVG namespace were offered
+  Edit in draw.io. The content must now parse as XML with an `mxfile` root
+  (or, as before, `mxGraphModel`; see the open questions), in an `svg` root
+  in the SVG namespace (`MELLON-STORE-SRS-132`).
+
+
+## 0.4.0 — 2026-11-14
+
+Mellon's own requirements now cover the whole application, in
+`MELLON-<AREA>-SRS` with their test cases in `MELLON-<AREA>-STS`. This
+release also fixes security problems found in 0.3.0 (see Security), so
+everyone on 0.3.0 should upgrade.
+
 ### Added
 
 - **Compare dialog.** Hamburger menu → **Compare…** shows what changed in a
@@ -279,149 +430,60 @@ All notable changes to Mellon. The format follows
   still can't be acknowledged until the target is committed, and
   `ack_suspects` skips it with that reason (`MELLON-TRACE-SRS-45`, `-47`).
 
-- **`mellon-check` prints a link outside the document and its parents once.**
-  A link to a document that is neither the link's own document nor a parent,
-  whose target object doesn't exist, was printed as `LINK_NOT_ALLOWED` and
-  again as a `BROKEN` link, and counted as two problems. It now gets the
-  `LINK_NOT_ALLOWED` line alone (`MELLON-CHECK-SRS-134`, `-33`).
-- **Every load error names its file and line.** A manifest whose enum
-  attribute has no option, or whose parent, attribute or ref element lacks a
-  required XML attribute, gave no file; and only an XML syntax error gave a
-  line. Each load error now names the file and the line of the element it
-  concerns, in `DocLoadError`, MCP `list_documents`, `validate_repo` and
-  `repo_health`, and in `mellon-check`, whose line now reads
-  `<doc>: LOAD_ERROR <file>:<line>: <reason>` with the file relative to the
-  repository root (`MELLON-STORE-SRS-29`, `MELLON-CHECK-SRS-90`, `-102`,
-  `-137`).
-
-- **Coverage counts each object once.** An outline that named an object
-  twice counted it twice, and an object the outline left out wasn't counted,
-  in `repo_health`'s coverage rows, MCP `coverage_report` and the PDF. Each
-  object of the document is now counted once, in outline order and then the
-  objects the outline leaves out (`MELLON-CHECK-SRS-107`, `-108`).
-- **`repo_health` no longer reports 0 suspect links when it couldn't look.**
-  When the suspect scan failed (no git repository, or `.git` moved after the
-  server started), each suspect and broken count read 0. They are now
-  `null`, and the new `suspect_scan_error` says why (`MELLON-CHECK-SRS-97`,
-  `-101`). A failing coverage row is no longer silently left out either.
-
-- **The Validate action reads the working copy.** A Document Editor
-  validated the copy it had read earlier, so after a pull left conflict
-  markers in the document it said "validation passed". It now reads the
-  document's files when the action is chosen and shows the load error
-  instead (`MELLON-CHECK-SRS-2`).
-- **The Validate action lists every validation error,** in a scrollable
-  list, where it used to show the first ten and "… and N more"
-  (`MELLON-CHECK-SRS-79`).
-
-- **`mellon-check` reads the repository once.** It used to read it three
-  times (to validate, to list, to scan); a file that changed in between,
-  such as during a pull, could leave a document validated clean and then
-  skipped by the scan without a word, so the check could pass with a load
-  error and suspect links. Each document is now validated and scanned from
-  the one reading, or reported as a load error (`MELLON-CHECK-SRS-147`,
-  `-149`).
-
-- **A table whose cell spans over a row span from above is a load error.**
-  A cell whose column span crossed a column still covered by a row span from
-  an earlier row was accepted: one grid position was covered twice and one
-  left empty, and the grid, the table editor and the PDF drew it by guessing.
-  The loader, the editor and validation now report it
-  (`MELLON-STORE-SRS-111`, `-113`).
-- **The merge-conflict note needs all three conflict markers.** A load error
-  was labelled "(unresolved merge conflict?)" for a file holding only a
-  `<<<<<<<` line. The note is now added only when the file holds a
-  `<<<<<<<` line, a later `=======` line and a later `>>>>>>>` line, as the
-  definition of conflict markers says (`MELLON-STORE-SRS-30`).
-
-- **Text after an element or comment inside a description is read.** In
-  `<description>The pump shall <b>always</b> stop.</description>` (a
-  hand-written file, another tool or a newer Mellon) only "The pump shall"
-  was read, and setting a new description kept the child element and the
-  text after it in the file. An element the format doesn't define, or a
-  comment, is now read as if absent and the text around it is kept; each
-  text Mellon writes replaces the element's whole content
-  (`MELLON-STORE-SRS-46`, `-84`, `-87`).
-- **An empty value is written as `<x/>` every time.** An attribute,
-  description, title or metadata field set to an empty value was written as
-  `<x></x>`, and the next unrelated rewrite of the file turned it into
-  `<x/>`: a change nobody made, which moved the object's last commit and
-  turned links to it suspect. Mellon now writes the one form `<x/>`
-  (`MELLON-STORE-SRS-208`).
-
-- **Acknowledging a link writes the links file with 2-space indentation.**
-  A links file indented another way kept that indentation when a link in it
-  was acknowledged, so the next edit re-indented it in a later commit
-  (`MELLON-STORE-SRS-190`).
-- **A figure is written whole or not at all.** Attaching or replacing a
-  figure, and copying an object with its figure, wrote straight into the
-  figure file, so a stop or a full disk part-way left a truncated SVG and
-  lost the draw.io diagram in it; a copy's figure also wasn't undone when
-  the copy failed. Figures now go through a temporary file that replaces
-  the old one, and the copy is journaled (`MELLON-STORE-SRS-167`).
-
-- **A filter rule without an operator is a load error, and isn't written.**
-  An `attr` rule with no `op`, or an empty one, loaded and then matched
-  nothing; `create_filter` and `set_filter_rules` wrote such a rule when
-  given one (`MELLON-STORE-SRS-145`, `-148`).
-- **Dates are written as YYYY-MM-DD only.** The manifest date and date
-  attribute values set through the composite MCP tools took any form
-  Python's date parser reads, such as `20261113` and the week date
-  `2026-W46-5`, which validation then reported as `META_BAD_DATE` or
-  `ATTR_BAD_DATE`. They now take the same check validation uses
-  (`MELLON-STORE-SRS-64`, `-98`).
-- **A control character in a view's column name, a filter rule's attribute
-  name or a parent document ID is named** in the refusal, as in the other
-  stored text, instead of lxml's general message (`MELLON-STORE-SRS-214`).
-
-- **A link without a type, and a parent that isn't a document ID, are
-  refused before anything is written.** MCP `add_link` with an empty
-  `link_type`, or `add_parent` with an empty or impossible ID, wrote a file
-  the loader then rejected, so the whole document stopped loading while the
-  call reported failure. And when a document failed to load again after an
-  edit, the GUI's cached document list dropped it without a load error until
-  a full refresh; the next listing now reads the repository again and shows
-  the load error (`MELLON-STORE-SRS-27`, `-68`, `-120`).
-
-- **Windows and Linux read the same object, figure, view and filter files.**
-  On Windows `objects/DOC-7.XML` was read as object DOC-7 and
-  `figures/DOC-0.SVG` as DOC-0's figure; on Linux CI neither was, so the
-  same commit checked differently. The `.xml` and `.svg` suffixes now count
-  letter case everywhere, as the manifest's name already did
-  (`MELLON-STORE-SRS-81`, `-129`).
-- **Opening a bare repository is refused as outside a work tree.** It was
-  called a subfolder of a work tree rooted in the folder above it, and the
-  GUI offered to open that folder, which then wasn't a git repository at
-  all (`MELLON-STORE-SRS-7`, `-12`).
-
-- **The History tab reads an object at a commit by the format's rules.**
-  Its own reader showed no table, took the last of two `attr` elements of
-  one name, ignored an id that differs from the file name, dropped
-  incomplete links and failed with an error dialog on a file that isn't
-  well-formed. It now reads the object and its links as the working copy is
-  read, and shows a load error for a file the rules reject
-  (`MELLON-STORE-SRS-83`, `-85`, `-90`).
-- **A folder Mellon may not examine no longer stops the repository from
-  opening.** A folder at the root whose contents another account or an ACL
-  hides made the GUI, every MCP tool that lists documents and `mellon-check`
-  fail with a permission error. It is now listed with a load error and the
-  other documents load (`MELLON-STORE-SRS-27`, `-28`).
-- **New sibling is one step.** It created the object and then moved it after
-  the selection in two writes; when the move failed the object stayed, last
-  under the parent, as an undo step of its own, under a "New sibling failed"
-  message. The object and its place are now written together or not at all
-  (`MELLON-STORE-SRS-174`).
-
-- **Only an SVG holding a draw.io diagram counts as a draw.io figure.** The
-  test looked for the text `<mxfile` anywhere in the `content` attribute and
-  accepted any root named `svg`, so content that wasn't XML, an `mxfile`
-  inside another element, and an svg outside the SVG namespace were offered
-  Edit in draw.io. The content must now parse as XML with an `mxfile` root
-  (or, as before, `mxGraphModel`; see the open questions), in an `svg` root
-  in the SVG namespace (`MELLON-STORE-SRS-132`).
-
 ### Security
 
+- **Exporting no longer runs a program from the repository.** On Windows a
+  bare program name is found in the current folder first, and the MCP server
+  usually starts in the repository, so a `tectonic.bat` (or a draw.io
+  program) committed there ran when anyone exported: whoever could push
+  could run code on the machine of whoever exported. The PDF program and
+  draw.io are now looked up in absolute `PATH` entries only, never inside the
+  repository or directly in the start folder; `MELLON_TECTONIC` and
+  `MELLON_DRAWIO` still name a program anywhere. A source checkout no longer
+  finds tectonic in `mellon/tools/`: set `MELLON_TECTONIC`. Specified in
+  `MELLON-PDF-SRS-67` and `MELLON-EDIT-SRS-247`.
+- **The GUI shows text from the repository as plain text.** Labels,
+  tooltips, messages and prompts took text that looked like HTML for HTML.
+  An attribute value or link type holding an image tag made the Inspector
+  open the file it named, which for a network path makes Windows offer the
+  user's credentials to that host; other markup could hide or fake text.
+  This covered attribute values, names and labels, IDs, link types, filter
+  names, load errors, branch names, View at this commit and the Resolve
+  merge dialog. Specified in `MELLON-GUI-SRS-122` and `MELLON-VER-SRS-380`;
+  new `gui/plain.py`.
+- **A link out of a document isn't followed.** A document's folder, or a
+  folder or file in it, that is a symbolic link, junction, pipe or device is
+  a load error and isn't read, and a link directly under the repository root
+  isn't taken for a document. Before, another project's document behind such
+  a link showed up in incoming links, traces and link states. Specified in
+  `MELLON-STORE-SRS-229`.
+- **IDs and paths from another clone stay inside the repository.** The link
+  picker listed a parent document named as a network share or a path;
+  resolving a merge wrote paths from the other branch unchecked; a load
+  error's merge-conflict note could read a file outside the repository that
+  an attribute name pointed at; and the MCP tools `git_history`,
+  `remove_link` and `commit_changes` looked at a `../` or share path on disk
+  before refusing it, which told the caller whether a file outside existed.
+  Each is now refused before anything outside is touched. Specified in
+  `MELLON-STORE-SRS-230`, `MELLON-VER-SRS-329` and `MELLON-MCP-SRS-112`.
+- **`export_document` refuses `.git` however the path is spelled.** A Windows
+  `\\?\` path into `.git` was written to (`MELLON-PDF-SRS-27`).
+- **The editor doesn't write or delete through a link.** Every edit, and
+  every folder an edit makes, is refused when the file, a folder of the
+  document or the document's folder is a symbolic link, a junction, a pipe
+  or a device, so an edit can't change a file outside the repository.
+  Saving a view or a filter didn't read the document first, so a linked
+  `views/` or `filters/` folder was written through. A repository root
+  reached through a link still works. Specified in `MELLON-STORE-SRS-228`.
+- **Loading a document looks at nothing outside it.** A load error's
+  merge-conflict note took the start of the message as a file name, and a
+  message can start with an attribute name from the file: the note then
+  looked that text up in the start folder, which for a network path
+  contacts the host. The note now looks only at a file inside the
+  document's folder. Specified in `MELLON-STORE-SRS-241`.
+- **`export_document` refuses a device, a pipe or a colon path.** `NUL.pdf`
+  wrote nowhere and `notes.txt:x.pdf` wrote a hidden stream into another
+  file, while the tool reported a PDF (`MELLON-PDF-SRS-31`).
 - **A link's target can no longer make Mellon look outside the repository.**
   A links file from another clone could set `target-doc` or `target-id` to a
   path such as `../x` or, on Windows, a share such as `\\host\share`. Working
@@ -443,6 +505,12 @@ All notable changes to Mellon. The format follows
 - **Upgrade everyone who creates objects.** Mellon 0.3.0 keeps
   `next-object-number` but doesn't use or raise it, so an object created with
   0.3.0 can still take the ID of a deleted one. Documents need no change.
+- **A document holding a link is now a load error.** Replace a symbolic link
+  or junction inside a document folder (a shared figure, say) with the file
+  itself. A repository root reached through a link still works.
+- **A source checkout no longer finds tectonic in `mellon/tools/`.** Set
+  `MELLON_TECTONIC` to the program. The installer finds its own copy as
+  before.
 
 ## 0.3.0 — 2026-10-30
 

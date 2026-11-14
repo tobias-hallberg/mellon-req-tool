@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-VER-STS-199">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_gui_plain.py::test_ver_srs_380_editor_status_bar_shows_the_branch_name_as_written
+tests/test_gui_plain.py::test_ver_srs_380_explorer_status_bar_shows_the_branch_name_as_written
+tests/test_gui_merge.py::test_ver_srs_340_renumbered_objects_show_ids_and_branch_names_as_written</attr>
+  <description>Check out a branch whose name holds an HTML entity, open the Project Explorer and a Document Editor; then stop a merge from a branch with such a name in which an object is renumbered, and open the Resolve merge dialog. Expected: both status bars show the branch name as written, entity included, and the dialog's renumbered line shows the object IDs and branch name as written.</description>
+</object>

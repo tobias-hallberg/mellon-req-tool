@@ -2346,3 +2346,34 @@ def test_22_real_figure_change_in_rewritten_figure_is_still_reported(canon_repo)
     d = diff.compare_document(root, DOC, info["c1"], c2)
     expected = {info["ids"][2]: ("Modified",)}
     assert _kinds(d) == expected, f"expected exactly {expected}, Compare reports {_reported(d)}"
+
+
+# MELLON-STORE-SRS-229 (CV-TRACE-07): Compare's working copy doesn't follow a
+# linked folder or file in the document.
+from tests.trace_support import Repo, dir_link, file_link  # noqa: E402
+
+
+def make_repo(tmp_path: Path) -> Repo:
+    r = Repo(tmp_path / "repo")
+    r.add_doc("D", {"D-1": "one"})
+    r.commit("D")
+    return r
+
+
+def test_store_srs_229_compare_refuses_a_linked_subfolder(tmp_path: Path) -> None:
+    r = make_repo(tmp_path)
+    elsewhere = tmp_path / "elsewhere"
+    elsewhere.mkdir()
+    dir_link(r.root / "D" / "links", elsewhere)
+    with pytest.raises(GitError, match="junction|symbolic link"):
+        compare_document(r.root, "D", "HEAD", diff.WORKING_COPY)
+
+
+def test_store_srs_229_compare_doesnt_read_a_linked_file(tmp_path: Path) -> None:
+    r = make_repo(tmp_path)
+    outside = tmp_path / "outside.xml"
+    outside.write_bytes((r.root / "D" / "objects" / "D-1.xml").read_bytes().replace(b"one", b"OUTSIDE"))
+    (r.root / "D" / "objects" / "D-1.xml").unlink()
+    file_link(r.root / "D" / "objects" / "D-1.xml", outside)
+    result = compare_document(r.root, "D", "HEAD", diff.WORKING_COPY)
+    assert "OUTSIDE" not in repr(result)

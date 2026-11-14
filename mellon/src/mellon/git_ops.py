@@ -282,6 +282,18 @@ def commit(
 
 
 # Requirements: MELLON-MCP-SRS-115, MELLON-VER-SRS-92
+# Requirements: MELLON-MCP-SRS-112
+def _leaves_repo(rel: str) -> bool:
+    """Whether a path given relative to the repository root (posix-style)
+    could name something outside it: absolute, a share, a drive, or a `..`
+    part. Checked before the path reaches the disk."""
+    return (
+        rel.startswith("/")
+        or re.match(r"[A-Za-z]:", rel) is not None
+        or ".." in rel.split("/")
+    )
+
+
 def _selected_files(
     repo: pygit2.Repository,
     root: Path,
@@ -301,6 +313,8 @@ def _selected_files(
         rel = str(p).replace("\\", "/").rstrip("/")
         if rel == ".":
             rel = ""
+        if _leaves_repo(rel):
+            raise GitError(f"path is outside the repository: {p!r}")
         target = root / rel
         is_dir = target.is_dir() and not target.is_symlink()
         if not is_dir and head is not None and rel and not os.path.lexists(target):

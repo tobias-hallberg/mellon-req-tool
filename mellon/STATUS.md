@@ -3,7 +3,7 @@
 A snapshot of what's built, what's deferred, and where to pick up. For the
 per-release list of changes, see [CHANGELOG.md](CHANGELOG.md).
 
-**Current release:** v0.3.0, with draw.io figure support. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
+**Current release:** v0.4.0, with Mellon's own requirements covering the whole application. It ships as a Windows installer (see [Packaging](#packaging-windows-installer)),
 and the team routine is in [TEAM.md](TEAM.md). Documents are meant for up to
 1,000 objects each; [SCALING.md](SCALING.md) has measurements up to 5,000.
 
@@ -551,7 +551,9 @@ A table is structured content on one object: `<table>` inside
 - **Surfaces:** MCP `export_document` and the GUI's Export (`Ctrl+E`, in a
   background thread).
 - **tectonic lookup:** `MELLON_TECTONIC`, then `<exe-dir>/tools` (frozen
-  build), then `PATH`, then `<project-root>/tools` (source checkout).
+  build), then the absolute `PATH` entries (`programs.which`). Nothing inside
+  the repository or directly in the start folder, other than
+  `MELLON_TECTONIC`'s program; draw.io is found the same way.
   - `<tectonic-dir>/tectonic-cache` is used as `TECTONIC_CACHE_DIR` when that
     variable is unset.
   - tectonic runs with no console window, a 300 s timeout and UTF-8 decoding.
@@ -705,9 +707,9 @@ one `MELLON-<AREA>-SRS` and one `MELLON-<AREA>-STS` per area (STORE, EDIT,
 CHECK, TRACE, VER, PDF, MCP, GUI). `../docs/specification.md` says how they
 are written and checked; `../docs/definitions.md` holds the terms.
 
-- Every area is specified: 1,675 requirements and 769 test cases. 882
-  requirements are built (780 Implemented, 102 Accepted), and each of them
-  has a test case, which `test_mellon_spec.py` checks. 785 are Proposed
+- Every area is specified: 1,676 requirements and 779 test cases. 892
+  requirements are built (780 Implemented, 112 Accepted), and each of them
+  has a test case, which `test_mellon_spec.py` checks. 776 are Proposed
   (gaps and planned behaviour, including a changed version beside a built
   requirement where the two differ) and 8 Deferred.
 - 472 requirements only restate what was built (rationale `as
@@ -717,8 +719,10 @@ are written and checked; `../docs/definitions.md` holds the terms.
   is cited in the code (`# Requirements:` comments), the review ledger is
   in `../.review/ledger.json`, and its findings are in
   `../.review/code-view-findings.json`, to be fixed or decided as
-  `../.review/tasks/fix-code-view.md` says. Still to do: those fixes,
-  and mutation testing (`../.review/tasks/mutation.md`).
+  `../.review/tasks/fix-code-view.md` says. Its 8 security findings were
+  fixed first, on 2026-11-14, with three hardening steps the person
+  accepted (`../docs/open-questions.md` Q20). Still to
+  do: the other fixes, and mutation testing (`../.review/tasks/mutation.md`).
 - Requirements are implementation-free, say exactly one of shall, should or
   could, and are all `level: High`.
 - The documents are edited with a released Mellon build.
@@ -822,6 +826,8 @@ src/mellon/
   export.py      LaTeX/PDF export: render_latex, build_pdf, pdf, unrendered_figures (tectonic)
   drawio.py      draw.io desktop: find_drawio, is_drawio_svg, BLANK_DRAWIO_SVG, open_in_drawio,
                  qt_svg (QtSvg-friendly rewrite), export_pdfs (batch CLI render)
+  programs.py    which, allowed: find the PDF program and draw.io in absolute PATH entries,
+                 never inside the repository or directly in the start folder
   templates/syrs/  main.tex.j2 (incl. the Traceability section) + syrs.cls
   mcp/
     server.py    FastMCP stdio server; 46 tools: read (13) / write (27) / git+review (6)
@@ -839,6 +845,8 @@ src/mellon/
     main_window.py                 DocumentEditorWindow: three-pane editor for one document, undo/redo
     controller.py                  RepoController (root guard, load, selection, Qt signals)
     theme.py                       ThemeManager singleton; tokens, QPalette+QSS, build_theme_menu
+    plain.py                       repository and git text as plain text: label, text, esc, make_plain,
+                                   warning/critical/information/question, get_text
     delegates.py                   per-column grid delegates (state gutter, id, multi-line text +
                                    table preview, attr-kind)
     settings.py                    QSettings factory (org/app names)
@@ -857,7 +865,7 @@ packaging/       build.ps1, mellon.spec, mellon.iss, launch_gui.py, launch_mcp.p
                  THIRD-PARTY-NOTICES.txt
 benchmarks/      scale benchmarks: gen_repo, bench_core, bench_gui, bench_export, run_all
 tests/           one file per module; conftest.py holds the fixture + a test git identity
-tools/           (gitignored) optional vendored tectonic for source checkouts
+tools/           (gitignored) a place to keep a tectonic binary; point MELLON_TECTONIC at it
 CHANGELOG.md     per-release changes
 TEAM.md          team routine (also shipped in the installer)
 INSTALL.md       installer + MCP client config + dev env setup

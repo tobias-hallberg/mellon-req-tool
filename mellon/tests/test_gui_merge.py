@@ -512,3 +512,58 @@ def test_ver_srs_353_merge_dialog_lists_fields_merged_in_from_theirs(tmp_path, q
 
     assert lines, "the dialog lists nothing as merged in"
     assert any("priority" in t.lower() for t in lines), f"priority isn't listed: {lines}"
+
+
+def _shown(label) -> str:
+    """What a label shows: its text, or the text its markup renders to."""
+    from PySide6.QtCore import Qt
+    from PySide6.QtGui import QTextDocument
+    from PySide6.QtGui import Qt as QtGuiNamespace
+
+    text = label.text()
+    fmt = label.textFormat()
+    if fmt == Qt.TextFormat.RichText or (
+        fmt == Qt.TextFormat.AutoText and QtGuiNamespace.mightBeRichText(text)
+    ):
+        doc = QTextDocument()
+        doc.setHtml(text)
+        text = doc.toPlainText()
+    return " ".join(text.replace("\xa0", " ").split())
+
+
+def test_ver_srs_340_renumbered_objects_show_ids_and_branch_names_as_written(qtbot, tmp_path) -> None:
+    """MELLON-VER-SRS-340, MELLON-VER-SRS-380 (CV-VER-35): object IDs, file
+    names, attribute names and branch names from the other clone show in the
+    Resolve merge dialog as written."""
+    from mellon import merge
+    from mellon.gui.dialogs.merge_dialog import MergeDialog
+
+    plan = merge.MergePlan(
+        into="main&lt;b&gt;",
+        merging="<b>feature</b>",
+        renumbered=(merge.Renumbered(
+            doc_id="D", obj_id="<i>D-3</i>", new_id="<u>D-4</u>", side="theirs", text="x"
+        ),),
+        by_hand=(merge.HandMerge(
+            path="D/objects/<i>D-1</i>.xml",
+            doc_id="<s>D</s>",
+            title="<i>D-1</i>",
+            conflicts=(merge.FieldConflict(
+                field="attr:status", label="<u>status</u>", ours="a", theirs="b", kind="value"
+            ),),
+            from_theirs=(),
+            deleted_on=None,
+            links=(),
+        ),),
+        outside=(),
+    )
+    dlg = MergeDialog(tmp_path, plan)
+    qtbot.addWidget(dlg)
+    shown = [_shown(label) for label in dlg.findChildren(QLabel)]
+    assert (
+        "<i>D-3</i> on <b>feature</b> was created later under the same id: it becomes <u>D-4</u>."
+        in shown
+    ), shown
+    assert "<i>D-1</i> · <s>D</s>" in shown, shown
+    assert "<u>status</u>" in shown, shown
+    assert any(s.startswith("Merging <b>feature</b> into main&lt;b&gt;.") for s in shown), shown

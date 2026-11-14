@@ -18,6 +18,8 @@ tests/test_suspects.py::test_trace_srs_77_target_that_is_no_object_id_is_broken_
 tests/test_editor.py::test_trace_srs_79_add_link_reads_nothing_outside_the_repository
 tests/test_mcp_git.py::test_trace_srs_79_review_of_a_target_that_is_no_object_id_reads_nothing_outside
 tests/test_mcp_git.py::test_trace_srs_79_no_path_outside_the_repository_is_opened
-tests/test_mcp_read.py::test_trace_srs_79_no_path_outside_the_repository_is_opened</attr>
+tests/test_mcp_read.py::test_trace_srs_79_no_path_outside_the_repository_is_opened
+tests/test_repo.py::test_trace_srs_79_incoming_links_leave_out_a_linked_folder
+tests/test_suspects.py::test_trace_srs_79_link_into_a_linked_folder_is_broken</attr>
   <description>In a repository, give a link a target that isn't an object ID: a document folder outside the repository ('../OUT'), an object path climbing out of the document ('../../../OUT-1', 'PARENT-42/../../../../OUT-1'), a Windows share, and the object ID of another document; work out the link's state while recording each path the file system is asked about. Also create links with such target IDs. Expected: each link reads broken with no last change, and no path outside the repository is opened, listed or looked up, whether the link is created or refused.</description>
 </object>

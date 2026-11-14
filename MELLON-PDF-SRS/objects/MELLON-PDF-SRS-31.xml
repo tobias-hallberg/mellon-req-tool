@@ -2,8 +2,8 @@
 <object id="MELLON-PDF-SRS-31">
   <attr name="type">Requirement</attr>
   <attr name="req-type">Security</attr>
-  <attr name="status">Proposed</attr>
+  <attr name="status">Accepted</attr>
   <attr name="level">High</attr>
-  <attr name="rationale">derived: NUL.pdf writes nowhere and notes.txt:x.pdf writes a hidden stream into another file, while the agent reports a PDF that doesn't exist (CF-P7).</attr>
+  <attr name="rationale">derived: NUL.pdf writes nowhere and notes.txt:x.pdf writes a hidden stream into another file, while the agent reports a PDF that doesn't exist (CF-P7). Accepted on 2026-11-14 by the person as a security fix (open question Q20).</attr>
   <description>If the MCP server's export tool is given an output path that names a device or a pipe, or holds a colon other than after a drive letter, the MCP server shall refuse the export.</description>
 </object>

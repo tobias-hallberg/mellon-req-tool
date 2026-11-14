@@ -1,6 +1,6 @@
 # Mellon — orientation for Claude
 
-A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.3.0 is the current release; see `mellon/CHANGELOG.md`.
+A DOORS-like requirements management tool. Requirements live as XML files in a git repo, so versioning, branching, diffs, and review come for free. The library, MCP server and PySide6 GUI are all feature-complete, and a frozen Windows installer is built from `mellon/packaging/`. v0.4.0 is the current release; see `mellon/CHANGELOG.md`.
 
 **The Python package is one directory deep**, in `mellon/`. Run all `uv` commands from there, not from this outer directory.
 
@@ -38,7 +38,7 @@ A DOORS-like requirements management tool. Requirements live as XML files in a g
 │   ├── tests/                  pytest suite
 │   ├── benchmarks/             scale benchmarks (not packaged, not run in CI)
 │   ├── packaging/              Windows installer: build.ps1, mellon.spec, mellon.iss, notices
-│   └── tools/                  (gitignored) optional vendored tectonic for source checkouts
+│   └── tools/                  (gitignored) a place to keep a tectonic binary; set MELLON_TECTONIC to it
 ├── req-test.bundle             test fixture (committed)
 └── req-test/                   unpacked fixture (.gitignored, auto-cloned)
 ```
@@ -83,7 +83,8 @@ All run from inside `mellon/`:
 | `search.py` | `search_objects`: case-insensitive substring scan with ranked hits |
 | `diff.py` | `compare_document(repo_root, doc_id, ref_a, ref_b)`: what changed between two versions (git refs or `WORKING_COPY`): added, deleted, modified, moved, link reviewed, with field deltas and both states. `document_versions` / `default_versions` feed the Compare dialog |
 | `merge.py` | Resolve a git merge that stopped with conflicts in documents: `pending`, `plan`, `resolve`. Renumbers the later of two objects created under one id (with their links), merges objects per field, link files as sets and outlines by position; only same-field conflicts go to the user (with trace context). GUI: Project Explorer banner + `MergeDialog` |
-| `export.py` | LaTeX/PDF export via Jinja2 + tectonic (`templates/syrs/`); tectonic lookup `MELLON_TECTONIC` → `<exe-dir>/tools` → PATH → `<project-root>/tools`. Figures are rendered by draw.io (`export.pdf(doc, folder=…)`) |
+| `export.py` | LaTeX/PDF export via Jinja2 + tectonic (`templates/syrs/`); tectonic lookup `MELLON_TECTONIC` → `<exe-dir>/tools` → PATH (`programs.which`), never inside the repository or directly in the start folder. Figures are rendered by draw.io (`export.pdf(doc, folder=…)`) |
+| `programs.py` | `which` and `allowed`: find the PDF program and draw.io in absolute `PATH` entries only, leaving out the repository and the start folder, so a program committed to a repository never runs |
 | `drawio.py` | draw.io desktop integration (stdlib + lxml only — the frozen MCP exe has no Qt): `find_drawio` (`MELLON_DRAWIO` → Windows install dirs → PATH), `is_drawio_svg`, `BLANK_DRAWIO_SVG`, `open_in_drawio`, `qt_svg` (QtSvg-friendly rewrite: `light-dark()` colours, HTML labels), `export_pdfs` (one batch CLI run → cropped vector PDFs) |
 | `mcp/server.py` | FastMCP stdio server, 46 tools (13 read / 27 write / 6 git+review) |
 | `mcp/serialize.py` | dataclass → JSON-serializable dicts |
@@ -92,6 +93,7 @@ All run from inside `mellon/`:
 | `gui/project_explorer_window.py` | Top-level window: list of docs + open editors. Double-click opens a `DocumentEditorWindow` |
 | `gui/main_window.py` | `DocumentEditorWindow` — three-pane editor for a single document |
 | `gui/controller.py` | `RepoController` (load, selection, Qt signals) |
+| `gui/plain.py` | Shows repository and git text as plain text: plain labels, `text` for tooltips and the static message-box and input-dialog functions, `esc` for labels that are rich on purpose. Use it for any text read from the repository |
 | `gui/theme.py` | `ThemeManager` singleton (dark/light tokens, `QPalette` + QSS) and `build_theme_menu` helper shared by both windows |
 | `gui/delegates.py` | Per-column grid delegates: state gutter, id, multi-line description (+ table preview rendered by `InlineTableWidget`), attribute-kind aware editor |
 | `gui/models/` | `ProjectTreeModel`, `OutlineModel`, `ObjectsGridModel` |

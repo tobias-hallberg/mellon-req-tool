@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object id="MELLON-GUI-STS-124">
+  <attr name="type">Test Case</attr>
+  <attr name="status">Accepted</attr>
+  <attr name="verification-method">Test</attr>
+  <attr name="execution">Automated</attr>
+  <attr name="rung">3 GUI and MCP</attr>
+  <attr name="rationale">derived: written with the security fix, from the requirement and the code view's finding.</attr>
+  <attr name="automated-tests">tests/test_gui_plain.py::test_gui_srs_122_text_shows_as_written_in_a_sink_that_guesses
+tests/test_gui_plain.py::test_gui_srs_122_text_leaves_ordinary_text_alone
+tests/test_gui_plain.py::test_gui_srs_122_label_and_form_label_are_plain
+tests/test_gui_plain.py::test_gui_srs_122_esc_escapes_for_rich_labels
+tests/test_gui_plain.py::test_gui_srs_122_make_plain_covers_a_boxs_informative_text
+tests/test_gui_plain.py::test_gui_srs_122_message_boxes_show_text_as_written
+tests/test_gui_plain.py::test_gui_srs_122_input_dialog_prompt_shows_as_written
+tests/test_gui_plain.py::test_gui_srs_122_inspector_value_with_image_tag_opens_no_file
+tests/test_gui_plain.py::test_gui_srs_122_inspector_link_row_shows_the_link_type_as_written
+tests/test_gui_plain.py::test_gui_srs_122_no_window_renders_markup_from_the_repository</attr>
+  <description>Give a repository's text markup: an attribute value holding an image tag that names a picture file and a bold tag, a description, an attribute's label, a link type and a filter name holding bold tags, on a branch whose name holds an HTML entity. Open a Document Editor read-only with the object selected in the Inspector, choose the filter, switch to editing, then open Document Properties, the trace view, View at this commit and the Commit dialog; separately show message boxes and an input prompt whose text holds markup. Expected: every label, row label, tooltip, message and prompt shows the text as written, tags included; the Inspector's label for the image value has the size of its text, not of the picture, so the picture file isn't opened; text without markup shows unchanged.</description>
+</object>

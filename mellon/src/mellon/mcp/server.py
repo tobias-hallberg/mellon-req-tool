@@ -30,7 +30,8 @@ import functools
 import logging
 import os
 import sys
-from pathlib import Path
+import stat
+from pathlib import Path, PureWindowsPath
 from typing import Any, Literal
 
 from lxml import etree
@@ -1928,7 +1929,7 @@ def add_link(
     ))
 
 
-# Requirements: MELLON-TRACE-SRS-27, MELLON-TRACE-SRS-28
+# Requirements: MELLON-MCP-SRS-112, MELLON-TRACE-SRS-27, MELLON-TRACE-SRS-28
 @_write_tool
 def remove_link(
     source_doc: str,
@@ -1945,7 +1946,8 @@ def remove_link(
     )
     folder = _require_doc(source_doc)
     links_path = folder / "links" / f"{source_id}.xml"
-    existed_before = links_path.exists()
+    # Only an object ID is looked up on disk; the service refuses anything else.
+    existed_before = is_object_id(source_doc, source_id) and links_path.exists()
     try:
         result = _svc().remove_link(source_doc, source_id, target_doc, target_id)
     except ServiceError as e:
@@ -2273,7 +2275,7 @@ def commit_changes(
     }
 
 
-# Requirements: MELLON-VER-SRS-222
+# Requirements: MELLON-MCP-SRS-112, MELLON-VER-SRS-222
 @mcp.tool()
 def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
     """Recent commits on HEAD's history that changed this object's file or
@@ -2285,7 +2287,9 @@ def git_history(doc_id: str, obj_id: str, max_entries: int = 10) -> list[dict]:
     except GitError:
         return []
     rel = f"{doc_id}/objects/{obj_id}.xml"
-    if not (root / rel).exists():
+    # An obj_id that isn't one of this document's IDs names no object: refuse
+    # it before it reaches the disk as a path.
+    if not is_object_id(doc_id, obj_id) or not (root / rel).exists():
         raise ValueError(f"No object {obj_id!r} in document {doc_id!r}")
     try:
         return git_ops.log_for_path(
@@ -2532,9 +2536,76 @@ def review_suspect_link(
     }
 
 
+def _without_win_prefix(path: Path) -> Path:
+    r"""``path`` without a Windows ``\\?\`` or ``\\.\`` prefix (``\\?\UNC\``
+    becomes ``\\``), which ``Path.resolve`` keeps and which would make the
+    same folder compare unequal to its plain spelling."""
+    text = str(path)
+    if text.startswith("\\\\?\\UNC\\"):
+        return Path("\\\\" + text[8:])
+    if text.startswith(("\\\\?\\", "\\\\.\\")):
+        return Path(text[4:])
+    return path
+
+
+# Windows' device names: a file whose name before the first dot is one of
+# these (letter case and trailing spaces aside) is the device, not a file.
+_WINDOWS_DEVICES = frozenset(
+    {"CON", "PRN", "AUX", "NUL", "CONIN$", "CONOUT$"}
+    | {f"{kind}{n}" for kind in ("COM", "LPT") for n in "0123456789¹²³"}
+)
+
+
+# Requirements: MELLON-PDF-SRS-31
+def _unsafe_output(out_path: str, out: Path) -> str | None:
+    """Why the export tool refuses ``out_path``: it names a device or a pipe,
+    or holds a colon other than after a drive letter (on Windows such a colon
+    names a hidden stream inside another file). The text is checked first, the
+    same on every system, so a device is never opened to find out; then an
+    existing pipe, device or socket at ``out`` is refused too."""
+    spelled = PureWindowsPath(out_path)
+    if out_path.replace("\\", "/").lower().startswith(("//./", "//?/globalroot")):
+        return "names a device or a pipe"
+    if ":" in out_path[len(spelled.drive):]:
+        return "holds a colon other than after a drive letter"
+    if spelled.name.split(".")[0].rstrip(" ").upper() in _WINDOWS_DEVICES:
+        return "names a device"
+    try:
+        mode = os.stat(out).st_mode
+    except (OSError, ValueError):
+        return None
+    if stat.S_ISFIFO(mode) or stat.S_ISCHR(mode) or stat.S_ISBLK(mode) or stat.S_ISSOCK(mode):
+        return "names a device or a pipe"
+    return None
+
+
+# Requirements: MELLON-PDF-SRS-27
+def _inside_folder(path: Path, folder: Path) -> bool:
+    """Whether ``path`` is ``folder`` or lies under it, however either is
+    spelled: by resolved path without prefixes, and by file identity of each
+    existing folder on the way up (a junction, 8.3 name or volume path)."""
+    full = _without_win_prefix(path.resolve())
+    if full.is_relative_to(_without_win_prefix(folder.resolve())):
+        return True
+    try:
+        target = os.stat(folder)
+    except OSError:
+        return False
+    if not target.st_ino:  # no file identity on this file system
+        return False
+    for candidate in full.parents:
+        try:
+            st = os.stat(candidate)
+        except OSError:
+            continue
+        if (st.st_dev, st.st_ino) == (target.st_dev, target.st_ino):
+            return True
+    return False
+
+
 # Requirements: MELLON-MCP-SRS-36, MELLON-MCP-SRS-112, MELLON-MCP-SRS-115, MELLON-PDF-SRS-5,
-#   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-56, MELLON-PDF-SRS-61,
-#   MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
+#   MELLON-PDF-SRS-10, MELLON-PDF-SRS-26, MELLON-PDF-SRS-27, MELLON-PDF-SRS-31, MELLON-PDF-SRS-56,
+#   MELLON-PDF-SRS-61, MELLON-PDF-SRS-62, MELLON-PDF-SRS-65, MELLON-PDF-SRS-84, MELLON-PDF-SRS-126
 @_changing_tool
 def export_document(
     doc_id: str,
@@ -2545,9 +2616,10 @@ def export_document(
     """Render a document to PDF (LaTeX via tectonic) and write it to disk.
 
     `out_path` is the destination file; it must end in `.pdf`, must not be
-    inside the repo's `.git` directory, and relative paths resolve against
-    the repo root. This tool writes to a filesystem path, so `--read-only`
-    refuses it.
+    inside the repo's `.git` directory, must not name a device or a pipe
+    (such as `NUL.pdf`) or hold a colon other than after a drive letter, and
+    relative paths resolve against the repo root. This tool writes to a
+    filesystem path, so `--read-only` refuses it.
 
     `rev` labels the cover page: omit it to use the document's current issue
     tag, pass an explicit string to override, or pass "" to suppress the rev
@@ -2556,8 +2628,10 @@ def export_document(
 
     Needs the `tectonic` binary, looked up as: the `MELLON_TECTONIC`
     environment variable, then `<exe-dir>/tools/` in the installed (frozen)
-    build, then PATH, then `<project-root>/tools/` in a source checkout. A
-    missing binary surfaces as `error_type: "TectonicError"`, not a crash.
+    build, then PATH. Apart from `MELLON_TECTONIC`, a program inside the
+    repository or directly in the folder the server started in is never
+    used. A missing binary surfaces as `error_type: "TectonicError"`, not a
+    crash.
     The PDF is not repo content — nothing is staged or committed.
 
     Attached figures are drawn by draw.io desktop (found via the
@@ -2598,7 +2672,13 @@ def export_document(
             ),
             message="export failed",
         )
-    if out.resolve().is_relative_to((_require_root() / ".git").resolve()):
+    why = _unsafe_output(out_path, out)
+    if why is not None:
+        return _service_error_result(
+            ServiceError(ErrorCode.VALIDATION, f"out_path {why}: {out_path!r}"),
+            message="export failed",
+        )
+    if _inside_folder(out, _require_root() / ".git"):
         return _service_error_result(
             ServiceError(
                 ErrorCode.VALIDATION,
@@ -2656,7 +2736,7 @@ def export_document(
             f"; {len(missing)} figure(s) not rendered (see unrendered_figures)"
         )
         extra["unrendered_figures"] = missing
-        if find_drawio() is None:
+        if find_drawio(_require_root()) is None:
             extra["drawio_found"] = False
     if problems:
         n_broken = sum(s.state.value == "broken" for s in problems)
